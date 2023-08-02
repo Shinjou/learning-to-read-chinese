@@ -1,10 +1,9 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/contants/routes.dart';
+import 'package:ltrc/extensions.dart';
 import 'package:ltrc/views/registerView.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ltrc/views/wordsView.dart';
 
 void main() {
    runApp(ProviderScope(child: MyApp()));
@@ -19,7 +18,10 @@ class MyApp extends ConsumerWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        appBarTheme: AppBarTheme(
+          iconTheme: const IconThemeData(color: Colors.white),
+          color: '#023E6E'.toColor()
+        ),
         useMaterial3: true,
       ),
       routes: AppRoutes.define(),
@@ -33,6 +35,6 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const RegisterView();
+    return const WordsView();
   }
 }
