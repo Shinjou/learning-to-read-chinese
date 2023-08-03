@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/contants/routes.dart';
 import 'package:ltrc/extensions.dart';
 import 'package:ltrc/views/registerView.dart';
-import 'package:ltrc/views/wordsView.dart';
+import 'package:ltrc/views/WordsView.dart';
 
 void main() {
    runApp(ProviderScope(child: MyApp()));
@@ -20,8 +20,10 @@ class MyApp extends ConsumerWidget {
       theme: ThemeData(
         appBarTheme: AppBarTheme(
           iconTheme: const IconThemeData(color: Colors.white),
+          foregroundColor: Colors.white,
           color: '#023E6E'.toColor()
         ),
+        scaffoldBackgroundColor: "#28231D".toColor(),
         useMaterial3: true,
       ),
       routes: AppRoutes.define(),
