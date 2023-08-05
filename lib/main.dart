@@ -18,8 +18,12 @@ class MyApp extends ConsumerWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        brightness: Brightness.light,
-        primaryColor: '#013E6D'.toColor(),
+        appBarTheme: AppBarTheme(
+          iconTheme: const IconThemeData(color: Colors.white),
+          foregroundColor: Colors.white,
+          color: '#023E6E'.toColor()
+        ),
+        scaffoldBackgroundColor: "#28231D".toColor(),
         useMaterial3: true,
       ),
       routes: AppRoutes.define(),
