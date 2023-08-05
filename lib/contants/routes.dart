@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ltrc/views/registerView.dart';
 import 'package:ltrc/views/mainPageView.dart';
-import 'package:ltrc/views/lessonsView.dart';
+import 'package:ltrc/views/UnitsView.dart';
 
 
 class AppRoutes {
@@ -15,7 +15,7 @@ class AppRoutes {
     return {
       register: (context) => const RegisterView(),
       mainPage: (context) => const MainPageView(),
-      lessons: (context) => const LessonsView(),
+      lessons: (context) => const UnitsView(),
     };
   }
 }

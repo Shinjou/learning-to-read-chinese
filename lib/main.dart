@@ -1,10 +1,8 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/contants/routes.dart';
+import 'package:ltrc/views/UnitsView.dart';
 import 'package:ltrc/views/registerView.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
    runApp(ProviderScope(child: MyApp()));
@@ -33,6 +31,6 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const RegisterView();
+    return const UnitsView();
   }
 }
