@@ -21,7 +21,7 @@ class MyApp extends ConsumerWidget {
         appBarTheme: AppBarTheme(
           iconTheme: const IconThemeData(color: Colors.white),
           foregroundColor: Colors.white,
-          color: '#023E6E'.toColor()
+          color: "#28231D".toColor()
         ),
         scaffoldBackgroundColor: "#28231D".toColor(),
         useMaterial3: true,
