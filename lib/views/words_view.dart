@@ -38,13 +38,6 @@ class WordsView extends StatelessWidget {
           ],
         )
       )
-      // body: ResponsiveGridList(
-      //   desiredItemWidth: 113, 
-      //   minSpacing: 10,
-      //   children: ['小','羊','草','吃','天','少','高','開','心','出','門','去']
-      //   .map((e) { return WordWithImage(word : e);})
-      //   .toList(),
-      // )
     );
   }
 }
