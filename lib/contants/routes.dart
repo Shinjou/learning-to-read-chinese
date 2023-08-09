@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:ltrc/views/registerView.dart';
-import 'package:ltrc/views/mainPageView.dart';
-import 'package:ltrc/views/lessonsView.dart';
+import 'package:ltrc/views/register_view.dart';
+import 'package:ltrc/views/main_page_view.dart';
+import 'package:ltrc/views/lessons_view.dart';
 
 
 class AppRoutes {
