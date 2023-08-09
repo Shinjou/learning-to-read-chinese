@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ltrc/extensions.dart';
-import 'package:ltrc/widgets/mainPage/leftRightSwitch.dart';
+import 'package:ltrc/widgets/mainPage/left_right_switch.dart';
+import 'package:ltrc/widgets/teach_word/tab_bar_view.dart';
 
 class TeachWordView extends StatefulWidget {
   const TeachWordView({super.key});
@@ -69,51 +70,11 @@ class _TeachWordViewState extends State<TeachWordView>
         body: 
             TabBarView(
               controller: _tabController,
-              children: [
-                Column(
-                  children: [
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height*0.6,
-                      width: MediaQuery.of(context).size.width,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: '#F5F5DC'.toColor(),
-                          border: Border(
-                            top: BorderSide(width: 6, color: '#999999'.toColor(),),
-                            left: BorderSide(width: 6, color: '#999999'.toColor(),),
-                            right: BorderSide(width: 6, color: '#999999'.toColor(),),
-                            bottom: BorderSide(width: 6, color: '#999999'.toColor(),),
-                            )
-                          ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            LeftRightSwitch(iconsColor: '#D9D9D9'.toColor(), iconsSize: 35)
-                          ],
-                        ),
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.chevron_left,
-                          color: '#F5F5DC'.toColor(),
-                          size: 48,
-                        ),
-                        // TODO: Box with image inside
-                        Icon(
-                          Icons.chevron_right,
-                          color: '#F5F5DC'.toColor(),
-                          size: 48,
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-                Text("There"),
-                Text("How"),
-                Text("Do"),
+              children: const [
+                TeachWordTabBarView(),
+                TeachWordTabBarView(),
+                TeachWordTabBarView(),
+                TeachWordTabBarView(),
               ]
             )
       )
