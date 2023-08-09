@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ltrc/extensions.dart';
 
 import '../mainPage/left_right_switch.dart';
+import 'card_title.dart';
 
 class TeachWordTabBarView extends StatelessWidget {
   const TeachWordTabBarView({super.key});
@@ -26,7 +27,7 @@ class TeachWordTabBarView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                LeftRightSwitch(iconsColor: '#D9D9D9'.toColor(), iconsSize: 35)
+                LeftRightSwitch(iconsColor: '#D9D9D9'.toColor(), iconsSize: 35, middleWidget: TeachWordCardTitle(iconsColor: '#D9D9D9'.toColor())),
               ],
             ),
           ),
