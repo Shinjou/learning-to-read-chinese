@@ -77,15 +77,15 @@ class UnitsView extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 16,
                                 color: "#F5F5DC".toColor(),
-                                )
+                              )
                             ),
                             Text(
                               units[index], 
                               style: TextStyle(
                                 fontSize: 24,
                                 color: "#F5F5DC".toColor(),
-                                ),
-                              )
+                              ),
+                            )
                           ],
                         ),
                       ),
