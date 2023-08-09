@@ -35,7 +35,13 @@ class UnitsView extends StatelessWidget {
                           borderRadius: const BorderRadius.all(Radius.circular(14)),
                           color: "#013E6D".toColor(),
                         ),
-                        child: const Text("學注音", style: TextStyle(fontSize: 32), textAlign: TextAlign.center,),
+                        child: Text(
+                          "學注音", 
+                          style: TextStyle(
+                            fontSize: 32,
+                            color: "#F5F5DC".toColor(),
+                          ), 
+                          textAlign: TextAlign.center,),
                       ),
                     );
                   },
@@ -66,8 +72,20 @@ class UnitsView extends StatelessWidget {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text("第$classNum課", style: const TextStyle(fontSize: 16)),
-                            Text(units[index], style: const TextStyle(fontSize: 24),)
+                            Text(
+                              "第$classNum課", 
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: "#F5F5DC".toColor(),
+                                )
+                            ),
+                            Text(
+                              units[index], 
+                              style: TextStyle(
+                                fontSize: 24,
+                                color: "#F5F5DC".toColor(),
+                                ),
+                              )
                           ],
                         ),
                       ),

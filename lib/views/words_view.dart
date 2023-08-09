@@ -26,7 +26,7 @@ class WordsView extends StatelessWidget {
                 maxCrossAxisExtent: 125.0,
                 mainAxisSpacing: 10.0,
                 crossAxisSpacing: 10.0,
-                childAspectRatio: 113/166,
+                childAspectRatio: 113/160,
               ),
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) {
