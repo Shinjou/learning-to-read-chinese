@@ -23,16 +23,16 @@ class WordsView extends StatelessWidget {
           slivers: [
             SliverGrid(
               gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 113.0,
+                maxCrossAxisExtent: 125.0,
                 mainAxisSpacing: 10.0,
                 crossAxisSpacing: 10.0,
-                childAspectRatio: 113/158,
+                childAspectRatio: 113/166,
               ),
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) {
                   return WordWithImage(word : words[index]);
                 },
-                childCount: 12,
+                childCount: words.length,
               ),
             ),
           ],
