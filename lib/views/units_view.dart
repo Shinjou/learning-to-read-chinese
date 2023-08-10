@@ -85,6 +85,7 @@ class UnitsView extends StatelessWidget {
                                 fontSize: 24,
                                 color: "#F5F5DC".toColor(),
                               ),
+                              textAlign: TextAlign.center,
                             )
                           ],
                         ),
