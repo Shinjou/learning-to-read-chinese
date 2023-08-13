@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:ltrc/contants/bopomos.dart';
 import 'package:ltrc/extensions.dart';
 import '../widgets/bopomo/bopomo_block.dart';
-import '../widgets/wordWithImage.dart';
+import '../widgets/bopomo/bopomo_container.dart';
+
 
 class BopomoSpellingView extends StatelessWidget {
   BopomoSpellingView({super.key});
@@ -10,6 +11,7 @@ class BopomoSpellingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String caughtChar ='';
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(icon: const Icon(Icons.chevron_left), onPressed: () => {},),
@@ -71,18 +73,49 @@ class BopomoSpellingView extends StatelessWidget {
                         width: 140,
                         height: 140,
                         child: Container(
-                          decoration: BoxDecoration(
-                            color: '023E6E'.toColor(),
-                            border: Border.all(
-                              width: 5,
-                              color: '#F5F5DC'.toColor(),
+                            decoration: BoxDecoration(
+                              color: '023E6E'.toColor(),
+                              border: Border.all(
+                                width: 5,
+                                color: '#F5F5DC'.toColor(),
+                              ),
                             ),
-                          ),
-                          child: DragTarget<String>(
-                            builder: (BuildContext context, List<dynamic> accepted, List<dynamic> rejected) {
-                              return Container();
-                            }
-                          ),
+                            child: Row (
+                              children: [
+                                Column(
+                                  children: [
+                                    DragTarget<String>(
+                                      onAccept: (data) => {caughtChar = data},
+                                      builder: (BuildContext context, List<dynamic> accepted, List<dynamic> rejected) {
+                                        return BopomoContainer( 
+                                          character : accepted.isEmpty ? caughtChar : ' ', 
+                                          color : "#48742C".toColor()
+                                        );
+                                      },
+                                    ),
+                                    DragTarget<String>(
+                                      onAccept: (data) => {caughtChar = data},
+                                      builder: (BuildContext context, List<dynamic> accepted, List<dynamic> rejected) {
+                                        return BopomoContainer( 
+                                          character : accepted.isEmpty ? caughtChar : ' ', 
+                                          color : "#404040".toColor()
+                                        );
+                                        //return BopomoBlock(character: accepted.isEmpty ? caughtChar : ' ' , color: "#48742C".toColor(),);
+                                      },
+                                    ),
+                                  ],
+                                ),
+                                DragTarget<String>(
+                                  onAccept: (data) => {caughtChar = data},
+                                  builder: (BuildContext context, List<dynamic> accepted, List<dynamic> rejected) {
+                                    return BopomoContainer( 
+                                          character : accepted.isEmpty ? caughtChar : ' ', 
+                                          color : "#28231D".toColor()
+                                        );
+                                  },
+                                ),
+                              ]
+                            ),
                         ),
                       ),
                       Column(
