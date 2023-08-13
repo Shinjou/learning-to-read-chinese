@@ -42,6 +42,7 @@ dependencies:
   svg_path_parser: ^1.1.1
   fluttertoast: ^8.2.2
   provider: ^6.0.5
+  responsive_grid: ^2.4.2
 
 dev_dependencies:
   flutter_test:
@@ -79,8 +80,7 @@ flutter:
     - lib/assets/img/with_bopomo/
     - lib/assets/img/evolution/
     - lib/assets/img/word/
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+    - lib/assets/oldWords/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
