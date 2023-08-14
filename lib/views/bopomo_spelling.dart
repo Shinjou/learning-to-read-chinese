@@ -11,7 +11,9 @@ class BopomoSpellingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String caughtChar ='';
+    String caughtInitial ='';
+    String caughtFinal ='';
+    String caughtTone ='';
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(icon: const Icon(Icons.chevron_left), onPressed: () => {},),
@@ -81,38 +83,43 @@ class BopomoSpellingView extends StatelessWidget {
                               ),
                             ),
                             child: Row (
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  //crossAxisAlignment: CrossAxisAlignment.stretch,
                                   children: [
                                     DragTarget<String>(
-                                      onAccept: (data) => {caughtChar = data},
+                                      onAccept: (data) => {caughtInitial = data},
                                       builder: (BuildContext context, List<dynamic> accepted, List<dynamic> rejected) {
                                         return BopomoContainer( 
-                                          character : accepted.isEmpty ? caughtChar : ' ', 
+                                          character : accepted.isEmpty ? caughtInitial : ' ', 
                                           color : "#48742C".toColor()
                                         );
                                       },
+                                      onWillAccept: (data) => initials.contains(data),
                                     ),
                                     DragTarget<String>(
-                                      onAccept: (data) => {caughtChar = data},
+                                      onAccept: (data) => {caughtFinal = data},
                                       builder: (BuildContext context, List<dynamic> accepted, List<dynamic> rejected) {
                                         return BopomoContainer( 
-                                          character : accepted.isEmpty ? caughtChar : ' ', 
+                                          character : accepted.isEmpty ? caughtFinal : ' ', 
                                           color : "#404040".toColor()
                                         );
-                                        //return BopomoBlock(character: accepted.isEmpty ? caughtChar : ' ' , color: "#48742C".toColor(),);
                                       },
+                                      onWillAccept: (data) => (List.from(prenuclear)..addAll(vowels)).contains(data),
                                     ),
                                   ],
                                 ),
                                 DragTarget<String>(
-                                  onAccept: (data) => {caughtChar = data},
+                                  onAccept: (data) => {caughtTone = data},
                                   builder: (BuildContext context, List<dynamic> accepted, List<dynamic> rejected) {
                                     return BopomoContainer( 
-                                          character : accepted.isEmpty ? caughtChar : ' ', 
-                                          color : "#28231D".toColor()
+                                          character : accepted.isEmpty ? caughtTone : ' ', 
+                                          color : "#01316D".toColor()
                                         );
                                   },
+                                  onWillAccept: (data) => tones.contains(data),
                                 ),
                               ]
                             ),

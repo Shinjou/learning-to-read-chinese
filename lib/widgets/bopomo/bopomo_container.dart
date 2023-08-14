@@ -14,6 +14,13 @@ class BopomoContainer extends StatelessWidget {
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.5),
+            offset: const Offset(0, 6),
+            blurRadius: 4,
+          )
+        ]
       ), 
       child: Text(
         character, 
