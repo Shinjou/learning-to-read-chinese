@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-const String demoChar = "手";
-
 extension ColorExtension on String {
   toColor() {
     var hexString = this;

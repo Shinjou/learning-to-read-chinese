@@ -77,7 +77,6 @@ flutter:
     - lib/assets/svg/
     - lib/assets/img/
     - lib/assets/img/char_view/
-    - lib/assets/img/with_bopomo/
     - lib/assets/img/evolution/
     - lib/assets/img/word/
     - lib/assets/oldWords/

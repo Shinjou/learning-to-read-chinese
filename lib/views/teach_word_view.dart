@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:ltrc/extensions.dart';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:provider/provider.dart';
-import 'package:ltrc/widgets/teach_word/tab_bar_view.dart';
-import 'package:ltrc/main.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:ltrc/widgets/mainPage/left_right_switch.dart';
-import 'package:ltrc/widgets/teach_word/card_title.dart';
-import 'package:ltrc/widgets/teach_word/stroke_order_animation_controller.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:ltrc/extensions.dart';
+import 'package:ltrc/widgets/teach_word/tab_bar_view.dart';
 import 'package:ltrc/widgets/teach_word/stroke_order_animator.dart';
+import 'package:ltrc/widgets/teach_word/stroke_order_animation_controller.dart';
+import 'package:provider/provider.dart';
+
+const String demoChar = "手";
 
 class TeachWordView extends StatefulWidget {
   const TeachWordView({super.key});
@@ -303,12 +302,15 @@ class _TeachWordViewState extends State<TeachWordView>
                               Text('手機',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                    fontSize: 74,
+                                    fontSize: 70,
                                     color: Color.fromRGBO(245, 245, 220, 100),
                                     fontFamily: 'Serif',
                                   )),
+                              SizedBox(
+                                height: 10,
+                              ),
                               Image(
-                                height: 225,
+                                height: 190,
                                 image: AssetImage(
                                     'lib/assets/img/word/' + '手機' + '.png'),
                               ),

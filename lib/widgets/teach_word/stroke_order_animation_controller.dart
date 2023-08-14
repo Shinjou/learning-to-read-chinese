@@ -2,8 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'stroke_order_animator.dart';
 import 'package:svg_path_parser/svg_path_parser.dart';
+
+import 'stroke_order_animator.dart';
 
 /// A ChangeNotifier that controls the behaviour of a stroke order diagram.
 /// It must be passed as an argument to a [StrokeOrderAnimator] that handles
