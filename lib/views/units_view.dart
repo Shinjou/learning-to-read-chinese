@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ltrc/extensions.dart';
 
-import '../contants/ArabicNumeralsToChinese.dart';
+import '../contants/arabic_numerals_to_chinese.dart';
 
 class UnitsView extends StatelessWidget {
   const UnitsView({super.key});

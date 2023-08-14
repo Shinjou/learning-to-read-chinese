@@ -21,29 +21,36 @@ class WordWithImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return InkWell(
+      onTap: (){},
+      child: Container( 
         width: sizedBoxWidth,
         height: sizedBoxHeight,
-        child: Container(
-            decoration: BoxDecoration(
-              color: "#F5F5DC".toColor(),
-              borderRadius: BorderRadius.circular(12),
+        decoration: BoxDecoration(
+          color: "#F5F5DC".toColor(),
+          borderRadius: BorderRadius.circular(12),
+        ), 
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              word, 
+              style: TextStyle(
+                fontSize: fontSize,
+                fontFamily: 'Serif',
+                fontWeight: FontWeight.w900,
+              ),
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  word,
-                  style: TextStyle(
-                    fontSize: fontSize,
-                    fontFamily: 'Serif',
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-                Image(
-                    image: ResizeImage(AssetImage(imgPath),
-                        height: imgSize, width: imgSize))
-              ],
-            )));
+            Image(
+              image: ResizeImage(
+                AssetImage(imgPath),
+                height: imgSize, 
+                width: imgSize,
+              )
+            )
+          ],
+        )
+      )
+    );
   }
 }
