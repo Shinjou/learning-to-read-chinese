@@ -30,7 +30,14 @@ class BopomosView extends StatelessWidget {
               ),
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) {
-                  return WordWithImage(word : bopomos[index]);
+                  return WordWithImage(
+                    word : bopomos[index],
+                    imgPath: 'lib/assets/oldWords/馬.png',
+                    sizedBoxWidth: 30,
+                    sizedBoxHeight: 155,
+                    fontSize: 48,
+                    imgSize: 83,
+                  );
                 },
                 childCount: bopomos.length,
               ),
