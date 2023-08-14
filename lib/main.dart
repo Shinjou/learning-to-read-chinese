@@ -4,16 +4,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/contants/routes.dart';
 import 'package:ltrc/extensions.dart';
 import 'package:ltrc/views/register_view.dart';
-import 'package:ltrc/views/units_view.dart';
+import 'package:ltrc/views/teach_word_view.dart';
+// import 'package:ltrc/views/units_view.dart';
 import 'package:ltrc/views/words_view.dart';
 
 void main() {
-   runApp(ProviderScope(child: MyApp()));
+  runApp(ProviderScope(child: MyApp()));
 }
 
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
-
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -21,10 +21,9 @@ class MyApp extends ConsumerWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         appBarTheme: AppBarTheme(
-          iconTheme: IconThemeData(color: "#F5F5DC".toColor()),
-          foregroundColor: "#F5F5DC".toColor(),
-          color: "#28231D".toColor()
-        ),
+            iconTheme: IconThemeData(color: "#F5F5DC".toColor()),
+            foregroundColor: "#F5F5DC".toColor(),
+            color: "#28231D".toColor()),
         scaffoldBackgroundColor: "#28231D".toColor(),
         useMaterial3: true,
       ),
@@ -39,6 +38,6 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const UnitsView();
+    return const TeachWordView();
   }
 }

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ltrc/views/main_page_view.dart';
 import 'package:ltrc/views/register_view.dart';
-import 'package:ltrc/views/units_view.dart';
-
+// import 'package:ltrc/views/units_view.dart';
 
 class AppRoutes {
   AppRoutes._();
@@ -15,7 +14,7 @@ class AppRoutes {
     return {
       register: (context) => const RegisterView(),
       mainPage: (context) => const MainPageView(),
-      units: (context) => const UnitsView(),
+      // units: (context) => const UnitsView(),
     };
   }
 }
