@@ -1,24 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:ltrc/contants/routes.dart';
-import 'package:ltrc/views/UnitsView.dart';
-import 'package:ltrc/views/logInView.dart';
-import 'package:ltrc/views/registerView.dart';
+import 'package:ltrc/extensions.dart';
+import 'package:ltrc/views/bopomo_spelling.dart';
+import 'package:ltrc/views/bopomos_view.dart';
+import 'package:ltrc/views/register_view.dart';
+import 'package:ltrc/views/teach_word_view.dart';
+// import 'package:ltrc/views/units_view.dart';
+import 'package:ltrc/views/words_view.dart';
 
 void main() {
-   runApp(ProviderScope(child: MyApp()));
+  runApp(ProviderScope(child: MyApp()));
 }
 
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
-
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        appBarTheme: AppBarTheme(
+            iconTheme: IconThemeData(color: "#F5F5DC".toColor()),
+            foregroundColor: "#F5F5DC".toColor(),
+            color: "#28231D".toColor()),
+        scaffoldBackgroundColor: "#28231D".toColor(),
         useMaterial3: true,
       ),
       routes: AppRoutes.define(),
@@ -32,6 +40,10 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     return const LogInView();
+=======
+    return BopomoSpellingView();
+>>>>>>> 21b49ea0b4f90a9d377d8214691d0b304f2cb741
   }
 }
