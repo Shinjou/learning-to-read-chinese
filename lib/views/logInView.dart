@@ -12,22 +12,25 @@ class _LogInViewState extends State<LogInView> {
 
   @override
   Widget build(BuildContext context) {
+
+    double deviceHeight = MediaQuery.of(context).size.height;
+    double deviceWidth = MediaQuery.of(context).size.height;
     return  Scaffold(
         backgroundColor: '#1E1E1E'.toColor(),
         // works
         body: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              const SizedBox(height: 133),
+              SizedBox(height: deviceHeight * 0.157),
               Text(
                   '學中文',
                   style: TextStyle(
                     color: 'F5F5DC'.toColor(),
                     fontSize: 46.0,
-                    fontFamily: 'BpmfZihiSerif',
+                    fontFamily: 'Serif',
                   )
               ),
-              const SizedBox(height: 137),
+              SizedBox(height: deviceHeight * 0.162),
               Container(
                   height: 60.0,
                   width: 303.0,
@@ -49,7 +52,7 @@ class _LogInViewState extends State<LogInView> {
                           hintText: '帳號名稱',
                           hintStyle: TextStyle(
                               fontSize: 20.0,
-                              fontFamily: 'BpmfZihiSerif',
+                              fontFamily: 'Serif',
                               color: '013E6D'.toColor()
                           ),
                           floatingLabelBehavior: FloatingLabelBehavior.always,
@@ -59,7 +62,7 @@ class _LogInViewState extends State<LogInView> {
                     ),
                   )
               ),
-              const SizedBox(height: 65),
+              SizedBox(height: deviceHeight * 0.073),
               Container(
                   height: 60.0,
                   width: 303.0,
@@ -81,7 +84,7 @@ class _LogInViewState extends State<LogInView> {
                           hintText: '密碼',
                           hintStyle: TextStyle(
                               fontSize: 20.0,
-                              fontFamily: 'BpmfZihiSerif',
+                              fontFamily: 'Serif',
                               color: '013E6D'.toColor()
                           ),
                           floatingLabelBehavior: FloatingLabelBehavior.always,
@@ -107,16 +110,14 @@ class _LogInViewState extends State<LogInView> {
                           style: TextStyle(
                             color: 'F5F5DC'.toColor(),
                             fontSize: 14.0,
-                            fontFamily: 'BpmfZihiSerif',
+                            fontFamily: 'Serif',
                           )
                       ),
                     ),
                   ),
                 ),
               ),
-              const SizedBox(
-                height: 32,
-              ),
+              SizedBox(height: deviceHeight * 0.0379),
               Center(
                   child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -130,7 +131,7 @@ class _LogInViewState extends State<LogInView> {
                                 '登入',
                                 style: TextStyle(
                                   fontSize: 24.0,
-                                  fontFamily: 'BpmfZihiSerif',
+                                  fontFamily: 'Serif',
                                   color: 'F5F5DC'.toColor(),
                                 )
                             )
@@ -139,7 +140,7 @@ class _LogInViewState extends State<LogInView> {
                             '/',
                             style: TextStyle(
                               fontSize: 24.0,
-                              fontFamily: 'BpmfZihiSerif',
+                              fontFamily: 'Serif',
                               color: 'F5F5DC'.toColor(),
                             )
                         ),
@@ -152,7 +153,7 @@ class _LogInViewState extends State<LogInView> {
                                 '註冊',
                                 style: TextStyle(
                                   fontSize: 24.0,
-                                  fontFamily: 'BpmfZihiSerif',
+                                  fontFamily: 'Serif',
                                   color: 'F5F5DC'.toColor(),
                                 )
                             )
