@@ -41,13 +41,13 @@ class _LogInViewState extends State<LogInView> {
                     child: TextField(
                       //maxLength: 6,
                         decoration: InputDecoration(
-                          icon: Icon(
+                          prefixIcon: Icon(
                             Icons.account_circle,
                             size: 30.0,
                             color: '1C1B1F'.toColor(),
                           ),
-                          labelText: '帳號名稱',
-                          labelStyle: TextStyle(
+                          hintText: '帳號名稱',
+                          hintStyle: TextStyle(
                               fontSize: 20.0,
                               fontFamily: 'BpmfZihiSerif',
                               color: '013E6D'.toColor()
@@ -60,30 +60,35 @@ class _LogInViewState extends State<LogInView> {
                   )
               ),
               const SizedBox(height: 65),
-              SizedBox(
+              Container(
                   height: 60.0,
                   width: 303.0,
-                  child: ElevatedButton.icon(
-                      onPressed: () {},
-                      icon: Icon(
-                        Icons.lock,
-                        color: '1C1B1F'.toColor(),
-
-                      ),
-                      label: Text(
-                          '密碼',
-                          style: TextStyle(
+                  decoration: BoxDecoration(
+                      color: '7DDEF8'.toColor(),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(width: 5.0, color: 'F5F5DC'.toColor())
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 6.0),
+                    child: TextField(
+                      //maxLength: 6,
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(
+                            Icons.lock,
+                            size: 30.0,
+                            color: '1C1B1F'.toColor(),
+                          ),
+                          hintText: '密碼',
+                          hintStyle: TextStyle(
                               fontSize: 20.0,
                               fontFamily: 'BpmfZihiSerif',
                               color: '013E6D'.toColor()
-                          )
-                      ),
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: '7DDEF8'.toColor(),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0)
-                          )
-                      )
+                          ),
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          floatingLabelAlignment: FloatingLabelAlignment.center,
+                          enabledBorder: InputBorder.none,
+                        )
+                    ),
                   )
               ),
               Center(
