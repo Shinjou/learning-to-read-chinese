@@ -40,10 +40,6 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
-    return const LogInView();
-=======
     return BopomoSpellingView();
->>>>>>> 21b49ea0b4f90a9d377d8214691d0b304f2cb741
   }
 }
