@@ -16,6 +16,7 @@ class _LogInViewState extends State<LogInView> {
     double deviceHeight = MediaQuery.of(context).size.height;
     double deviceWidth = MediaQuery.of(context).size.height;
     return  Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: '#1E1E1E'.toColor(),
         // works
         body: Column(
