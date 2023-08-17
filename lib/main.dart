@@ -42,6 +42,6 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RegisterAccountView();
+    return RegisterView();
   }
 }
