@@ -14,11 +14,9 @@ class _LogInViewState extends State<LogInView> {
   Widget build(BuildContext context) {
 
     double deviceHeight = MediaQuery.of(context).size.height;
-    double deviceWidth = MediaQuery.of(context).size.height;
     return  Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: '#1E1E1E'.toColor(),
-        // works
         body: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
@@ -43,7 +41,6 @@ class _LogInViewState extends State<LogInView> {
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 6.0),
                     child: TextField(
-                      //maxLength: 6,
                         decoration: InputDecoration(
                           prefixIcon: Icon(
                             Icons.account_circle,
@@ -75,7 +72,6 @@ class _LogInViewState extends State<LogInView> {
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 6.0),
                     child: TextField(
-                      //maxLength: 6,
                         decoration: InputDecoration(
                           prefixIcon: Icon(
                             Icons.lock,
