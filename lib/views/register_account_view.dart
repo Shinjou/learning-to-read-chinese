@@ -127,7 +127,6 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
                         });
                       },
                       child: TextField(
-                        //maxLength: 6,
                           decoration: InputDecoration(
                             prefixIcon: Icon(
                               Icons.lock,
@@ -158,7 +157,6 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 6.0),
                     child: TextField(
-                      //maxLength: 6,
                         decoration: InputDecoration(
                           prefixIcon: Icon(
                             Icons.lock,
