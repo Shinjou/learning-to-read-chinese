@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ltrc/extensions.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -28,21 +29,6 @@ class _RegisterViewState extends State<RegisterView> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Column(
-          children:[
-            FractionallySizedBox(
-              widthFactor: 1.0,
-              heightFactor: 0.4,
-              child: Card(child: Text('哈囉!')),
-            ),
-            FractionallySizedBox(
-              widthFactor: 1.0,
-              heightFactor: 0.6,
-              child: Card(child: Text('哈囉!')),
-            ),
-          ]
-        ),
-    );
+    return const Placeholder();
   }
 }
