@@ -8,9 +8,11 @@ import 'package:ltrc/views/bopomos_view.dart';
 import 'package:ltrc/views/logInView.dart';
 import 'package:ltrc/views/register_account_view.dart';
 import 'package:ltrc/views/register_view.dart';
+import 'package:ltrc/views/setting_view.dart';
 import 'package:ltrc/views/teach_word_view.dart';
 // import 'package:ltrc/views/units_view.dart';
 import 'package:ltrc/views/words_view.dart';
+import 'package:ltrc/widgets/setting_button.dart';
 
 void main() {
   runApp(ProviderScope(child: MyApp()));

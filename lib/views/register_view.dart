@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ltrc/extensions.dart';
 import 'package:ltrc/widgets/mainPage/left_right_switch.dart';
+import 'package:ltrc/widgets/mainPage/circular container.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -40,12 +41,10 @@ class _RegisterViewState extends State<RegisterView> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Container(
-              alignment: const Alignment(0, -1),
-          height: 3a00,
-          width: 300,
+          height: deviceHeight * 0.35,
+          width: deviceWidth,
           decoration: BoxDecoration(
             color: '013E6D'.toColor(),
-            shape: BoxShape.circle
           ),
           child: Column(
             children: <Widget>[
