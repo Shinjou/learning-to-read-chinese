@@ -5,7 +5,7 @@ import 'package:ltrc/contants/routes.dart';
 import 'package:ltrc/extensions.dart';
 import 'package:ltrc/views/bopomo_spelling.dart';
 import 'package:ltrc/views/bopomos_view.dart';
-import 'package:ltrc/views/logInView.dart';
+import 'package:ltrc/views/login_view.dart';
 import 'package:ltrc/views/register_account_view.dart';
 import 'package:ltrc/views/register_view.dart';
 import 'package:ltrc/views/teach_word_view.dart';
