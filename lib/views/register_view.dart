@@ -41,7 +41,7 @@ class _RegisterViewState extends State<RegisterView> {
         children: <Widget>[
           Container(
               alignment: const Alignment(0, -1),
-          height: 3a00,
+          height: 300,
           width: 300,
           decoration: BoxDecoration(
             color: '013E6D'.toColor(),

@@ -6,6 +6,7 @@ import 'package:ltrc/extensions.dart';
 import 'package:ltrc/views/bopomo_spelling.dart';
 import 'package:ltrc/views/bopomos_view.dart';
 import 'package:ltrc/views/logInView.dart';
+import 'package:ltrc/views/main_page_view.dart';
 import 'package:ltrc/views/register_account_view.dart';
 import 'package:ltrc/views/register_view.dart';
 import 'package:ltrc/views/teach_word_view.dart';
@@ -42,6 +43,6 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RegisterView();
+    return MainPageView();
   }
 }
