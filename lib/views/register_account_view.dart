@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:ltrc/data/models/unit_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ltrc/extensions.dart';
+
+import '../data/providers/unit_provider.dart';
 
 class RegisterAccountView extends StatefulWidget {
   const RegisterAccountView({super.key});
@@ -13,6 +16,11 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
 
   bool showAccountHint = false;
   bool showPasswordHint = false;
+
+  void getTodoList() async {
+    final list = await UnitProvider.getUnits(inputGrade:1, inputSemester:"上");
+    debugPrint(list.toString());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -176,7 +184,7 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
               ),
               SizedBox(height: deviceHeight * 0.0627),
               TextButton(
-                  onPressed: () {},
+                  onPressed: () {getTodoList();},
                   child: Text(
                       '註冊並登入',
                       style: TextStyle(

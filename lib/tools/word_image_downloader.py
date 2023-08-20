@@ -6,7 +6,7 @@ def download_png_files(base_url, words):
         for font in fonts:
             url = base_url.format(word = word, font = font)
 
-            response = requests.get(url)
+            response = requests.get(url, headers = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.97 Safari/537.36"})
             
             if response.status_code == 200:
                 with open('D:/github/learning-to-read-chinese/lib/assets/oldWords/' + word + '.png', 'wb') as file:

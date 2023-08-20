@@ -1,10 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:ltrc/data/providers/unit_provider.dart';
 import 'package:ltrc/extensions.dart';
 
 import '../contants/arabic_numerals_to_chinese.dart';
+import '../data/models/unit_model.dart';
 
-class UnitsView extends StatelessWidget {
-  const UnitsView({super.key});
+class UnitsView extends StatefulWidget {
+  const UnitsView({super.key, required this.units});
+
+  final List<Unit> units;
+
+  @override
+  _UnitsViewState createState() => _UnitsViewState();
+}
+class _UnitsViewState extends State<UnitsView> {
+  @override
+  void initState() {
+    super.initState();
+  }
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
