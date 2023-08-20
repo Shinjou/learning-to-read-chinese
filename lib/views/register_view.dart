@@ -46,6 +46,7 @@ class _RegisterViewState extends State<RegisterView> {
             decoration: BoxDecoration(
               color: '013E6D'.toColor(),
             ),
+            alignment: Alignment.center,
             child: Column(
               children: <Widget>[
                 SizedBox(height: deviceHeight * 0.071),
@@ -58,7 +59,7 @@ class _RegisterViewState extends State<RegisterView> {
                     )
                 ),
                 Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 23.0),
+                    padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: deviceHeight * 0.027),
                     child: Container(
                         height: 9,
                         width: 84,
@@ -80,7 +81,7 @@ class _RegisterViewState extends State<RegisterView> {
             Icon(
               Icons.home_filled,
               color: 'F8A23A'.toColor(),
-              size: deviceWidth * 0.18,
+              size: deviceHeight * 0.083,
             ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: deviceHeight * 0.04),
@@ -90,7 +91,7 @@ class _RegisterViewState extends State<RegisterView> {
                   middleWidget: Container(
                     alignment: AlignmentDirectional.center,
                     width: 224,
-                    height: 57,
+                    height: deviceHeight * 0.067,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadiusDirectional.circular(20),
                         color: '7DDEF8'.toColor()
@@ -112,7 +113,7 @@ class _RegisterViewState extends State<RegisterView> {
                 middleWidget: Container(
                     alignment: AlignmentDirectional.center,
                     width: 224,
-                    height: 57,
+                    height: deviceHeight * 0.067,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadiusDirectional.circular(20),
                         color: '7DDEF8'.toColor()
@@ -128,11 +129,11 @@ class _RegisterViewState extends State<RegisterView> {
                 )
             ),
             Padding(
-              padding: EdgeInsets.fromLTRB(0, deviceHeight * 0.0687, 0, deviceHeight * 0.05),
+              padding: EdgeInsets.fromLTRB(0, deviceHeight * 0.06, 0, deviceHeight * 0.05),
               child: Container(
                 alignment: AlignmentDirectional.center,
-                width: 80,
-                height: 80,
+                width: deviceHeight * 0.095,
+                height: deviceHeight * 0.095,
                 decoration: BoxDecoration(
                   color: 'F8A23A'.toColor(),
                   shape: BoxShape.circle,
@@ -140,7 +141,7 @@ class _RegisterViewState extends State<RegisterView> {
                 child: Icon(
                   Icons.chevron_right,
                   color: '1E1E1E'.toColor(),
-                  size: 80
+                  size: deviceHeight * 0.09
                 )
               ),
             )
