@@ -1,10 +1,7 @@
-import 'dart:io' show Platform;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:sqflite/sqflite.dart';
 
 import 'package:ltrc/contants/routes.dart';
 import 'package:ltrc/extensions.dart';
@@ -18,12 +15,11 @@ import 'package:ltrc/views/units_view.dart';
 import 'package:ltrc/views/words_view.dart';
 
 
+
 Future main() async{
-  if (Platform.isWindows || Platform.isLinux) {
-    // Initialize FFI
-    sqfliteFfiInit();
-  }
-  databaseFactory = databaseFactoryFfi;
+  sqfliteFfiInit();
+  var databaseFactory = databaseFactoryFfi;
+  // databaseFactory = databaseFactoryFfi;
   runApp(ProviderScope(child: MyApp()));
 }
 

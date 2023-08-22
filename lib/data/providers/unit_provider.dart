@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import '../models/unit_model.dart';
 
@@ -10,7 +10,6 @@ class UnitProvider {
   static Future<Database> getDBConnect() async => database ??= await initDatabase();
 
   // Define constants for database
-  static const String databaseYear = 'year';
   static const String databasePublisher = 'publisher';
   static const String databaseGrade = 'grade';
   static const String databaseSemester = 'semester';
@@ -24,7 +23,7 @@ class UnitProvider {
       join(await getDatabasesPath(), '../data_files/南一.sqlite'),
       onCreate: (db, version) {
         return db.execute(
-          "CREATE TABLE unit($databaseYear INTEGER, $databasePublisher TEXT, $databaseGrade INTEGER, $databaseSemester TEXT, $databaseUnitId INTEGER, $databaseUnitTitle TEXT, $databaseNewWords TEXT, $databaseExtraWords TEXT)",
+          "CREATE TABLE unit($databasePublisher TEXT, $databaseGrade INTEGER, $databaseSemester TEXT, $databaseUnitId INTEGER, $databaseUnitTitle TEXT, $databaseNewWords TEXT, $databaseExtraWords TEXT)",
         );
       },
       version: 1,
