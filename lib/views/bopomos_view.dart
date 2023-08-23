@@ -11,10 +11,10 @@ class BopomosView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(icon: const Icon(Icons.chevron_left), onPressed: () => {},),
+        leading: IconButton(icon: const Icon(Icons.chevron_left), onPressed: () => Navigator.pop(context),),
         title: const Text("00|學注音"),
         actions: [
-          IconButton(icon: const Icon(Icons.home), onPressed: ()=>{},)
+          IconButton(icon: const Icon(Icons.home), onPressed: () => {},)
         ],
       ),
       body: CustomScrollView(
