@@ -43,6 +43,6 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RegisterView();
+    return const WordsView();
   }
 }
