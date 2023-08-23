@@ -25,15 +25,15 @@ class ProgressBar extends StatelessWidget {
                   height: 24,
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: 'F5F5DC'.toColor(),
+                      color: '#F5F5DC'.toColor(),
                       width: 3
                     ),
                     borderRadius: BorderRadius.circular(10)
                   ),
                   child: LinearProgressIndicator(
-                      backgroundColor: 'D9D9D9'.toColor(),
+                      backgroundColor: '#D9D9D9'.toColor(),
                       value: value,
-                      valueColor: AlwaysStoppedAnimation<Color>('F8A23A'.toColor()),
+                      valueColor: AlwaysStoppedAnimation<Color>('#F8A23A'.toColor()),
                       borderRadius: BorderRadius.circular(5)
                   ),
                 ),
@@ -46,7 +46,7 @@ class ProgressBar extends StatelessWidget {
                   child: Icon(
                     Icons.star,
                     size: iconSize,
-                    color: 'F5F5DC'.toColor()
+                    color: '#F5F5DC'.toColor()
                   )
                 );
               })
@@ -63,7 +63,7 @@ class ProgressBar extends StatelessWidget {
                 child: Text(
                   '0',
                   style: TextStyle(
-                    color: 'F5F5DC'.toColor(),
+                    color: '#F5F5DC'.toColor(),
                     fontSize: 24,
                     fontFamily: 'Iceberg'
                   )
@@ -75,7 +75,7 @@ class ProgressBar extends StatelessWidget {
               Text(
                 '186',
                 style: TextStyle(
-                    color: 'F5F5DC'.toColor(),
+                    color: '#F5F5DC'.toColor(),
                     fontSize: 24,
                     fontFamily: 'Iceberg'
                 )

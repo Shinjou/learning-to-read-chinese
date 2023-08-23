@@ -17,14 +17,14 @@ class _SettingViewState extends State<SettingView> {
     double deviceWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-        backgroundColor: '1E1E1E'.toColor(),
+        backgroundColor: '#1E1E1E'.toColor(),
         body: Stack(
             children: <Widget>[
               Container(
                   height: deviceHeight * 0.3673,
                   width: deviceWidth,
                   decoration: BoxDecoration(
-                      color: '013E6D'.toColor(),
+                      color: '#013E6D'.toColor(),
                       borderRadius: BorderRadius.only(
                         bottomLeft: Radius.circular(20),
                         bottomRight: Radius.circular(20),
@@ -37,7 +37,7 @@ class _SettingViewState extends State<SettingView> {
                       alignment: AlignmentDirectional.topEnd,
                       child: Icon(
                         Icons.close,
-                        color: 'F5F5DC'.toColor(),
+                        color: '#F5F5DC'.toColor(),
                         size: 40,
                         shadows: const [Shadow(color: Colors.black, blurRadius: 10, offset: Offset(0, 4.5))],
                       )
@@ -49,7 +49,7 @@ class _SettingViewState extends State<SettingView> {
                       children: <Widget>[
                         Icon(
                             Icons.settings,
-                            color: 'F5F5DC'.toColor(),
+                            color: '#F5F5DC'.toColor(),
                             size: 36
                         ),
                         Container(
@@ -57,7 +57,7 @@ class _SettingViewState extends State<SettingView> {
                             child: Text(
                                 '設定',
                                 style: TextStyle(
-                                    color: 'F5F5DC'.toColor(),
+                                    color: '#F5F5DC'.toColor(),
                                     fontSize: 36,
                                     fontFamily: 'Serif'
                                 )
@@ -77,7 +77,7 @@ class _SettingViewState extends State<SettingView> {
                             topEnd: Radius.circular(16),
                             topStart: Radius.circular(16)
                         ),
-                        color: 'F5F5DC'.toColor(),
+                        color: '#F5F5DC'.toColor(),
                       ),
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -91,13 +91,13 @@ class _SettingViewState extends State<SettingView> {
                                   children: [
                                     Icon(
                                         Icons.account_circle,
-                                        color: '1C1B1F'.toColor(),
+                                        color: '#1C1B1F'.toColor(),
                                         size: 49
                                     ),
                                     Text(
-                                        'A12345',
+                                        '#A12345',
                                         style: TextStyle(
-                                            color: '000000'.toColor(),
+                                            color: '#000000'.toColor(),
                                             fontSize: 28,
                                             fontFamily: 'Serif'
                                         )
@@ -114,7 +114,7 @@ class _SettingViewState extends State<SettingView> {
                                     style: TextStyle(
                                         fontSize: 24,
                                         fontFamily: 'Serif',
-                                        color: '000000'.toColor()
+                                        color: '#000000'.toColor()
                                     )
                                 )
                             ),

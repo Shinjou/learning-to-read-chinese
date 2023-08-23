@@ -12,7 +12,7 @@ class MainPageView extends StatelessWidget {
     double deviceWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      backgroundColor: '28231D'.toColor(),
+      backgroundColor: '#28231D'.toColor(),
       body: SizedBox.expand(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -24,7 +24,7 @@ class MainPageView extends StatelessWidget {
               alignment: AlignmentDirectional.centerEnd,
               child: Icon(
                 Icons.settings,
-                color: 'F5F5DC'.toColor(),
+                color: '#F5F5DC'.toColor(),
                 size: 38
               ),
             ),
@@ -35,7 +35,7 @@ class MainPageView extends StatelessWidget {
               child: Text(
                 '學中文',
                 style: TextStyle(
-                  color: 'F5F5DC'.toColor(),
+                  color: '#F5F5DC'.toColor(),
                   fontSize: 46,
                   fontFamily: 'Serif'
                 )
@@ -49,7 +49,7 @@ class MainPageView extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () {},
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all('013E6D'.toColor()),
+                    backgroundColor: MaterialStateProperty.all('#013E6D'.toColor()),
                     elevation: MaterialStateProperty.all(25),
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
@@ -60,7 +60,7 @@ class MainPageView extends StatelessWidget {
                   child: Text(
                     '學生字',
                     style: TextStyle(
-                      color: 'F5F5DC'.toColor(),
+                      color: '#F5F5DC'.toColor(),
                       fontSize: 32,
                       fontFamily: 'Serif'
                     )
@@ -71,7 +71,7 @@ class MainPageView extends StatelessWidget {
             Text(
                 '收集生字卡',
                 style: TextStyle(
-                    color: 'F5F5DC'.toColor(),
+                    color: '#F5F5DC'.toColor(),
                     fontSize: 22,
                     fontFamily: 'Serif'
                 )

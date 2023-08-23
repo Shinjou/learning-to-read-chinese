@@ -35,7 +35,7 @@ class _RegisterViewState extends State<RegisterView> {
     double deviceWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      backgroundColor: '1E1E1E'.toColor(),
+      backgroundColor: '#1E1E1E'.toColor(),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
@@ -44,7 +44,7 @@ class _RegisterViewState extends State<RegisterView> {
           height: 300,
           width: 300,
           decoration: BoxDecoration(
-            color: '013E6D'.toColor(),
+            color: '#013E6D'.toColor(),
             shape: BoxShape.circle
           ),
           child: Column(
@@ -53,7 +53,7 @@ class _RegisterViewState extends State<RegisterView> {
               Text(
                   '年級',
                   style: TextStyle(
-                      color: 'F5F5DC'.toColor(),
+                      color: '#F5F5DC'.toColor(),
                       fontSize: 44,
                       fontFamily: 'Serif'
                   )
@@ -63,13 +63,13 @@ class _RegisterViewState extends State<RegisterView> {
                   child: Container(
                       height: 9,
                       width: 84,
-                      color: 'F5F5DC'.toColor()
+                      color: '#F5F5DC'.toColor()
                   )
               ),
               Text(
                   '課本版本',
                   style: TextStyle(
-                      color: 'F5F5DC'.toColor(),
+                      color: '#F5F5DC'.toColor(),
                       fontSize: 44,
                       fontFamily: 'Serif'
                   )
@@ -80,13 +80,13 @@ class _RegisterViewState extends State<RegisterView> {
           SizedBox(height: deviceHeight * 0.057),
           Icon(
             Icons.home_filled,
-            color: 'F8A23A'.toColor(),
+            color: '#F8A23A'.toColor(),
             size: deviceWidth * 0.18,
           ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: deviceHeight * 0.04),
             child: LeftRightSwitch(
-                iconsColor: 'F5F5DC'.toColor(),
+                iconsColor: '#F5F5DC'.toColor(),
                 iconsSize: deviceWidth * 0.15,
                 middleWidget: Container(
                   alignment: AlignmentDirectional.center,
@@ -94,12 +94,12 @@ class _RegisterViewState extends State<RegisterView> {
                   height: 57,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadiusDirectional.circular(20),
-                      color: '7DDEF8'.toColor()
+                      color: '#7DDEF8'.toColor()
                   ),
                   child: Text(
                     '一年級',
                     style: TextStyle(
-                      color: '000000'.toColor(),
+                      color: '#000000'.toColor(),
                       fontSize: 34.0,
                       fontFamily: 'Serif'
                     )
@@ -108,7 +108,7 @@ class _RegisterViewState extends State<RegisterView> {
             )
           ),
           LeftRightSwitch(
-              iconsColor: 'F5F5DC'.toColor(),
+              iconsColor: '#F5F5DC'.toColor(),
               iconsSize: deviceWidth * 0.15,
               middleWidget: Container(
                   alignment: AlignmentDirectional.center,
@@ -116,12 +116,12 @@ class _RegisterViewState extends State<RegisterView> {
                   height: 57,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadiusDirectional.circular(20),
-                      color: '7DDEF8'.toColor()
+                      color: '#7DDEF8'.toColor()
                   ),
                   child: Text(
                       '翰林',
                       style: TextStyle(
-                          color: '000000'.toColor(),
+                          color: '#000000'.toColor(),
                           fontSize: 34.0,
                           fontFamily: 'Serif'
                       )
@@ -135,12 +135,12 @@ class _RegisterViewState extends State<RegisterView> {
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color: 'F8A23A'.toColor(),
+                color: '#F8A23A'.toColor(),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.chevron_right,
-                color: '1E1E1E'.toColor(),
+                color: '#1E1E1E'.toColor(),
                 size: 80
               )
             ),
