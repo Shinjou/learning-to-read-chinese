@@ -38,10 +38,9 @@ class _RegisterViewState extends State<RegisterView> {
       backgroundColor: '1E1E1E'.toColor(),
       body: SizedBox.expand(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Container(
-            height: deviceHeight * 0.35,
+            height: deviceHeight * 0.33,
             width: deviceWidth,
             decoration: BoxDecoration(
               color: '013E6D'.toColor(),
@@ -49,7 +48,7 @@ class _RegisterViewState extends State<RegisterView> {
             alignment: Alignment.center,
             child: Column(
               children: <Widget>[
-                SizedBox(height: deviceHeight * 0.071),
+                SizedBox(height: deviceHeight * 0.06),
                 Text(
                     '年級',
                     style: TextStyle(
@@ -90,7 +89,7 @@ class _RegisterViewState extends State<RegisterView> {
                   iconsSize: deviceWidth * 0.15,
                   middleWidget: Container(
                     alignment: AlignmentDirectional.center,
-                    width: 224,
+                    width: deviceWidth * 0.57,
                     height: deviceHeight * 0.067,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadiusDirectional.circular(20),
@@ -112,7 +111,7 @@ class _RegisterViewState extends State<RegisterView> {
                 iconsSize: deviceWidth * 0.15,
                 middleWidget: Container(
                     alignment: AlignmentDirectional.center,
-                    width: 224,
+                    width: deviceWidth * 0.57,
                     height: deviceHeight * 0.067,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadiusDirectional.circular(20),
@@ -129,7 +128,7 @@ class _RegisterViewState extends State<RegisterView> {
                 )
             ),
             Padding(
-              padding: EdgeInsets.fromLTRB(0, deviceHeight * 0.06, 0, deviceHeight * 0.05),
+              padding: EdgeInsets.fromLTRB(0, deviceHeight * 0.02, 0, deviceHeight * 0.05),
               child: Container(
                 alignment: AlignmentDirectional.center,
                 width: deviceHeight * 0.095,
