@@ -11,6 +11,7 @@ import 'package:ltrc/views/register_view.dart';
 import 'package:ltrc/views/teach_word_view.dart';
 // import 'package:ltrc/views/units_view.dart';
 import 'package:ltrc/views/words_view.dart';
+import 'package:ltrc/views/setting_view.dart';
 
 void main() {
   runApp(ProviderScope(child: MyApp()));
@@ -42,6 +43,6 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RegisterView();
+    return SettingView();
   }
 }

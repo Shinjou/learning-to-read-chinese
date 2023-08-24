@@ -84,18 +84,20 @@ class _SettingViewState extends State<SettingView> {
                           children: <Widget>[
                             Container(
                               height: 55,
-                              width: 165,
+                              width: deviceWidth * 0.85,
                               margin: EdgeInsetsDirectional.fromSTEB(deviceWidth * 0.0513, deviceHeight * 0.032, 0, deviceHeight * 0.034),
                               child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Icon(
                                         Icons.account_circle,
                                         color: '#1C1B1F'.toColor(),
                                         size: 49
                                     ),
+                                    Container(
+                                      width: 20
+                                    ),
                                     Text(
-                                        '#A12345',
+                                        'A12345',
                                         style: TextStyle(
                                             color: '#000000'.toColor(),
                                             fontSize: 28,
