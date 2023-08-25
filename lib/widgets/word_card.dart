@@ -18,7 +18,9 @@ class WordCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: (){},
+      onTap: (){
+        Navigator.of(context).pushNamed('/teachWord');
+      },
       child: Container( 
         width: sizedBoxWidth,
         height: sizedBoxHeight,

@@ -10,6 +10,7 @@ import 'package:ltrc/views/register_account_view.dart';
 import 'package:ltrc/views/register_view.dart';
 import 'package:ltrc/views/setting_view.dart';
 import 'package:ltrc/views/teach_word_view.dart';
+import 'package:ltrc/views/units_view.dart';
 // import 'package:ltrc/views/units_view.dart';
 import 'package:ltrc/views/words_view.dart';
 

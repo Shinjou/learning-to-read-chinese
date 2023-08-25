@@ -24,7 +24,7 @@ class WordsView extends StatelessWidget {
         appBar: AppBar(
           leading: IconButton(
             icon: const Icon(Icons.chevron_left),
-            onPressed: () => {},
+            onPressed: () => Navigator.pop(context),
           ),
           title: const Text("01|拍拍手"),
           actions: [
