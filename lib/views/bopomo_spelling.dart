@@ -5,8 +5,14 @@ import '../widgets/bopomo/bopomo_block.dart';
 import '../widgets/bopomo/bopomo_container.dart';
 
 
-class BopomoSpellingView extends StatelessWidget {
-  BopomoSpellingView({super.key});
+class BopomoSpellingView extends StatefulWidget {
+  const BopomoSpellingView({super.key});
+
+  @override
+  State<BopomoSpellingView> createState() => _BopomoSpellingState();
+}
+
+class _BopomoSpellingState extends State<BopomoSpellingView>{ 
   final vowels = List.from(prenuclear)..addAll(finals);
 
   @override
