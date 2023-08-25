@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ltrc/extensions.dart';
-import 'package:ltrc/widgets/wordWithImage.dart';
+import 'package:ltrc/widgets/word_card.dart';
 
 import '../mainPage/left_right_switch.dart';
 import 'card_title.dart';
@@ -51,13 +51,11 @@ class TeachWordTabBarView extends StatelessWidget {
       LeftRightSwitch(
         iconsColor: '#F5F5DC'.toColor(),
         iconsSize: 48,
-        middleWidget: const WordWithImage(
+        middleWidget: const WordCard(
           word: '手',
-          imgPath: 'lib/assets/img/char_view/手.png',
           sizedBoxWidth: 67,
           sizedBoxHeight: 88,
           fontSize: 23,
-          imgSize: 45,
         ),
       ),
     ]);

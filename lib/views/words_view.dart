@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../widgets/wordWithImage.dart';
+import '../widgets/word_card.dart';
 
 class WordsView extends StatelessWidget {
   const WordsView({super.key});
@@ -47,13 +47,11 @@ class WordsView extends StatelessWidget {
                   ),
                   delegate: SliverChildBuilderDelegate(
                     (BuildContext context, int index) {
-                      return WordWithImage(
+                      return WordCard(
                         word: words[index],
-                        imgPath: 'lib/assets/oldWords/馬.png',
                         sizedBoxWidth: 30,
                         sizedBoxHeight: 155,
                         fontSize: 48,
-                        imgSize: 83,
                       );
                     },
                     childCount: words.length,
