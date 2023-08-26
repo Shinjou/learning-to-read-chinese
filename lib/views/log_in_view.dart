@@ -24,6 +24,7 @@ class _LogInViewState extends State<LogInView> {
               Text(
                   '學中文',
                   style: TextStyle(
+
                     color: '#F5F5DC'.toColor(),
                     fontSize: 46.0,
                     fontFamily: 'Serif',

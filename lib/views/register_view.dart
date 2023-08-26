@@ -103,7 +103,6 @@ class _RegisterViewState extends State<RegisterView> {
                       fontSize: 34.0,
                       fontFamily: 'Serif'
                     )
-                  )
                 )
             )
           ),
@@ -125,6 +124,7 @@ class _RegisterViewState extends State<RegisterView> {
                           fontSize: 34.0,
                           fontFamily: 'Serif'
                       )
+                    )
                   )
               )
           ),
@@ -144,8 +144,46 @@ class _RegisterViewState extends State<RegisterView> {
                 size: 80
               )
             ),
-          )
-        ],
+            LeftRightSwitch(
+                iconsColor: 'F5F5DC'.toColor(),
+                iconsSize: deviceWidth * 0.15,
+                middleWidget: Container(
+                    alignment: AlignmentDirectional.center,
+                    width: deviceWidth * 0.57,
+                    height: deviceHeight * 0.067,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadiusDirectional.circular(20),
+                        color: '7DDEF8'.toColor()
+                    ),
+                    child: Text(
+                        '翰林',
+                        style: TextStyle(
+                            color: '000000'.toColor(),
+                            fontSize: 34.0,
+                            fontFamily: 'Serif'
+                        )
+                    )
+                )
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(0, deviceHeight * 0.02, 0, deviceHeight * 0.05),
+              child: Container(
+                alignment: AlignmentDirectional.center,
+                width: deviceHeight * 0.095,
+                height: deviceHeight * 0.095,
+                decoration: BoxDecoration(
+                  color: 'F8A23A'.toColor(),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.chevron_right,
+                  color: '1E1E1E'.toColor(),
+                  size: deviceHeight * 0.09
+                )
+              ),
+            )
+          ],
+        ),
       )
     );
   }
