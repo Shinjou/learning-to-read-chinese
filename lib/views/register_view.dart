@@ -40,12 +40,10 @@ class _RegisterViewState extends State<RegisterView> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Container(
-              alignment: const Alignment(0, -1),
           height: 300,
-          width: 300,
+          width: deviceWidth,
           decoration: BoxDecoration(
             color: '#013E6D'.toColor(),
-            shape: BoxShape.circle
           ),
           child: Column(
             children: <Widget>[
