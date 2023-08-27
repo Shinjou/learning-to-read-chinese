@@ -6,20 +6,10 @@ class WordsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<String> words = [
-      '小',
-      '羊',
-      '草',
-      '吃',
-      '天',
-      '少',
-      '高',
-      '開',
-      '心',
-      '出',
-      '門',
-      '去'
-    ];
+    List<String> newWords;
+    dynamic obj = ModalRoute.of(context)!.settings.arguments;
+    newWords = obj["newWords"];
+
     return Scaffold(
         appBar: AppBar(
           leading: IconButton(
@@ -48,13 +38,13 @@ class WordsView extends StatelessWidget {
                   delegate: SliverChildBuilderDelegate(
                     (BuildContext context, int index) {
                       return WordCard(
-                        word: words[index],
+                        word: newWords[index],
                         sizedBoxWidth: 30,
                         sizedBoxHeight: 155,
                         fontSize: 48,
                       );
                     },
-                    childCount: words.length,
+                    childCount: newWords.length,
                   ),
                 ),
               ],

@@ -70,6 +70,10 @@ class _TeachWordViewState extends State<TeachWordView>
 
   @override
   Widget build(BuildContext context) {
+    String word;
+    dynamic obj = ModalRoute.of(context)!.settings.arguments;
+    word = obj["word"];
+    
     return DefaultTabController(
       length: teachWordTabs.length,
       child: Scaffold(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ltrc/data/models/unit_model.dart';
 
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -50,6 +51,10 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RegisterAccountView();
+    return UnitsView(units: [
+        Unit(publisher: "康軒", grade: 1, semester: "上", unitId: 1, unitTitle: "我的未來", newWords: ["上", "下", "左", "喜", "羊"], extraWords: []),
+        Unit(publisher: "康軒", grade: 1, semester: "上", unitId: 2, unitTitle: "這是誰的", newWords: ["這", "是", "誰", "的", "我", "分", "好", "了", "啊", "多", "個"], extraWords: ["了", "啊", "多", "個"])
+      ]
+    );
   }
 }

@@ -18,7 +18,7 @@ class UnitProvider {
   static Future<Database> getDBConnect() async {
     String newPath = join(await getDatabasesPath(), 'units.sqlite');
     final exist = await databaseExists(newPath);
-    if (true) {
+    if (!exist) {
       try {
           ByteData data = await rootBundle.load(join("assets/data_files", "units.sqlite"));
           List<int> bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);

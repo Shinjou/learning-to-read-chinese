@@ -19,7 +19,10 @@ class WordCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: (){
-        Navigator.of(context).pushNamed('/teachWord');
+        Navigator.of(context).pushNamed(
+          '/teachWord', 
+          arguments:{'word': word} 
+        );
       },
       child: Container( 
         width: sizedBoxWidth,

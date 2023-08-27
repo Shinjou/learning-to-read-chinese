@@ -31,6 +31,6 @@ class Unit {
 
   @override
   String toString() {
-    return "Unit{'publisher': $publisher, 'grade': $grade, 'semester': $semester, 'unitId': $unitId, 'unitTitle': $unitTitle, 'newWords': ${newWords.toString()}, 'extraWords': ${extraWords.toString()}}";
+    return "Unit{publisher: $publisher, grade: $grade, semester: $semester, unitId: $unitId, unitTitle: $unitTitle, newWords: ${newWords.toString()}, extraWords: ${extraWords.toString()}}";
   }
 } 

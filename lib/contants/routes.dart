@@ -20,7 +20,7 @@ class AppRoutes {
     return {
       register: (context) => const RegisterView(),
       mainPage: (context) => const MainPageView(),
-      units: (context) => const UnitsView(),
+      // units: (context) => const UnitsView(),
       words: (context) => const WordsView(),
       teachWord: (context) => const TeachWordView(),
       bopomos: (context) => BopomosView(),

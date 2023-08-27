@@ -87,7 +87,10 @@ class _UnitsViewState extends State<UnitsView> {
                     String? classNum = numeralToChinese[index+1];
                     return InkWell( 
                       onTap: (){
-                        Navigator.of(context).pushNamed('/words');
+                        Navigator.of(context).pushNamed(
+                          '/words', 
+                          arguments: {'newWords' : widget.units[index].newWords}
+                        );
                       },
                       child: Container(
                         width: 140,
