@@ -18,7 +18,7 @@ import 'package:ltrc/views/words_view.dart';
 
 
 Future main() async{
-  // sqfliteFfiInit();
+  sqfliteFfiInit();
   // var databaseFactory = databaseFactoryFfi;
   // databaseFactory = databaseFactoryFfi;
   runApp(ProviderScope(child: MyApp()));
@@ -50,6 +50,6 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RegisterView();
+    return RegisterAccountView();
   }
 }

@@ -17,11 +17,6 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
   bool showAccountHint = false;
   bool showPasswordHint = false;
 
-  void getTodoList() async {
-    final list = await UnitProvider.getUnits(inputGrade:1, inputSemester:"上");
-    debugPrint(list.toString());
-  }
-
   @override
   Widget build(BuildContext context) {
 
@@ -109,7 +104,7 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
                       width: 303,
                       alignment: AlignmentDirectional.topStart,
                       child: Text(
-                          '至少4個數字',
+                          '至少4個英數字',
                           style: TextStyle(
                               color: 'F5F5DC'.toColor(),
                               fontSize: 14,
@@ -184,7 +179,7 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
               ),
               SizedBox(height: deviceHeight * 0.0627),
               TextButton(
-                  onPressed: () {getTodoList();},
+                  onPressed: () {},
                   child: Text(
                       '註冊並登入',
                       style: TextStyle(

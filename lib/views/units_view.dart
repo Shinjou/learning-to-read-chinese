@@ -6,6 +6,7 @@ import '../contants/arabic_numerals_to_chinese.dart';
 import '../data/models/unit_model.dart';
 
 class UnitsView extends StatefulWidget {
+  
   const UnitsView({super.key, required this.units});
 
   final List<Unit> units;
@@ -25,8 +26,11 @@ class _UnitsViewState extends State<UnitsView> {
 
   @override
   Widget build(BuildContext context) {
-    const units = ["手拉手", "排一排", "來數數", "找一找", "雨來了",
-      "山坡上的學校", "值日生", "運動會", "做卡片"];
+    void getTodoList() async {
+      final list = await UnitProvider.getUnits(inputGrade:1, inputSemester:"上");
+      debugPrint(list.toString());
+    }
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(icon: const Icon(Icons.chevron_left), onPressed: () => {},),
@@ -78,10 +82,11 @@ class _UnitsViewState extends State<UnitsView> {
                 delegate: SliverChildBuilderDelegate(
                   (BuildContext context, int index) {
                     String? classNum = numeralToChinese[index+1];
-                    return SizedBox(
-                      width: 140,
-                      height: 140,
+                    return InkWell(
+                      onTap:(){},
                       child: Container(
+                        width: 140,
+                        height: 140,
                         decoration: BoxDecoration(
                           borderRadius: const BorderRadius.all(Radius.circular(14)),
                           color: "#013E6D".toColor(),
@@ -97,7 +102,7 @@ class _UnitsViewState extends State<UnitsView> {
                               )
                             ),
                             Text(
-                              units[index], 
+                              widget.units[index].unitTitle, 
                               style: TextStyle(
                                 fontSize: 24,
                                 color: "#F5F5DC".toColor(),
@@ -109,7 +114,7 @@ class _UnitsViewState extends State<UnitsView> {
                       ),
                     );
                   },
-                  childCount: units.length,
+                  childCount: widget.units.length,
                 ),
               ),
             )
