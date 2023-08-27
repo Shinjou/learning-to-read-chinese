@@ -73,6 +73,7 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.17.1"
+<<<<<<< HEAD
   convert:
     dependency: transitive
     description:
@@ -89,6 +90,8 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.6.3"
+=======
+>>>>>>> eacf8f5a8e6c5af45a77797b30366b4fe1608c12
   crypto:
     dependency: transitive
     description:
@@ -709,6 +712,7 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.5.1"
+<<<<<<< HEAD
   test_core:
     dependency: transitive
     description:
@@ -717,6 +721,8 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.5.1"
+=======
+>>>>>>> eacf8f5a8e6c5af45a77797b30366b4fe1608c12
   typed_data:
     dependency: transitive
     description:

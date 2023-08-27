@@ -67,7 +67,7 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
                       border: Border.all(width: 5.0, color: 'F5F5DC'.toColor())
                   ),
                 child: Padding(
-                  padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 6.0),
+                  padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 6.0),
                   child: Focus(
                     onFocusChange: (hasFocus) {
                         setState(() {

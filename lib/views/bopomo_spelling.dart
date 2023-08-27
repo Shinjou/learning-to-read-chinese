@@ -5,8 +5,14 @@ import '../widgets/bopomo/bopomo_block.dart';
 import '../widgets/bopomo/bopomo_container.dart';
 
 
-class BopomoSpellingView extends StatelessWidget {
-  BopomoSpellingView({super.key});
+class BopomoSpellingView extends StatefulWidget {
+  const BopomoSpellingView({super.key});
+
+  @override
+  State<BopomoSpellingView> createState() => _BopomoSpellingState();
+}
+
+class _BopomoSpellingState extends State<BopomoSpellingView>{ 
   final vowels = List.from(prenuclear)..addAll(finals);
 
   @override
@@ -16,7 +22,7 @@ class BopomoSpellingView extends StatelessWidget {
     String caughtTone ='';
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(icon: const Icon(Icons.chevron_left), onPressed: () => {},),
+        leading: IconButton(icon: const Icon(Icons.chevron_left), onPressed: () => Navigator.pop(context),),
         title: const Text("00|學注音"),
         actions: [
           IconButton(icon: const Icon(Icons.home), onPressed: ()=>{},)

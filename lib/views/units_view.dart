@@ -33,7 +33,7 @@ class _UnitsViewState extends State<UnitsView> {
 
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(icon: const Icon(Icons.chevron_left), onPressed: () => {},),
+        leading: IconButton(icon: const Icon(Icons.chevron_left), onPressed: () => Navigator.pop(context),),
         title: const Text("課程單元"),
         actions: [
           IconButton(icon: const Icon(Icons.settings), onPressed: ()=>{},)
@@ -47,10 +47,13 @@ class _UnitsViewState extends State<UnitsView> {
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (BuildContext context, int idx){
-                    return SizedBox(
-                      width: 297,
-                      height: 80,
+                    return InkWell( 
+                      onTap: (){
+                        Navigator.of(context).pushNamed('/bopomos');
+                      },
                       child: Container(
+                        width: 297,
+                        height: 80,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
                           borderRadius: const BorderRadius.all(Radius.circular(14)),
@@ -82,8 +85,10 @@ class _UnitsViewState extends State<UnitsView> {
                 delegate: SliverChildBuilderDelegate(
                   (BuildContext context, int index) {
                     String? classNum = numeralToChinese[index+1];
-                    return InkWell(
-                      onTap:(){},
+                    return InkWell( 
+                      onTap: (){
+                        Navigator.of(context).pushNamed('/words');
+                      },
                       child: Container(
                         width: 140,
                         height: 140,
