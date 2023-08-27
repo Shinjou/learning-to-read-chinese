@@ -70,7 +70,7 @@ class _LogInViewState extends State<LogInView> {
                       border: Border.all(width: 5.0, color: '#F5F5DC'.toColor())
                   ),
                   child: Padding(
-                    padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 6.0),
+                    padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 6.0),
                     child: TextField(
                         decoration: InputDecoration(
                           prefixIcon: Icon(
@@ -142,7 +142,7 @@ class _LogInViewState extends State<LogInView> {
                             )
                         ),
                         TextButton(
-                            onPressed: () {},
+                            onPressed: () => Navigator.of(context).pushNamed('/register'),
                             style: TextButton.styleFrom(
                               fixedSize: const Size(110, 45),
                             ),

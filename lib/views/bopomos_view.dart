@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ltrc/contants/bopomos.dart';
 import 'package:ltrc/extensions.dart';
-import '../widgets/wordWithImage.dart';
+import '../widgets/word_card.dart';
 
 class BopomosView extends StatelessWidget {
   BopomosView({super.key});
@@ -11,10 +11,10 @@ class BopomosView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(icon: const Icon(Icons.chevron_left), onPressed: () => {},),
+        leading: IconButton(icon: const Icon(Icons.chevron_left), onPressed: () => Navigator.pop(context),),
         title: const Text("00|學注音"),
         actions: [
-          IconButton(icon: const Icon(Icons.home), onPressed: ()=>{},)
+          IconButton(icon: const Icon(Icons.home), onPressed: () => {},)
         ],
       ),
       body: CustomScrollView(
@@ -30,13 +30,11 @@ class BopomosView extends StatelessWidget {
               ),
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) {
-                  return WordWithImage(
+                  return WordCard(
                     word : bopomos[index],
-                    imgPath: 'lib/assets/oldWords/馬.png',
                     sizedBoxWidth: 30,
                     sizedBoxHeight: 155,
                     fontSize: 48,
-                    imgSize: 83,
                   );
                 },
                 childCount: bopomos.length,
