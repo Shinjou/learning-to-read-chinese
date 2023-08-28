@@ -45,7 +45,7 @@ dependencies:
   shared_preferences: ^2.2.0
   svg_path_parser: ^1.1.1
   sqflite: ^2.3.0
-  sqflite_common_ffi: 2.3.0+2
+  sqflite_common_ffi: ^2.3.0+2
   sqflite_common_ffi_web: 0.4.0
   sqlite3_flutter_libs: 0.5.15
 
@@ -73,6 +73,9 @@ flutter:
     - family: Serif   
       fonts:
         - asset: lib\assets\fonts\BpmfZihiSerif-Regular.ttf
+    - family: BpmfOnly
+      fonts:
+        - asset: lib\assets\fonts\BpmfZihiOnly-R.ttf
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
@@ -84,5 +87,6 @@ flutter:
     - lib/assets/svg/
     - lib/assets/img/
     - lib/assets/img/evolution/
+    - lib/assets/img/bopomo/
     - lib/assets/img/word/
     - lib/assets/oldWords/

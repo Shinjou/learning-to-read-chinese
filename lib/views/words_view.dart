@@ -39,6 +39,7 @@ class WordsView extends StatelessWidget {
                     (BuildContext context, int index) {
                       return WordCard(
                         word: newWords[index],
+                        isBpmf: false,
                         sizedBoxWidth: 30,
                         sizedBoxHeight: 155,
                         fontSize: 48,

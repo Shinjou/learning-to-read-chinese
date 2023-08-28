@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_tts/flutter_tts.dart';
@@ -27,10 +28,12 @@ class _TeachWordViewState extends State<TeachWordView>
 
   Future<String> readJson() async {
     final String response =
-        await rootBundle.loadString('lib/assets/svg/' + demoChar + '.json');
+        await rootBundle.loadString('lib/assets/svg/word.json');
+    Map<String, dynamic> svg = jsonDecode(response)[demoChar];
 
     await ftts.setLanguage("zh-tw");
-    return response.replaceAll("\"", "\'");
+    String svgStr = jsonEncode(svg);
+    return svgStr.replaceAll("\"", "\'");
   }
 
   @override
@@ -71,14 +74,19 @@ class _TeachWordViewState extends State<TeachWordView>
   @override
   Widget build(BuildContext context) {
     String word;
+    bool isBpmf;
     dynamic obj = ModalRoute.of(context)!.settings.arguments;
     word = obj["word"];
-    
+    isBpmf = obj["isBpmf"];
+
     return DefaultTabController(
       length: teachWordTabs.length,
       child: Scaffold(
           appBar: AppBar(
-            leading: IconButton(icon: const Icon(Icons.chevron_left), onPressed: () => Navigator.pop(context),),
+            leading: IconButton(
+              icon: const Icon(Icons.chevron_left),
+              onPressed: () => Navigator.pop(context),
+            ),
             centerTitle: true,
             title: const Text("1|手拉手"),
             titleTextStyle: TextStyle(
@@ -111,19 +119,22 @@ class _TeachWordViewState extends State<TeachWordView>
               physics: const NeverScrollableScrollPhysics(),
               controller: _tabController,
               children: [
-                const TeachWordTabBarView(
+                TeachWordTabBarView(
+                    word: word,
+                    isBpmf: isBpmf,
                     sectionName: '看一看',
                     content: Image(
                       height: 130,
-                      image: AssetImage(
-                          'lib/assets/img/evolution/' + demoChar + '.png'),
+                      image: AssetImage('lib/assets/img/evolution/$word.png'),
                     )),
                 TeachWordTabBarView(
+                    word: word,
+                    isBpmf: isBpmf,
                     sectionName: '聽一聽',
                     content: Column(
                       children: [
                         Container(
-                          height: 300,
+                          height: 320,
                           alignment: Alignment.center,
                           child: const Text(demoChar,
                               textAlign: TextAlign.center,
@@ -133,6 +144,9 @@ class _TeachWordViewState extends State<TeachWordView>
                                   fontFamily: 'Serif',
                                   fontWeight: FontWeight.w100)),
                         ),
+                        const SizedBox(
+                          height: 25,
+                        ),
                         Container(
                           alignment: Alignment.bottomLeft,
                           child: Padding(
@@ -141,7 +155,8 @@ class _TeachWordViewState extends State<TeachWordView>
                               children: [
                                 IconButton(
                                     iconSize: 35,
-                                    color: Color.fromRGBO(245, 245, 220, 100),
+                                    color: const Color.fromRGBO(
+                                        245, 245, 220, 100),
                                     onPressed: () async {
                                       await ftts.setLanguage("zh-tw");
                                       await ftts.setSpeechRate(0.5);
@@ -166,6 +181,8 @@ class _TeachWordViewState extends State<TeachWordView>
                       ],
                     )),
                 TeachWordTabBarView(
+                  word: word,
+                  isBpmf: isBpmf,
                   sectionName: '寫一寫',
                   content: ChangeNotifierProvider<
                       StrokeOrderAnimationController>.value(
@@ -177,6 +194,9 @@ class _TeachWordViewState extends State<TeachWordView>
                           width: 300,
                           child: Column(
                             children: <Widget>[
+                              const SizedBox(
+                                height: 20,
+                              ),
                               Container(
                                 decoration: const BoxDecoration(
                                   image: DecorationImage(
@@ -191,10 +211,13 @@ class _TeachWordViewState extends State<TeachWordView>
                                   ),
                                 ),
                               ),
+                              const SizedBox(
+                                height: 10,
+                              ),
                               Flexible(
                                 child: GridView(
                                   gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                      const SliverGridDelegateWithFixedCrossAxisCount(
                                     childAspectRatio: 2,
                                     crossAxisCount: 4,
                                     mainAxisSpacing: 6,
@@ -203,7 +226,8 @@ class _TeachWordViewState extends State<TeachWordView>
                                   children: <Widget>[
                                     IconButton(
                                       iconSize: 35,
-                                      color: Color.fromRGBO(245, 245, 220, 100),
+                                      color: const Color.fromRGBO(
+                                          245, 245, 220, 100),
                                       isSelected: controller.isAnimating,
                                       icon: const Icon(Icons.play_arrow),
                                       selectedIcon: const Icon(Icons.pause),
@@ -219,7 +243,8 @@ class _TeachWordViewState extends State<TeachWordView>
                                     ),
                                     IconButton(
                                       iconSize: 35,
-                                      color: Color.fromRGBO(245, 245, 220, 100),
+                                      color: const Color.fromRGBO(
+                                          245, 245, 220, 100),
                                       isSelected: controller.isQuizzing,
                                       icon: const Icon(Icons.edit),
                                       selectedIcon: const Icon(Icons.edit_off),
@@ -233,7 +258,8 @@ class _TeachWordViewState extends State<TeachWordView>
                                     ),
                                     IconButton(
                                       iconSize: 35,
-                                      color: Color.fromRGBO(245, 245, 220, 100),
+                                      color: const Color.fromRGBO(
+                                          245, 245, 220, 100),
                                       isSelected: controller.showOutline,
                                       icon: const Icon(
                                           Icons.remove_red_eye_outlined),
@@ -246,7 +272,8 @@ class _TeachWordViewState extends State<TeachWordView>
                                     ),
                                     IconButton(
                                       iconSize: 35,
-                                      color: Color.fromRGBO(245, 245, 220, 100),
+                                      color: const Color.fromRGBO(
+                                          245, 245, 220, 100),
                                       icon: const Icon(Icons.restart_alt),
                                       onPressed: () {
                                         controller.reset();
@@ -295,14 +322,19 @@ class _TeachWordViewState extends State<TeachWordView>
                   ),
                 ),
                 TeachWordTabBarView(
+                    word: word,
+                    isBpmf: isBpmf,
                     sectionName: '用一用',
                     content: Column(
                       children: [
                         Container(
-                          height: 300,
+                          height: 320,
                           alignment: Alignment.center,
                           child: const Column(
                             children: [
+                              SizedBox(
+                                height: 20,
+                              ),
                               Text('手機',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
@@ -315,11 +347,13 @@ class _TeachWordViewState extends State<TeachWordView>
                               ),
                               Image(
                                 height: 190,
-                                image: AssetImage(
-                                    'lib/assets/img/word/' + '手機' + '.png'),
+                                image: AssetImage('lib/assets/img/word/手機.png'),
                               ),
                             ],
                           ),
+                        ),
+                        const SizedBox(
+                          height: 25,
                         ),
                         Container(
                           alignment: Alignment.bottomLeft,
@@ -329,7 +363,8 @@ class _TeachWordViewState extends State<TeachWordView>
                               children: [
                                 IconButton(
                                     iconSize: 35,
-                                    color: Color.fromRGBO(245, 245, 220, 100),
+                                    color: const Color.fromRGBO(
+                                        245, 245, 220, 100),
                                     onPressed: () async {
                                       await ftts.setLanguage("zh-tw");
                                       await ftts.setSpeechRate(0.5);

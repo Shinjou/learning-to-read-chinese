@@ -3,6 +3,7 @@ import 'package:ltrc/views/bopomos_view.dart';
 import 'package:ltrc/views/main_page_view.dart';
 import 'package:ltrc/views/register_view.dart';
 import 'package:ltrc/views/teach_word_view.dart';
+import 'package:ltrc/views/teach_bopomo_view.dart';
 import 'package:ltrc/views/units_view.dart';
 import 'package:ltrc/views/words_view.dart';
 
@@ -23,6 +24,7 @@ class AppRoutes {
       // units: (context) => const UnitsView(),
       words: (context) => const WordsView(),
       teachWord: (context) => const TeachWordView(),
+      // teachWord: (context) => const TeachBopomoView(),
       bopomos: (context) => BopomosView(),
     };
   }
