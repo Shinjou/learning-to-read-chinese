@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ltrc/data/models/unit_model.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ltrc/extensions.dart';
-
-import '../data/providers/unit_provider.dart';
 
 class RegisterAccountView extends StatefulWidget {
   const RegisterAccountView({super.key});

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:ltrc/data/providers/unit_provider.dart';
 import 'package:ltrc/extensions.dart';
 
 import '../contants/arabic_numerals_to_chinese.dart';
