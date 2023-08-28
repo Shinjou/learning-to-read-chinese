@@ -6,6 +6,7 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:ltrc/contants/routes.dart';
 import 'package:ltrc/extensions.dart';
 import 'package:ltrc/views/main_page_view.dart';
+import 'package:ltrc/views/register_account_view.dart';
 
 
 
@@ -42,6 +43,6 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MainPageView();
+    return const RegisterAccountView();
   }
 }
