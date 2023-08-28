@@ -24,7 +24,7 @@ class _LogInViewState extends State<LogInView> {
               Text(
                   '學中文',
                   style: TextStyle(
-                    color: 'F5F5DC'.toColor(),
+                    color: '#F5F5DC'.toColor(),
                     fontSize: 46.0,
                     fontFamily: 'Serif',
                   )
@@ -34,9 +34,9 @@ class _LogInViewState extends State<LogInView> {
                   height: 60.0,
                   width: 303.0,
                   decoration: BoxDecoration(
-                      color: '7DDEF8'.toColor(),
+                      color: '#7DDEF8'.toColor(),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(width: 5.0, color: 'F5F5DC'.toColor())
+                      border: Border.all(width: 5.0, color: '#F5F5DC'.toColor())
                   ),
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 6.0),
@@ -45,13 +45,13 @@ class _LogInViewState extends State<LogInView> {
                           prefixIcon: Icon(
                             Icons.account_circle,
                             size: 30.0,
-                            color: '1C1B1F'.toColor(),
+                            color: '#1C1B1F'.toColor(),
                           ),
                           hintText: '帳號名稱',
                           hintStyle: TextStyle(
                               fontSize: 20.0,
                               fontFamily: 'Serif',
-                              color: '013E6D'.toColor()
+                              color: '#013E6D'.toColor()
                           ),
                           floatingLabelBehavior: FloatingLabelBehavior.always,
                           floatingLabelAlignment: FloatingLabelAlignment.center,
@@ -65,24 +65,24 @@ class _LogInViewState extends State<LogInView> {
                   height: 60.0,
                   width: 303.0,
                   decoration: BoxDecoration(
-                      color: '7DDEF8'.toColor(),
+                      color: '#7DDEF8'.toColor(),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(width: 5.0, color: 'F5F5DC'.toColor())
+                      border: Border.all(width: 5.0, color: '#F5F5DC'.toColor())
                   ),
                   child: Padding(
-                    padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 6.0),
+                    padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 6.0),
                     child: TextField(
                         decoration: InputDecoration(
                           prefixIcon: Icon(
                             Icons.lock,
                             size: 30.0,
-                            color: '1C1B1F'.toColor(),
+                            color: '#1C1B1F'.toColor(),
                           ),
                           hintText: '密碼',
                           hintStyle: TextStyle(
                               fontSize: 20.0,
                               fontFamily: 'Serif',
-                              color: '013E6D'.toColor()
+                              color: '#013E6D'.toColor()
                           ),
                           floatingLabelBehavior: FloatingLabelBehavior.always,
                           floatingLabelAlignment: FloatingLabelAlignment.center,
@@ -105,7 +105,7 @@ class _LogInViewState extends State<LogInView> {
                       child: Text(
                           '忘記密碼',
                           style: TextStyle(
-                            color: 'F5F5DC'.toColor(),
+                            color: '#F5F5DC'.toColor(),
                             fontSize: 14.0,
                             fontFamily: 'Serif',
                           )
@@ -129,7 +129,7 @@ class _LogInViewState extends State<LogInView> {
                                 style: TextStyle(
                                   fontSize: 24.0,
                                   fontFamily: 'Serif',
-                                  color: 'F5F5DC'.toColor(),
+                                  color: '#F5F5DC'.toColor(),
                                 )
                             )
                         ),
@@ -138,11 +138,11 @@ class _LogInViewState extends State<LogInView> {
                             style: TextStyle(
                               fontSize: 24.0,
                               fontFamily: 'Serif',
-                              color: 'F5F5DC'.toColor(),
+                              color: '#F5F5DC'.toColor(),
                             )
                         ),
                         TextButton(
-                            onPressed: () {},
+                            onPressed: () => Navigator.of(context).pushNamed('/register'),
                             style: TextButton.styleFrom(
                               fixedSize: const Size(110, 45),
                             ),
@@ -151,7 +151,7 @@ class _LogInViewState extends State<LogInView> {
                                 style: TextStyle(
                                   fontSize: 24.0,
                                   fontFamily: 'Serif',
-                                  color: 'F5F5DC'.toColor(),
+                                  color: '#F5F5DC'.toColor(),
                                 )
                             )
                         )

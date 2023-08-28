@@ -30,7 +30,7 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
               Text(
                   '學中文',
                   style: TextStyle(
-                    color: 'F5F5DC'.toColor(),
+                    color: '#F5F5DC'.toColor(),
                     fontSize: 46.0,
                     fontFamily: 'Serif',
                   )
@@ -48,7 +48,7 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
                     child: Text(
                       '至少6個字母/數字',
                       style: TextStyle(
-                        color: 'F5F5DC'.toColor(),
+                        color: '#F5F5DC'.toColor(),
                         fontSize: 14,
                         fontFamily: 'Serif'
                       )
@@ -59,12 +59,12 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
                 height: 60.0,
                 width: 303.0,
                 decoration: BoxDecoration(
-                      color: '7DDEF8'.toColor(),
+                      color: '#7DDEF8'.toColor(),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(width: 5.0, color: 'F5F5DC'.toColor())
+                      border: Border.all(width: 5.0, color: '#F5F5DC'.toColor())
                   ),
                 child: Padding(
-                  padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 6.0),
+                  padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 6.0),
                   child: Focus(
                     onFocusChange: (hasFocus) {
                         setState(() {
@@ -76,13 +76,13 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
                             prefixIcon: Icon(
                               Icons.account_circle,
                               size: 30.0,
-                              color: '1C1B1F'.toColor(),
+                              color: '#1C1B1F'.toColor(),
                             ),
                             hintText: '帳號名稱',
                             hintStyle: TextStyle(
                                 fontSize: 20.0,
                                 fontFamily: 'Serif',
-                                color: '013E6D'.toColor()
+                                color: '#013E6D'.toColor()
                             ),
                             enabledBorder: InputBorder.none,
                           )
@@ -103,7 +103,7 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
                       child: Text(
                           '至少4個數字',
                           style: TextStyle(
-                              color: 'F5F5DC'.toColor(),
+                              color: '#F5F5DC'.toColor(),
                               fontSize: 14,
                               fontFamily: 'Serif'
                           )
@@ -114,9 +114,9 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
                   height: 60.0,
                   width: 303.0,
                   decoration: BoxDecoration(
-                      color: '7DDEF8'.toColor(),
+                      color: '#7DDEF8'.toColor(),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(width: 5.0, color: 'F5F5DC'.toColor())
+                      border: Border.all(width: 5.0, color: '#F5F5DC'.toColor())
                   ),
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 6.0),
@@ -131,13 +131,13 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
                             prefixIcon: Icon(
                               Icons.lock,
                               size: 30.0,
-                              color: '1C1B1F'.toColor(),
+                              color: '#1C1B1F'.toColor(),
                             ),
                             hintText: '密碼',
                             hintStyle: TextStyle(
                                 fontSize: 20.0,
                                 fontFamily: 'Serif',
-                                color: '013E6D'.toColor()
+                                color: '#013E6D'.toColor()
                             ),
                             enabledBorder: InputBorder.none,
                           )
@@ -150,9 +150,9 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
                   height: 60.0,
                   width: 303.0,
                   decoration: BoxDecoration(
-                      color: '7DDEF8'.toColor(),
+                      color: '#7DDEF8'.toColor(),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(width: 5.0, color: 'F5F5DC'.toColor())
+                      border: Border.all(width: 5.0, color: '#F5F5DC'.toColor())
                   ),
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 6.0),
@@ -161,13 +161,13 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
                           prefixIcon: Icon(
                             Icons.lock,
                             size: 30.0,
-                            color: '1C1B1F'.toColor(),
+                            color: '#1C1B1F'.toColor(),
                           ),
                           hintText: '確認密碼',
                           hintStyle: TextStyle(
                               fontSize: 20.0,
                               fontFamily: 'Serif',
-                              color: '013E6D'.toColor()
+                              color: '#013E6D'.toColor()
                           ),
                           enabledBorder: InputBorder.none,
                         )
@@ -182,7 +182,7 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
                       style: TextStyle(
                         fontSize: 24.0,
                         fontFamily: 'Serif',
-                        color: 'F5F5DC'.toColor(),
+                        color: '#F5F5DC'.toColor(),
                       )
                   )
               )

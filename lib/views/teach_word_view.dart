@@ -74,7 +74,7 @@ class _TeachWordViewState extends State<TeachWordView>
       length: teachWordTabs.length,
       child: Scaffold(
           appBar: AppBar(
-            leading: const Icon(Icons.chevron_left),
+            leading: IconButton(icon: const Icon(Icons.chevron_left), onPressed: () => Navigator.pop(context),),
             centerTitle: true,
             title: const Text("1|手拉手"),
             titleTextStyle: TextStyle(
