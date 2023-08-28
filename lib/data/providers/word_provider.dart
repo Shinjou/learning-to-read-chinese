@@ -44,7 +44,7 @@ class WordProvider {
       version: 1,
     );
 
-  static Future<void> addWordsInUnit(Word word) async {
+  static Future<void> addWord(Word word) async {
     final Database db = await getDBConnect();
     await db.insert(
       tableName,
