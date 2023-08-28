@@ -5,11 +5,13 @@ import 'package:ltrc/views/register_view.dart';
 import 'package:ltrc/views/teach_word_view.dart';
 import 'package:ltrc/views/units_view.dart';
 import 'package:ltrc/views/words_view.dart';
+import 'package:ltrc/views/register_account_view.dart';
 
 class AppRoutes {
   AppRoutes._();
 
   static const String register = '/register';
+  static const String registerAccount = '/registerAccount';
   static const String mainPage = '/mainPage';
   static const String units = '/units';
   static const String words = '/words';
@@ -24,6 +26,7 @@ class AppRoutes {
       words: (context) => const WordsView(),
       teachWord: (context) => const TeachWordView(),
       bopomos: (context) => BopomosView(),
+      registerAccount: (context) => const RegisterAccountView(),
     };
   }
 }
