@@ -20,7 +20,7 @@ class WordsView extends StatelessWidget {
           actions: [
             IconButton(
               icon: const Icon(Icons.home),
-              onPressed: () => {},
+              onPressed: () => Navigator.of(context).pushNamed('/mainPage'),
             )
           ],
         ),

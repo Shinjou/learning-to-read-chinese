@@ -7,9 +7,7 @@ import '../data/models/unit_model.dart';
 
 class UnitsView extends StatefulWidget {
   
-  const UnitsView({super.key, required this.units});
-
-  final List<Unit> units;
+  const UnitsView({super.key});
 
   @override
   _UnitsViewState createState() => _UnitsViewState();
@@ -26,11 +24,10 @@ class _UnitsViewState extends State<UnitsView> {
 
   @override
   Widget build(BuildContext context) {
-    void getTodoList() async {
-      final list = await UnitProvider.getUnits(inputGrade:1, inputSemester:"上");
-      debugPrint(list.toString());
-    }
-
+    
+    dynamic obj = ModalRoute.of(context)!.settings.arguments;
+    List<Unit> units = obj["units"];
+    
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(icon: const Icon(Icons.chevron_left), onPressed: () => Navigator.pop(context),),
@@ -89,7 +86,7 @@ class _UnitsViewState extends State<UnitsView> {
                       onTap: (){
                         Navigator.of(context).pushNamed(
                           '/words', 
-                          arguments: {'newWords' : widget.units[index].newWords}
+                          arguments: {'newWords' : units[index].newWords}
                         );
                       },
                       child: Container(
@@ -110,7 +107,7 @@ class _UnitsViewState extends State<UnitsView> {
                               )
                             ),
                             Text(
-                              widget.units[index].unitTitle, 
+                              units[index].unitTitle, 
                               style: TextStyle(
                                 fontSize: 24,
                                 color: "#F5F5DC".toColor(),
@@ -122,7 +119,7 @@ class _UnitsViewState extends State<UnitsView> {
                       ),
                     );
                   },
-                  childCount: widget.units.length,
+                  childCount: units.length,
                 ),
               ),
             )

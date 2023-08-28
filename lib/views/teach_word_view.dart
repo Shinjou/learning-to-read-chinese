@@ -89,7 +89,9 @@ class _TeachWordViewState extends State<TeachWordView>
             ),
             actions: <Widget>[
               IconButton(
-                  onPressed: () => {}, icon: const Icon(Icons.home_filled)),
+                onPressed: () => Navigator.of(context).pushNamed('/mainPage'),
+                icon: const Icon(Icons.home_filled)
+              ),
             ],
             bottom: TabBar(
               tabs: teachWordTabs,

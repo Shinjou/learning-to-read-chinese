@@ -73,6 +73,9 @@ flutter:
     - family: Serif   
       fonts:
         - asset: lib\assets\fonts\BpmfZihiSerif-Regular.ttf
+    - family: Iceberg
+      fonts:
+        - asset: lib\assets\fonts\Iceberg-Regular.ttf
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

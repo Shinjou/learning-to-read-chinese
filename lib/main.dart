@@ -1,20 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ltrc/data/models/unit_model.dart';
 
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import 'package:ltrc/contants/routes.dart';
 import 'package:ltrc/extensions.dart';
-import 'package:ltrc/views/bopomo_spelling.dart';
-import 'package:ltrc/views/bopomos_view.dart';
-import 'package:ltrc/views/log_in_view.dart';
-import 'package:ltrc/views/register_account_view.dart';
-import 'package:ltrc/views/register_view.dart';
-import 'package:ltrc/views/setting_view.dart';
-import 'package:ltrc/views/teach_word_view.dart';
-import 'package:ltrc/views/units_view.dart';
-import 'package:ltrc/views/words_view.dart';
+import 'package:ltrc/views/main_page_view.dart';
 
 
 
@@ -51,10 +42,6 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return UnitsView(units: [
-        Unit(publisher: "康軒", grade: 1, semester: "上", unitId: 1, unitTitle: "我的未來", newWords: ["上", "下", "左", "喜", "羊"], extraWords: []),
-        Unit(publisher: "康軒", grade: 1, semester: "上", unitId: 2, unitTitle: "這是誰的", newWords: ["這", "是", "誰", "的", "我", "分", "好", "了", "啊", "多", "個"], extraWords: ["了", "啊", "多", "個"])
-      ]
-    );
+    return const MainPageView();
   }
 }
