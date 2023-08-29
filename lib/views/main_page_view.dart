@@ -50,7 +50,7 @@ class MainPageView extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () async {
                     List<Unit> units = await UnitProvider.getUnits(
-                      inputGrade: 1,
+                      inputGrade: 3,
                       inputSemester: "上"
                     );
                     Navigator.of(context).pushNamed(
