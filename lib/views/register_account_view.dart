@@ -138,9 +138,9 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
                 height: 60.0,
                 width: 303.0,
                 decoration: BoxDecoration(
-                    color: '#7DDEF8'.toColor(),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(width: 5.0, color: '#F5F5DC'.toColor())
+                  color: '#7DDEF8'.toColor(),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(width: 5.0, color: '#F5F5DC'.toColor())
                 ),
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 6.0),
