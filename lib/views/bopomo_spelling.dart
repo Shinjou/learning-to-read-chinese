@@ -23,7 +23,7 @@ class _BopomoSpellingState extends State<BopomoSpellingView>{
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(icon: const Icon(Icons.chevron_left), onPressed: () => Navigator.pop(context),),
-        title: const Text("00|學注音"),
+        title: const Text("拼拼看"),
         actions: [
           IconButton(
             icon: const Icon(Icons.home),

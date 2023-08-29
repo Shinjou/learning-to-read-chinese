@@ -12,7 +12,7 @@ class BopomosView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(icon: const Icon(Icons.chevron_left), onPressed: () => Navigator.pop(context),),
-        title: const Text("00|學注音"),
+        title: const Text("00 | 學注音"),
         actions: [
           IconButton(
             icon: const Icon(Icons.home),
@@ -49,10 +49,11 @@ class BopomosView extends StatelessWidget {
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int idx){
-                  return SizedBox(
-                    width: 297,
-                    height: 80,
+                  return InkWell(
+                    onTap: () => Navigator.of(context).pushNamed('/bopomoSpelling'),
                     child: Container(
+                      width: 297,
+                      height: 80,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                         borderRadius: const BorderRadius.all(Radius.circular(14)),
