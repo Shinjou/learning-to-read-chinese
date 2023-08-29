@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ltrc/views/log_in_view.dart';
 
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -31,6 +32,7 @@ class MyApp extends ConsumerWidget {
             color: "#28231D".toColor()),
         scaffoldBackgroundColor: "#28231D".toColor(),
         useMaterial3: true,
+        fontFamily: 'Serif',
       ),
       routes: AppRoutes.define(),
       home: const HomePage(),
@@ -43,6 +45,6 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const RegisterAccountView();
+    return const LogInView();
   }
 }

@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:ltrc/data/models/user_model.dart';
+import 'package:ltrc/data/models/word_model.dart';
+import 'package:ltrc/data/providers/user_provider.dart';
+import 'package:ltrc/data/providers/word_provider.dart';
 import 'package:ltrc/extensions.dart';
 
 class LogInView extends StatefulWidget {
@@ -41,7 +45,6 @@ class _LogInViewState extends State<LogInView> {
               style: TextStyle(
                 color: '#F5F5DC'.toColor(),
                 fontSize: 46.0,
-                fontFamily: 'Serif',
               )
           ),
           SizedBox(height: deviceHeight * 0.162),
@@ -66,7 +69,6 @@ class _LogInViewState extends State<LogInView> {
                     hintText: '帳號名稱',
                     hintStyle: TextStyle(
                         fontSize: 20.0,
-                        fontFamily: 'Serif',
                         color: '#013E6D'.toColor()
                     ),
                     floatingLabelBehavior: FloatingLabelBehavior.always,
@@ -99,7 +101,6 @@ class _LogInViewState extends State<LogInView> {
                     hintText: '密碼',
                     hintStyle: TextStyle(
                         fontSize: 20.0,
-                        fontFamily: 'Serif',
                         color: '#013E6D'.toColor()
                     ),
                     floatingLabelBehavior: FloatingLabelBehavior.always,
@@ -129,12 +130,11 @@ class _LogInViewState extends State<LogInView> {
                     fixedSize: const Size(110, 14),
                   ),
                   child: Text(
-                      '忘記密碼',
-                      style: TextStyle(
-                        color: '#F5F5DC'.toColor(),
-                        fontSize: 14.0,
-                        fontFamily: 'Serif',
-                      )
+                    '忘記密碼',
+                    style: TextStyle(
+                      color: '#F5F5DC'.toColor(),
+                      fontSize: 14.0,
+                    )
                   ),
                 ),
               ),
@@ -154,7 +154,6 @@ class _LogInViewState extends State<LogInView> {
                 style: TextStyle(
                   color: '#F5F5DC'.toColor(),
                   fontSize: 14,
-                  fontFamily: 'Serif'
                 )
               )
             )
@@ -165,26 +164,43 @@ class _LogInViewState extends State<LogInView> {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 TextButton(
-                    onPressed: () {},
-                    style: TextButton.styleFrom(
-                      fixedSize: const Size(110, 45),
-                    ),
-                    child: Text(
-                        '登入',
-                        style: TextStyle(
-                          fontSize: 24.0,
-                          fontFamily: 'Serif',
-                          color: '#F5F5DC'.toColor(),
-                        )
-                    )
-                ),
-                Text(
-                    '/',
+                  onPressed: () async {
+                    try {
+                      User user = await UserProvider.getUser(inputAccount: accountController.text);
+                      if (user.password != pwdController.text){
+                        setState(() {
+                          showErrorHint = "密碼錯誤";
+                        });
+                      }
+                      else {
+                        Navigator.of(context).pushNamed('/mainPage');
+                      }
+                    } catch (e){
+                      setState(() {
+                        showErrorHint = "帳號不存在！";
+                      });
+                    }
+
+                    //Word word = await WordProvider.getWord(inputWord: "ㄅ");
+                    //debugPrint(word.toString());
+                  },
+                  style: TextButton.styleFrom(
+                    fixedSize: const Size(110, 45),
+                  ),
+                  child: Text(
+                    '登入',
                     style: TextStyle(
                       fontSize: 24.0,
-                      fontFamily: 'Serif',
                       color: '#F5F5DC'.toColor(),
                     )
+                  )
+                ),
+                Text(
+                  '/',
+                  style: TextStyle(
+                    fontSize: 24.0,
+                    color: '#F5F5DC'.toColor(),
+                  )
                 ),
                 TextButton(
                   onPressed: () => Navigator.of(context).pushNamed('/registerAccount'),
@@ -195,7 +211,6 @@ class _LogInViewState extends State<LogInView> {
                     '註冊',
                     style: TextStyle(
                       fontSize: 24.0,
-                      fontFamily: 'Serif',
                       color: '#F5F5DC'.toColor(),
                     )
                   )

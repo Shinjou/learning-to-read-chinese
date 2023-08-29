@@ -30,7 +30,7 @@ class UserProvider {
       version: 1,
     );
 
-  static Future<void> addUser(User user) async {
+  static Future<void> addUser({required User user}) async {
     final Database db = await getDBConnect();
     await db.insert(
       tableName,

@@ -38,7 +38,6 @@ class WordCard extends StatelessWidget {
               word, 
               style: TextStyle(
                 fontSize: fontSize,
-                fontFamily: 'Serif',
                 fontWeight: FontWeight.w900,
               ),
             ),

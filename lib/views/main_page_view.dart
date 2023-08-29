@@ -39,7 +39,6 @@ class MainPageView extends StatelessWidget {
                 style: TextStyle(
                   color: '#F5F5DC'.toColor(),
                   fontSize: 46,
-                  fontFamily: 'Serif'
                 )
               )
             ),
@@ -73,21 +72,19 @@ class MainPageView extends StatelessWidget {
                     style: TextStyle(
                       color: '#F5F5DC'.toColor(),
                       fontSize: 32,
-                      fontFamily: 'Serif'
                     )
                   )
                 ),
               )
             ),
             Text(
-                '收集生字卡',
-                style: TextStyle(
-                    color: '#F5F5DC'.toColor(),
-                    fontSize: 22,
-                    fontFamily: 'Serif'
-                )
+              '收集生字卡',
+              style: TextStyle(
+                color: '#F5F5DC'.toColor(),
+                fontSize: 22,
+              )
             ),
-            ProgressBar(value: 0.0)
+            const ProgressBar(value: 0.0)
           ]
         ),
       )

@@ -28,9 +28,4 @@ class Word {
       'sentence_2': sentence2,
     };
   }
-
-  @override
-  String toString() {
-    return "Word{word: $word, vocab_1: $vocab1, vocab_2: $vocab2}";
-  }
 } 

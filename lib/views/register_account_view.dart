@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:ltrc/data/models/user_model.dart';
+import 'package:ltrc/data/providers/user_provider.dart';
 import 'package:ltrc/extensions.dart';
 
 class RegisterAccountView extends StatefulWidget {
@@ -11,6 +13,7 @@ class RegisterAccountView extends StatefulWidget {
 const String accountLengthErrorHint = "帳號長度不足 6 位英/數字";
 const String pwdLengthErrorHint = "密碼長度不足 4 位英/數字";
 const String pwdConfirmErrorHint = "確認密碼錯誤";
+const String duplicateAccountErrorHint = "此帳號已被其他人建立";
 
 class _RegisterAccountViewState extends State<RegisterAccountView> {
 
@@ -53,7 +56,6 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
               style: TextStyle(
                 color: '#F5F5DC'.toColor(),
                 fontSize: 46.0,
-                fontFamily: 'Serif',
               )
             ),
             SizedBox(height: deviceHeight * 0.096),
@@ -71,7 +73,6 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
                   style: TextStyle(
                     color: '#F5F5DC'.toColor(),
                     fontSize: 14,
-                    fontFamily: 'Serif'
                   )
                 )
               )
@@ -106,7 +107,6 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
                       hintText: '帳號名稱',
                       hintStyle: TextStyle(
                         fontSize: 20.0,
-                        fontFamily: 'Serif',
                         color: '#013E6D'.toColor()
                       ),
                       enabledBorder: InputBorder.none,
@@ -130,7 +130,6 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
                   style: TextStyle(
                     color: '#F5F5DC'.toColor(),
                     fontSize: 14,
-                    fontFamily: 'Serif'
                   )
                 )
               )
@@ -166,7 +165,6 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
                         hintText: '密碼',
                         hintStyle: TextStyle(
                             fontSize: 20.0,
-                            fontFamily: 'Serif',
                             color: '#013E6D'.toColor()
                         ),
                         enabledBorder: InputBorder.none,
@@ -206,7 +204,6 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
                       hintText: '確認密碼',
                       hintStyle: TextStyle(
                           fontSize: 20.0,
-                          fontFamily: 'Serif',
                           color: '#013E6D'.toColor()
                       ),
                       enabledBorder: InputBorder.none,
@@ -236,39 +233,50 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
                   style: TextStyle(
                     color: '#F5F5DC'.toColor(),
                     fontSize: 14,
-                    fontFamily: 'Serif'
                   )
                 )
               )
             ),
             SizedBox(height: deviceHeight * 0.0627),
             TextButton(
-              onPressed: () {
+              onPressed: () async {
                 if (accountController.text.length < 6){
                   setState(() {
                     showErrorHint = accountLengthErrorHint;
                   });
                 }
-                else if (pwdController.text.length < 4){
-                  setState(() {
-                    showErrorHint = pwdLengthErrorHint;
-                  });
-                }
-                else if (pwdController.text != confirmPwdController.text){
-                  setState(() {
-                    showErrorHint = pwdConfirmErrorHint;
-                  });
-                }
-                // TODO: Check if account is created before.
                 else{
-                  Navigator.of(context).pushNamed('/register');
+                  List<User> users = await UserProvider.getAllUser();
+                  if (users.map((user) => user.account).contains(accountController.text)){
+                    setState(() {
+                      showErrorHint = duplicateAccountErrorHint;
+                    });
+                  }
+                  else if (pwdController.text.length < 4){
+                    setState(() {
+                      showErrorHint = pwdLengthErrorHint;
+                    });
+                  }
+                  else if (pwdController.text != confirmPwdController.text){
+                    setState(() {
+                      showErrorHint = pwdConfirmErrorHint;
+                    });
+                  }
+                  else{
+                    await UserProvider.addUser(
+                      user: User(
+                        account: accountController.text,
+                        password: pwdController.text,
+                      ), 
+                    );
+                    Navigator.of(context).pushNamed('/register');
+                  }
                 }
               },
               child: Text(
                 '註冊並登入',
                 style: TextStyle(
                   fontSize: 24.0,
-                  fontFamily: 'Serif',
                   color: '#F5F5DC'.toColor(),
                 )
               )

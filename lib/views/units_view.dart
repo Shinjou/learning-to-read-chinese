@@ -39,7 +39,7 @@ class _UnitsViewState extends State<UnitsView> {
       body: CustomScrollView(
           slivers: [
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(46, 20, 46, 14),
+              padding: const EdgeInsets.fromLTRB(23, 20, 23, 14),
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (BuildContext context, int idx){
@@ -70,7 +70,7 @@ class _UnitsViewState extends State<UnitsView> {
               ),
             ),
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(46, 14, 46, 20),
+              padding: const EdgeInsets.fromLTRB(23, 14, 23, 20),
                 sliver: SliverGrid(
                 gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                   maxCrossAxisExtent: 180.0,
