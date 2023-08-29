@@ -57,7 +57,7 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              SizedBox(height: deviceHeight * 0.10),
+              SizedBox(height: deviceHeight * 0.050),
               Text(
                 '學中文',
                 style: TextStyle(
@@ -65,7 +65,7 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
                   fontSize: 46.0,
                 )
               ),
-              SizedBox(height: deviceHeight * 0.096),
+              SizedBox(height: deviceHeight * 0.050),
               Visibility(
                 visible: showAccountHint,
                 maintainAnimation: true,
@@ -241,7 +241,7 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
                   child: Text(
                     showErrorHint,
                     style: TextStyle(
-                      color: '#F5F5DC'.toColor(),
+                      color: '#FF0303'.toColor(),
                       fontSize: 14,
                     )
                   )

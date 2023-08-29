@@ -162,7 +162,7 @@ class _LogInViewState extends State<LogInView> {
                 child: Text(
                   showErrorHint,
                   style: TextStyle(
-                    color: '#F5F5DC'.toColor(),
+                    color: '#FF0303'.toColor(),
                     fontSize: 14,
                   )
                 )
