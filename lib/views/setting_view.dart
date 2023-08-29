@@ -31,7 +31,7 @@ class _SettingViewState extends State<SettingView> {
                       width: deviceWidth,
                       decoration: BoxDecoration(
                           color: '#013E6D'.toColor(),
-                          borderRadius: const BorㄋderRadius.only(
+                          borderRadius: const BorderRadius.only(
                             bottomLeft: Radius.circular(20),
                             bottomRight: Radius.circular(20),
                           )
@@ -76,13 +76,10 @@ class _SettingViewState extends State<SettingView> {
                       top: deviceHeight * 0.156,
                       left: deviceWidth * 0.059,
                       child: Container(
-                          height: deviceHeight * 0.844,
+                          height: deviceHeight * 0.8,
                           width: deviceWidth * 0.882,
                           decoration: BoxDecoration(
-                            borderRadius: const BorderRadiusDirectional.only(
-                                topEnd: Radius.circular(16),
-                                topStart: Radius.circular(16)
-                            ),
+                            borderRadius: BorderRadius.circular(16),
                             color: '#F5F5DC'.toColor(),
                           ),
                           child: Column(
@@ -126,26 +123,26 @@ class _SettingViewState extends State<SettingView> {
                                       )
                                   ),
                                 Container(
-                                  height: deviceHeight * 0.0284,
+                                  height: deviceHeight * 0.035,
                                   width: deviceWidth * 0.8,
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: <Widget>[
-                                      GradeAndProviderButton(buttonWidth: deviceWidth * 0.24, buttonHeight: deviceHeight * 0.0284, text: '一年級'),
-                                      GradeAndProviderButton(buttonWidth: deviceWidth * 0.24, buttonHeight: deviceHeight * 0.0284, text: '二年級'),
-                                      GradeAndProviderButton(buttonWidth: deviceWidth * 0.24, buttonHeight: deviceHeight * 0.0284, text: '三年級')
+                                      GradeAndProviderButton(buttonWidth: deviceWidth * 0.25, buttonHeight: deviceHeight * 0.035, text: '一年級'),
+                                      GradeAndProviderButton(buttonWidth: deviceWidth * 0.25, buttonHeight: deviceHeight * 0.035, text: '二年級'),
+                                      GradeAndProviderButton(buttonWidth: deviceWidth * 0.25, buttonHeight: deviceHeight * 0.035, text: '三年級')
                                     ]
                                   )),
                                   Container(
-                                    height: deviceHeight * 0.0284,
+                                    height: deviceHeight * 0.035,
                                     width: deviceWidth * 0.8,
                                     margin: EdgeInsetsDirectional.only(top: deviceHeight * 0.027),
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: <Widget>[
-                                        GradeAndProviderButton(buttonWidth: deviceWidth * 0.24, buttonHeight: deviceHeight * 0.0284, text: '四年級'),
-                                        GradeAndProviderButton(buttonWidth: deviceWidth * 0.24, buttonHeight: deviceHeight * 0.0284, text: '五年級'),
-                                        GradeAndProviderButton(buttonWidth: deviceWidth * 0.24, buttonHeight: deviceHeight * 0.0284, text: '六年級')
+                                        GradeAndProviderButton(buttonWidth: deviceWidth * 0.25, buttonHeight: deviceHeight * 0.035, text: '四年級'),
+                                        GradeAndProviderButton(buttonWidth: deviceWidth * 0.25, buttonHeight: deviceHeight * 0.035, text: '五年級'),
+                                        GradeAndProviderButton(buttonWidth: deviceWidth * 0.25, buttonHeight: deviceHeight * 0.035, text: '六年級')
                                       ]
                                     )
                                   ),
@@ -163,14 +160,14 @@ class _SettingViewState extends State<SettingView> {
                                     )
                                 ),
                                 Container(
-                                    height: deviceHeight * 0.0284,
+                                    height: deviceHeight * 0.035,
                                     width: deviceWidth * 0.8,
                                     child: Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: <Widget>[
-                                          GradeAndProviderButton(buttonWidth: deviceWidth * 0.24, buttonHeight: deviceHeight * 0.0284, text: '康軒'),
-                                          GradeAndProviderButton(buttonWidth: deviceWidth * 0.24, buttonHeight: deviceHeight * 0.0284, text: '翰林'),
-                                          GradeAndProviderButton(buttonWidth: deviceWidth * 0.24, buttonHeight: deviceHeight * 0.0284, text: '南一')
+                                          GradeAndProviderButton(buttonWidth: deviceWidth * 0.25, buttonHeight: deviceHeight * 0.035, text: '康軒'),
+                                          GradeAndProviderButton(buttonWidth: deviceWidth * 0.25, buttonHeight: deviceHeight * 0.035, text: '翰林'),
+                                          GradeAndProviderButton(buttonWidth: deviceWidth * 0.25, buttonHeight: deviceHeight * 0.035, text: '南一')
                                         ]
                                     )
                                 ),
@@ -227,7 +224,7 @@ class _SettingViewState extends State<SettingView> {
                                     )
                                 ),
                                 SizedBox(
-                                  height: deviceHeight * 0.25,
+                                  height: deviceHeight * 0.1,
                                   width: deviceWidth * 0.882,
                                 ),
                                 Container(
