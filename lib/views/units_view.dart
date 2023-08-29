@@ -85,7 +85,7 @@ class _UnitsViewState extends State<UnitsView> {
                       onTap: (){
                         Navigator.of(context).pushNamed(
                           '/words', 
-                          arguments: {'newWords' : units[index].newWords}
+                          arguments: {'unit' : units[index]}
                         );
                       },
                       child: Container(
