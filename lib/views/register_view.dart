@@ -1,38 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ltrc/contants/arabic_numerals_to_chinese.dart';
+import 'package:ltrc/contants/publisher_code.dart';
+import 'package:ltrc/providers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ltrc/extensions.dart';
 import 'package:ltrc/widgets/mainPage/left_right_switch.dart';
 
-class RegisterView extends StatefulWidget {
+class RegisterView extends ConsumerStatefulWidget {
   const RegisterView({super.key});
 
   @override
-  State<RegisterView> createState() => _RegisterViewState();
+  RegisterViewState createState() => RegisterViewState();
 }
 
-class _RegisterViewState extends State<RegisterView> {
-  late int _grade;
-  late String _publisher;
+class RegisterViewState extends ConsumerState<RegisterView> {
 
   @override
   void initState() {
     super.initState();
-    _loadGradeAndPublisher();
+    ref.read(gradeProvider);
+    ref.read(publisherCodeProvider);
   }
 
-  void _loadGradeAndPublisher() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _grade = prefs.getInt('grade') ?? 1;
-      _publisher = prefs.getString('publisher') ?? "HanLin";
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
 
     double deviceHeight = MediaQuery.of(context).size.height;
     double deviceWidth = MediaQuery.of(context).size.width;
+    final grade = ref.watch(gradeProvider);
+    final publisherCode = ref.watch(publisherCodeProvider);
 
     return Scaffold(
         backgroundColor: '#1E1E1E'.toColor(),
@@ -87,6 +85,8 @@ class _RegisterViewState extends State<RegisterView> {
                 child: LeftRightSwitch(
                     iconsColor: 'F5F5DC'.toColor(),
                     iconsSize: deviceWidth * 0.15,
+                    onLeftClicked: () => {ref.read(gradeProvider.notifier).state = (ref.read(gradeProvider.notifier).state-2) % 6 + 1},
+                    onRightClicked: () => {ref.read(gradeProvider.notifier).state = (ref.read(gradeProvider.notifier).state) % 6 + 1},
                     middleWidget: Container(
                       alignment: AlignmentDirectional.center,
                       width: deviceWidth * 0.57,
@@ -96,7 +96,7 @@ class _RegisterViewState extends State<RegisterView> {
                           color: '7DDEF8'.toColor()
                       ),
                       child: Text(
-                        '一年級',
+                        '${numeralToChinese[grade]}年級',
                         style: TextStyle(
                           color: '000000'.toColor(),
                           fontSize: 34.0,
@@ -109,6 +109,8 @@ class _RegisterViewState extends State<RegisterView> {
               LeftRightSwitch(
                   iconsColor: 'F5F5DC'.toColor(),
                   iconsSize: deviceWidth * 0.15,
+                  onLeftClicked: () => {ref.read(publisherCodeProvider.notifier).state = (ref.read(publisherCodeProvider.notifier).state-1) % 3},
+                  onRightClicked: () => {ref.read(publisherCodeProvider.notifier).state = (ref.read(publisherCodeProvider.notifier).state+1) % 3},
                   middleWidget: Container(
                       alignment: AlignmentDirectional.center,
                       width: deviceWidth * 0.57,
@@ -118,7 +120,7 @@ class _RegisterViewState extends State<RegisterView> {
                           color: '7DDEF8'.toColor()
                       ),
                       child: Text(
-                          '翰林',
+                          publisherCodeTable[publisherCode]!,
                           style: TextStyle(
                               color: '000000'.toColor(),
                               fontSize: 34.0,
@@ -127,27 +129,6 @@ class _RegisterViewState extends State<RegisterView> {
                       )
                   )
               ),
-            LeftRightSwitch(
-                iconsColor: '#F5F5DC'.toColor(),
-                iconsSize: deviceWidth * 0.15,
-                middleWidget: Container(
-                    alignment: AlignmentDirectional.center,
-                    width: 224,
-                    height: 57,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadiusDirectional.circular(20),
-                        color: '#7DDEF8'.toColor()
-                    ),
-                    child: Text(
-                        '翰林',
-                        style: TextStyle(
-                            color: '#000000'.toColor(),
-                            fontSize: 34.0,
-                            fontFamily: 'Serif'
-                        )
-                    )
-                )
-            ),
             Padding(
               padding: EdgeInsets.fromLTRB(0, deviceHeight * 0.0687, 0, deviceHeight * 0.05),
               child: Container(
