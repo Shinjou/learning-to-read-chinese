@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:ltrc/data/models/user_model.dart';
+import 'package:ltrc/data/providers/user_provider.dart';
 import 'package:ltrc/extensions.dart';
 
-class ResetPasswordView extends StatefulWidget {
-  const ResetPasswordView({super.key});
+class ResetPwdView extends StatefulWidget {
+  const ResetPwdView({super.key});
 
   @override
-  State<ResetPasswordView> createState() => _ResetPasswordViewState();
+  State<ResetPwdView> createState() => _ResetPwdViewState();
 }
 
 const String pwdLengthErrorHint = "密碼長度不足 4 位英/數字";
 const String pwdConfirmErrorHint = "確認密碼錯誤";
 
-class _ResetPasswordViewState extends State<ResetPasswordView> {
+class _ResetPwdViewState extends State<ResetPwdView> {
 
   bool showPasswordHint = false;
   bool pwdVisible = false; 
@@ -33,7 +35,16 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
 
     double deviceHeight = MediaQuery.of(context).size.height;
 
+    dynamic obj = ModalRoute.of(context)!.settings.arguments;
+    User user = obj['user'];
+
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.chevron_left), 
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       resizeToAvoidBottomInset: false,
       backgroundColor: '#1E1E1E'.toColor(),
       body: SizedBox.expand(
@@ -64,7 +75,6 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
                   style: TextStyle(
                     color: '#F5F5DC'.toColor(),
                     fontSize: 14,
-                    fontFamily: 'Serif'
                   )
                 )
               )
@@ -170,7 +180,6 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
                   style: TextStyle(
                     color: '#F5F5DC'.toColor(),
                     fontSize: 14,
-                    fontFamily: 'Serif'
                   )
                 )
               )
@@ -188,9 +197,10 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
                     showErrorHint = pwdConfirmErrorHint;
                   });
                 }
-                // TODO: Update account to database
                 else{
-                  Navigator.of(context).pushNamed('/main');
+                  user.password = pwdController.text;
+                  UserProvider.updateUser(user: user);
+                  Navigator.of(context).pushNamed('/mainPage');
                 }
               },
               child: Text(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ltrc/contants/register_question_label.dart';
+import 'package:ltrc/data/models/user_model.dart';
 import 'package:ltrc/extensions.dart';
 
 class SafetyHintVerifyView extends StatefulWidget {
@@ -18,10 +19,6 @@ class _SafetyHintVerifyState extends State<SafetyHintVerifyView> {
   final TextEditingController a2Controller = TextEditingController();
 
   String showErrorHint = "";
-  String question1 = "你最喜歡的顏色";
-  String question2 = "你的寵物名字";
-  String a1 = "黃色";
-  String a2 = "皮皮";
 
   @override
   void initState(){
@@ -34,14 +31,28 @@ class _SafetyHintVerifyState extends State<SafetyHintVerifyView> {
 
     double deviceHeight = MediaQuery.of(context).size.height;
 
+    dynamic obj = ModalRoute.of(context)!.settings.arguments;
+    User user = obj['user']; 
+
+    String question1 = registerQuestions[user.safetyQuestionId1];
+    String question2 = registerQuestions[user.safetyQuestionId2];
+    String a1 = user.safetyAnswer1;
+    String a2 = user.safetyAnswer2;
+
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.chevron_left), 
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       resizeToAvoidBottomInset: false,
       backgroundColor: '#1E1E1E'.toColor(),
       body: SizedBox.expand(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            SizedBox(height: deviceHeight * 0.08),
+            SizedBox(height: deviceHeight * 0.04),
             Text(
               '忘記密碼',
               style: TextStyle(
@@ -179,7 +190,7 @@ class _SafetyHintVerifyState extends State<SafetyHintVerifyView> {
                   });
                 }
                 else{
-                  Navigator.of(context).pushNamed('/setNewPwd');
+                  Navigator.of(context).pushNamed('/setNewPwd', arguments: {'user': user});
                 }
               },
               child: Text(

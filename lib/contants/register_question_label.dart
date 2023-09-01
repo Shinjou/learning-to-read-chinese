@@ -8,7 +8,9 @@ enum RegisterQuestionLabel {
   telephone(6, "家中電話號碼")
   ;
 
-  const RegisterQuestionLabel(this.label, this.question);
-  final int label;
+  const RegisterQuestionLabel(this.value, this.question);
+  final int value;
   final String question;
 }
+
+List<String> registerQuestions = RegisterQuestionLabel.values.map((e) => e.question).toList();

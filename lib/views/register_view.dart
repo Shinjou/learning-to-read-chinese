@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/contants/arabic_numerals_to_chinese.dart';
 import 'package:ltrc/contants/publisher_code.dart';
+import 'package:ltrc/data/models/user_model.dart';
+import 'package:ltrc/data/providers/user_provider.dart';
 import 'package:ltrc/providers.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ltrc/extensions.dart';
 import 'package:ltrc/widgets/mainPage/left_right_switch.dart';
 
@@ -31,6 +32,10 @@ class RegisterViewState extends ConsumerState<RegisterView> {
     double deviceWidth = MediaQuery.of(context).size.width;
     final grade = ref.watch(gradeProvider);
     final publisherCode = ref.watch(publisherCodeProvider);
+    final pwd = ref.watch(pwdProvider);
+    final account = ref.watch(accountProvider);
+
+    dynamic obj = ModalRoute.of(context)!.settings.arguments;
 
     return Scaffold(
       backgroundColor: '#1E1E1E'.toColor(),
@@ -98,7 +103,6 @@ class RegisterViewState extends ConsumerState<RegisterView> {
                     style: TextStyle(
                       color: '000000'.toColor(),
                       fontSize: 34.0,
-                      fontFamily: 'Serif'
                     )
                   )
                 )
@@ -140,7 +144,25 @@ class RegisterViewState extends ConsumerState<RegisterView> {
                   icon: const Icon(Icons.chevron_right),
                   color: '#1E1E1E'.toColor(),
                   iconSize: deviceHeight * 0.09,
-                  onPressed: () => Navigator.of(context).pushNamed('/mainPage'),
+                  onPressed: () async {
+                    try{
+                      await UserProvider.addUser(
+                        user: User(
+                          account: account,
+                          password: pwd,
+                          safetyQuestionId1: obj['q1'],
+                          safetyAnswer1: obj['a1'] as String,
+                          safetyQuestionId2: obj['q2'],
+                          safetyAnswer2: obj['a2'] as String,
+                          grade: grade,
+                          publisher: publisherCodeTable[publisherCode]!,
+                        ), 
+                      );
+                    } catch(e){
+                      throw("create user error: $e");
+                    }
+                    Navigator.of(context).pushNamed('/mainPage');
+                  },
                 )
               ),
             )

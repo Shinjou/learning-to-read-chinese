@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/data/models/user_model.dart';
 import 'package:ltrc/data/providers/user_provider.dart';
 import 'package:ltrc/extensions.dart';
+import 'package:ltrc/providers.dart';
 
 class RegisterAccountView extends StatefulWidget {
   const RegisterAccountView({super.key});
@@ -248,48 +250,48 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
                   )
                 )
               ),
-              TextButton(
-                onPressed: () async {
-                  if (accountController.text.length < 6){
-                    setState(() {
-                      showErrorHint = accountLengthErrorHint;
-                    });
-                  }
-                  else{
-                    List<User> users = await UserProvider.getAllUser();
-                    if (users.map((user) => user.account).contains(accountController.text)){
-                      setState(() {
-                        showErrorHint = duplicateAccountErrorHint;
-                      });
-                    }
-                    else if (pwdController.text.length < 4){
-                      setState(() {
-                        showErrorHint = pwdLengthErrorHint;
-                      });
-                    }
-                    else if (pwdController.text != confirmPwdController.text){
-                      setState(() {
-                        showErrorHint = pwdConfirmErrorHint;
-                      });
-                    }
-                    else{
-                      await UserProvider.addUser(
-                        user: User(
-                          account: accountController.text,
-                          password: pwdController.text,
-                        ), 
-                      );
-                      Navigator.of(context).pushNamed('/main');
-                    }
-                  }
-                },
-                child: Text(
-                  '註冊並登入',
-                  style: TextStyle(
-                    fontSize: 24.0,
-                    color: '#F5F5DC'.toColor(),
-                  )
-                )
+              Consumer(
+                builder: (context, ref, child){
+                  return TextButton(
+                    onPressed: () async {
+                      if (accountController.text.length < 6){
+                        setState(() {
+                          showErrorHint = accountLengthErrorHint;
+                        });
+                      }
+                      else{
+                        List<String> userAccounts = await UserProvider.getAllUserAccounts();
+                        if (userAccounts.contains(accountController.text)){
+                          setState(() {
+                            showErrorHint = duplicateAccountErrorHint;
+                          });
+                        }
+                        else if (pwdController.text.length < 4){
+                          setState(() {
+                            showErrorHint = pwdLengthErrorHint;
+                          });
+                        }
+                        else if (pwdController.text != confirmPwdController.text){
+                          setState(() {
+                            showErrorHint = pwdConfirmErrorHint;
+                          });
+                        }
+                        else{
+                          ref.read(accountProvider.notifier).state = accountController.text;
+                          ref.read(pwdProvider.notifier).state = pwdController.text;
+                          Navigator.of(context).pushNamed('/safetyHintRegister');
+                        }
+                      }
+                    },
+                    child: Text(
+                      '下一步',
+                      style: TextStyle(
+                        fontSize: 24.0,
+                        color: '#F5F5DC'.toColor(),
+                      )
+                    )
+                  );
+                }
               )
             ]
           ),

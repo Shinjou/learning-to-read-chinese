@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:ltrc/data/models/user_model.dart';
+import 'package:ltrc/data/providers/user_provider.dart';
 import 'package:ltrc/extensions.dart';
 
 class ResetPwdAccountView extends StatefulWidget {
@@ -9,7 +11,7 @@ class ResetPwdAccountView extends StatefulWidget {
 }
 
 const String pwdLengthErrorHint = "帳號長度不足 6 位英/數字";
-const String pwdConfirmErrorHint = "確認密碼錯誤";
+const String noAccountErrorHint = "帳號輸入錯誤或不存在";
 
 class _ResetPwdAccountViewState extends State<ResetPwdAccountView> {
 
@@ -29,18 +31,32 @@ class _ResetPwdAccountViewState extends State<ResetPwdAccountView> {
     double deviceHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.chevron_left), 
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       resizeToAvoidBottomInset: false,
       backgroundColor: '#1E1E1E'.toColor(),
       body: SizedBox.expand(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            SizedBox(height: deviceHeight * 0.08),
+            SizedBox(height: deviceHeight * 0.15),
+            Text(
+              '忘記密碼',
+              style: TextStyle(
+                color: '#F5F5DC'.toColor(),
+                fontSize: 42.0,
+              )
+            ),
+            SizedBox(height: deviceHeight * 0.04),
             Text(
               '請輸入帳號',
               style: TextStyle(
                 color: '#F5F5DC'.toColor(),
-                fontSize: 46.0,
+                fontSize: 20.0,
               )
             ),
     
@@ -59,7 +75,6 @@ class _ResetPwdAccountViewState extends State<ResetPwdAccountView> {
                   style: TextStyle(
                     color: '#F5F5DC'.toColor(),
                     fontSize: 14,
-                    fontFamily: 'Serif'
                   )
                 )
               )
@@ -116,24 +131,35 @@ class _ResetPwdAccountViewState extends State<ResetPwdAccountView> {
                 child: Text(
                   showErrorHint,
                   style: TextStyle(
-                    color: '#F5F5DC'.toColor(),
+                    color: '#FF0303'.toColor(),
                     fontSize: 14,
-                    fontFamily: 'Serif'
                   )
                 )
               )
             ),
             SizedBox(height: deviceHeight * 0.0627),
             TextButton(
-              onPressed: () {
-                if (accountController.text.length < 4){
+              onPressed: () async {
+                try {
+                  if (accountController.text.length < 6){
+                    setState(() {
+                      showErrorHint = pwdLengthErrorHint;
+                    });
+                  }
+                  else {
+                    User user = await UserProvider.getUser(inputAccount: accountController.text);
+                    Navigator.of(context).pushNamed(
+                      '/safetyHintVerify', 
+                      arguments: {
+                        'user': user
+                      }
+                    );
+                  }
+                } catch (e){
                   setState(() {
-                    showErrorHint = pwdLengthErrorHint;
+                    showErrorHint = noAccountErrorHint;
                   });
-                }
-                // TODO: Update account to database
-                else{
-                  Navigator.of(context).pushNamed('/main');
+                  throw("[Reset Pwd Account] Find user account exception: $e");
                 }
               },
               child: Text(
