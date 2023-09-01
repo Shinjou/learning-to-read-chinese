@@ -1,26 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ltrc/extensions.dart';
 
-class RegisterAccountView extends StatefulWidget {
-  const RegisterAccountView({super.key});
+class ResetPasswordView extends StatefulWidget {
+  const ResetPasswordView({super.key});
 
   @override
-  State<RegisterAccountView> createState() => _RegisterAccountViewState();
+  State<ResetPasswordView> createState() => _ResetPasswordViewState();
 }
 
-const String accountLengthErrorHint = "帳號長度不足 6 位英/數字";
 const String pwdLengthErrorHint = "密碼長度不足 4 位英/數字";
 const String pwdConfirmErrorHint = "確認密碼錯誤";
 
-class _RegisterAccountViewState extends State<RegisterAccountView> {
+class _ResetPasswordViewState extends State<ResetPasswordView> {
 
-  bool showAccountHint = false;
   bool showPasswordHint = false;
   bool pwdVisible = false; 
   bool confirmPwdVisible = false;
   String showErrorHint = "";
-  TextEditingController accountController = TextEditingController();
   TextEditingController pwdController = TextEditingController();
   TextEditingController confirmPwdController = TextEditingController();
 
@@ -38,85 +34,22 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
     double deviceHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: '#1E1E1E'.toColor(),
-        leading: IconButton(icon: const Icon(Icons.chevron_left), onPressed: () => Navigator.pop(context),),
-      ),
       resizeToAvoidBottomInset: false,
       backgroundColor: '#1E1E1E'.toColor(),
       body: SizedBox.expand(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            SizedBox(height: deviceHeight * 0.15),
+            SizedBox(height: deviceHeight * 0.08),
             Text(
-              '學中文',
+              '重設密碼',
               style: TextStyle(
                 color: '#F5F5DC'.toColor(),
                 fontSize: 46.0,
-                fontFamily: 'Serif',
               )
             ),
-            SizedBox(height: deviceHeight * 0.096),
-            Visibility(
-              visible: showAccountHint,
-              maintainAnimation: true,
-              maintainSize: true,
-              maintainState: true,
-              child: Container(
-                height: 24,
-                width: 303,
-                alignment: AlignmentDirectional.topStart,
-                child: Text(
-                  '至少6個字母/數字',
-                  style: TextStyle(
-                    color: '#F5F5DC'.toColor(),
-                    fontSize: 14,
-                    fontFamily: 'Serif'
-                  )
-                )
-              )
-            ),
-            Container(
-              height: 60.0,
-              width: 303.0,
-              decoration: BoxDecoration(
-                color: '#7DDEF8'.toColor(),
-                borderRadius: BorderRadius.circular(5),
-                border: Border.all(width: 5.0, color: '#F5F5DC'.toColor())
-              ),
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 6.0),
-                child: Focus(
-                  onFocusChange: (hasFocus) {
-                    setState(() {
-                      showAccountHint = !showAccountHint;
-                      if (showErrorHint == accountLengthErrorHint && accountController.text.length >= 6){
-                        showErrorHint = "";
-                      }
-                    });
-                  },
-                  child: TextField(
-                    controller: accountController,
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(
-                        Icons.account_circle,
-                        size: 30.0,
-                        color: '#1C1B1F'.toColor(),
-                      ),
-                      hintText: '帳號名稱',
-                      hintStyle: TextStyle(
-                        fontSize: 20.0,
-                        fontFamily: 'Serif',
-                        color: '#013E6D'.toColor()
-                      ),
-                      enabledBorder: InputBorder.none,
-                    )
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(height: deviceHeight * 0.012),
+    
+            SizedBox(height: deviceHeight * 0.08),
             Visibility(
               visible: showPasswordHint,
               maintainAnimation: true,
@@ -166,9 +99,8 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
                         ),
                         hintText: '密碼',
                         hintStyle: TextStyle(
-                            fontSize: 20.0,
-                            fontFamily: 'Serif',
-                            color: '#013E6D'.toColor()
+                          fontSize: 20.0,
+                          color: '#013E6D'.toColor()
                         ),
                         enabledBorder: InputBorder.none,
                         suffixIcon: IconButton(
@@ -207,7 +139,6 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
                       hintText: '確認密碼',
                       hintStyle: TextStyle(
                           fontSize: 20.0,
-                          fontFamily: 'Serif',
                           color: '#013E6D'.toColor()
                       ),
                       enabledBorder: InputBorder.none,
@@ -245,12 +176,7 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
             SizedBox(height: deviceHeight * 0.0627),
             TextButton(
               onPressed: () {
-                if (accountController.text.length < 6){
-                  setState(() {
-                    showErrorHint = accountLengthErrorHint;
-                  });
-                }
-                else if (pwdController.text.length < 4){
+                if (pwdController.text.length < 4){
                   setState(() {
                     showErrorHint = pwdLengthErrorHint;
                   });
@@ -260,16 +186,15 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
                     showErrorHint = pwdConfirmErrorHint;
                   });
                 }
-                // TODO: Check if account is created before.
+                // TODO: Update account to database
                 else{
-                  Navigator.of(context).pushNamed('/register');
+                  Navigator.of(context).pushNamed('/main');
                 }
               },
               child: Text(
-                '註冊並登入',
+                '完成',
                 style: TextStyle(
                   fontSize: 24.0,
-                  fontFamily: 'Serif',
                   color: '#F5F5DC'.toColor(),
                 )
               )
