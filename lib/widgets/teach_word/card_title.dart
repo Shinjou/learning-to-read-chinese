@@ -9,21 +9,21 @@ class TeachWordCardTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        width: MediaQuery.of(context).size.width * 0.44,
-        height: 38,
-        alignment: Alignment.center,
-        margin: const EdgeInsets.all(8.0),
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(38 / 2)),
-          color: iconsColor,
+      width: MediaQuery.of(context).size.width * 0.44,
+      height: 38,
+      alignment: Alignment.center,
+      margin: const EdgeInsets.all(8.0),
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.all(Radius.circular(38 / 2)),
+        color: iconsColor,
+      ),
+      child: Text(
+        sectionName,
+        style: const TextStyle(
+          fontSize: 24,
+          fontWeight: FontWeight.w900,
         ),
-        child: Text(
-          sectionName,
-          style: const TextStyle(
-            fontSize: 24,
-            fontFamily: 'Serif',
-            fontWeight: FontWeight.w900,
-          ),
-        ));
+      )
+    );
   }
 }

@@ -2,14 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:ltrc/extensions.dart';
 
 import '../contants/arabic_numerals_to_chinese.dart';
+import '../data/models/unit_model.dart';
 
-class UnitsView extends StatelessWidget {
+class UnitsView extends StatefulWidget {
+  
   const UnitsView({super.key});
 
   @override
+  _UnitsViewState createState() => _UnitsViewState();
+}
+class _UnitsViewState extends State<UnitsView> {
+  @override
+  void initState() {
+    super.initState();
+  }
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    const units = ["手拉手", "排一排", "來數數", "找一找", "雨來了",
-      "山坡上的學校", "值日生", "運動會", "做卡片"];
+    
+    dynamic obj = ModalRoute.of(context)!.settings.arguments;
+    List<Unit> units = obj["units"];
+    
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(icon: const Icon(Icons.chevron_left), onPressed: () => Navigator.pop(context),),
@@ -22,7 +39,7 @@ class UnitsView extends StatelessWidget {
       body: CustomScrollView(
           slivers: [
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(46, 20, 46, 14),
+              padding: const EdgeInsets.fromLTRB(23, 20, 23, 14),
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (BuildContext context, int idx){
@@ -53,7 +70,7 @@ class UnitsView extends StatelessWidget {
               ),
             ),
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(46, 14, 46, 20),
+              padding: const EdgeInsets.fromLTRB(23, 14, 23, 20),
                 sliver: SliverGrid(
                 gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                   maxCrossAxisExtent: 180.0,
@@ -66,9 +83,14 @@ class UnitsView extends StatelessWidget {
                     String? classNum = numeralToChinese[index+1];
                     return InkWell( 
                       onTap: (){
-                        Navigator.of(context).pushNamed('/words');
+                        Navigator.of(context).pushNamed(
+                          '/words', 
+                          arguments: {'unit' : units[index]}
+                        );
                       },
                       child: Container(
+                        width: 140,
+                        height: 140,
                         decoration: BoxDecoration(
                           borderRadius: const BorderRadius.all(Radius.circular(14)),
                           color: "#013E6D".toColor(),
@@ -84,7 +106,7 @@ class UnitsView extends StatelessWidget {
                               )
                             ),
                             Text(
-                              units[index], 
+                              units[index].unitTitle, 
                               style: TextStyle(
                                 fontSize: 24,
                                 color: "#F5F5DC".toColor(),
