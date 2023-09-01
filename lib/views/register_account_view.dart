@@ -279,7 +279,7 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
                           password: pwdController.text,
                         ), 
                       );
-                      Navigator.of(context).pushNamed('/register');
+                      Navigator.of(context).pushNamed('/main');
                     }
                   }
                 },

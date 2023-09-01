@@ -129,13 +129,13 @@ class _LogInViewState extends State<LogInView> {
                 )
             ),
             Center(
-              child: Container(
+              child: SizedBox(
                 height: 50.0,
                 width: 303.0,
                 child: Align(
                   alignment: AlignmentDirectional.bottomEnd,
                   child: TextButton(
-                    onPressed: () {},
+                    onPressed: () => Navigator.of(context).pushNamed('/resetPwdAccount'),
                     style: TextButton.styleFrom(
                       fixedSize: const Size(110, 14),
                     ),
@@ -168,7 +168,7 @@ class _LogInViewState extends State<LogInView> {
                 )
               )
             ),
-            SizedBox(height: deviceHeight * 0.0379),
+            SizedBox(height: deviceHeight * 0.038),
             Center(
               child: Row(
                 mainAxisSize: MainAxisSize.min,

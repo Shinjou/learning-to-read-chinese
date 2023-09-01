@@ -1,30 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:ltrc/extensions.dart';
 
-class ResetPasswordView extends StatefulWidget {
-  const ResetPasswordView({super.key});
+class ResetPwdAccountView extends StatefulWidget {
+  const ResetPwdAccountView({super.key});
 
   @override
-  State<ResetPasswordView> createState() => _ResetPasswordViewState();
+  State<ResetPwdAccountView> createState() => _ResetPwdAccountViewState();
 }
 
-const String pwdLengthErrorHint = "密碼長度不足 4 位英/數字";
+const String pwdLengthErrorHint = "帳號長度不足 6 位英/數字";
 const String pwdConfirmErrorHint = "確認密碼錯誤";
 
-class _ResetPasswordViewState extends State<ResetPasswordView> {
+class _ResetPwdAccountViewState extends State<ResetPwdAccountView> {
 
-  bool showPasswordHint = false;
-  bool pwdVisible = false; 
-  bool confirmPwdVisible = false;
+  bool showAccountHint = false;
   String showErrorHint = "";
-  TextEditingController pwdController = TextEditingController();
-  TextEditingController confirmPwdController = TextEditingController();
+  TextEditingController accountController = TextEditingController();
 
   @override
   void initState(){
-    super.initState();
-    pwdVisible = true; 
-    confirmPwdVisible = true;
+    super.initState(); 
     showErrorHint = "";
   }  
 
@@ -51,7 +46,7 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
     
             SizedBox(height: deviceHeight * 0.08),
             Visibility(
-              visible: showPasswordHint,
+              visible: showAccountHint,
               maintainAnimation: true,
               maintainSize: true,
               maintainState: true,
@@ -70,52 +65,43 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
               )
             ),
             Container(
-                height: 60.0,
-                width: 303.0,
-                decoration: BoxDecoration(
-                    color: '#7DDEF8'.toColor(),
-                    borderRadius: BorderRadius.circular(5),
-                    border: Border.all(width: 5.0, color: '#F5F5DC'.toColor())
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
-                  child: Focus(
-                    onFocusChange: (hasFocus){
-                      setState(() {
-                        showPasswordHint = !showPasswordHint;
-                        if (showErrorHint == pwdLengthErrorHint && pwdController.text.length >= 4){
-                          showErrorHint = "";
-                        }}
-                      );
-                    },
-                    child: TextField(
-                      controller: pwdController,
-                      obscureText: pwdVisible,
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(
-                          Icons.lock,
-                          size: 30.0,
-                          color: '#1C1B1F'.toColor(),
-                        ),
-                        hintText: '請輸入帳號',
-                        hintStyle: TextStyle(
-                          fontSize: 20.0,
-                          color: '#013E6D'.toColor()
-                        ),
-                        enabledBorder: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        suffixIcon: IconButton(
-                          icon: Icon(pwdVisible ? Icons.visibility : Icons.visibility_off),
-                          onPressed: () {
-                            setState(() {
-                              pwdVisible = !pwdVisible;
-                            });
-                          },
-                        ),
-                      )
-                    ),
+              height: 60.0,
+              width: 303.0,
+              decoration: BoxDecoration(
+                color: '#7DDEF8'.toColor(),
+                borderRadius: BorderRadius.circular(5),
+                border: Border.all(width: 5.0, color: '#F5F5DC'.toColor())
+              ),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
+                child: Focus(
+                  onFocusChange: (hasFocus){
+                    setState(() {
+                      showAccountHint = !showAccountHint;
+                      if (showErrorHint == pwdLengthErrorHint && accountController.text.length >= 4){
+                        showErrorHint = "";
+                      }}
+                    );
+                  },
+                  child: TextField(
+                    controller: accountController,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(
+                        Icons.account_circle,
+                        size: 30.0,
+                        color: '#1C1B1F'.toColor(),
+                      ),
+                      hintText: '請輸入帳號',
+                      hintStyle: TextStyle(
+                        fontSize: 20.0,
+                        color: '#013E6D'.toColor()
+                      ),
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                    )
                   ),
-                )
+                ),
+              )
             ),
             
             Visibility(
@@ -140,14 +126,9 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
             SizedBox(height: deviceHeight * 0.0627),
             TextButton(
               onPressed: () {
-                if (pwdController.text.length < 4){
+                if (accountController.text.length < 4){
                   setState(() {
                     showErrorHint = pwdLengthErrorHint;
-                  });
-                }
-                else if (pwdController.text != confirmPwdController.text){
-                  setState(() {
-                    showErrorHint = pwdConfirmErrorHint;
                   });
                 }
                 // TODO: Update account to database
