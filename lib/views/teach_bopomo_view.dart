@@ -7,50 +7,34 @@ import 'package:ltrc/extensions.dart';
 import 'package:ltrc/widgets/teach_word/tab_bar_view.dart';
 import 'package:ltrc/widgets/teach_word/stroke_order_animator.dart';
 import 'package:ltrc/widgets/teach_word/stroke_order_animation_controller.dart';
-// import 'package:ltrc/data/providers/word_provider.dart';
-// import 'package:ltrc/data/models/word_model.dart';
 import 'package:provider/provider.dart';
 import '../widgets/word_card.dart';
-// import 'package:ltrc/views/get_svg.dart';
 
-class TeachWordView extends StatefulWidget {
-  const TeachWordView({super.key});
+// const String demoChar = "";
+
+class TeachBopomoView extends StatefulWidget {
+  const TeachBopomoView({super.key});
 
   @override
-  State<TeachWordView> createState() => _TeachWordViewState();
+  State<TeachBopomoView> createState() => _TeachBopomoViewState();
 }
 
-class _TeachWordViewState extends State<TeachWordView>
+class _TeachBopomoViewState extends State<TeachBopomoView>
     with TickerProviderStateMixin {
   late StrokeOrderAnimationController _strokeOrderAnimationControllers;
   late TabController _tabController;
   FlutterTts ftts = FlutterTts();
-  String vocab = "手機";
-  // late Word wordVocab;
+  String vocab = "水杯";
 
-  // String svg = "";
+  // String svg = "ㄠ";
 
   Future<String> readJson() async {
     final String response =
-        await rootBundle.loadString('lib/assets/svg/word.json');
-    Map<String, dynamic> svg = jsonDecode(response)[demoChar];
+        await rootBundle.loadString('lib/assets/svg/bopomo.json');
+    Map<String, dynamic> svg = jsonDecode(response)["ㄅ"];
     String svgStr = jsonEncode(svg);
     return svgStr.replaceAll("\"", "\'");
-    // return response;
   }
-
-  // Future<Word> getVocab() async {
-  //   // final Word word_ = await WordProvider.getWord(inputWord: demoChar);
-  //   final Word word_ = await WordProvider.getWord(inputWord: "手");
-  //   print(word_.sentence1);
-  //   return word_;
-  //   // return response;
-  // }
-  // Future<String> readJson() async {
-  //   final String response =
-  //       await rootBundle.loadString('lib/assets/svg/' + demoChar + '.json');
-  //   return response.replaceAll("\"", "\'");
-  // }
 
   @override
   void initState() {
@@ -74,12 +58,6 @@ class _TeachWordViewState extends State<TeachWordView>
         );
       });
     });
-    // getVocab().then((result) {
-    //   setState(() {
-    //     wordVocab = result;
-    //   });
-    //   print(wordVocab.sentence1);
-    // });
     super.initState();
   }
 
@@ -115,7 +93,7 @@ class _TeachWordViewState extends State<TeachWordView>
               onPressed: () => Navigator.pop(context),
             ),
             centerTitle: true,
-            title: const Text("1|手拉手"),
+            title: const Text("0|學注音"),
             titleTextStyle: TextStyle(
               color: "#F5F5DC".toColor(),
               fontSize: 34,
@@ -153,9 +131,9 @@ class _TeachWordViewState extends State<TeachWordView>
                     isBpmf: isBpmf,
                     sectionName: '看一看',
                     content: Image(
-                      width: 300,
-                      image:
-                          AssetImage('lib/assets/img/oldWords/$demoChar.png'),
+                      height: 75,
+                      image: AssetImage(
+                          'lib/assets/img/bopomofo/' + demoChar + '.png'),
                     )),
                 TeachWordTabBarView(
                     unitTitle: unitTitle,
@@ -165,18 +143,15 @@ class _TeachWordViewState extends State<TeachWordView>
                     content: Column(
                       children: [
                         Container(
-                          height: 320,
+                          height: 300,
                           alignment: Alignment.center,
                           child: Text(demoChar,
                               textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                  fontSize: 150,
+                              style: TextStyle(
+                                  fontSize: 175,
                                   color: Color.fromRGBO(245, 245, 220, 100),
-                                  fontFamily: 'Serif',
+                                  fontFamily: 'BpmfOnly',
                                   fontWeight: FontWeight.w100)),
-                        ),
-                        const SizedBox(
-                          height: 25,
                         ),
                         Container(
                           alignment: Alignment.bottomLeft,
@@ -186,12 +161,8 @@ class _TeachWordViewState extends State<TeachWordView>
                               children: [
                                 IconButton(
                                     iconSize: 35,
-                                    color: const Color.fromRGBO(
-                                        245, 245, 220, 100),
+                                    color: Color.fromRGBO(245, 245, 220, 100),
                                     onPressed: () async {
-                                      await ftts.setSpeechRate(0.5);
-                                      await ftts.setVolume(1.0);
-
                                       var result = await ftts.speak(demoChar);
                                       if (result == 1) {
                                       } else {}
@@ -225,9 +196,6 @@ class _TeachWordViewState extends State<TeachWordView>
                           width: 300,
                           child: Column(
                             children: <Widget>[
-                              const SizedBox(
-                                height: 20,
-                              ),
                               Container(
                                 decoration: const BoxDecoration(
                                   image: DecorationImage(
@@ -242,13 +210,10 @@ class _TeachWordViewState extends State<TeachWordView>
                                   ),
                                 ),
                               ),
-                              const SizedBox(
-                                height: 10,
-                              ),
                               Flexible(
                                 child: GridView(
                                   gridDelegate:
-                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                      SliverGridDelegateWithFixedCrossAxisCount(
                                     childAspectRatio: 2,
                                     crossAxisCount: 4,
                                     mainAxisSpacing: 6,
@@ -257,15 +222,21 @@ class _TeachWordViewState extends State<TeachWordView>
                                   children: <Widget>[
                                     IconButton(
                                       iconSize: 35,
-                                      color: const Color.fromRGBO(
-                                          245, 245, 220, 100),
+                                      color: Color.fromRGBO(245, 245, 220, 100),
                                       isSelected: controller.isAnimating,
                                       icon: const Icon(Icons.play_arrow),
                                       selectedIcon: const Icon(Icons.pause),
                                       onPressed: !controller.isQuizzing
-                                          ? () {
+                                          ? () async {
                                               if (!controller.isAnimating) {
                                                 controller.startAnimation();
+                                                var result =
+                                                    await ftts.speak(demoChar);
+                                                if (result == 1) {
+                                                  //speaking
+                                                } else {
+                                                  //not speaking
+                                                }
                                               } else {
                                                 controller.stopAnimation();
                                               }
@@ -274,14 +245,20 @@ class _TeachWordViewState extends State<TeachWordView>
                                     ),
                                     IconButton(
                                       iconSize: 35,
-                                      color: const Color.fromRGBO(
-                                          245, 245, 220, 100),
+                                      color: Color.fromRGBO(245, 245, 220, 100),
                                       isSelected: controller.isQuizzing,
                                       icon: const Icon(Icons.edit),
                                       selectedIcon: const Icon(Icons.edit_off),
-                                      onPressed: () {
+                                      onPressed: () async {
                                         if (!controller.isQuizzing) {
                                           controller.startQuiz();
+                                          var result =
+                                              await ftts.speak(demoChar);
+                                          if (result == 1) {
+                                            //speaking
+                                          } else {
+                                            //not speaking
+                                          }
                                         } else {
                                           controller.stopQuiz();
                                         }
@@ -289,8 +266,7 @@ class _TeachWordViewState extends State<TeachWordView>
                                     ),
                                     IconButton(
                                       iconSize: 35,
-                                      color: const Color.fromRGBO(
-                                          245, 245, 220, 100),
+                                      color: Color.fromRGBO(245, 245, 220, 100),
                                       isSelected: controller.showOutline,
                                       icon: const Icon(
                                           Icons.remove_red_eye_outlined),
@@ -303,8 +279,7 @@ class _TeachWordViewState extends State<TeachWordView>
                                     ),
                                     IconButton(
                                       iconSize: 35,
-                                      color: const Color.fromRGBO(
-                                          245, 245, 220, 100),
+                                      color: Color.fromRGBO(245, 245, 220, 100),
                                       icon: const Icon(Icons.restart_alt),
                                       onPressed: () {
                                         controller.reset();
@@ -360,34 +335,63 @@ class _TeachWordViewState extends State<TeachWordView>
                     content: Column(
                       children: [
                         Container(
-                          height: 320,
+                          height: 340,
                           alignment: Alignment.center,
                           child: Column(
                             children: [
-                              const SizedBox(
-                                height: 20,
-                              ),
                               Text(vocab,
                                   textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                    fontSize: 70,
+                                  style: TextStyle(
+                                    fontSize: 55,
                                     color: Color.fromRGBO(245, 245, 220, 100),
-                                    fontFamily: 'Serif',
+                                    fontFamily: 'BpmfOnly',
                                   )),
+                              // SizedBox(
+                              //   height: 10,
+                              // ),
+                              Image(
+                                height: 140,
+                                image: AssetImage('lib/assets/img/bopomofo/' +
+                                    demoChar +
+                                    '.png'),
+                              ),
                               SizedBox(
                                 height: 10,
                               ),
-                              Image(
-                                height: 190,
-                                image: AssetImage(
-                                    'lib/assets/img/word/$vocab.png'),
-                              ),
+                              Text.rich(
+                                  textAlign: TextAlign.center,
+                                  TextSpan(
+                                      text: '媽媽拿起',
+                                      style: TextStyle(
+                                        height: 1.1,
+                                        fontSize: 48,
+                                        color:
+                                            Color.fromRGBO(245, 245, 220, 100),
+                                        fontFamily: "BpmfOnly",
+                                      ),
+                                      children: <InlineSpan>[
+                                        TextSpan(
+                                          text: '水杯',
+                                          style: TextStyle(
+                                            // fontWeight: FontWeight.bold,
+                                            color: Color.fromRGBO(
+                                                228, 219, 124, 1),
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: '，將水全部喝完。',
+                                          // style: TextStyle(
+                                          // fontWeight: FontWeight.bold,
+                                          // color: Color.fromRGBO(228, 219, 124, 1),
+                                          // ),
+                                        ),
+                                      ])),
                             ],
                           ),
                         ),
-                        const SizedBox(
-                          height: 25,
-                        ),
+                        // SizedBox(
+                        //   height: 30,
+                        // ),
                         Container(
                           alignment: Alignment.bottomLeft,
                           child: Padding(
@@ -396,10 +400,14 @@ class _TeachWordViewState extends State<TeachWordView>
                               children: [
                                 IconButton(
                                     iconSize: 35,
-                                    color: const Color.fromRGBO(
-                                        245, 245, 220, 100),
+                                    color: Color.fromRGBO(245, 245, 220, 100),
                                     onPressed: () async {
-                                      var result = await ftts.speak(vocab);
+                                      await ftts.setLanguage("zh-tw");
+                                      await ftts.setSpeechRate(0.5);
+                                      await ftts.setVolume(1.0);
+
+                                      var result =
+                                          await ftts.speak('水杯。媽媽拿起水杯，將水全部喝完。');
                                       if (result == 1) {
                                         //speaking
                                       } else {
