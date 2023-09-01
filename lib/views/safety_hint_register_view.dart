@@ -137,6 +137,7 @@ class _SafetyHintRegisterState extends State<SafetyHintRegisterView> {
                       color: '#013E6D'.toColor()
                     ),
                     enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
                   )
                 ),
               ),
@@ -191,6 +192,7 @@ class _SafetyHintRegisterState extends State<SafetyHintRegisterView> {
                       color: '#013E6D'.toColor()
                     ),
                     enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
                   )
                 ),
               ),
