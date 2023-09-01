@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:ltrc/data/models/unit_model.dart';
+import 'package:ltrc/data/providers/unit_provider.dart';
 import 'package:ltrc/extensions.dart';
 import 'package:ltrc/widgets/progressBar.dart';
 
@@ -37,7 +39,6 @@ class MainPageView extends StatelessWidget {
                 style: TextStyle(
                   color: '#F5F5DC'.toColor(),
                   fontSize: 46,
-                  fontFamily: 'Serif'
                 )
               )
             ),
@@ -47,7 +48,16 @@ class MainPageView extends StatelessWidget {
                 width: deviceWidth * 0.76,
                 height: deviceHeight * 0.095,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                    List<Unit> units = await UnitProvider.getUnits(
+                      inputGrade: 3,
+                      inputSemester: "上"
+                    );
+                    Navigator.of(context).pushNamed(
+                      '/units', 
+                      arguments: {'units' : units},
+                    );
+                  },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all('#013E6D'.toColor()),
                     elevation: MaterialStateProperty.all(25),
@@ -62,21 +72,19 @@ class MainPageView extends StatelessWidget {
                     style: TextStyle(
                       color: '#F5F5DC'.toColor(),
                       fontSize: 32,
-                      fontFamily: 'Serif'
                     )
                   )
                 ),
               )
             ),
             Text(
-                '收集生字卡',
-                style: TextStyle(
-                    color: '#F5F5DC'.toColor(),
-                    fontSize: 22,
-                    fontFamily: 'Serif'
-                )
+              '收集生字卡',
+              style: TextStyle(
+                color: '#F5F5DC'.toColor(),
+                fontSize: 22,
+              )
             ),
-            ProgressBar(value: 0.0)
+            const ProgressBar(value: 0.0)
           ]
         ),
       )
