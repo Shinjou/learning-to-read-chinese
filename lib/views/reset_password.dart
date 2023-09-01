@@ -78,7 +78,7 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
                     border: Border.all(width: 5.0, color: '#F5F5DC'.toColor())
                 ),
                 child: Padding(
-                  padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 6.0),
+                  padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
                   child: Focus(
                     onFocusChange: (hasFocus){
                       setState(() {
@@ -103,6 +103,7 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
                           color: '#013E6D'.toColor()
                         ),
                         enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
                         suffixIcon: IconButton(
                           icon: Icon(pwdVisible ? Icons.visibility : Icons.visibility_off),
                           onPressed: () {
@@ -126,7 +127,7 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
                     border: Border.all(width: 5.0, color: '#F5F5DC'.toColor())
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 6.0),
+                  padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
                   child: TextField(
                     controller: confirmPwdController,
                     obscureText: confirmPwdVisible,
@@ -142,6 +143,7 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
                           color: '#013E6D'.toColor()
                       ),
                       enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
                       suffixIcon: IconButton(
                         icon: Icon(confirmPwdVisible ? Icons.visibility : Icons.visibility_off),
                         onPressed: () {
