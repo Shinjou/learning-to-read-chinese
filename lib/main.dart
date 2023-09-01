@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ltrc/views/log_in_view.dart';
+
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import 'package:ltrc/contants/routes.dart';
 import 'package:ltrc/extensions.dart';
-import 'package:ltrc/views/bopomo_spelling.dart';
-import 'package:ltrc/views/bopomos_view.dart';
-import 'package:ltrc/views/log_in_view.dart';
 import 'package:ltrc/views/main_page_view.dart';
 import 'package:ltrc/views/register_account_view.dart';
-import 'package:ltrc/views/register_view.dart';
-import 'package:ltrc/views/setting_view.dart';
-import 'package:ltrc/views/teach_word_view.dart';
-import 'package:ltrc/views/units_view.dart';
-// import 'package:ltrc/views/units_view.dart';
-import 'package:ltrc/views/words_view.dart';
 
-void main() {
+
+
+Future main() async{
+  sqfliteFfiInit();
+  // var databaseFactory = databaseFactoryFfi;
+  // databaseFactory = databaseFactoryFfi;
   runApp(ProviderScope(child: MyApp()));
 }
 
@@ -33,6 +32,7 @@ class MyApp extends ConsumerWidget {
             color: "#28231D".toColor()),
         scaffoldBackgroundColor: "#28231D".toColor(),
         useMaterial3: true,
+        fontFamily: 'Serif',
       ),
       routes: AppRoutes.define(),
       home: const HomePage(),
@@ -45,6 +45,6 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const RegisterView();
+    return const LogInView();
   }
 }
