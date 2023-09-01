@@ -4,12 +4,17 @@ class LeftRightSwitch extends StatelessWidget {
   final Color iconsColor;
   final double iconsSize;
   final Widget middleWidget;
-  const LeftRightSwitch(
-      {Key? key,
-      required this.iconsColor,
-      required this.iconsSize,
-      required this.middleWidget})
-      : super(key: key);
+  final VoidCallback? onLeftClicked;
+  final VoidCallback? onRightClicked;
+
+  const LeftRightSwitch({
+    Key? key,
+    required this.iconsColor,
+    required this.iconsSize,
+    required this.middleWidget,
+    this.onLeftClicked,
+    this.onRightClicked,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +30,7 @@ class LeftRightSwitch extends StatelessWidget {
             color: iconsColor,
           ),
           iconSize: iconsSize,
-          onPressed: () {},
+          onPressed: onLeftClicked ?? ()=>{},
         ),
         middleWidget,
         IconButton(
@@ -37,7 +42,7 @@ class LeftRightSwitch extends StatelessWidget {
             color: iconsColor,
           ),
           iconSize: iconsSize,
-          onPressed: () {},
+          onPressed: onRightClicked ?? ()=>{},
         )
       ],
     );
