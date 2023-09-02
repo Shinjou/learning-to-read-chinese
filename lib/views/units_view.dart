@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ltrc/data/models/word_status_model.dart';
 import 'package:ltrc/data/providers/word_status_provider.dart';
 import 'package:ltrc/extensions.dart';
+import 'package:ltrc/providers.dart';
 import 'package:provider/provider.dart';
 
 import '../contants/arabic_numerals_to_chinese.dart';
