@@ -87,7 +87,7 @@ class _UnitsViewState extends State<UnitsView> {
                     String? classNum = numeralToChinese[index+1];
                     return Consumer(
                       builder: (context, ref, child) {
-                        InkWell( 
+                        return InkWell( 
                           onTap: () async {
                             Unit unit = units[index];
                             await WordStatusProvider.addWordsStatus(
