@@ -70,6 +70,10 @@ class _TeachWordViewState extends State<TeachWordView>
 
   @override
   Widget build(BuildContext context) {
+    String word;
+    dynamic obj = ModalRoute.of(context)!.settings.arguments;
+    word = obj["word"];
+    
     return DefaultTabController(
       length: teachWordTabs.length,
       child: Scaffold(
@@ -80,12 +84,13 @@ class _TeachWordViewState extends State<TeachWordView>
             titleTextStyle: TextStyle(
               color: "#F5F5DC".toColor(),
               fontSize: 34,
-              fontFamily: 'Serif',
               fontWeight: FontWeight.w900,
             ),
             actions: <Widget>[
               IconButton(
-                  onPressed: () => {}, icon: const Icon(Icons.home_filled)),
+                onPressed: () => Navigator.of(context).pushNamed('/mainPage'),
+                icon: const Icon(Icons.home_filled)
+              ),
             ],
             bottom: TabBar(
               tabs: teachWordTabs,
@@ -126,7 +131,6 @@ class _TeachWordViewState extends State<TeachWordView>
                               style: TextStyle(
                                   fontSize: 150,
                                   color: Color.fromRGBO(245, 245, 220, 100),
-                                  fontFamily: 'Serif',
                                   fontWeight: FontWeight.w100)),
                         ),
                         Container(
@@ -153,7 +157,6 @@ class _TeachWordViewState extends State<TeachWordView>
                                     style: TextStyle(
                                       fontSize: 17.5,
                                       color: Color.fromRGBO(245, 245, 220, 100),
-                                      fontFamily: 'Serif',
                                     )),
                               ],
                             ),
@@ -232,12 +235,11 @@ class _TeachWordViewState extends State<TeachWordView>
                                       color: Color.fromRGBO(245, 245, 220, 100),
                                       isSelected: controller.showOutline,
                                       icon: const Icon(
-                                          Icons.remove_red_eye_outlined),
+                                        Icons.remove_red_eye_outlined),
                                       selectedIcon:
-                                          const Icon(Icons.remove_red_eye),
+                                        const Icon(Icons.remove_red_eye),
                                       onPressed: () {
-                                        controller.setShowOutline(
-                                            !controller.showOutline);
+                                        controller.setShowOutline(!controller.showOutline);
                                       },
                                     ),
                                     IconButton(
@@ -249,37 +251,36 @@ class _TeachWordViewState extends State<TeachWordView>
                                       },
                                     ),
                                     const Text('筆順',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize: 17.5,
-                                          color: Color.fromRGBO(
-                                              245, 245, 220, 100),
-                                          fontFamily: 'Serif',
-                                        )),
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 17.5,
+                                        color: Color.fromRGBO(
+                                            245, 245, 220, 100),
+                                      )
+                                    ),
                                     const Text('寫字',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize: 17.5,
-                                          color: Color.fromRGBO(
-                                              245, 245, 220, 100),
-                                          fontFamily: 'Serif',
-                                        )),
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 17.5,
+                                        color: Color.fromRGBO(
+                                            245, 245, 220, 100),
+                                      )
+                                    ),
                                     const Text('邊框',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize: 17.5,
-                                          color: Color.fromRGBO(
-                                              245, 245, 220, 100),
-                                          fontFamily: 'Serif',
-                                        )),
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 17.5,
+                                        color: Color.fromRGBO(
+                                            245, 245, 220, 100),
+                                      )
+                                    ),
                                     const Text('重新',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize: 17.5,
-                                          color: Color.fromRGBO(
-                                              245, 245, 220, 100),
-                                          fontFamily: 'Serif',
-                                        )),
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 17.5,
+                                        color: Color.fromRGBO(55, 55, 24, 0.612)
+                                      )
+                                    ),
                                   ],
                                 ),
                               ),
@@ -304,7 +305,6 @@ class _TeachWordViewState extends State<TeachWordView>
                                   style: TextStyle(
                                     fontSize: 70,
                                     color: Color.fromRGBO(245, 245, 220, 100),
-                                    fontFamily: 'Serif',
                                   )),
                               SizedBox(
                                 height: 10,
@@ -344,7 +344,6 @@ class _TeachWordViewState extends State<TeachWordView>
                                     style: TextStyle(
                                       fontSize: 17.5,
                                       color: Color.fromRGBO(245, 245, 220, 100),
-                                      fontFamily: 'Serif',
                                     )),
                               ],
                             ),
