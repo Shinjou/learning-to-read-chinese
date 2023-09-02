@@ -73,7 +73,9 @@ class WordProvider {
     );
   }
 
-  static void closeDb(){
-    database!.close();
+  static void closeDb() async{
+    await deleteDatabase(
+      join(await getDatabasesPath(), 'words.sqlite')
+    );
   }
 }

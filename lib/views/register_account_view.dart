@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/data/models/user_model.dart';
 import 'package:ltrc/data/providers/user_provider.dart';
 import 'package:ltrc/extensions.dart';
+import 'package:ltrc/providers.dart';
 
 class RegisterAccountView extends StatefulWidget {
   const RegisterAccountView({super.key});
@@ -89,7 +91,7 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
                 width: 303.0,
                 decoration: BoxDecoration(
                   color: '#7DDEF8'.toColor(),
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(5),
                   border: Border.all(width: 5.0, color: '#F5F5DC'.toColor())
                 ),
                 child: Padding(
@@ -143,92 +145,93 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
                 )
               ),
               Container(
-                  height: 60.0,
-                  width: 303.0,
-                  decoration: BoxDecoration(
-                    color: '#7DDEF8'.toColor(),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(width: 5.0, color: '#F5F5DC'.toColor())
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
-                    child: Focus(
-                      onFocusChange: (hasFocus){
-                        setState(() {
-                          showPasswordHint = !showPasswordHint;
-                          if (showErrorHint == pwdLengthErrorHint && pwdController.text.length >= 4){
-                            showErrorHint = "";
-                          }}
-                        );
-                      },
-                      child: TextField(
-                        controller: pwdController,
-                        obscureText: pwdVisible,
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(
-                            Icons.lock,
-                            size: 30.0,
-                            color: '#1C1B1F'.toColor(),
-                          ),
-                          hintText: '密碼',
-                          hintStyle: TextStyle(
-                              fontSize: 20.0,
-                              color: '#013E6D'.toColor()
-                          ),
-                          focusedBorder: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          suffixIcon: IconButton(
-                            icon: Icon(pwdVisible ? Icons.visibility : Icons.visibility_off),
-                            onPressed: () {
-                              setState(() {
-                                pwdVisible = !pwdVisible;
-                              });
-                            },
-                          ),
-                        )
-                      ),
-                    ),
-                  )
-              ),
-              SizedBox(height: deviceHeight * 0.0343),
-              Container(
-                  height: 60.0,
-                  width: 303.0,
-                  decoration: BoxDecoration(
-                      color: '#7DDEF8'.toColor(),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(width: 5.0, color: '#F5F5DC'.toColor())
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
+                height: 60.0,
+                width: 303.0,
+                decoration: BoxDecoration(
+                  color: '#7DDEF8'.toColor(),
+                  borderRadius: BorderRadius.circular(5),
+                  border: Border.all(width: 5.0, color: '#F5F5DC'.toColor())
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
+                  child: Focus(
+                    onFocusChange: (hasFocus){
+                      setState(() {
+                        showPasswordHint = !showPasswordHint;
+                        if (showErrorHint == pwdLengthErrorHint && pwdController.text.length >= 4){
+                          showErrorHint = "";
+                        }}
+                      );
+                    },
                     child: TextField(
-                      controller: confirmPwdController,
-                      obscureText: confirmPwdVisible,
+                      controller: pwdController,
+                      obscureText: pwdVisible,
                       decoration: InputDecoration(
                         prefixIcon: Icon(
                           Icons.lock,
                           size: 30.0,
                           color: '#1C1B1F'.toColor(),
                         ),
-                        hintText: '確認密碼',
+                        hintText: '密碼',
                         hintStyle: TextStyle(
-                            fontSize: 20.0,
-                            color: '#013E6D'.toColor()
+                          fontSize: 20.0,
+                          color: '#013E6D'.toColor()
                         ),
-                        enabledBorder: InputBorder.none,
                         focusedBorder: InputBorder.none,
+                        enabledBorder: InputBorder.none,
                         suffixIcon: IconButton(
-                          icon: Icon(confirmPwdVisible ? Icons.visibility : Icons.visibility_off),
+                          icon: Icon(pwdVisible ? Icons.visibility : Icons.visibility_off),
                           onPressed: () {
                             setState(() {
-                              confirmPwdVisible = !confirmPwdVisible;
+                              pwdVisible = !pwdVisible;
                             });
                           },
                         ),
                       )
                     ),
-                  )
+                  ),
+                )
               ),
+              SizedBox(height: deviceHeight * 0.0343),
+              Container(
+                height: 60.0,
+                width: 303.0,
+                decoration: BoxDecoration(
+                  color: '#7DDEF8'.toColor(),
+                  borderRadius: BorderRadius.circular(5),
+                  border: Border.all(width: 5.0, color: '#F5F5DC'.toColor())
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
+                  child: TextField(
+                    controller: confirmPwdController,
+                    obscureText: confirmPwdVisible,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(
+                        Icons.lock,
+                        size: 30.0,
+                        color: '#1C1B1F'.toColor(),
+                      ),
+                      hintText: '確認密碼',
+                      hintStyle: TextStyle(
+                        fontSize: 20.0,
+                        color: '#013E6D'.toColor()
+                      ),
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      suffixIcon: IconButton(
+                        icon: Icon(confirmPwdVisible ? Icons.visibility : Icons.visibility_off),
+                        onPressed: () {
+                          setState(() {
+                            confirmPwdVisible = !confirmPwdVisible;
+                          });
+                        },
+                      ),
+                    )
+                  ),
+                ),
+              ),
+              SizedBox(height: deviceHeight * 0.012),
               Visibility(
                 visible: (showErrorHint != ""),
                 maintainAnimation: true,
@@ -247,49 +250,48 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
                   )
                 )
               ),
-              SizedBox(height: deviceHeight * 0.0627),
-              TextButton(
-                onPressed: () async {
-                  if (accountController.text.length < 6){
-                    setState(() {
-                      showErrorHint = accountLengthErrorHint;
-                    });
-                  }
-                  else{
-                    List<User> users = await UserProvider.getAllUser();
-                    if (users.map((user) => user.account).contains(accountController.text)){
-                      setState(() {
-                        showErrorHint = duplicateAccountErrorHint;
-                      });
-                    }
-                    else if (pwdController.text.length < 4){
-                      setState(() {
-                        showErrorHint = pwdLengthErrorHint;
-                      });
-                    }
-                    else if (pwdController.text != confirmPwdController.text){
-                      setState(() {
-                        showErrorHint = pwdConfirmErrorHint;
-                      });
-                    }
-                    else{
-                      await UserProvider.addUser(
-                        user: User(
-                          account: accountController.text,
-                          password: pwdController.text,
-                        ), 
-                      );
-                      Navigator.of(context).pushNamed('/register');
-                    }
-                  }
-                },
-                child: Text(
-                  '註冊並登入',
-                  style: TextStyle(
-                    fontSize: 24.0,
-                    color: '#F5F5DC'.toColor(),
-                  )
-                )
+              Consumer(
+                builder: (context, ref, child){
+                  return TextButton(
+                    onPressed: () async {
+                      if (accountController.text.length < 6){
+                        setState(() {
+                          showErrorHint = accountLengthErrorHint;
+                        });
+                      }
+                      else{
+                        List<String> userAccounts = await UserProvider.getAllUserAccounts();
+                        if (userAccounts.contains(accountController.text)){
+                          setState(() {
+                            showErrorHint = duplicateAccountErrorHint;
+                          });
+                        }
+                        else if (pwdController.text.length < 4){
+                          setState(() {
+                            showErrorHint = pwdLengthErrorHint;
+                          });
+                        }
+                        else if (pwdController.text != confirmPwdController.text){
+                          setState(() {
+                            showErrorHint = pwdConfirmErrorHint;
+                          });
+                        }
+                        else{
+                          ref.read(accountProvider.notifier).state = accountController.text;
+                          ref.read(pwdProvider.notifier).state = pwdController.text;
+                          Navigator.of(context).pushNamed('/safetyHintRegister');
+                        }
+                      }
+                    },
+                    child: Text(
+                      '下一步',
+                      style: TextStyle(
+                        fontSize: 24.0,
+                        color: '#F5F5DC'.toColor(),
+                      )
+                    )
+                  );
+                }
               )
             ]
           ),
