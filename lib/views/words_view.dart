@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/data/models/unit_model.dart';
+import 'package:ltrc/data/models/word_status_model.dart';
 import 'package:ltrc/extensions.dart';
 import '../widgets/word_card.dart';
 
-class WordsView extends StatelessWidget {
+class WordsView extends ConsumerWidget {
   const WordsView({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
 
     dynamic obj = ModalRoute.of(context)!.settings.arguments;
     Unit unit = obj["unit"];
-    unit.newWords.removeWhere((item) => unit.extraWords.contains(item));
 
     return Scaffold(
       appBar: AppBar(
@@ -45,6 +46,7 @@ class WordsView extends StatelessWidget {
                     sizedBoxWidth: 30,
                     sizedBoxHeight: 155,
                     fontSize: 48,
+                    learned: false
                   );
                 },
                 childCount: unit.newWords.length,
@@ -80,6 +82,7 @@ class WordsView extends StatelessWidget {
                     sizedBoxWidth: 30,
                     sizedBoxHeight: 155,
                     fontSize: 48,
+                    learned: true,
                   );
                 },
                 childCount: unit.extraWords.length,

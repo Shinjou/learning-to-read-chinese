@@ -56,6 +56,7 @@ class TeachWordTabBarView extends StatelessWidget {
           sizedBoxWidth: 67,
           sizedBoxHeight: 88,
           fontSize: 23,
+          learned: false,
         ),
       ),
     ]);

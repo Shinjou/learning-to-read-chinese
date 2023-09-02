@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:ltrc/data/models/word_status_model.dart';
+import 'package:ltrc/data/providers/word_status_provider.dart';
 import 'package:ltrc/extensions.dart';
+import 'package:provider/provider.dart';
 
 import '../contants/arabic_numerals_to_chinese.dart';
 import '../data/models/unit_model.dart';
@@ -81,42 +84,59 @@ class _UnitsViewState extends State<UnitsView> {
                 delegate: SliverChildBuilderDelegate(
                   (BuildContext context, int index) {
                     String? classNum = numeralToChinese[index+1];
-                    return InkWell( 
-                      onTap: (){
-                        Navigator.of(context).pushNamed(
-                          '/words', 
-                          arguments: {'unit' : units[index]}
-                        );
-                      },
-                      child: Container(
-                        width: 140,
-                        height: 140,
-                        decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.all(Radius.circular(14)),
-                          color: "#013E6D".toColor(),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "第$classNum課", 
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: "#F5F5DC".toColor(),
-                              )
+                    return Consumer(
+                      builder: (context, ref, child) {
+                        InkWell( 
+                          onTap: () async {
+                            Unit unit = units[index];
+                            await WordStatusProvider.addWordsStatus(
+                              statuses: unit.newWords.map((word) => 
+                                WordStatus(
+                                  id: -1, 
+                                  userAccount: ref!.watch(accountProvider), 
+                                  word: word, 
+                                  learned: false, 
+                                  liked: false
+                                )
+                              ).toList()
+                            );
+                            unit.newWords.removeWhere((item) => unit.extraWords.contains(item));
+                            Navigator.of(context).pushNamed(
+                              '/words', 
+                              arguments: {'unit' : unit}
+                            );
+                          },
+                          child: Container(
+                            width: 140,
+                            height: 140,
+                            decoration: BoxDecoration(
+                              borderRadius: const BorderRadius.all(Radius.circular(14)),
+                              color: "#013E6D".toColor(),
                             ),
-                            Text(
-                              units[index].unitTitle, 
-                              style: TextStyle(
-                                fontSize: 24,
-                                color: "#F5F5DC".toColor(),
-                              ),
-                              textAlign: TextAlign.center,
-                            )
-                          ],
-                        ),
-                      ),
-                    );
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "第$classNum課", 
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: "#F5F5DC".toColor(),
+                                  )
+                                ),
+                                Text(
+                                  units[index].unitTitle, 
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    color: "#F5F5DC".toColor(),
+                                  ),
+                                  textAlign: TextAlign.center,
+                                )
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+                    ); 
                   },
                   childCount: units.length,
                 ),

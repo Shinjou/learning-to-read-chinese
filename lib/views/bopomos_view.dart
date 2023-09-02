@@ -38,6 +38,7 @@ class BopomosView extends StatelessWidget {
                     sizedBoxWidth: 30,
                     sizedBoxHeight: 155,
                     fontSize: 48,
+                    learned: true,
                   );
                 },
                 childCount: bopomos.length,
