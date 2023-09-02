@@ -27,7 +27,7 @@ class _TeachWordViewState extends State<TeachWordView>
 
   Future<String> readJson() async {
     final String response =
-        await rootBundle.loadString('lib/assets/svg/' + demoChar + '.json');
+        await rootBundle.loadString('lib/assets/svg/$demoChar.json');
 
     return response.replaceAll("\"", "\'");
   }
@@ -116,23 +116,24 @@ class _TeachWordViewState extends State<TeachWordView>
               physics: const NeverScrollableScrollPhysics(),
               controller: _tabController,
               children: [
-                const TeachWordTabBarView(
+                TeachWordTabBarView(
                     sectionName: '看一看',
+                    word: word,
                     content: Image(
-                      height: 130,
-                      image: AssetImage(
-                          'lib/assets/img/evolution/' + demoChar + '.png'),
+                      width: 300,
+                      image: AssetImage('lib/assets/img/oldWords/$word.png'),
                     )),
                 TeachWordTabBarView(
+                    word: word,
                     sectionName: '聽一聽',
                     content: Column(
                       children: [
                         Container(
                           height: 300,
                           alignment: Alignment.center,
-                          child: const Text(demoChar,
+                          child: Text(word,
                               textAlign: TextAlign.center,
-                              style: TextStyle(
+                              style: const TextStyle(
                                   fontSize: 150,
                                   color: Color.fromRGBO(245, 245, 220, 100),
                                   fontWeight: FontWeight.w100)),
@@ -147,7 +148,7 @@ class _TeachWordViewState extends State<TeachWordView>
                                     iconSize: 35,
                                     color: Color.fromRGBO(245, 245, 220, 100),
                                     onPressed: () async {
-                                      var result = await ftts.speak(demoChar);
+                                      var result = await ftts.speak(word);
                                       if (result == 1) {
                                       } else {}
                                     },
@@ -166,6 +167,7 @@ class _TeachWordViewState extends State<TeachWordView>
                     )),
                 TeachWordTabBarView(
                   sectionName: '寫一寫',
+                  word: word,
                   content: ChangeNotifierProvider<
                       StrokeOrderAnimationController>.value(
                     value: _strokeOrderAnimationControllers,
@@ -290,6 +292,7 @@ class _TeachWordViewState extends State<TeachWordView>
                 ),
                 TeachWordTabBarView(
                     sectionName: '用一用',
+                    word: word,
                     content: Column(
                       children: [
                         Container(
