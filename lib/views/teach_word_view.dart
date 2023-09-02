@@ -29,7 +29,6 @@ class _TeachWordViewState extends State<TeachWordView>
     final String response =
         await rootBundle.loadString('lib/assets/svg/' + demoChar + '.json');
 
-    await ftts.setLanguage("zh-tw");
     return response.replaceAll("\"", "\'");
   }
 
@@ -37,6 +36,9 @@ class _TeachWordViewState extends State<TeachWordView>
   void initState() {
     _tabController = TabController(length: 4, vsync: this);
     super.initState();
+    ftts.setLanguage("zh-tw");
+    ftts.setSpeechRate(0.5);
+    ftts.setVolume(1.0);
     readJson().then((result) {
       setState(() {
         _strokeOrderAnimationControllers = StrokeOrderAnimationController(
@@ -73,12 +75,15 @@ class _TeachWordViewState extends State<TeachWordView>
     String word;
     dynamic obj = ModalRoute.of(context)!.settings.arguments;
     word = obj["word"];
-    
+
     return DefaultTabController(
       length: teachWordTabs.length,
       child: Scaffold(
           appBar: AppBar(
-            leading: IconButton(icon: const Icon(Icons.chevron_left), onPressed: () => Navigator.pop(context),),
+            leading: IconButton(
+              icon: const Icon(Icons.chevron_left),
+              onPressed: () => Navigator.pop(context),
+            ),
             centerTitle: true,
             title: const Text("1|手拉手"),
             titleTextStyle: TextStyle(
@@ -88,9 +93,8 @@ class _TeachWordViewState extends State<TeachWordView>
             ),
             actions: <Widget>[
               IconButton(
-                onPressed: () => Navigator.of(context).pushNamed('/mainPage'),
-                icon: const Icon(Icons.home_filled)
-              ),
+                  onPressed: () => Navigator.of(context).pushNamed('/mainPage'),
+                  icon: const Icon(Icons.home_filled)),
             ],
             bottom: TabBar(
               tabs: teachWordTabs,
@@ -143,10 +147,6 @@ class _TeachWordViewState extends State<TeachWordView>
                                     iconSize: 35,
                                     color: Color.fromRGBO(245, 245, 220, 100),
                                     onPressed: () async {
-                                      await ftts.setLanguage("zh-tw");
-                                      await ftts.setSpeechRate(0.5);
-                                      await ftts.setVolume(1.0);
-
                                       var result = await ftts.speak(demoChar);
                                       if (result == 1) {
                                       } else {}
@@ -235,11 +235,12 @@ class _TeachWordViewState extends State<TeachWordView>
                                       color: Color.fromRGBO(245, 245, 220, 100),
                                       isSelected: controller.showOutline,
                                       icon: const Icon(
-                                        Icons.remove_red_eye_outlined),
+                                          Icons.remove_red_eye_outlined),
                                       selectedIcon:
-                                        const Icon(Icons.remove_red_eye),
+                                          const Icon(Icons.remove_red_eye),
                                       onPressed: () {
-                                        controller.setShowOutline(!controller.showOutline);
+                                        controller.setShowOutline(
+                                            !controller.showOutline);
                                       },
                                     ),
                                     IconButton(
@@ -251,36 +252,32 @@ class _TeachWordViewState extends State<TeachWordView>
                                       },
                                     ),
                                     const Text('筆順',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontSize: 17.5,
-                                        color: Color.fromRGBO(
-                                            245, 245, 220, 100),
-                                      )
-                                    ),
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 17.5,
+                                          color: Color.fromRGBO(
+                                              245, 245, 220, 100),
+                                        )),
                                     const Text('寫字',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontSize: 17.5,
-                                        color: Color.fromRGBO(
-                                            245, 245, 220, 100),
-                                      )
-                                    ),
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 17.5,
+                                          color: Color.fromRGBO(
+                                              245, 245, 220, 100),
+                                        )),
                                     const Text('邊框',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontSize: 17.5,
-                                        color: Color.fromRGBO(
-                                            245, 245, 220, 100),
-                                      )
-                                    ),
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 17.5,
+                                          color: Color.fromRGBO(
+                                              245, 245, 220, 100),
+                                        )),
                                     const Text('重新',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontSize: 17.5,
-                                        color: Color.fromRGBO(55, 55, 24, 0.612)
-                                      )
-                                    ),
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 17.5,
+                                            color: Color.fromRGBO(
+                                                55, 55, 24, 0.612))),
                                   ],
                                 ),
                               ),
@@ -327,10 +324,6 @@ class _TeachWordViewState extends State<TeachWordView>
                                     iconSize: 35,
                                     color: Color.fromRGBO(245, 245, 220, 100),
                                     onPressed: () async {
-                                      await ftts.setLanguage("zh-tw");
-                                      await ftts.setSpeechRate(0.5);
-                                      await ftts.setVolume(1.0);
-
                                       var result = await ftts.speak('手機');
                                       if (result == 1) {
                                         //speaking

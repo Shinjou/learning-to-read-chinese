@@ -5,3 +5,4 @@ final chuyinOnProvider = Provider((ref) => true);
 
 final gradeProvider = StateProvider<int>((ref) => 1);
 final publisherCodeProvider = StateProvider<int>((ref) => 0);
+final currentChar = StateProvider<String>((ref) => '');

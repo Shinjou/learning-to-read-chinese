@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/views/log_in_view.dart';
+import 'package:ltrc/views/words_view.dart';
 
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -9,9 +10,7 @@ import 'package:ltrc/extensions.dart';
 import 'package:ltrc/views/main_page_view.dart';
 import 'package:ltrc/views/register_account_view.dart';
 
-
-
-Future main() async{
+Future main() async {
   sqfliteFfiInit();
   // var databaseFactory = databaseFactoryFfi;
   // databaseFactory = databaseFactoryFfi;
@@ -46,5 +45,6 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const LogInView();
+    // return const WordsView();
   }
 }
