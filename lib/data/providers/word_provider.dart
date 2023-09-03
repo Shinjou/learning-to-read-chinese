@@ -14,11 +14,12 @@ class WordProvider {
     final exist = await databaseExists(newPath);
     if (!exist) {
       try {
-          ByteData data = await rootBundle.load(join("assets/data_files", "vocabulary.sqlite"));
-          List<int> bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
-          await File(newPath).writeAsBytes(bytes, flush: true);
-      } 
-      catch (e) {
+        ByteData data = await rootBundle
+            .load(join("assets/data_files", "vocabulary.sqlite"));
+        List<int> bytes =
+            data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+        await File(newPath).writeAsBytes(bytes, flush: true);
+      } catch (e) {
         debugPrint('Failed to write bytes to the file at $newPath. Error: $e');
         throw Exception('Failed to write bytes to the file. Error: $e');
       }
@@ -28,7 +29,7 @@ class WordProvider {
   }
 
   static String tableName = 'vocabulary_utf8';
-  
+
   // Define constants for database
   static const String databaseWord = 'word';
   static const String databaseVocab1 = 'vocab_1';
@@ -39,10 +40,10 @@ class WordProvider {
   static const String databaseSentence2 = 'sentence_2';
 
   static Future<Database> initDatabase() async =>
-    database ??= await openDatabase(
-      join(await getDatabasesPath(), 'words.sqlite'),
-      version: 1,
-    );
+      database ??= await openDatabase(
+        join(await getDatabasesPath(), 'words.sqlite'),
+        version: 1,
+      );
 
   static Future<void> addWord(Word word) async {
     final Database db = await getDBConnect();
@@ -52,16 +53,27 @@ class WordProvider {
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
-    
+
   static Future<Word> getWord({required String inputWord}) async {
     final Database db = await getDBConnect();
-    final List<Map<String, dynamic>> tmp = await db.rawQuery("PRAGMA table_info($tableName)");
+    final List<Map<String, dynamic>> tmp =
+        await db.rawQuery("PRAGMA table_info($tableName)");
     debugPrint(tmp.toString());
     final List<Map<String, dynamic>> maps = await db.query(tableName,
-      columns: [databaseWord, databaseVocab1, databaseMeaning1, databaseSentence1, databaseVocab2, databaseMeaning2, databaseSentence2],
-      where: "$databaseWord=?",
-      whereArgs: [inputWord]
-    );
+        columns: [
+          databaseWord,
+          databaseVocab1,
+          databaseMeaning1,
+          databaseSentence1,
+          databaseVocab2,
+          databaseMeaning2,
+          databaseSentence2
+        ],
+        where: "$databaseWord = ?",
+        whereArgs: [inputWord]);
+    print(
+        "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000");
+    print(maps[0][databaseVocab1]);
     return Word(
       word: maps[0][databaseWord],
       vocab1: maps[0][databaseVocab1],
@@ -73,7 +85,7 @@ class WordProvider {
     );
   }
 
-  static void closeDb(){
+  static void closeDb() {
     database!.close();
   }
 }
