@@ -7,18 +7,22 @@ import 'card_title.dart';
 
 class TeachWordTabBarView extends StatelessWidget {
   final Widget content;
+  final String word;
   final String sectionName;
+  final bool isBpmf;
   const TeachWordTabBarView({
     Key? key,
     required this.sectionName,
+    required this.word,
     required this.content,
+    required this.isBpmf,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Column(children: [
       SizedBox(
-        height: MediaQuery.of(context).size.height * 0.6,
+        height: MediaQuery.of(context).size.height * 0.65,
         width: MediaQuery.of(context).size.width,
         child: Container(
           decoration: BoxDecoration(
@@ -46,17 +50,19 @@ class TeachWordTabBarView extends StatelessWidget {
         ),
       ),
       const SizedBox(
-        height: 45,
+        height: 25,
       ),
       LeftRightSwitch(
         iconsColor: '#F5F5DC'.toColor(),
         iconsSize: 48,
-        middleWidget: const WordCard(
-          word: '手',
-          sizedBoxWidth: 67,
-          sizedBoxHeight: 88,
-          fontSize: 23,
-        ),
+        middleWidget: WordCard(
+            unitId: -1,
+            unitTitle: "",
+            word: word,
+            sizedBoxWidth: 67,
+            sizedBoxHeight: 88,
+            fontSize: 30,
+            isBpmf: isBpmf),
       ),
     ]);
   }

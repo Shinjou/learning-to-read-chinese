@@ -76,6 +76,9 @@ flutter:
     - family: Iceberg
       fonts:
         - asset: lib\assets\fonts\Iceberg-Regular.ttf
+    - family: BpmfOnly
+      fonts:
+        - asset: lib\assets\fonts\BpmfZihiOnly-R.ttf
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
@@ -86,6 +89,7 @@ flutter:
     - assets/data_files/
     - lib/assets/svg/
     - lib/assets/img/
-    - lib/assets/img/evolution/
     - lib/assets/img/word/
     - lib/assets/img/oldWords/
+    - lib/assets/img/vocabulary/
+    - lib/assets/img/bopomo/

@@ -34,7 +34,7 @@ class AppRoutes {
       mainPage: (context) => const MainPageView(),
       units: (context) => const UnitsView(),
       words: (context) => const WordsView(),
-      teachWord: (context) => const TeachWordView(),
+      // teachWord: (context) => const TeachWordView(),
       bopomos: (context) => BopomosView(),
       bopomoSpelling: (context) => const BopomoSpellingView(),
       registerAccount: (context) => const RegisterAccountView(),

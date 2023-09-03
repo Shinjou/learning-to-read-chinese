@@ -9,18 +9,15 @@ import 'package:ltrc/extensions.dart';
 import 'package:ltrc/widgets/teach_word/tab_bar_view.dart';
 import 'package:ltrc/widgets/teach_word/stroke_order_animator.dart';
 import 'package:ltrc/widgets/teach_word/stroke_order_animation_controller.dart';
-import 'package:ltrc/widgets/teach_word/word_vocab_content.dart';
 import 'package:provider/provider.dart';
 
-const String demoChar = "手";
-
-class TeachWordView extends StatefulWidget {
+class TeachBopomoView extends StatefulWidget {
   final String char;
   final int unitId;
   final String unitTitle;
   final bool isBpmf;
 
-  const TeachWordView({
+  const TeachBopomoView({
     super.key,
     required this.char,
     required this.unitId,
@@ -29,10 +26,10 @@ class TeachWordView extends StatefulWidget {
   });
 
   @override
-  State<TeachWordView> createState() => _TeachWordViewState();
+  State<TeachBopomoView> createState() => _TeachBopomoViewState();
 }
 
-class _TeachWordViewState extends State<TeachWordView>
+class _TeachBopomoViewState extends State<TeachBopomoView>
     with TickerProviderStateMixin {
   late StrokeOrderAnimationController _strokeOrderAnimationControllers;
   late TabController _tabController;
@@ -147,7 +144,7 @@ class _TeachWordViewState extends State<TeachWordView>
                     word: word,
                     content: Image(
                       width: 300,
-                      image: AssetImage('lib/assets/img/oldWords/$word.png'),
+                      image: AssetImage('lib/assets/img/bopomo/$word.png'),
                     )),
                 TeachWordTabBarView(
                     isBpmf: isBpmf,
@@ -163,6 +160,7 @@ class _TeachWordViewState extends State<TeachWordView>
                               style: const TextStyle(
                                   fontSize: 150,
                                   color: Color.fromRGBO(245, 245, 220, 100),
+                                  fontFamily: 'BpmfOnly',
                                   fontWeight: FontWeight.w100)),
                         ),
                         Container(
@@ -206,7 +204,6 @@ class _TeachWordViewState extends State<TeachWordView>
                           width: 300,
                           child: Column(
                             children: <Widget>[
-                              const SizedBox(height: 10),
                               Container(
                                 decoration: const BoxDecoration(
                                   image: DecorationImage(
@@ -313,10 +310,9 @@ class _TeachWordViewState extends State<TeachWordView>
                                     const Text('重新',
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
-                                          fontSize: 17.5,
-                                          color: Color.fromRGBO(
-                                              245, 245, 220, 100),
-                                        )),
+                                            fontSize: 17.5,
+                                            color: Color.fromRGBO(
+                                                55, 55, 24, 0.612))),
                                   ],
                                 ),
                               ),
@@ -332,56 +328,90 @@ class _TeachWordViewState extends State<TeachWordView>
                     sectionName: '用一用',
                     word: word,
                     content: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Container(
-                          // height: 320,
-                          child: const WordVocabContent(
-                            imgSize: 150,
-                            vocab: "拍手叫好",
-                            meaning: "描述人們熱烈地鼓掌並大聲喊好的情景。",
-                            sentence: "哥哥唱完好聽的歌後，大家都為他拍手叫好!\n",
-                          ),
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Column(
-                              children: [
-                                IconButton(
-                                    iconSize: 35,
+                          // height: 300,
+                          alignment: Alignment.center,
+                          child: Column(
+                            children: [
+                              const Text('水杯',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 55,
                                     color: Color.fromRGBO(245, 245, 220, 100),
-                                    onPressed: () async {
-                                      var result = await ftts
-                                          .speak("拍手叫好。哥哥唱完好聽的歌後，大家都為他拍手叫好!\n");
-                                      if (result == 1) {
-                                        //speaking
-                                      } else {
-                                        //not speaking
-                                      }
-                                    },
-                                    icon: const Icon(Icons.volume_up)),
-                                const Text('讀音',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 17.5,
-                                      color: Color.fromRGBO(245, 245, 220, 100),
-                                    )),
-                              ],
-                            ),
-                            const Image(
-                              height: 150,
-                              image: AssetImage(
-                                  'lib/assets/img/vocabulary/一直.png'),
-                            ),
-                            const Text("1 / 1",
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color.fromRGBO(245, 245, 220, 100),
-                                )),
-                          ],
+                                    fontFamily: 'BpmfOnly',
+                                  )),
+                              Image(
+                                height: 140,
+                                image: AssetImage(
+                                    'lib/assets/img/bopomo/$word.png'),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text.rich(
+                                      textAlign: TextAlign.center,
+                                      TextSpan(
+                                          text: '媽媽拿起',
+                                          style: TextStyle(
+                                            height: 1.1,
+                                            fontSize: 48,
+                                            color: Color.fromRGBO(
+                                                245, 245, 220, 100),
+                                            fontFamily: "BpmfOnly",
+                                          ),
+                                          children: <InlineSpan>[
+                                            TextSpan(
+                                              text: '水杯',
+                                              style: TextStyle(
+                                                // fontWeight: FontWeight.bold,
+                                                color: Color.fromRGBO(
+                                                    228, 219, 124, 1),
+                                              ),
+                                            ),
+                                            TextSpan(
+                                              text: '，將水全部喝完。',
+                                              // style: TextStyle(
+                                              // fontWeight: FontWeight.bold,
+                                              // color: Color.fromRGBO(228, 219, 124, 1),
+                                              // ),
+                                            ),
+                                          ])),
+                                  Padding(
+                                    padding: const EdgeInsets.all(3),
+                                    child: Column(
+                                      children: [
+                                        IconButton(
+                                            iconSize: 35,
+                                            color: const Color.fromRGBO(
+                                                245, 245, 220, 100),
+                                            onPressed: () async {
+                                              var result = await ftts
+                                                  .speak('水杯。媽媽拿起水杯，將水全部喝完。');
+                                              if (result == 1) {
+                                                //speaking
+                                              } else {
+                                                //not speaking
+                                              }
+                                            },
+                                            icon: const Icon(Icons.volume_up)),
+                                        const Text('讀音',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              fontSize: 17.5,
+                                              color: Color.fromRGBO(
+                                                  245, 245, 220, 100),
+                                            )),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     )),
