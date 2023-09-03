@@ -71,9 +71,6 @@ class WordProvider {
         ],
         where: "$databaseWord = ?",
         whereArgs: [inputWord]);
-    print(
-        "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000");
-    print(maps[0][databaseVocab1]);
     return Word(
       word: maps[0][databaseWord],
       vocab1: maps[0][databaseVocab1],
@@ -85,7 +82,9 @@ class WordProvider {
     );
   }
 
-  static void closeDb() {
-    database!.close();
+  static void closeDb() async{
+    await deleteDatabase(
+      join(await getDatabasesPath(), 'words.sqlite')
+    );
   }
 }

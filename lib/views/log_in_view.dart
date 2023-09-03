@@ -13,6 +13,7 @@ class LogInView extends StatefulWidget {
 }
 
 const String pwdConfirmErrorHint = "帳號/密碼錯誤";
+const String accountLengthErrorHint = "帳號長度不足 6 位英/數字";
 
 class _LogInViewState extends State<LogInView> {
 
@@ -33,7 +34,7 @@ class _LogInViewState extends State<LogInView> {
   Widget build(BuildContext context) {
     
     double deviceHeight = MediaQuery.of(context).size.height;
-    
+
     return GestureDetector(
       onTap: () {
         FocusScopeNode currentFocus = FocusScope.of(context);
@@ -57,44 +58,44 @@ class _LogInViewState extends State<LogInView> {
             ),
             SizedBox(height: deviceHeight * 0.162),
             Container(
-                height: 60.0,
-                width: 303.0,
-                decoration: BoxDecoration(
-                    color: '#7DDEF8'.toColor(),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(width: 5.0, color: '#F5F5DC'.toColor())
+              height: 60.0,
+              width: 303.0,
+              decoration: BoxDecoration(
+                color: '#7DDEF8'.toColor(),
+                borderRadius: BorderRadius.circular(5),
+                border: Border.all(width: 5.0, color: '#F5F5DC'.toColor())
+              ),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
+                child: TextField(
+                  controller: accountController,
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(
+                      Icons.account_circle,
+                      size: 30.0,
+                      color: '#1C1B1F'.toColor(),
+                    ),
+                    hintText: '帳號名稱',
+                    hintStyle: TextStyle(
+                        fontSize: 20.0,
+                        color: '#013E6D'.toColor()
+                    ),
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                    floatingLabelAlignment: FloatingLabelAlignment.center,
+                    focusedBorder: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                  )
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
-                  child: TextField(
-                    controller: accountController,
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(
-                        Icons.account_circle,
-                        size: 30.0,
-                        color: '#1C1B1F'.toColor(),
-                      ),
-                      hintText: '帳號名稱',
-                      hintStyle: TextStyle(
-                          fontSize: 20.0,
-                          color: '#013E6D'.toColor()
-                      ),
-                      floatingLabelBehavior: FloatingLabelBehavior.always,
-                      floatingLabelAlignment: FloatingLabelAlignment.center,
-                      focusedBorder: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                    )
-                  ),
-                )
+              )
             ),
             SizedBox(height: deviceHeight * 0.073),
             Container(
                 height: 60.0,
                 width: 303.0,
                 decoration: BoxDecoration(
-                    color: '#7DDEF8'.toColor(),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(width: 5.0, color: '#F5F5DC'.toColor())
+                  color: '#7DDEF8'.toColor(),
+                  borderRadius: BorderRadius.circular(5),
+                  border: Border.all(width: 5.0, color: '#F5F5DC'.toColor())
                 ),
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
@@ -109,8 +110,8 @@ class _LogInViewState extends State<LogInView> {
                       ),
                       hintText: '密碼',
                       hintStyle: TextStyle(
-                          fontSize: 20.0,
-                          color: '#013E6D'.toColor()
+                        fontSize: 20.0,
+                        color: '#013E6D'.toColor()
                       ),
                       floatingLabelBehavior: FloatingLabelBehavior.always,
                       floatingLabelAlignment: FloatingLabelAlignment.center,
@@ -129,13 +130,13 @@ class _LogInViewState extends State<LogInView> {
                 )
             ),
             Center(
-              child: Container(
+              child: SizedBox(
                 height: 50.0,
                 width: 303.0,
                 child: Align(
                   alignment: AlignmentDirectional.bottomEnd,
                   child: TextButton(
-                    onPressed: () {},
+                    onPressed: () => Navigator.of(context).pushNamed('/resetPwdAccount'),
                     style: TextButton.styleFrom(
                       fixedSize: const Size(110, 14),
                     ),
@@ -168,31 +169,38 @@ class _LogInViewState extends State<LogInView> {
                 )
               )
             ),
-            SizedBox(height: deviceHeight * 0.0379),
+            SizedBox(height: deviceHeight * 0.038),
             Center(
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   TextButton(
                     onPressed: () async {
-                      try {
-                        User user = await UserProvider.getUser(inputAccount: accountController.text);
-                        if (user.password != pwdController.text){
+                      if (accountController.text.length < 6){
+                        setState(() {
+                          showErrorHint = accountLengthErrorHint;
+                        }); 
+                      }
+                      else {
+                        try {
+                          User user = await UserProvider.getUser(inputAccount: accountController.text);
+                          if (user.password != pwdController.text){
+                            setState(() {
+                              showErrorHint = pwdConfirmErrorHint;
+                            });
+                          }
+                          else {
+                            Navigator.of(context).pushNamed('/mainPage');
+                          }
+                        } catch (e){
                           setState(() {
-                            showErrorHint = "密碼錯誤";
+                            showErrorHint = pwdConfirmErrorHint;
                           });
                         }
-                        else {
-                          Navigator.of(context).pushNamed('/mainPage');
-                        }
-                      } catch (e){
-                        setState(() {
-                          showErrorHint = "帳號不存在！";
-                        });
-                      }
 
                       //Word word = await WordProvider.getWord(inputWord: "ㄅ");
                       //debugPrint(word.toString());
+                      }
                     },
                     style: TextButton.styleFrom(
                       fixedSize: const Size(110, 45),
