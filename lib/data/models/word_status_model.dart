@@ -11,14 +11,14 @@ class WordStatus {
   final String userAccount;
   final String word;
   final bool learned;
-  final bool liked;
+  bool liked;
 
   Map<String, dynamic> toMap() {
     return {
       'userAccount': userAccount,
       'word': word,
-      'learned': learned,
-      'liked': liked,
+      'learned': learned ? 1 : 0,
+      'liked': liked ? 1 : 0 ,
     };
   }
 
@@ -27,8 +27,8 @@ class WordStatus {
       'id': id,
       'userAccount': userAccount,
       'word': word,
-      'learned': learned,
-      'liked': liked,
+      'learned': learned ? 1 : 0,
+      'liked': liked ? 1 : 0,
     };
   }
 

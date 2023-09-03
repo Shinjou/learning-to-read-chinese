@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ltrc/contants/bopomos.dart';
 import 'package:ltrc/data/models/word_status_model.dart';
 import 'package:ltrc/data/providers/word_status_provider.dart';
 import 'package:ltrc/extensions.dart';
@@ -8,14 +10,14 @@ import 'package:provider/provider.dart';
 import '../contants/arabic_numerals_to_chinese.dart';
 import '../data/models/unit_model.dart';
 
-class UnitsView extends StatefulWidget {
+class UnitsView extends ConsumerStatefulWidget {
   
   const UnitsView({super.key});
 
   @override
-  _UnitsViewState createState() => _UnitsViewState();
+  UnitsViewState createState() => UnitsViewState();
 }
-class _UnitsViewState extends State<UnitsView> {
+class UnitsViewState extends ConsumerState<UnitsView> {
   @override
   void initState() {
     super.initState();
@@ -48,8 +50,31 @@ class _UnitsViewState extends State<UnitsView> {
                 delegate: SliverChildBuilderDelegate(
                   (BuildContext context, int idx){
                     return InkWell( 
-                      onTap: (){
-                        Navigator.of(context).pushNamed('/bopomos');
+                      onTap: () async {
+                        List<String> bopomos = List.from(initials)..addAll(prenuclear)..addAll(finals);
+                        await WordStatusProvider.addWordsStatus(
+                          statuses: bopomos.map((word) => 
+                            WordStatus(
+                              id: -1, 
+                              userAccount: ref.read(accountProvider.notifier).state , 
+                              word: word, 
+                              learned: false, 
+                              liked: false
+                            )
+                          ).toList()
+                        );
+
+                        List<WordStatus> wordStatus = await WordStatusProvider.getWordsStatus(
+                          account: ref.read(accountProvider.notifier).state,
+                          words: bopomos, 
+                        );
+
+                        Navigator.of(context).pushNamed(
+                          '/bopomos', 
+                          arguments: {
+                            'wordStatus' : wordStatus,
+                          }
+                        );
                       },
                       child: Container(
                         width: 297,
@@ -85,59 +110,69 @@ class _UnitsViewState extends State<UnitsView> {
                 delegate: SliverChildBuilderDelegate(
                   (BuildContext context, int index) {
                     String? classNum = numeralToChinese[index+1];
-                    return Consumer(
-                      builder: (context, ref, child) {
-                        return InkWell( 
-                          onTap: () async {
-                            Unit unit = units[index];
-                            await WordStatusProvider.addWordsStatus(
-                              statuses: unit.newWords.map((word) => 
-                                WordStatus(
-                                  id: -1, 
-                                  userAccount: ref!.watch(accountProvider), 
-                                  word: word, 
-                                  learned: false, 
-                                  liked: false
-                                )
-                              ).toList()
-                            );
-                            unit.newWords.removeWhere((item) => unit.extraWords.contains(item));
-                            Navigator.of(context).pushNamed(
-                              '/words', 
-                              arguments: {'unit' : unit}
-                            );
-                          },
-                          child: Container(
-                            width: 140,
-                            height: 140,
-                            decoration: BoxDecoration(
-                              borderRadius: const BorderRadius.all(Radius.circular(14)),
-                              color: "#013E6D".toColor(),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  "第$classNum課", 
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: "#F5F5DC".toColor(),
-                                  )
-                                ),
-                                Text(
-                                  units[index].unitTitle, 
-                                  style: TextStyle(
-                                    fontSize: 24,
-                                    color: "#F5F5DC".toColor(),
-                                  ),
-                                  textAlign: TextAlign.center,
-                                )
-                              ],
-                            ),
-                          ),
+                    return InkWell( 
+                      onTap: () async {
+                        Unit unit = units[index];
+                        await WordStatusProvider.addWordsStatus(
+                          statuses: unit.newWords.map((word) => 
+                            WordStatus(
+                              id: -1, 
+                              userAccount: ref.read(accountProvider.notifier).state , 
+                              word: word, 
+                              learned: false, 
+                              liked: false
+                            )
+                          ).toList()
                         );
-                      }
-                    ); 
+                        unit.newWords.removeWhere((item) => unit.extraWords.contains(item));
+                        
+                        List<WordStatus> newWordsStatus = await WordStatusProvider.getWordsStatus(
+                          account: ref.read(accountProvider.notifier).state,
+                          words: unit.newWords, 
+                        );
+                        List<WordStatus> extraWordsStatus = await WordStatusProvider.getWordsStatus(
+                          account: ref.read(accountProvider.notifier).state,
+                          words: unit.extraWords, 
+                        );
+
+                        Navigator.of(context).pushNamed(
+                          '/words', 
+                          arguments: {
+                            'unit' : unit,
+                            'newWordsStatus' : newWordsStatus,
+                            'extraWordsStatus' : extraWordsStatus
+                          }
+                        );
+                      },
+                      child: Container(
+                        width: 140,
+                        height: 140,
+                        decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.all(Radius.circular(14)),
+                          color: "#013E6D".toColor(),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "第$classNum課", 
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: "#F5F5DC".toColor(),
+                              )
+                            ),
+                            Text(
+                              units[index].unitTitle, 
+                              style: TextStyle(
+                                fontSize: 24,
+                                color: "#F5F5DC".toColor(),
+                              ),
+                              textAlign: TextAlign.center,
+                            )
+                          ],
+                        ),
+                      ),
+                    );
                   },
                   childCount: units.length,
                 ),

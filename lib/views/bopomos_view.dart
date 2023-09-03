@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:ltrc/contants/bopomos.dart';
+import 'package:ltrc/data/models/word_status_model.dart';
 import 'package:ltrc/extensions.dart';
 import '../widgets/word_card.dart';
 
 class BopomosView extends StatelessWidget {
   BopomosView({super.key});
-  final List<String> bopomos = List.from(initials)..addAll(prenuclear)..addAll(finals);
 
   @override
   Widget build(BuildContext context) {
+    dynamic obj = ModalRoute.of(context)!.settings.arguments;
+    List<WordStatus> wordStatus = obj['wordStatus']; 
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(icon: const Icon(Icons.chevron_left), onPressed: () => Navigator.pop(context),),
@@ -34,14 +37,13 @@ class BopomosView extends StatelessWidget {
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) {
                   return WordCard(
-                    word : bopomos[index],
+                    wordStatus : wordStatus[index],
                     sizedBoxWidth: 30,
                     sizedBoxHeight: 155,
                     fontSize: 48,
-                    learned: true,
                   );
                 },
-                childCount: bopomos.length,
+                childCount: wordStatus.length,
               ),
             ),
           ),

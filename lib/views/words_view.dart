@@ -13,6 +13,8 @@ class WordsView extends ConsumerWidget {
 
     dynamic obj = ModalRoute.of(context)!.settings.arguments;
     Unit unit = obj["unit"];
+    List<WordStatus> newWordsStatus = obj["newWordsStatus"];
+    List<WordStatus> extraWordsStatus = obj["extraWordsStatus"];
 
     return Scaffold(
       appBar: AppBar(
@@ -42,11 +44,10 @@ class WordsView extends ConsumerWidget {
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) {
                   return WordCard(
-                    word: unit.newWords[index],
+                    wordStatus: newWordsStatus[index],
                     sizedBoxWidth: 30,
                     sizedBoxHeight: 155,
                     fontSize: 48,
-                    learned: false
                   );
                 },
                 childCount: unit.newWords.length,
@@ -78,11 +79,10 @@ class WordsView extends ConsumerWidget {
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) {
                   return WordCard(
-                    word: unit.extraWords[index],
+                    wordStatus: extraWordsStatus[index],
                     sizedBoxWidth: 30,
                     sizedBoxHeight: 155,
                     fontSize: 48,
-                    learned: true,
                   );
                 },
                 childCount: unit.extraWords.length,

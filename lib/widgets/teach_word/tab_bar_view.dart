@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ltrc/data/models/word_status_model.dart';
 import 'package:ltrc/extensions.dart';
+import 'package:ltrc/providers.dart';
 import 'package:ltrc/widgets/word_card.dart';
 
 import '../mainPage/left_right_switch.dart';
 import 'card_title.dart';
 
-class TeachWordTabBarView extends StatelessWidget {
+class TeachWordTabBarView extends ConsumerWidget {
   final Widget content;
   final String sectionName;
   const TeachWordTabBarView({
@@ -15,7 +18,7 @@ class TeachWordTabBarView extends StatelessWidget {
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Column(children: [
       SizedBox(
         height: MediaQuery.of(context).size.height * 0.6,
@@ -51,12 +54,11 @@ class TeachWordTabBarView extends StatelessWidget {
       LeftRightSwitch(
         iconsColor: '#F5F5DC'.toColor(),
         iconsSize: 48,
-        middleWidget: const WordCard(
-          word: '手',
+        middleWidget: WordCard(
+          wordStatus: WordStatus(id: 10000, userAccount: ref.watch(accountProvider), word: '手', learned: true, liked: true),
           sizedBoxWidth: 67,
           sizedBoxHeight: 88,
           fontSize: 23,
-          learned: false,
         ),
       ),
     ]);
