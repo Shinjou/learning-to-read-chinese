@@ -12,8 +12,6 @@ import 'package:ltrc/widgets/teach_word/stroke_order_animation_controller.dart';
 import 'package:ltrc/widgets/teach_word/word_vocab_content.dart';
 import 'package:provider/provider.dart';
 
-const String demoChar = "手";
-
 class TeachWordView extends StatefulWidget {
   final String char;
   final int unitId;
