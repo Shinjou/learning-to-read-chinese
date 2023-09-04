@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ltrc/views/log_in_view.dart';
 
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import 'package:ltrc/contants/routes.dart';
 import 'package:ltrc/extensions.dart';
-import 'package:ltrc/views/setting_view.dart';
-
-
 
 Future main() async{
   sqfliteFfiInit();
-  // var databaseFactory = databaseFactoryFfi;
-  // databaseFactory = databaseFactoryFfi;
   runApp(ProviderScope(child: MyApp()));
 }
 
@@ -43,6 +39,6 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SettingView();
+    return const LogInView();
   }
 }

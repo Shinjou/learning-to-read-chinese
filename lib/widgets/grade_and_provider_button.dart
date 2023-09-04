@@ -46,7 +46,6 @@ class GradeAndProviderButton extends StatelessWidget {
           style: TextStyle(
             color: '#000000'.toColor(),
             fontSize: fontSize,
-            fontFamily: 'Serif'
           )
         )
       ),

@@ -24,11 +24,14 @@ class MainPageView extends StatelessWidget {
               width: deviceWidth,
               padding: EdgeInsetsDirectional.fromSTEB(0, deviceHeight * 0.05, deviceWidth * 0.04, 0),
               alignment: AlignmentDirectional.centerEnd,
-              child: Icon(
-                Icons.settings,
-                color: '#F5F5DC'.toColor(),
-                size: 38
-              ),
+              child : IconButton( 
+                icon : Icon(
+                  Icons.settings,
+                  color: '#F5F5DC'.toColor(),
+                  size: 38
+                ),
+                onPressed: () => Navigator.of(context).pushNamed('/setting'),
+              )
             ),
             Container(
               height: 54,
