@@ -22,7 +22,7 @@ class TeachWordTabBarView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(children: [
       SizedBox(
-        height: MediaQuery.of(context).size.height * 0.66,
+        height: MediaQuery.of(context).size.height * 0.68,
         width: MediaQuery.of(context).size.width,
         child: Container(
           decoration: BoxDecoration(
@@ -41,28 +41,10 @@ class TeachWordTabBarView extends StatelessWidget {
                 middleWidget: TeachWordCardTitle(
                   sectionName: sectionName, iconsColor: '#D9D9D9'.toColor()),
               ),
-              const SizedBox(
-                height: 10,
-              ),
               Expanded(child: content),
             ],
           ),
         ),
-      ),
-      const SizedBox(
-        height: 25,
-      ),
-      LeftRightSwitch(
-        iconsColor: '#F5F5DC'.toColor(),
-        iconsSize: 48,
-        middleWidget: WordCard(
-          unitId: -1,
-          unitTitle: "",
-          word: word,
-          sizedBoxWidth: 67,
-          sizedBoxHeight: 88,
-          fontSize: 30,
-          isBpmf: isBpmf),
       ),
     ]);
   }

@@ -3,10 +3,13 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:ltrc/extensions.dart';
+import 'package:ltrc/widgets/mainPage/left_right_switch.dart';
+import 'package:ltrc/widgets/teach_word/bpmf_vocab_content.dart';
 import 'package:ltrc/widgets/teach_word/tab_bar_view.dart';
 import 'package:ltrc/widgets/teach_word/stroke_order_animator.dart';
 import 'package:ltrc/widgets/teach_word/stroke_order_animation_controller.dart';
 import 'package:ltrc/widgets/teach_word/word_vocab_content.dart';
+import 'package:ltrc/widgets/word_card.dart';
 import 'package:provider/provider.dart';
 
 class TeachWordView extends StatefulWidget {
@@ -145,6 +148,8 @@ class _TeachWordViewState extends State<TeachWordView>
 
   @override
   Widget build(BuildContext context) {
+    // double deviceHeight = MediaQuery.of(context).size.height;
+
     String word = widget.char;
     int unitId = widget.unitId;
     String unitTitle = widget.unitTitle;
@@ -157,19 +162,28 @@ class _TeachWordViewState extends State<TeachWordView>
       content: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          WordVocabContent(
-            vocab: wordObj['vocab1'],
-            meaning: wordObj['meaning1'],
-            sentence: "${wordObj['sentence1']}\n",
-          ),
+          isBpmf ? 
+            BopomofoVocabContent(
+              word: word,
+              vocab: wordObj['vocab1'],
+              sentence: "${wordObj['sentence1']}",
+            )
+            :
+            WordVocabContent(
+              vocab: wordObj['vocab1'],
+              meaning: wordObj['meaning1'],
+              sentence: "${wordObj['sentence1']}\n",
+            ),
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Column(
-                children: [
+              Wrap(
+                direction: Axis.vertical, 
+                spacing: 0,
+                children: <Widget>[
                   IconButton(
-                    iconSize: 35,
+                    iconSize: 30,
                     color: Color.fromRGBO(245, 245, 220, 100),
                     onPressed: () async {
                       var result = await ftts.speak(
@@ -184,14 +198,14 @@ class _TeachWordViewState extends State<TeachWordView>
                     )),
                 ],
               ),
-              img1Exist
+              (img1Exist && !isBpmf)
                 ? Image(
                   height: 150,
                   image: AssetImage(
                     'lib/assets/img/vocabulary/${wordObj['vocab1']}.png'),
                 )
                 : Container(
-                  height: 150,
+                  height: isBpmf ? 80 : 150,
                 ),
               Text("1 / $vocabCnt",
                 style: const TextStyle(
@@ -211,41 +225,50 @@ class _TeachWordViewState extends State<TeachWordView>
         content: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            WordVocabContent(
-              vocab: wordObj['vocab2'],
-              meaning: wordObj['meaning2'],
-              sentence: "${wordObj['sentence2']}\n",
-            ),
+            isBpmf ? 
+              BopomofoVocabContent(
+                word: word,
+                vocab: wordObj['vocab2'],
+                sentence: "${wordObj['sentence2']}",
+              )
+              :
+              WordVocabContent(
+                vocab: wordObj['vocab2'],
+                meaning: wordObj['meaning2'],
+                sentence: "${wordObj['sentence2']}\n",
+              ),
             Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Column(
-                  children: [
-                    IconButton(
-                      iconSize: 35,
+                Wrap(
+                direction: Axis.vertical, 
+                spacing: 0,
+                children: <Widget>[
+                  IconButton(
+                    iconSize: 30,
+                    color: Color.fromRGBO(245, 245, 220, 100),
+                    onPressed: () async {
+                      var result = await ftts.speak(
+                        "${wordObj['vocab2']}。${wordObj['sentence2']}");
+                    },
+                    icon: const Icon(Icons.volume_up)),
+                  const Text('讀音',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 17.5,
                       color: Color.fromRGBO(245, 245, 220, 100),
-                      onPressed: () async {
-                        var result = await ftts.speak(
-                          "${wordObj['vocab1']}。${wordObj['sentence1']}");
-                      },
-                      icon: const Icon(Icons.volume_up)),
-                    const Text('讀音',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 17.5,
-                        color: Color.fromRGBO(245, 245, 220, 100),
                     )),
-                  ],
-                ),
-                img1Exist
+                ],
+              ),
+                (img1Exist && !isBpmf)
                   ? Image(
                       height: 150,
                       image: AssetImage(
                       'lib/assets/img/vocabulary/${wordObj['vocab2']}.png'),
                     )
                   : Container(
-                      height: 150,
+                      height: isBpmf ? 0 : 150,
                     ),
                 Text("2 / $vocabCnt",
                   style: const TextStyle(
@@ -296,8 +319,8 @@ class _TeachWordViewState extends State<TeachWordView>
           ),
         ),
         body: TabBarView(
-          physics: const NeverScrollableScrollPhysics(),
-          controller: _tabController,
+                physics: const NeverScrollableScrollPhysics(),
+                controller: _tabController,
           children: [
             TeachWordTabBarView(
               isBpmf: isBpmf,
@@ -305,7 +328,8 @@ class _TeachWordViewState extends State<TeachWordView>
               word: word,
               content: Image(
                 width: 300,
-                image: AssetImage('lib/assets/img/oldWords/$word.png'),
+                image: isBpmf ? 
+                  AssetImage('lib/assets/img/bopomo/$word.png') : AssetImage('lib/assets/img/oldWords/$word.png'),
               )),
             TeachWordTabBarView(
               isBpmf: isBpmf,
@@ -313,15 +337,21 @@ class _TeachWordViewState extends State<TeachWordView>
               sectionName: '聽一聽',
               content: Column(
                 children: [
-                  Container(
-                    height: 300,
-                    alignment: Alignment.center,
-                    child: Text(word,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 150,
-                        color: Color.fromRGBO(245, 245, 220, 100),
-                        fontWeight: FontWeight.w100)),
+                  const SizedBox(height: 20,),
+                  Padding(
+                    padding: isBpmf ? const EdgeInsets.fromLTRB(0, 0, 0, 0) : const EdgeInsets.fromLTRB(50, 0, 0, 0),
+                    child: Container(
+                      height: 300,
+                      alignment: Alignment.center,
+                      child: Text(word,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 150,
+                          color: const Color.fromRGBO(245, 245, 220, 100),
+                          fontWeight: FontWeight.w100,
+                          fontFamily: isBpmf ? "BpmfOnly" : "Serif",
+                        )),
+                    ),
                   ),
                   Container(
                     alignment: Alignment.bottomLeft,
@@ -331,7 +361,7 @@ class _TeachWordViewState extends State<TeachWordView>
                         children: [
                           IconButton(
                             iconSize: 35,
-                            color: Color.fromRGBO(245, 245, 220, 100),
+                            color: const Color.fromRGBO(245, 245, 220, 100),
                             onPressed: () async {
                               var result = await ftts.speak(word);
                             },
@@ -362,7 +392,7 @@ class _TeachWordViewState extends State<TeachWordView>
                         width: 300,
                         child: Column(
                           children: <Widget>[
-                            const SizedBox(height: 10),
+                            const SizedBox(height: 30),
                             Container(
                               decoration: const BoxDecoration(
                                 image: DecorationImage(
@@ -377,10 +407,11 @@ class _TeachWordViewState extends State<TeachWordView>
                                 ),
                               ),
                             ),
+                            const SizedBox(height: 7.5,),
                             Flexible(
                               child: GridView(
                                 gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
                                     childAspectRatio: 2,
                                     crossAxisCount: 4,
                                     mainAxisSpacing: 6,
@@ -389,7 +420,7 @@ class _TeachWordViewState extends State<TeachWordView>
                                 children: <Widget>[
                                   IconButton(
                                     iconSize: 35,
-                                    color: Color.fromRGBO(245, 245, 220, 100),
+                                    color: const Color.fromRGBO(245, 245, 220, 100),
                                     isSelected: controller.isAnimating,
                                     icon: const Icon(Icons.play_arrow),
                                     selectedIcon: const Icon(Icons.pause),
@@ -397,8 +428,7 @@ class _TeachWordViewState extends State<TeachWordView>
                                       ? () async {
                                         if (!controller.isAnimating) {
                                           controller.startAnimation();
-                                          var result =
-                                              await ftts.speak(word);
+                                          var result = await ftts.speak(word);
                                         } else {
                                           controller.stopAnimation();
                                         }
@@ -407,7 +437,7 @@ class _TeachWordViewState extends State<TeachWordView>
                                   ),
                                   IconButton(
                                     iconSize: 35,
-                                    color: Color.fromRGBO(245, 245, 220, 100),
+                                    color: const Color.fromRGBO(245, 245, 220, 100),
                                     isSelected: controller.isQuizzing,
                                     icon: const Icon(Icons.edit),
                                     selectedIcon: const Icon(Icons.edit_off),
@@ -422,7 +452,7 @@ class _TeachWordViewState extends State<TeachWordView>
                                   ),
                                   IconButton(
                                     iconSize: 35,
-                                    color: Color.fromRGBO(245, 245, 220, 100),
+                                    color: const Color.fromRGBO(245, 245, 220, 100),
                                     isSelected: controller.showOutline,
                                     icon: const Icon(
                                       Icons.remove_red_eye_outlined),
@@ -434,7 +464,7 @@ class _TeachWordViewState extends State<TeachWordView>
                                   ),
                                 IconButton(
                                   iconSize: 35,
-                                  color: Color.fromRGBO(245, 245, 220, 100),
+                                  color: const Color.fromRGBO(245, 245, 220, 100),
                                   icon: const Icon(Icons.restart_alt),
                                   onPressed: () {
                                     controller.reset();
@@ -476,7 +506,25 @@ class _TeachWordViewState extends State<TeachWordView>
               ),
             ),
             vocab1View
-          ])),
+          ]),
+        bottomNavigationBar: BottomAppBar(
+          height: 112,
+          elevation: 0,
+          color: '#28231D'.toColor(),
+          child: LeftRightSwitch(
+            iconsColor: '#F5F5DC'.toColor(),
+            iconsSize: 48,
+            middleWidget: WordCard(
+              unitId: -1,
+              unitTitle: "",
+              word: word,
+              sizedBoxWidth: 67,
+              sizedBoxHeight: 88,
+              fontSize: 30,
+              isBpmf: isBpmf),
+          )
+        ),
+      ),
     );
   }
 }

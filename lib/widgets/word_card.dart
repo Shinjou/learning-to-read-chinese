@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ltrc/extensions.dart';
 import 'package:ltrc/views/teach_word_view.dart';
-import 'package:ltrc/views/teach_bpmf_view.dart';
 
 class WordCard extends StatelessWidget {
   const WordCard({
@@ -27,23 +26,13 @@ class WordCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        if (isBpmf) {
-          Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => TeachBopomoView(
-              isBpmf: isBpmf,
-              char: word,
-              unitId: unitId,
-              unitTitle: unitTitle,
-            )));
-        } else {
-          Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => TeachWordView(
-              isBpmf: isBpmf,
-              char: word,
-              unitId: unitId,
-              unitTitle: unitTitle,
-          )));
-        }
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => TeachWordView(
+            isBpmf: isBpmf,
+            char: word,
+            unitId: unitId,
+            unitTitle: unitTitle,
+        )));
       },
       child: Container(
         width: sizedBoxWidth,
