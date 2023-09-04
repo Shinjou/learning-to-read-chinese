@@ -4,13 +4,11 @@ class WordVocabContent extends StatelessWidget {
   final String vocab;
   final String meaning;
   final String sentence;
-  final double imgSize;
   const WordVocabContent({
     Key? key,
     required this.vocab,
     required this.meaning,
     required this.sentence,
-    required this.imgSize,
   }) : super(key: key);
 
   @override

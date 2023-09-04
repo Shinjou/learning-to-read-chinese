@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_tts/flutter_tts.dart';
@@ -11,8 +12,6 @@ import 'package:ltrc/widgets/teach_word/stroke_order_animator.dart';
 import 'package:ltrc/widgets/teach_word/stroke_order_animation_controller.dart';
 import 'package:ltrc/widgets/teach_word/word_vocab_content.dart';
 import 'package:provider/provider.dart';
-
-const String demoChar = "手";
 
 class TeachWordView extends StatefulWidget {
   final String char;
@@ -37,7 +36,11 @@ class _TeachWordViewState extends State<TeachWordView>
   late StrokeOrderAnimationController _strokeOrderAnimationControllers;
   late TabController _tabController;
   FlutterTts ftts = FlutterTts();
-  late Word wordd;
+  // late Word wordObj;
+  late Map wordObj;
+  int vocabCnt = 0;
+  bool img1Exist = false;
+  bool img2Exist = false;
 
   Future<String> readJson() async {
     final String response =
@@ -54,14 +57,56 @@ class _TeachWordViewState extends State<TeachWordView>
   //   });
   // }
 
+  Future myLoadAsset(String path) async {
+    try {
+      return await rootBundle.load(path);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  void getWord() async {
+    setState(() {
+      wordObj = {
+        "word": "日",
+        "vocab1": "日記",
+        "meaning1": "就是每天把自己做過的事情、心情寫下來的記錄。",
+        "sentence1": "今天我開始養成寫日記的好習慣，把每天的所見所聞都記錄下來。",
+        "vocab2": "日常",
+        "meaning2": "平常的、日常的。",
+        "sentence2": "這是我們日常使用的家電。",
+      };
+    });
+    if (wordObj['vocab1'] != "") {
+      vocabCnt += 1;
+      var imgAsset = await myLoadAsset(
+          'lib/assets/img/vocabulary/${wordObj['vocab1']}.png');
+      if (imgAsset == null) {
+        img1Exist = false;
+      } else {
+        img1Exist = true;
+      }
+    }
+    if (wordObj['vocab2'] != "") {
+      vocabCnt += 1;
+      var imgAsset = await myLoadAsset(
+          'lib/assets/img/vocabulary/${wordObj['vocab2']}.png');
+      if (imgAsset == null) {
+        img2Exist = false;
+      } else {
+        img2Exist = true;
+      }
+    }
+  }
+
   @override
   void initState() {
-    _tabController = TabController(length: 4, vsync: this);
     super.initState();
     ftts.setLanguage("zh-tw");
     ftts.setSpeechRate(0.5);
     ftts.setVolume(1.0);
-    // getWord();
+    getWord();
+    _tabController = TabController(length: 4, vsync: this);
     readJson().then((result) {
       setState(() {
         _strokeOrderAnimationControllers = StrokeOrderAnimationController(
@@ -99,6 +144,131 @@ class _TeachWordViewState extends State<TeachWordView>
     int unitId = widget.unitId;
     String unitTitle = widget.unitTitle;
     bool isBpmf = widget.isBpmf;
+
+    Widget vocab1View = TeachWordTabBarView(
+        isBpmf: isBpmf,
+        sectionName: '用一用',
+        word: word,
+        content: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+              // height: 320,
+              child: WordVocabContent(
+                vocab: wordObj['vocab1'],
+                meaning: wordObj['meaning1'],
+                sentence: "${wordObj['sentence1']}\n",
+              ),
+            ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Column(
+                  children: [
+                    IconButton(
+                        iconSize: 35,
+                        color: Color.fromRGBO(245, 245, 220, 100),
+                        onPressed: () async {
+                          var result = await ftts.speak(
+                              "${wordObj['vocab1']}。${wordObj['sentence1']}");
+                          if (result == 1) {
+                            //speaking
+                          } else {
+                            //not speaking
+                          }
+                        },
+                        icon: const Icon(Icons.volume_up)),
+                    const Text('讀音',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 17.5,
+                          color: Color.fromRGBO(245, 245, 220, 100),
+                        )),
+                  ],
+                ),
+                img1Exist
+                    ? Image(
+                        height: 150,
+                        image: AssetImage(
+                            'lib/assets/img/vocabulary/${wordObj['vocab1']}.png'),
+                      )
+                    : Container(
+                        height: 150,
+                      ),
+                Text("1 / $vocabCnt",
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromRGBO(245, 245, 220, 100),
+                    )),
+              ],
+            ),
+          ],
+        ));
+    Widget vocab2View = (vocabCnt == 2)
+        ? TeachWordTabBarView(
+            isBpmf: isBpmf,
+            sectionName: '用一用',
+            word: word,
+            content: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  // height: 320,
+                  child: WordVocabContent(
+                    vocab: wordObj['vocab2'],
+                    meaning: wordObj['meaning2'],
+                    sentence: "${wordObj['sentence2']}\n",
+                  ),
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Column(
+                      children: [
+                        IconButton(
+                            iconSize: 35,
+                            color: Color.fromRGBO(245, 245, 220, 100),
+                            onPressed: () async {
+                              var result = await ftts.speak(
+                                  "${wordObj['vocab1']}。${wordObj['sentence1']}");
+                              if (result == 1) {
+                                //speaking
+                              } else {
+                                //not speaking
+                              }
+                            },
+                            icon: const Icon(Icons.volume_up)),
+                        const Text('讀音',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 17.5,
+                              color: Color.fromRGBO(245, 245, 220, 100),
+                            )),
+                      ],
+                    ),
+                    img1Exist
+                        ? Image(
+                            height: 150,
+                            image: AssetImage(
+                                'lib/assets/img/vocabulary/${wordObj['vocab2']}.png'),
+                          )
+                        : Container(
+                            height: 150,
+                          ),
+                    Text("2 / $vocabCnt",
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Color.fromRGBO(245, 245, 220, 100),
+                        )),
+                  ],
+                ),
+              ],
+            ))
+        : Container();
 
     return DefaultTabController(
       length: teachWordTabs.length,
@@ -327,64 +497,7 @@ class _TeachWordViewState extends State<TeachWordView>
                     }),
                   ),
                 ),
-                TeachWordTabBarView(
-                    isBpmf: isBpmf,
-                    sectionName: '用一用',
-                    word: word,
-                    content: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Container(
-                          // height: 320,
-                          child: const WordVocabContent(
-                            imgSize: 150,
-                            vocab: "拍手叫好",
-                            meaning: "描述人們熱烈地鼓掌並大聲喊好的情景。",
-                            sentence: "哥哥唱完好聽的歌後，大家都為他拍手叫好!\n",
-                          ),
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Column(
-                              children: [
-                                IconButton(
-                                    iconSize: 35,
-                                    color: Color.fromRGBO(245, 245, 220, 100),
-                                    onPressed: () async {
-                                      var result = await ftts
-                                          .speak("拍手叫好。哥哥唱完好聽的歌後，大家都為他拍手叫好!\n");
-                                      if (result == 1) {
-                                        //speaking
-                                      } else {
-                                        //not speaking
-                                      }
-                                    },
-                                    icon: const Icon(Icons.volume_up)),
-                                const Text('讀音',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 17.5,
-                                      color: Color.fromRGBO(245, 245, 220, 100),
-                                    )),
-                              ],
-                            ),
-                            const Image(
-                              height: 150,
-                              image: AssetImage(
-                                  'lib/assets/img/vocabulary/一直.png'),
-                            ),
-                            const Text("1 / 1",
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color.fromRGBO(245, 245, 220, 100),
-                                )),
-                          ],
-                        ),
-                      ],
-                    )),
+                vocab1View
               ])),
     );
   }

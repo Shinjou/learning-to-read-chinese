@@ -22,7 +22,7 @@ class TeachWordTabBarView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(children: [
       SizedBox(
-        height: MediaQuery.of(context).size.height * 0.65,
+        height: MediaQuery.of(context).size.height * 0.66,
         width: MediaQuery.of(context).size.width,
         child: Container(
           decoration: BoxDecoration(
