@@ -46,47 +46,50 @@ class WordCardState extends State<WordCard> {
           color: widget.wordStatus.learned ? "#F8F88E".toColor():"#F5F5DC".toColor(),
           borderRadius: BorderRadius.circular(12),
         ), 
-        child: Flexible(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Align(
-                alignment: Alignment.topRight,
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  children:[
-                    Icon(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+             Align(
+              alignment: Alignment.topRight,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children:[
+                  IconButton(
+                    icon: liked ? const Icon(Icons.favorite) : const Icon(Icons.favorite_border),
+                    iconSize: 16,
+                    color: liked ? "#FF0303".toColor() : "#999999".toColor(),
+                    onPressed: () async {
+                      setState(() {
+                        liked = !liked;
+                      });
+                      WordStatus newStatus = widget.wordStatus;
+                      newStatus.liked = liked;
+                      await WordStatusProvider.updateWordStatus(
+                        status: newStatus
+                      );
+                    },
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 0, 3, 0),
+                    child: Icon(
                       widget.wordStatus.learned ? Icons.check_circle : Icons.circle_outlined,
-                      size: 12,
+                      size: 16,
                       color: widget.wordStatus.learned ? "#F8A339".toColor() : "#999999".toColor(),
                     ),
-                    IconButton(
-                      icon: liked ? const Icon(Icons.favorite) : const Icon(Icons.favorite_outlined),
-                      iconSize: 12,
-                      color: liked ? "#FF0303".toColor() : "#999999".toColor(),
-                      onPressed: () async {
-                        setState(() {
-                          liked = !liked;
-                        });
-                        WordStatus newStatus = widget.wordStatus;
-                        newStatus.liked = liked;
-                        await WordStatusProvider.updateWordStatus(
-                          status: newStatus
-                        );
-                      },
-                    ),
-                  ]
-                ),
+                  )
+                ]
               ),
-              Text(
-                widget.wordStatus.word, 
-                style: TextStyle(
-                  fontSize: widget.fontSize,
-                  fontWeight: FontWeight.w900,
-                ),
+            ),
+            Text(
+              widget.wordStatus.word, 
+              style: TextStyle(
+                fontSize: widget.fontSize,
+                fontWeight: FontWeight.w900,
               ),
-            ],
-          )
+            ),
+          ],
         )
       )
     );
