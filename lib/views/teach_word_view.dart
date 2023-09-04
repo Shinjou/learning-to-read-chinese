@@ -242,7 +242,7 @@ class _TeachWordViewState extends State<TeachWordView>
                   ? Image(
                       height: 150,
                       image: AssetImage(
-                          'lib/assets/img/vocabulary/${wordObj['vocab2']}.png'),
+                      'lib/assets/img/vocabulary/${wordObj['vocab2']}.png'),
                     )
                   : Container(
                       height: 150,
@@ -272,7 +272,6 @@ class _TeachWordViewState extends State<TeachWordView>
           titleTextStyle: TextStyle(
             color: "#F5F5DC".toColor(),
             fontSize: 34,
-            fontFamily: 'Serif',
             fontWeight: FontWeight.w900,
           ),
           actions: <Widget>[

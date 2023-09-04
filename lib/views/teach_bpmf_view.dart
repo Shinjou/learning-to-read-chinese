@@ -111,7 +111,6 @@ class _TeachBopomoViewState extends State<TeachBopomoView>
             titleTextStyle: TextStyle(
               color: "#F5F5DC".toColor(),
               fontSize: 34,
-              fontFamily: 'Serif',
               fontWeight: FontWeight.w900,
             ),
             actions: <Widget>[

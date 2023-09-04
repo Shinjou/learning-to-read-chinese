@@ -28,13 +28,13 @@ class WordCard extends StatelessWidget {
     return InkWell(
       onTap: () {
         if (isBpmf) {
-          // Navigator.of(context).push(MaterialPageRoute(
-          //   builder: (context) => TeachBopomoView(
-          //     isBpmf: isBpmf,
-          //     char: word,
-          //     unitId: unitId,
-          //     unitTitle: unitTitle,
-          //   )));
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => TeachBopomoView(
+              isBpmf: isBpmf,
+              char: word,
+              unitId: unitId,
+              unitTitle: unitTitle,
+            )));
         } else {
           Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => TeachWordView(

@@ -21,7 +21,6 @@ class WordVocabContent extends StatelessWidget {
           textAlign: TextAlign.center,
           style: const TextStyle(
             fontSize: 45,
-            fontFamily: "Serif",
             color: Color.fromRGBO(245, 245, 220, 100),
           )),
         Padding(
