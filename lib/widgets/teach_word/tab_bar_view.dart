@@ -39,7 +39,7 @@ class TeachWordTabBarView extends StatelessWidget {
                 iconsColor: '#D9D9D9'.toColor(),
                 iconsSize: 35,
                 middleWidget: TeachWordCardTitle(
-                    sectionName: sectionName, iconsColor: '#D9D9D9'.toColor()),
+                  sectionName: sectionName, iconsColor: '#D9D9D9'.toColor()),
               ),
               const SizedBox(
                 height: 10,
@@ -56,13 +56,13 @@ class TeachWordTabBarView extends StatelessWidget {
         iconsColor: '#F5F5DC'.toColor(),
         iconsSize: 48,
         middleWidget: WordCard(
-            unitId: -1,
-            unitTitle: "",
-            word: word,
-            sizedBoxWidth: 67,
-            sizedBoxHeight: 88,
-            fontSize: 30,
-            isBpmf: isBpmf),
+          unitId: -1,
+          unitTitle: "",
+          word: word,
+          sizedBoxWidth: 67,
+          sizedBoxHeight: 88,
+          fontSize: 30,
+          isBpmf: isBpmf),
       ),
     ]);
   }
