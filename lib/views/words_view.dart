@@ -47,16 +47,17 @@ class WordsView extends ConsumerWidget {
                     isBpmf: false,
                     unitId: unit.unitId,
                     unitTitle: unit.unitTitle,
-                    word: unit.newWords[index],
-                    wordStatus: newWordsStatus[index],
+                    wordStatus: newWordsStatus,
+                    wordIndex: index,
                     sizedBoxWidth: 30,
                     sizedBoxHeight: 155,
                     fontSize: 48,
+                    isVertical: true,
                   );
                 },
                 childCount: unit.newWords.length,
               ),
-            ),
+            )),
             (unit.extraWords.isEmpty)
                 ? const SliverToBoxAdapter(child: Text(''))
                 : SliverPadding(
@@ -85,17 +86,18 @@ class WordsView extends ConsumerWidget {
                     isBpmf: false,
                     unitId: unit.unitId,
                     unitTitle: unit.unitTitle,
-                    word: unit.extraWords[index],
-                    wordStatus: extraWordsStatus[index],
+                    wordStatus: extraWordsStatus,
+                    wordIndex: index,
                     sizedBoxWidth: 30,
                     sizedBoxHeight: 155,
                     fontSize: 48,
+                    isVertical: true,
                   );
                 },
                 childCount: unit.extraWords.length,
               ),
             ),
-          ],
+          )],
         ));
   }
 }

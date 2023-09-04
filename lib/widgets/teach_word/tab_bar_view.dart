@@ -10,15 +10,15 @@ import 'card_title.dart';
 
 class TeachWordTabBarView extends ConsumerWidget {
   final Widget content;
-  final String word;
-  final String sectionName;
-  final bool isBpmf;
+  // final String word;
+  // final String sectionName;
+  // final bool isBpmf;
   const TeachWordTabBarView({
     Key? key,
-    required this.sectionName,
-    required this.word,
+    // required this.sectionName,
+    // required this.word,
     required this.content,
-    required this.isBpmf,
+    // required this.isBpmf,
   }) : super(key: key);
 
   @override
@@ -37,12 +37,6 @@ class TeachWordTabBarView extends ConsumerWidget {
             children: [
               const SizedBox(
                 height: 10,
-              ),
-              LeftRightSwitch(
-                iconsColor: '#D9D9D9'.toColor(),
-                iconsSize: 35,
-                middleWidget: TeachWordCardTitle(
-                  sectionName: sectionName, iconsColor: '#D9D9D9'.toColor()),
               ),
               Expanded(child: content),
             ],

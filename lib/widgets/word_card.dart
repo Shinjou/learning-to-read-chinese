@@ -9,22 +9,24 @@ class WordCard extends StatefulWidget {
     super.key,
     required this.unitId,
     required this.unitTitle,
-    required this.word,
     required this.wordStatus,
+    required this.wordIndex,
     required this.sizedBoxWidth,
     required this.sizedBoxHeight,
     required this.fontSize,
     required this.isBpmf,
+    required this.isVertical,
   });
 
   final int unitId;
   final String unitTitle;
-  final String word;
   final double sizedBoxWidth;
   final double sizedBoxHeight;
   final double fontSize;
   final bool isBpmf;
-  final WordStatus wordStatus;
+  final List<WordStatus> wordStatus;
+  final int wordIndex;
+  final bool isVertical;
   
   @override
   WordCardState createState() => WordCardState();
@@ -35,7 +37,7 @@ class WordCardState extends State<WordCard> {
   bool liked = false;
 
   @override void initState() {
-    liked = widget.wordStatus.liked;
+    liked = widget.wordStatus[widget.wordIndex].liked;
     super.initState();
   }
 
@@ -46,60 +48,64 @@ class WordCardState extends State<WordCard> {
         Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => TeachWordView(
             isBpmf: widget.isBpmf,
-            char: widget.wordStatus.word,
             unitId: widget.unitId,
             unitTitle: widget.unitTitle,
+            wordStatus: widget.wordStatus,
+            wordIndex: widget.wordIndex,
         )));
       },
       child: Container(
-        width: sizedBoxWidth,
-        height: sizedBoxHeight,
+        width: widget.sizedBoxWidth,
+        height: widget.sizedBoxHeight,
         decoration: BoxDecoration(
-          color: widget.wordStatus.learned ? "#F8F88E".toColor():"#F5F5DC".toColor(),
+          color: widget.wordStatus[widget.wordIndex].learned ? "#F8F88E".toColor():"#F5F5DC".toColor(),
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
+        child: Wrap(
+          direction: !widget.isVertical ? Axis.vertical : Axis.horizontal,
+          alignment: WrapAlignment.center,
+          crossAxisAlignment: WrapCrossAlignment.center,
           children: [
              Align(
               alignment: Alignment.topRight,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children:[
-                  IconButton(
-                    icon: liked ? const Icon(Icons.favorite) : const Icon(Icons.favorite_border),
-                    iconSize: 16,
-                    color: liked ? "#FF0303".toColor() : "#999999".toColor(),
-                    onPressed: () async {
-                      setState(() {
-                        liked = !liked;
-                      });
-                      WordStatus newStatus = widget.wordStatus;
-                      newStatus.liked = liked;
-                      await WordStatusProvider.updateWordStatus(
-                        status: newStatus
-                      );
-                    },
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+                child: 
+                  Wrap(
+                    direction: !widget.isVertical ? Axis.vertical : Axis.horizontal,
+                    alignment: WrapAlignment.center,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children:[
+                      IconButton(
+                        icon: liked ? const Icon(Icons.favorite) : const Icon(Icons.favorite_border),
+                        iconSize: 16,
+                        color: liked ? "#FF0303".toColor() : "#999999".toColor(),
+                        onPressed: () async {
+                          setState(() {
+                            liked = !liked;
+                          });
+                          WordStatus newStatus = widget.wordStatus[widget.wordIndex];
+                          newStatus.liked = liked;
+                          await WordStatusProvider.updateWordStatus(
+                            status: newStatus
+                          );
+                        },
+                      ),
+                      Icon(
+                        widget.wordStatus[widget.wordIndex].learned ? Icons.check_circle : Icons.circle_outlined,
+                        size: 16,
+                        color: widget.wordStatus[widget.wordIndex].learned ? "#F8A339".toColor() : "#999999".toColor(),
+                      ),
+                    ]
                   ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 0, 3, 0),
-                    child: Icon(
-                      widget.wordStatus.learned ? Icons.check_circle : Icons.circle_outlined,
-                      size: 16,
-                      color: widget.wordStatus.learned ? "#F8A339".toColor() : "#999999".toColor(),
-                    ),
-                  )
-                ]
               ),
             ),
             Text(
-              widget.wordStatus.word, 
+              widget.wordStatus[widget.wordIndex].word, 
               style: TextStyle(
                 fontSize: widget.fontSize,
                 fontWeight: FontWeight.w900,
-                fontFamily: isBpmf ? "BpmfOnly" : "Serif",
+                fontFamily: widget.isBpmf ? "BpmfOnly" : "Serif",
               ),
             ),
           ],

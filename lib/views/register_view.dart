@@ -105,7 +105,9 @@ class RegisterViewState extends ConsumerState<RegisterView> {
                       fontSize: 34.0,
                     )
                   )
-                )
+                ),
+                isFirst: false,
+                isLast: false,
               )
             ),
             LeftRightSwitch(
@@ -128,7 +130,9 @@ class RegisterViewState extends ConsumerState<RegisterView> {
                     fontSize: 34.0,
                   )
                 )
-              )
+              ),
+              isFirst: false,
+              isLast: false,
             ),
             Padding(
               padding: EdgeInsets.fromLTRB(0, deviceHeight * 0.0687, 0, deviceHeight * 0.05),

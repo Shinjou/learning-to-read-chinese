@@ -4,6 +4,8 @@ class LeftRightSwitch extends StatelessWidget {
   final Color iconsColor;
   final double iconsSize;
   final Widget middleWidget;
+  final bool isFirst;
+  final bool isLast;
   final VoidCallback? onLeftClicked;
   final VoidCallback? onRightClicked;
 
@@ -12,6 +14,8 @@ class LeftRightSwitch extends StatelessWidget {
     required this.iconsColor,
     required this.iconsSize,
     required this.middleWidget,
+    required this.isFirst,
+    required this.isLast,
     this.onLeftClicked,
     this.onRightClicked,
   }) : super(key: key);
@@ -21,7 +25,7 @@ class LeftRightSwitch extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        IconButton(
+        (!isFirst) ? IconButton(
           icon: Icon(
             Icons.chevron_left,
             shadows: const [
@@ -31,9 +35,9 @@ class LeftRightSwitch extends StatelessWidget {
           ),
           iconSize: iconsSize,
           onPressed: onLeftClicked ?? ()=>{},
-        ),
+        ) : Container(width: 40,),
         middleWidget,
-        IconButton(
+        (!isLast) ? IconButton(
           icon: Icon(
             Icons.chevron_right,
             shadows: const [
@@ -43,7 +47,7 @@ class LeftRightSwitch extends StatelessWidget {
           ),
           iconSize: iconsSize,
           onPressed: onRightClicked ?? ()=>{},
-        )
+        ) : Container(width: 40,),
       ],
     );
   }

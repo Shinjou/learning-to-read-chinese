@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:ltrc/data/models/word_status_model.dart';
 import 'package:ltrc/extensions.dart';
 import 'package:ltrc/widgets/mainPage/left_right_switch.dart';
 import 'package:ltrc/widgets/teach_word/bpmf_vocab_content.dart';
+import 'package:ltrc/widgets/teach_word/card_title.dart';
 import 'package:ltrc/widgets/teach_word/tab_bar_view.dart';
 import 'package:ltrc/widgets/teach_word/stroke_order_animator.dart';
 import 'package:ltrc/widgets/teach_word/stroke_order_animation_controller.dart';
@@ -13,17 +15,19 @@ import 'package:ltrc/widgets/word_card.dart';
 import 'package:provider/provider.dart';
 
 class TeachWordView extends StatefulWidget {
-  final String char;
   final int unitId;
   final String unitTitle;
   final bool isBpmf;
+  final List<WordStatus> wordStatus;
+  final int wordIndex;
 
   const TeachWordView({
     super.key,
-    required this.char,
     required this.unitId,
     required this.unitTitle,
     required this.isBpmf,
+    required this.wordStatus,
+    required this.wordIndex,
   });
 
   @override
@@ -42,7 +46,7 @@ class _TeachWordViewState extends State<TeachWordView>
 
   Future<String> readJson() async {
     final String response =
-        await rootBundle.loadString('lib/assets/svg/${widget.char}.json');
+        await rootBundle.loadString('lib/assets/svg/${widget.wordStatus[widget.wordIndex].word}.json');
 
     return response.replaceAll("\"", "\'");
   }
@@ -150,18 +154,23 @@ class _TeachWordViewState extends State<TeachWordView>
   Widget build(BuildContext context) {
     // double deviceHeight = MediaQuery.of(context).size.height;
 
-    String word = widget.char;
+    String word = widget.wordStatus[widget.wordIndex].word;
     int unitId = widget.unitId;
     String unitTitle = widget.unitTitle;
     bool isBpmf = widget.isBpmf;
 
     Widget vocab1View = TeachWordTabBarView(
-      isBpmf: isBpmf,
-      sectionName: '用一用',
-      word: word,
       content: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
+          LeftRightSwitch(
+            iconsColor: '#D9D9D9'.toColor(),
+            iconsSize: 35,
+            middleWidget: TeachWordCardTitle(
+              sectionName: '用一用', iconsColor: '#D9D9D9'.toColor()),
+            isFirst: false,
+            isLast: (vocabCnt == 1),
+          ),
           isBpmf ? 
             BopomofoVocabContent(
               word: word,
@@ -219,12 +228,17 @@ class _TeachWordViewState extends State<TeachWordView>
     ));
     Widget vocab2View = (vocabCnt == 2)
       ? TeachWordTabBarView(
-        isBpmf: isBpmf,
-        sectionName: '用一用',
-        word: word,
         content: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            LeftRightSwitch(
+              iconsColor: '#D9D9D9'.toColor(),
+              iconsSize: 35,
+              middleWidget: TeachWordCardTitle(
+                sectionName: '用一用', iconsColor: '#D9D9D9'.toColor()),
+              isFirst: false,
+              isLast: true,
+            ),
             isBpmf ? 
               BopomofoVocabContent(
                 word: word,
@@ -294,8 +308,9 @@ class _TeachWordViewState extends State<TeachWordView>
           title: Text("${unitId.toString().padLeft(2, '0')} | $unitTitle"),
           titleTextStyle: TextStyle(
             color: "#F5F5DC".toColor(),
-            fontSize: 34,
+            fontSize: 30,
             fontWeight: FontWeight.w900,
+            fontFamily: "Serif",
           ),
           actions: <Widget>[
             IconButton(
@@ -323,20 +338,35 @@ class _TeachWordViewState extends State<TeachWordView>
                 controller: _tabController,
           children: [
             TeachWordTabBarView(
-              isBpmf: isBpmf,
-              sectionName: '看一看',
-              word: word,
-              content: Image(
-                width: 300,
-                image: isBpmf ? 
-                  AssetImage('lib/assets/img/bopomo/$word.png') : AssetImage('lib/assets/img/oldWords/$word.png'),
-              )),
-            TeachWordTabBarView(
-              isBpmf: isBpmf,
-              word: word,
-              sectionName: '聽一聽',
               content: Column(
                 children: [
+                  LeftRightSwitch(
+                    iconsColor: '#D9D9D9'.toColor(),
+                    iconsSize: 35,
+                    middleWidget: TeachWordCardTitle(
+                      sectionName: '看一看', iconsColor: '#D9D9D9'.toColor()),
+                    isFirst: true,
+                    isLast: false,
+                  ),
+                  const SizedBox(height: 60,),
+                  Image(
+                    width: 300,
+                    image: isBpmf ? 
+                      AssetImage('lib/assets/img/bopomo/$word.png') : AssetImage('lib/assets/img/oldWords/$word.png'),
+                  ),
+                ],
+              )),
+            TeachWordTabBarView(
+              content: Column(
+                children: [
+                  LeftRightSwitch(
+                    iconsColor: '#D9D9D9'.toColor(),
+                    iconsSize: 35,
+                    middleWidget: TeachWordCardTitle(
+                      sectionName: '聽一聽', iconsColor: '#D9D9D9'.toColor()),
+                    isFirst: false,
+                    isLast: false,
+                  ),
                   const SizedBox(height: 20,),
                   Padding(
                     padding: isBpmf ? const EdgeInsets.fromLTRB(0, 0, 0, 0) : const EdgeInsets.fromLTRB(50, 0, 0, 0),
@@ -379,9 +409,6 @@ class _TeachWordViewState extends State<TeachWordView>
                 ],
               )),
             TeachWordTabBarView(
-              isBpmf: isBpmf,
-              sectionName: '寫一寫',
-              word: word,
               content: ChangeNotifierProvider<
                 StrokeOrderAnimationController>.value(
                 value: _strokeOrderAnimationControllers,
@@ -392,6 +419,14 @@ class _TeachWordViewState extends State<TeachWordView>
                         width: 300,
                         child: Column(
                           children: <Widget>[
+                            LeftRightSwitch(
+                              iconsColor: '#D9D9D9'.toColor(),
+                              iconsSize: 35,
+                              middleWidget: TeachWordCardTitle(
+                                sectionName: '聽一聽', iconsColor: '#D9D9D9'.toColor()),
+                              isFirst: false,
+                              isLast: false,
+                            ),
                             const SizedBox(height: 30),
                             Container(
                               decoration: const BoxDecoration(
@@ -508,20 +543,45 @@ class _TeachWordViewState extends State<TeachWordView>
             vocab1View
           ]),
         bottomNavigationBar: BottomAppBar(
-          height: 112,
+          height: 100,
           elevation: 0,
           color: '#28231D'.toColor(),
           child: LeftRightSwitch(
             iconsColor: '#F5F5DC'.toColor(),
             iconsSize: 48,
             middleWidget: WordCard(
-              unitId: -1,
-              unitTitle: "",
-              word: word,
-              sizedBoxWidth: 67,
+              unitId: unitId,
+              unitTitle: unitTitle,
+              wordStatus: widget.wordStatus,
+              wordIndex: widget.wordIndex,
+              sizedBoxWidth: 125,
               sizedBoxHeight: 88,
               fontSize: 30,
-              isBpmf: isBpmf),
+              isBpmf: isBpmf,
+              isVertical: false,
+            ),
+            isFirst: (widget.wordIndex == 0),
+            isLast: (widget.wordIndex == widget.wordStatus.length - 1),
+            onLeftClicked: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => TeachWordView(
+                  isBpmf: widget.isBpmf,
+                  unitId: widget.unitId,
+                  unitTitle: widget.unitTitle,
+                  wordStatus: widget.wordStatus,
+                  wordIndex: widget.wordIndex - 1,
+              )));
+            },
+            onRightClicked: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => TeachWordView(
+                  isBpmf: widget.isBpmf,
+                  unitId: widget.unitId,
+                  unitTitle: widget.unitTitle,
+                  wordStatus: widget.wordStatus,
+                  wordIndex: widget.wordIndex + 1,
+              )));
+            }
           )
         ),
       ),
