@@ -66,11 +66,12 @@ class _TeachBopomoViewState extends State<TeachBopomoView>
           this,
           onQuizCompleteCallback: (summary) {
             Fluttertoast.showToast(
-                msg: [
-              "Quiz finished. ",
-              summary.nTotalMistakes.toString(),
-              " mistakes"
-            ].join());
+              msg: [
+                "Quiz finished. ",
+                summary.nTotalMistakes.toString(),
+                " mistakes"
+              ].join()
+            );
           },
         );
       });

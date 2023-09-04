@@ -1,11 +1,7 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:ltrc/data/models/word_model.dart';
-import 'package:ltrc/data/models/unit_model.dart';
-import 'package:ltrc/data/providers/word_provider.dart';
 import 'package:ltrc/extensions.dart';
 import 'package:ltrc/widgets/teach_word/tab_bar_view.dart';
 import 'package:ltrc/widgets/teach_word/stroke_order_animator.dart';
@@ -71,10 +67,19 @@ class _TeachWordViewState extends State<TeachWordView>
         "vocab1": "日記",
         "meaning1": "就是每天把自己做過的事情、心情寫下來的記錄。",
         "sentence1": "今天我開始養成寫日記的好習慣，把每天的所見所聞都記錄下來。",
-        "vocab2": "日常",
-        "meaning2": "平常的、日常的。",
-        "sentence2": "這是我們日常使用的家電。",
+        "vocab2": "日出",
+        "meaning2": "描述凌晨太陽昇起。",
+        "sentence2": "日出的时候，海上的景色特别美麗。",
       };
+      // wordObj = {
+      //   "word": "我",
+      //   "vocab1": "我們",
+      //   "meaning1": "包括自己在內的一組人。",
+      //   "sentence1": "悲傷的電影，常常讓我們淚流滿面。",
+      //   "vocab2": "",
+      //   "meaning2": "",
+      //   "sentence2": "",
+      // };
     });
     if (wordObj['vocab1'] != "") {
       vocabCnt += 1;
@@ -113,12 +118,13 @@ class _TeachWordViewState extends State<TeachWordView>
           this,
           onQuizCompleteCallback: (summary) {
             Fluttertoast.showToast(
-                msg: [
-              "Quiz finished. ",
-              summary.nTotalMistakes.toString(),
-              " mistakes"
-            ].join());
-          }
+              msg: [
+                "Quiz finished. ",
+                summary.nTotalMistakes.toString(),
+                " mistakes"
+              ].join()
+            );
+          },
         );
       });
     });
@@ -151,13 +157,10 @@ class _TeachWordViewState extends State<TeachWordView>
       content: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Container(
-            // height: 320,
-            child: WordVocabContent(
-              vocab: wordObj['vocab1'],
-              meaning: wordObj['meaning1'],
-              sentence: "${wordObj['sentence1']}\n",
-            ),
+          WordVocabContent(
+            vocab: wordObj['vocab1'],
+            meaning: wordObj['meaning1'],
+            sentence: "${wordObj['sentence1']}\n",
           ),
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
@@ -202,61 +205,58 @@ class _TeachWordViewState extends State<TeachWordView>
     ));
     Widget vocab2View = (vocabCnt == 2)
       ? TeachWordTabBarView(
-          isBpmf: isBpmf,
-          sectionName: '用一用',
-          word: word,
-          content: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Container(
-                // height: 320,
-                child: WordVocabContent(
-                  vocab: wordObj['vocab2'],
-                  meaning: wordObj['meaning2'],
-                  sentence: "${wordObj['sentence2']}\n",
-                ),
-              ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Column(
-                    children: [
-                      IconButton(
-                        iconSize: 35,
-                        color: Color.fromRGBO(245, 245, 220, 100),
-                        onPressed: () async {
-                          var result = await ftts.speak(
-                            "${wordObj['vocab1']}。${wordObj['sentence1']}");
-                        },
-                        icon: const Icon(Icons.volume_up)),
-                      const Text('讀音',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 17.5,
-                          color: Color.fromRGBO(245, 245, 220, 100),
-                      )),
-                    ],
-                  ),
-                  img1Exist
-                    ? Image(
-                        height: 150,
-                        image: AssetImage(
-                            'lib/assets/img/vocabulary/${wordObj['vocab2']}.png'),
-                      )
-                    : Container(
-                        height: 150,
-                      ),
-                  Text("2 / $vocabCnt",
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+        isBpmf: isBpmf,
+        sectionName: '用一用',
+        word: word,
+        content: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            WordVocabContent(
+              vocab: wordObj['vocab2'],
+              meaning: wordObj['meaning2'],
+              sentence: "${wordObj['sentence2']}\n",
+            ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Column(
+                  children: [
+                    IconButton(
+                      iconSize: 35,
                       color: Color.fromRGBO(245, 245, 220, 100),
-                  )),
-                ],
-              ),
-            ],
-          ))
+                      onPressed: () async {
+                        var result = await ftts.speak(
+                          "${wordObj['vocab1']}。${wordObj['sentence1']}");
+                      },
+                      icon: const Icon(Icons.volume_up)),
+                    const Text('讀音',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 17.5,
+                        color: Color.fromRGBO(245, 245, 220, 100),
+                    )),
+                  ],
+                ),
+                img1Exist
+                  ? Image(
+                      height: 150,
+                      image: AssetImage(
+                          'lib/assets/img/vocabulary/${wordObj['vocab2']}.png'),
+                    )
+                  : Container(
+                      height: 150,
+                    ),
+                Text("2 / $vocabCnt",
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromRGBO(245, 245, 220, 100),
+                )),
+              ],
+            ),
+          ],
+        ))
       : Container();
 
     return DefaultTabController(
