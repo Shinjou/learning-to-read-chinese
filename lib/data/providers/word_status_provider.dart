@@ -55,7 +55,7 @@ class WordStatusProvider {
   static Future<WordStatus> getWordStatus({required String word, required String account}) async {
     final Database db = await getDBConnect();
     final List<Map<String, dynamic>> maps = await db.query(tableName,
-      columns: [databaseId, databaseUserAccount, databaseWord, databaseLearned, databaseLiked],
+      columns: ["*"],
       where: "$databaseUserAccount = ? and $databaseWord = ?",
       whereArgs: [account, word]
     );
@@ -73,7 +73,7 @@ class WordStatusProvider {
     List<WordStatus> statuses = [];
     for (var word in words){
       List<Map<String, dynamic>> maps = await db.query(tableName,
-        columns: [databaseId, databaseUserAccount, databaseWord, databaseLearned, databaseLiked],
+        columns: ["*"],
         where: "$databaseUserAccount = ? and $databaseWord = ?",
         whereArgs: [account, word]
       );
@@ -101,6 +101,9 @@ class WordStatusProvider {
   }
 
   static Future<void> closeDb() async {
-    await deleteDatabase(join(await getDatabasesPath(), 'wordStatus.sqlite'));
+    database = null;
+    await deleteDatabase( 
+      join(await getDatabasesPath(), 'wordStatus.sqlite')
+    );
   }
 }

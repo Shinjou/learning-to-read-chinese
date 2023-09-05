@@ -63,7 +63,7 @@ class UnitProvider {
   static Future<List<Unit>> getUnits({required int inputGrade, required String inputSemester}) async {
     final Database db = await getDBConnect();
     final List<Map<String, dynamic>> maps = await db.query(tableName,
-      columns: [databaseGrade, databaseSemester, databaseUnitId, databaseUnitTitle, databaseNewWords, databaseExtraWords],
+      columns: ["*"],
       where: " $databaseGrade = ? and $databaseSemester = ? ",
       whereArgs: [inputGrade, inputSemester]
     );
@@ -84,7 +84,7 @@ class UnitProvider {
   static Future<List<Unit>> getWordsInUnit(int inputGrade, String inputSemester, int unitId) async {
     final Database db = await getDBConnect();
     final List<Map<String, dynamic>> maps = await db.query(tableName,
-      columns: [databaseGrade, databaseSemester, databaseUnitId, databaseUnitTitle, databaseNewWords, databaseExtraWords],
+      columns: ["*"],
       where: " $databaseGrade = ? and $databaseSemester = ? and $databaseUnitId = ?",
       whereArgs: [inputGrade, inputSemester, unitId]
     );
@@ -101,7 +101,8 @@ class UnitProvider {
     });
   }
 
-  static void closeDb() async {
+  static Future<void> closeDb() async {
+    database = null;
     await deleteDatabase(
       join(await getDatabasesPath(), 'units.sqlite')
     );

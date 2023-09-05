@@ -58,10 +58,13 @@ class WordProvider {
     final List<Map<String, dynamic>> tmp = await db.rawQuery("PRAGMA table_info($tableName)");
     debugPrint(tmp.toString());
     final List<Map<String, dynamic>> maps = await db.query(tableName,
-      columns: [databaseWord, databaseVocab1, databaseMeaning1, databaseSentence1, databaseVocab2, databaseMeaning2, databaseSentence2],
+      columns: ["*"],
       where: "$databaseWord=?",
       whereArgs: [inputWord]
     );
+    // final List<Map<String, dynamic>> maps = await db.rawQuery(
+    //   'SELECT * FROM $tableName WHERE $databaseWord = "$inputWord"'
+    // );
     return Word(
       word: maps[0][databaseWord],
       vocab1: maps[0][databaseVocab1],
@@ -73,7 +76,8 @@ class WordProvider {
     );
   }
 
-  static void closeDb() async{
+  static Future<void> closeDb() async{
+    database = null;
     await deleteDatabase(
       join(await getDatabasesPath(), 'words.sqlite')
     );

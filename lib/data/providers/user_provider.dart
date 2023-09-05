@@ -49,7 +49,7 @@ class UserProvider {
     final Database db = await getDBConnect();
     try {
       final List<Map<String, dynamic>> maps = await db.query(tableName,
-        columns: [databaseAccount, databasePassword, databaseUserName, databaseSafetyQuestionId1, databaseSafetyAnswer1, databaseSafetyQuestionId2, databaseSafetyAnswer2, databaseGrade, databasePublisher],
+        columns: ["*"],
         where: " $databaseAccount = ? ",
         whereArgs: [inputAccount]
       );
@@ -98,6 +98,7 @@ class UserProvider {
   }
 
   static Future<void> closeDb() async {
+    database = null;
     await deleteDatabase(
       join(await getDatabasesPath(), 'users.sqlite')
     );
