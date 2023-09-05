@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/extensions.dart';
+import 'package:ltrc/providers.dart';
 import 'package:ltrc/widgets/grade_and_provider_button.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -115,8 +116,8 @@ class SettingViewState extends ConsumerState<SettingView> {
                       child: const Text(
                         '年級',
                         style: TextStyle(
-                            fontSize: 24,
-                            color: Colors.black
+                          fontSize: 24,
+                          color: Colors.black
                         )
                       )
                     ),
@@ -126,9 +127,9 @@ class SettingViewState extends ConsumerState<SettingView> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          GradeAndProviderButton(buttonWidth: deviceWidth * 0.25, buttonHeight: deviceHeight * 0.035, text: '一年級'),
-                          GradeAndProviderButton(buttonWidth: deviceWidth * 0.25, buttonHeight: deviceHeight * 0.035, text: '二年級'),
-                          GradeAndProviderButton(buttonWidth: deviceWidth * 0.25, buttonHeight: deviceHeight * 0.035, text: '三年級')
+                          GradeAndProviderButton(buttonWidth: deviceWidth * 0.25, buttonHeight: deviceHeight * 0.035, text: '一'),
+                          GradeAndProviderButton(buttonWidth: deviceWidth * 0.25, buttonHeight: deviceHeight * 0.035, text: '二'),
+                          GradeAndProviderButton(buttonWidth: deviceWidth * 0.25, buttonHeight: deviceHeight * 0.035, text: '三')
                         ]
                       )),
                     Container(
@@ -138,9 +139,9 @@ class SettingViewState extends ConsumerState<SettingView> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          GradeAndProviderButton(buttonWidth: deviceWidth * 0.25, buttonHeight: deviceHeight * 0.035, text: '四年級'),
-                          GradeAndProviderButton(buttonWidth: deviceWidth * 0.25, buttonHeight: deviceHeight * 0.035, text: '五年級'),
-                          GradeAndProviderButton(buttonWidth: deviceWidth * 0.25, buttonHeight: deviceHeight * 0.035, text: '六年級')
+                          GradeAndProviderButton(buttonWidth: deviceWidth * 0.25, buttonHeight: deviceHeight * 0.035, text: '四'),
+                          GradeAndProviderButton(buttonWidth: deviceWidth * 0.25, buttonHeight: deviceHeight * 0.035, text: '五'),
+                          GradeAndProviderButton(buttonWidth: deviceWidth * 0.25, buttonHeight: deviceHeight * 0.035, text: '六')
                         ]
                       )
                     ),
@@ -151,8 +152,8 @@ class SettingViewState extends ConsumerState<SettingView> {
                       child: const Text(
                         '課本版本',
                         style: TextStyle(
-                            fontSize: 24,
-                            color: Colors.black
+                          fontSize: 24,
+                          color: Colors.black
                         )
                       )
                     ),
@@ -185,11 +186,9 @@ class SettingViewState extends ConsumerState<SettingView> {
                             ),
                             CupertinoSwitch(
                               onChanged: (bool? value){
-                                setState(() {
-                                  switchValue = value ?? false;
-                                });
+                                ref.read(soundOnProvider.notifier).state = !ref.read(soundOnProvider.notifier).state;
                               },
-                              value: switchValue,
+                              value: ref.watch(soundOnProvider),
                               activeColor: CupertinoColors.black,
                             )
                           ]

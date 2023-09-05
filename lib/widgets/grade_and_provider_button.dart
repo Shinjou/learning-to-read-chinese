@@ -15,9 +15,9 @@ class GradeAndProviderButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    double fontSize = 0;
-    if (buttonWidth * 4 > 400) fontSize = 11;
-    else fontSize = 9;
+    double fontSize = 12;
+    // if (buttonWidth * 4 > 400) fontSize = 11;
+    // else fontSize = 9;
 
     return Container(
       width: buttonWidth,
