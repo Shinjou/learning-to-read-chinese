@@ -13,7 +13,19 @@ class SettingView extends ConsumerStatefulWidget {
 }
 
 class SettingViewState extends ConsumerState<SettingView> {
-  bool switchValue = true;
+  late TextEditingController controller;
+
+  @override 
+  void initState(){
+    super.initState();
+    controller = TextEditingController();
+  }
+
+  @override
+  void dispose(){
+    controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,15 +100,15 @@ class SettingViewState extends ConsumerState<SettingView> {
                 child: Column(
                   children: [
                     Container(
-                      height: 55,
+                      height: 50,
                       width: deviceWidth * 0.85,
-                      margin: EdgeInsetsDirectional.fromSTEB(deviceWidth * 0.0513, deviceHeight * 0.032, 0, deviceHeight * 0.034),
+                      margin: EdgeInsetsDirectional.fromSTEB(deviceWidth * 0.0513, deviceHeight * 0.032, 0, deviceHeight * 0.024),
                       child: Row(
                         children: [
                           Icon(
                             Icons.account_circle,
                             color: '#1C1B1F'.toColor(),
-                            size: 49
+                            size: 48
                           ),
                           Container( width: 20 ),
                           const Text(
@@ -105,9 +117,53 @@ class SettingViewState extends ConsumerState<SettingView> {
                               color: Colors.black,
                               fontSize: 28,
                             )
+                          ),
+                          Container( width: 30 ),
+                          InkWell(
+                            onTap: (){
+                              showDialog(
+                                context: context, 
+                                builder: (context) => AlertDialog(
+                                  backgroundColor: "#F5F5DC".toColor(),
+                                  title: const Text("編輯名稱"),
+                                  content: const TextField(
+                                    decoration: InputDecoration(
+                                      hintText: "請輸入你的名稱"
+                                    ),
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.of(context).pop(),
+                                      child: const Text('確認')
+                                    )
+                                  ],
+                                )
+                              );
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Icon(
+                                  Icons.mode,
+                                  color: "#999999".toColor(),
+                                ),
+                                Text(
+                                  "編輯",
+                                  style: TextStyle(
+                                    color: "#999999".toColor(),
+                                  ),
+                                )
+                              ],
+                            )
                           )
                         ]
                       ),
+                    ),
+                    Divider(
+                      color: '#999999'.toColor(),
+                      indent: 12,
+                      endIndent: 12,
+                      height: 4,
                     ),
                     Container(
                       height: 30,
@@ -131,7 +187,8 @@ class SettingViewState extends ConsumerState<SettingView> {
                           GradeAndProviderButton(buttonWidth: deviceWidth * 0.25, buttonHeight: deviceHeight * 0.035, text: '二'),
                           GradeAndProviderButton(buttonWidth: deviceWidth * 0.25, buttonHeight: deviceHeight * 0.035, text: '三')
                         ]
-                      )),
+                      )
+                    ),
                     Container(
                       height: deviceHeight * 0.035,
                       width: deviceWidth * 0.8,
@@ -144,6 +201,12 @@ class SettingViewState extends ConsumerState<SettingView> {
                           GradeAndProviderButton(buttonWidth: deviceWidth * 0.25, buttonHeight: deviceHeight * 0.035, text: '六')
                         ]
                       )
+                    ),
+                    Divider(
+                      color: '#999999'.toColor(),
+                      indent: 12,
+                      endIndent: 12,
+                      height: 4,
                     ),
                     Container(
                       height: 30,
@@ -168,6 +231,12 @@ class SettingViewState extends ConsumerState<SettingView> {
                           GradeAndProviderButton(buttonWidth: deviceWidth * 0.25, buttonHeight: deviceHeight * 0.035, text: '南一')
                         ]
                       )
+                    ),
+                    Divider(
+                      color: '#999999'.toColor(),
+                      indent: 12,
+                      endIndent: 12,
+                      height: 4,
                     ),
                     Padding(
                       padding: EdgeInsetsDirectional.symmetric(horizontal: 0, vertical: deviceHeight * 0.04),
@@ -195,8 +264,14 @@ class SettingViewState extends ConsumerState<SettingView> {
                         )
                       )
                     ),
+                    Divider(
+                      color: '#999999'.toColor(),
+                      indent: 12,
+                      endIndent: 12,
+                      height: 4,
+                    ),
                     SizedBox(
-                      height: 30,
+                      height: 26,
                       width: deviceWidth * 0.8,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
