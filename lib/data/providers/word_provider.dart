@@ -55,8 +55,6 @@ class WordProvider {
     
   static Future<Word> getWord({required String inputWord}) async {
     final Database db = await getDBConnect();
-    final List<Map<String, dynamic>> tmp = await db.rawQuery("PRAGMA table_info($tableName)");
-    debugPrint(tmp.toString());
     final List<Map<String, dynamic>> maps = await db.query(tableName,
       columns: ["*"],
       where: "$databaseWord=?",
