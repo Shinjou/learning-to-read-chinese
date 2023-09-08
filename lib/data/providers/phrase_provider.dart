@@ -5,9 +5,9 @@ import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-import '../models/word_model.dart';
+import '../models/Phrase_model.dart';
 
-class WordProvider {
+class PhraseProvider {
   static Database? database;
   static Future<Database> getDBConnect() async {
     String newPath = join(await getDatabasesPath(), 'all.sqlite');
@@ -27,54 +27,45 @@ class WordProvider {
     return database!;
   }
 
-  static String tableName = 'Words';
+  static String tableName = 'Phrases';
   
   // Define constants for database
   static const String databaseId = 'id';
-  static const String databaseWord = 'word';
-  static const String databasePhoneticTone = 'phonetic_tone';
-  static const String databasePhonetic = 'phonetic';
-  static const String databaseTone = 'tone';
-  static const String databaseShapeSymbol = 'shape_symbol';
-  static const String databaseSoundSymbol = 'sound_symbol';
-  static const String databaseStrokes = 'strokes';
-  static const String databaseCommon = 'common';
+  static const String databasePhrase = 'phrase';
+  static const String databaseDefinition = 'definition';
+  static const String databaseSentence = 'sentence';
 
   static Future<Database> initDatabase() async =>
     database ??= await openDatabase(
       join(await getDatabasesPath(), 'all.sqlite'),
       version: 1,
-      onConfigure: (Database db) async => await db.execute("PRAGMA foreign_keys = ON"),
     );
 
-  static Future<void> addWord(Word word) async {
+  static Future<void> addPhrase(Phrase phrase) async {
     final Database db = await getDBConnect();
     await db.insert(
       tableName,
-      word.toMap(),
+      phrase.toMap(),
       conflictAlgorithm: ConflictAlgorithm.ignore,
     );
   }
 
-  static Future<Word> getWord({required String inputWord}) async {
+  static Future<Phrase> getPhraseById({required String inputPhraseId}) async {
     final Database db = await getDBConnect();
     final List<Map<String, dynamic>> maps = await db.query(tableName,
       columns: ["*"],
-      where: "$databaseWord=?",
-      whereArgs: [inputWord]
+      where: "$databaseId=?",
+      whereArgs: [inputPhraseId]
     );
-    return Word(
+    return Phrase(
       id: maps[0][databaseId],
-      word: maps[0][databaseWord],
-      phoneticTone: maps[0][databasePhoneticTone],
-      phonetic: maps[0][databasePhonetic],
-      tone: maps[0][databaseTone],
-      shapeSymbol: maps[0][databaseShapeSymbol],
-      soundSymbol: maps[0][databaseSoundSymbol],
-      strokes: maps[0][databaseStrokes],
-      common: maps[0][databaseCommon],
+      phrase: maps[0][databasePhrase],
+      definition: maps[0][databaseDefinition],
+      sentence: maps[0][databaseSentence],
     );
   }
+
+
 
   static Future<void> closeDb() async{
     database = null;

@@ -102,6 +102,7 @@ class UnitProvider {
   }
 
   static void closeDb() async {
+    database = null;
     await deleteDatabase(
       join(await getDatabasesPath(), 'units.sqlite')
     );
