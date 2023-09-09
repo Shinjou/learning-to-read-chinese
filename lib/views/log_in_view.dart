@@ -3,6 +3,7 @@ import 'package:ltrc/data/models/user_model.dart';
 import 'package:ltrc/data/models/word_model.dart';
 import 'package:ltrc/data/providers/user_provider.dart';
 import 'package:ltrc/data/providers/word_provider.dart';
+import 'package:ltrc/data/providers/word_status_provider.dart';
 import 'package:ltrc/extensions.dart';
 
 class LogInView extends StatefulWidget {
