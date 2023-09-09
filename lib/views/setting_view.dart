@@ -20,8 +20,16 @@ class SettingViewState extends ConsumerState<SettingView> {
 
   @override 
   void initState() {
+    _getUserNameFromDb();
     super.initState();
     controller = TextEditingController();
+  }
+
+  void _getUserNameFromDb(){
+    _getUserAsync();
+  }
+
+  void _getUserAsync() async{
     UserProvider.getUser(inputAccount: ref.watch(accountProvider)).then((outUser){
         user = outUser;
       }
