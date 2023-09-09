@@ -179,7 +179,9 @@ class _LogInViewState extends State<LogInView> {
                       if (accountController.text.length < 6){
                         setState(() {
                           showErrorHint = accountLengthErrorHint;
-                        }); 
+                        });
+                        Word word = await WordProvider.getWord(inputWord: "ㄅ");
+                        debugPrint(word.toString());
                       }
                       else {
                         try {
@@ -197,9 +199,6 @@ class _LogInViewState extends State<LogInView> {
                             showErrorHint = pwdConfirmErrorHint;
                           });
                         }
-
-                      //Word word = await WordProvider.getWord(inputWord: "ㄅ");
-                      //debugPrint(word.toString());
                       }
                     },
                     style: TextButton.styleFrom(
