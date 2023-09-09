@@ -16,24 +16,15 @@ class SettingView extends ConsumerStatefulWidget {
 
 class SettingViewState extends ConsumerState<SettingView> {
   late TextEditingController controller;
-  late User user;
+  late String userName;
+  late String account;
 
   @override 
   void initState() {
-    _getUserNameFromDb();
     super.initState();
     controller = TextEditingController();
-  }
-
-  void _getUserNameFromDb(){
-    _getUserAsync();
-  }
-
-  void _getUserAsync() async{
-    UserProvider.getUser(inputAccount: ref.watch(accountProvider)).then((outUser){
-        user = outUser;
-      }
-    );
+    userName = ref.watch(userNameProvider);
+    account = ref.watch(accountProvider);
   }
 
   @override
@@ -127,7 +118,7 @@ class SettingViewState extends ConsumerState<SettingView> {
                           ),
                           Container( width: 20 ),
                           Text(
-                            user.username,
+                            userName,
                             style: const TextStyle(
                               color: Colors.black,
                               fontSize: 28,
@@ -149,11 +140,14 @@ class SettingViewState extends ConsumerState<SettingView> {
                                   ),
                                   actions: [
                                     TextButton(
-                                      onPressed: () {
+                                      onPressed: () async {
                                         Navigator.of(context).pop();
                                         setState(() {
-                                          user.username = controller.text;
+                                          userName = controller.text;
                                         });
+                                        User userToUpdate = await UserProvider.getUser(inputAccount: account);
+                                        userToUpdate.username = userName;
+                                        await UserProvider.updateUser(user: userToUpdate);
                                       },
                                       child: const Text('確認')
                                     )
@@ -305,7 +299,7 @@ class SettingViewState extends ConsumerState<SettingView> {
                             )
                           ),
                           IconButton(
-                            onPressed: () {},
+                            onPressed: () => Navigator.of(context).pushNamed('/acknowledge'),
                             icon: const Icon(Icons.arrow_forward_ios),
                             color: Colors.black,
                             iconSize: 25
@@ -321,6 +315,8 @@ class SettingViewState extends ConsumerState<SettingView> {
                       child:TextButton(
                         onPressed: (){
                           Navigator.of(context).pushNamed('/login');
+                          ref.read(accountProvider.notifier).state = "";
+                          ref.read(userNameProvider.notifier).state = "";  
                         },
                         style: TextButton.styleFrom(
                           fixedSize: const Size.fromHeight(30),

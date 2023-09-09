@@ -77,9 +77,8 @@ class _SafetyHintVerifyState extends State<SafetyHintVerifyView> {
               child:Text(
                 question1,
                 textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: "#F5F5DC".toColor(),
+                style: const TextStyle(
+                  fontSize: 16,                  
                 ),
               ),
             ),
@@ -120,9 +119,8 @@ class _SafetyHintVerifyState extends State<SafetyHintVerifyView> {
               child:Text(
                 question2,
                 textAlign: TextAlign.left,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 16,
-                  color: "#F5F5DC".toColor(),
                 ),
               ),
             ),

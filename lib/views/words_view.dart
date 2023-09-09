@@ -55,13 +55,12 @@ class WordsView extends ConsumerWidget {
             ),
           ),
           (unit.extraWords.isEmpty) ? const SliverToBoxAdapter(child: Text('')) : 
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(24, 0, 0, 0),
+          const SliverPadding(
+            padding: EdgeInsets.fromLTRB(24, 0, 0, 0),
             sliver: SliverToBoxAdapter(
               child: Text(
                   "唸唸看",
                   style: TextStyle(
-                    color: "#F5F5DC".toColor(),
                     fontSize: 24,
                   ),
                 )

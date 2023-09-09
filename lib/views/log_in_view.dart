@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/data/models/user_model.dart';
 import 'package:ltrc/data/models/word_model.dart';
 import 'package:ltrc/data/providers/user_provider.dart';
 import 'package:ltrc/data/providers/word_provider.dart';
 import 'package:ltrc/data/providers/word_status_provider.dart';
 import 'package:ltrc/extensions.dart';
+import 'package:ltrc/providers.dart';
 
-class LogInView extends StatefulWidget {
+class LogInView extends ConsumerStatefulWidget {
   const LogInView({super.key});
 
   @override
-  State<LogInView> createState() => _LogInViewState();
+  LogInViewState createState() => LogInViewState();
 }
 
 const String pwdConfirmErrorHint = "帳號/密碼錯誤";
 const String accountLengthErrorHint = "帳號長度不足 6 位英/數字";
 
-class _LogInViewState extends State<LogInView> {
+class LogInViewState extends ConsumerState<LogInView> {
 
   TextEditingController accountController = TextEditingController();
   TextEditingController pwdController = TextEditingController();
@@ -191,6 +193,8 @@ class _LogInViewState extends State<LogInView> {
                             });
                           }
                           else {
+                            ref.read(accountProvider.notifier).state = accountController.text;
+                            ref.read(userNameProvider.notifier).state = user.username;
                             Navigator.of(context).pushNamed('/mainPage');
                           }
                         } catch (e){

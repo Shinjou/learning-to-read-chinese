@@ -5,7 +5,7 @@ import 'package:ltrc/data/models/word_status_model.dart';
 import 'package:ltrc/data/providers/word_status_provider.dart';
 import 'package:ltrc/extensions.dart';
 import 'package:ltrc/providers.dart';
-import 'package:provider/provider.dart';
+import 'package:ltrc/views/acknowledge.dart';
 
 import '../contants/arabic_numerals_to_chinese.dart';
 import '../data/models/unit_model.dart';
@@ -44,11 +44,18 @@ class UnitsViewState extends ConsumerState<UnitsView> {
 
       body: CustomScrollView(
           slivers: [
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(23, 20, 23, 14),
-              sliver: SliverToBoxAdapter(
-                child: Row(
-                  children:[
+             SliverPadding(
+              padding: const EdgeInsets.fromLTRB(23, 14, 23, 20),
+                sliver: SliverGrid(
+                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 180.0,
+                  mainAxisSpacing: 13.0,
+                  crossAxisSpacing: 13.0,
+                  childAspectRatio: 2,
+                ),
+                delegate: SliverChildBuilderDelegate(
+                  (BuildContext context, int index) {
+                    return index == 0 ?
                     InkWell( 
                       onTap: () async {
                         List<String> bopomos = List.from(initials)..addAll(prenuclear)..addAll(finals);
@@ -84,18 +91,14 @@ class UnitsViewState extends ConsumerState<UnitsView> {
                           borderRadius: const BorderRadius.all(Radius.circular(14)),
                           color: "#013E6D".toColor(),
                         ),
-                        child: Text(
+                        child: const Text(
                           "學注音", 
                           style: TextStyle(
-                            fontSize: 32,
-                            color: "#F5F5DC".toColor(),
+                            fontSize: 24,
                           ), 
                           textAlign: TextAlign.center,),
                       ),
-                    ),
-                    const SizedBox(
-                      width:16
-                    ),
+                    ) :
                     InkWell( 
                       onTap: () async {
                         List<WordStatus> wordStatus = await WordStatusProvider.getWordsStatus(
@@ -118,16 +121,16 @@ class UnitsViewState extends ConsumerState<UnitsView> {
                           borderRadius: const BorderRadius.all(Radius.circular(14)),
                           color: "#013E6D".toColor(),
                         ),
-                        child: Text(
+                        child: const Text(
                           "最愛", 
                           style: TextStyle(
                             fontSize: 24,
-                            color: "#F5F5DC".toColor(),
                           ), 
                           textAlign: TextAlign.center,),
                       ),
-                    ),
-                  ]
+                    );
+                  },
+                  childCount: resourceList.length,
                 ),
               ),
             ),
@@ -189,16 +192,14 @@ class UnitsViewState extends ConsumerState<UnitsView> {
                           children: [
                             Text(
                               "第$classNum課", 
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 16,
-                                color: "#F5F5DC".toColor(),
                               )
                             ),
                             Text(
                               units[index].unitTitle, 
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 24,
-                                color: "#F5F5DC".toColor(),
                               ),
                               textAlign: TextAlign.center,
                             )
