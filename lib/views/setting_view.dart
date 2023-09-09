@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ltrc/data/models/user_model.dart';
+import 'package:ltrc/data/providers/user_provider.dart';
 import 'package:ltrc/extensions.dart';
 import 'package:ltrc/providers.dart';
 import 'package:ltrc/widgets/grade_and_provider_button.dart';
@@ -14,11 +16,16 @@ class SettingView extends ConsumerStatefulWidget {
 
 class SettingViewState extends ConsumerState<SettingView> {
   late TextEditingController controller;
+  late User user;
 
   @override 
-  void initState(){
+  void initState() {
     super.initState();
     controller = TextEditingController();
+    UserProvider.getUser(inputAccount: ref.watch(accountProvider)).then((outUser){
+        user = outUser;
+      }
+    );
   }
 
   @override
@@ -111,9 +118,9 @@ class SettingViewState extends ConsumerState<SettingView> {
                             size: 48
                           ),
                           Container( width: 20 ),
-                          const Text(
-                            'A12345',
-                            style: TextStyle(
+                          Text(
+                            user.username,
+                            style: const TextStyle(
                               color: Colors.black,
                               fontSize: 28,
                             )
@@ -130,10 +137,16 @@ class SettingViewState extends ConsumerState<SettingView> {
                                     decoration: InputDecoration(
                                       hintText: "請輸入你的名稱"
                                     ),
+
                                   ),
                                   actions: [
                                     TextButton(
-                                      onPressed: () => Navigator.of(context).pop(),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                        setState(() {
+                                          user.username = controller.text;
+                                        });
+                                      },
                                       child: const Text('確認')
                                     )
                                   ],

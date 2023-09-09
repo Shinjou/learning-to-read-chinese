@@ -46,10 +46,10 @@ class UnitsViewState extends ConsumerState<UnitsView> {
           slivers: [
             SliverPadding(
               padding: const EdgeInsets.fromLTRB(23, 20, 23, 14),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (BuildContext context, int idx){
-                    return InkWell( 
+              sliver: SliverToBoxAdapter(
+                child: Row(
+                  children:[
+                    InkWell( 
                       onTap: () async {
                         List<String> bopomos = List.from(initials)..addAll(prenuclear)..addAll(finals);
                         await WordStatusProvider.addWordsStatus(
@@ -77,7 +77,7 @@ class UnitsViewState extends ConsumerState<UnitsView> {
                         );
                       },
                       child: Container(
-                        width: 297,
+                        width: 140,
                         height: 80,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
@@ -92,10 +92,43 @@ class UnitsViewState extends ConsumerState<UnitsView> {
                           ), 
                           textAlign: TextAlign.center,),
                       ),
-                    );
-                  },
-                  childCount: 1,
-                )
+                    ),
+                    const SizedBox(
+                      width:16
+                    ),
+                    InkWell( 
+                      onTap: () async {
+                        List<WordStatus> wordStatus = await WordStatusProvider.getWordsStatus(
+                          account: ref.read(accountProvider.notifier).state,
+                          words: [""], 
+                        );
+
+                        Navigator.of(context).pushNamed(
+                          '/bopomos', 
+                          arguments: {
+                            'wordStatus' : wordStatus,
+                          }
+                        );
+                      },
+                      child: Container(
+                        width: 140,
+                        height: 80,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.all(Radius.circular(14)),
+                          color: "#013E6D".toColor(),
+                        ),
+                        child: Text(
+                          "最愛", 
+                          style: TextStyle(
+                            fontSize: 24,
+                            color: "#F5F5DC".toColor(),
+                          ), 
+                          textAlign: TextAlign.center,),
+                      ),
+                    ),
+                  ]
+                ),
               ),
             ),
             SliverPadding(
