@@ -98,6 +98,7 @@ class UserProvider {
   }
 
   static Future<void> closeDb() async {
+    database = null;
     await deleteDatabase(
       join(await getDatabasesPath(), 'users.sqlite')
     );

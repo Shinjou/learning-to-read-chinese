@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:ltrc/data/models/phrase_model.dart';
 import 'package:ltrc/data/models/user_model.dart';
 import 'package:ltrc/data/models/word_model.dart';
+import 'package:ltrc/data/providers/phrase_provider.dart';
 import 'package:ltrc/data/providers/user_provider.dart';
 import 'package:ltrc/data/providers/word_provider.dart';
 import 'package:ltrc/data/providers/word_status_provider.dart';
@@ -180,7 +182,7 @@ class _LogInViewState extends State<LogInView> {
                       if (accountController.text.length < 6){
                         setState(() {
                           showErrorHint = accountLengthErrorHint;
-                        }); 
+                        });
                       }
                       else {
                         try {
@@ -198,9 +200,6 @@ class _LogInViewState extends State<LogInView> {
                             showErrorHint = pwdConfirmErrorHint;
                           });
                         }
-
-                      //Word word = await WordProvider.getWord(inputWord: "ㄅ");
-                      //debugPrint(word.toString());
                       }
                     },
                     style: TextButton.styleFrom(
