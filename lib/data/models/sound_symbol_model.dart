@@ -4,7 +4,7 @@ class SoundSymbol {
     required this.soundSymbol
   });
   
-  final String id ;
+  final int id ;
   final String soundSymbol;
 
   Map<String, dynamic> toMap() {

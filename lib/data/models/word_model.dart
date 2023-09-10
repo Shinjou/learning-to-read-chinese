@@ -15,7 +15,7 @@ class Word {
   final String word;
   final String phoneticTone;
   final String phonetic;
-  final String tone;
+  final int tone;
   final String shapeSymbol;
   final String soundSymbol;
   final int strokes;

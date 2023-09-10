@@ -71,8 +71,8 @@ class WordProvider {
       tone: maps[0][databaseTone],
       shapeSymbol: maps[0][databaseShapeSymbol],
       soundSymbol: maps[0][databaseSoundSymbol],
-      strokes: maps[0][databaseStrokes],
-      common: maps[0][databaseCommon],
+      strokes: (maps[0][databaseStrokes].runtimeType == String) ? 0 : maps[0][databaseStrokes],
+      common: (maps[0][databaseCommon].runtimeType == String) ? 0 : maps[0][databaseCommon],
     );
   }
 

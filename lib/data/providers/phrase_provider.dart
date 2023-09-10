@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-import '../models/Phrase_model.dart';
+import '../models/phrase_model.dart';
 
 class PhraseProvider {
   static Database? database;
@@ -50,7 +50,7 @@ class PhraseProvider {
     );
   }
 
-  static Future<Phrase> getPhraseById({required String inputPhraseId}) async {
+  static Future<Phrase> getPhraseById({required int inputPhraseId}) async {
     final Database db = await getDBConnect();
     final List<Map<String, dynamic>> maps = await db.query(tableName,
       columns: ["*"],

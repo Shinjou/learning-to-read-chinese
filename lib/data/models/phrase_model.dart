@@ -6,7 +6,7 @@ class Phrase {
     required this.sentence,
   });
   
-  final String id ;
+  final int id ;
   final String phrase;
   final String definition;
   final String sentence;

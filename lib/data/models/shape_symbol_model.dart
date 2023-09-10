@@ -4,7 +4,7 @@ class ShapeSymbol {
     required this.shapeSymbol
   });
   
-  final String id ;
+  final int id ;
   final String shapeSymbol;
 
   Map<String, dynamic> toMap() {
