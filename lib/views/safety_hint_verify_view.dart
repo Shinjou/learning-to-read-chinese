@@ -53,18 +53,16 @@ class _SafetyHintVerifyState extends State<SafetyHintVerifyView> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             SizedBox(height: deviceHeight * 0.04),
-            Text(
+            const Text(
               '忘記密碼',
               style: TextStyle(
-                color: '#F5F5DC'.toColor(),
                 fontSize: 46.0,
               )
             ),
             SizedBox(height: deviceHeight * 0.015),
-            Text(
+            const Text(
               '請回答安全提示問題',
               style: TextStyle(
-                color: '#F5F5DC'.toColor(),
                 fontSize: 20.0,
               )
             ),
@@ -191,11 +189,10 @@ class _SafetyHintVerifyState extends State<SafetyHintVerifyView> {
                   Navigator.of(context).pushNamed('/setNewPwd', arguments: {'user': user});
                 }
               },
-              child: Text(
+              child: const Text(
                 '下一步',
                 style: TextStyle(
                   fontSize: 24.0,
-                  color: '#F5F5DC'.toColor(),
                 )
               )
             )

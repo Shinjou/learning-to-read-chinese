@@ -38,7 +38,11 @@ class UnitsViewState extends ConsumerState<UnitsView> {
         leading: IconButton(icon: const Icon(Icons.chevron_left), onPressed: () => Navigator.pop(context),),
         title: const Text("課程單元"),
         actions: [
-          IconButton(icon: const Icon(Icons.settings), onPressed: () => Navigator.of(context).pushNamed('/setting'),)
+          IconButton(
+            icon: const Icon(Icons.settings), 
+            onPressed: () => Navigator.of(context).pushNamed(
+              '/setting'
+            ),)
         ],
       ),
 

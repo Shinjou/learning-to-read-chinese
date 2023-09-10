@@ -55,7 +55,6 @@ class LogInViewState extends ConsumerState<LogInView> {
             Text(
                 '學中文',
                 style: TextStyle(
-                  color: '#F5F5DC'.toColor(),
                   fontSize: 46.0,
                 )
             ),
@@ -146,7 +145,6 @@ class LogInViewState extends ConsumerState<LogInView> {
                     child: Text(
                       '忘記密碼',
                       style: TextStyle(
-                        color: '#F5F5DC'.toColor(),
                         fontSize: 14.0,
                       )
                     ),
@@ -202,9 +200,6 @@ class LogInViewState extends ConsumerState<LogInView> {
                             showErrorHint = pwdConfirmErrorHint;
                           });
                         }
-
-                      //Word word = await WordProvider.getWord(inputWord: "ㄅ");
-                      //debugPrint(word.toString());
                       }
                     },
                     style: TextButton.styleFrom(
@@ -214,7 +209,6 @@ class LogInViewState extends ConsumerState<LogInView> {
                       '登入',
                       style: TextStyle(
                         fontSize: 24.0,
-                        color: '#F5F5DC'.toColor(),
                       )
                     )
                   ),
@@ -222,7 +216,6 @@ class LogInViewState extends ConsumerState<LogInView> {
                     '/',
                     style: TextStyle(
                       fontSize: 24.0,
-                      color: '#F5F5DC'.toColor(),
                     )
                   ),
                   TextButton(
@@ -234,7 +227,6 @@ class LogInViewState extends ConsumerState<LogInView> {
                       '註冊',
                       style: TextStyle(
                         fontSize: 24.0,
-                        color: '#F5F5DC'.toColor(),
                       )
                     )
                   )

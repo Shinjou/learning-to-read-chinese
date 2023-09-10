@@ -44,18 +44,16 @@ class _ResetPwdAccountViewState extends State<ResetPwdAccountView> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             SizedBox(height: deviceHeight * 0.15),
-            Text(
+            const Text(
               '忘記密碼',
               style: TextStyle(
-                color: '#F5F5DC'.toColor(),
                 fontSize: 42.0,
               )
             ),
             SizedBox(height: deviceHeight * 0.04),
-            Text(
+            const Text(
               '請輸入帳號',
               style: TextStyle(
-                color: '#F5F5DC'.toColor(),
                 fontSize: 20.0,
               )
             ),
@@ -70,10 +68,9 @@ class _ResetPwdAccountViewState extends State<ResetPwdAccountView> {
                 height: 24,
                 width: 303,
                 alignment: AlignmentDirectional.topStart,
-                child: Text(
+                child: const Text(
                   '至少6個字母/數字',
                   style: TextStyle(
-                    color: '#F5F5DC'.toColor(),
                     fontSize: 14,
                   )
                 )
@@ -162,11 +159,10 @@ class _ResetPwdAccountViewState extends State<ResetPwdAccountView> {
                   throw("[Reset Pwd Account] Find user account exception: $e");
                 }
               },
-              child: Text(
+              child: const Text(
                 '下一步',
                 style: TextStyle(
                   fontSize: 24.0,
-                  color: '#F5F5DC'.toColor(),
                 )
               )
             )

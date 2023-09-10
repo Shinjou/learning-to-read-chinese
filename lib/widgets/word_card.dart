@@ -87,6 +87,7 @@ class WordCardState extends State<WordCard> {
               style: TextStyle(
                 fontSize: widget.fontSize,
                 fontWeight: FontWeight.w900,
+                color: Colors.black,
               ),
             ),
           ],

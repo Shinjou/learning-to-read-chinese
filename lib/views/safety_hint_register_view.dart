@@ -88,14 +88,12 @@ class _SafetyHintRegisterState extends State<SafetyHintRegisterView> {
               Text(
                 '選取安全提示',
                 style: TextStyle(
-                  color: '#F5F5DC'.toColor(),
                   fontSize: 28.0,
                 )
               ),
               Text(
                 '問題&答案',
                 style: TextStyle(
-                  color: '#F5F5DC'.toColor(),
                   fontSize: 28.0,
                 )
               ),
@@ -237,7 +235,6 @@ class _SafetyHintRegisterState extends State<SafetyHintRegisterView> {
               Text(
                 '如果你忘記你的密碼，',
                 style: TextStyle(
-                  color: '#F5F5DC'.toColor(),
                   fontSize: 14.0,
                 )
               ),
@@ -245,7 +242,6 @@ class _SafetyHintRegisterState extends State<SafetyHintRegisterView> {
               Text(
                 '這些問題可用來驗證你的身分，',
                 style: TextStyle(
-                  color: '#F5F5DC'.toColor(),
                   fontSize: 14.0,
                 )
               ),
@@ -253,7 +249,6 @@ class _SafetyHintRegisterState extends State<SafetyHintRegisterView> {
               Text(
                 '協助你取回密碼。',
                 style: TextStyle(
-                  color: '#F5F5DC'.toColor(),
                   fontSize: 14.0,
                 )
               ),
@@ -288,7 +283,6 @@ class _SafetyHintRegisterState extends State<SafetyHintRegisterView> {
                   '下一步',
                   style: TextStyle(
                     fontSize: 24.0,
-                    color: '#F5F5DC'.toColor(),
                   )
                 )
               )

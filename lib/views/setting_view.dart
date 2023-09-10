@@ -23,8 +23,8 @@ class SettingViewState extends ConsumerState<SettingView> {
   void initState() {
     super.initState();
     controller = TextEditingController();
-    userName = ref.watch(userNameProvider);
-    account = ref.watch(accountProvider);
+    userName = "";
+    account = "";
   }
 
   @override
@@ -35,9 +35,13 @@ class SettingViewState extends ConsumerState<SettingView> {
 
   @override
   Widget build(BuildContext context) {
-
     double deviceHeight = MediaQuery.of(context).size.height;
     double deviceWidth = MediaQuery.of(context).size.width;
+
+    setState(() {
+      userName = ref.watch(userNameProvider);
+      account = ref.watch(accountProvider);
+    });
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -82,10 +86,9 @@ class SettingViewState extends ConsumerState<SettingView> {
                   ),
                   Container(
                     padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 0, 0),
-                    child: Text(
+                    child: const Text(
                       '設定',
                       style: TextStyle(
-                        color: '#F5F5DC'.toColor(),
                         fontSize: 36,
                       )
                     )
@@ -116,12 +119,12 @@ class SettingViewState extends ConsumerState<SettingView> {
                             color: '#1C1B1F'.toColor(),
                             size: 48
                           ),
-                          Container( width: 20 ),
+                          Container( width: 15 ),
                           Text(
                             userName,
                             style: const TextStyle(
                               color: Colors.black,
-                              fontSize: 28,
+                              fontSize: 20,
                             )
                           ),
                           Container( width: 30 ),

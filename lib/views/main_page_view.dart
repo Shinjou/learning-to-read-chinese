@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/data/models/unit_model.dart';
 import 'package:ltrc/data/providers/unit_provider.dart';
 import 'package:ltrc/extensions.dart';
 import 'package:ltrc/widgets/progressBar.dart';
 
-class MainPageView extends StatelessWidget {
+class MainPageView extends ConsumerWidget {
   const MainPageView({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
 
     double deviceHeight = MediaQuery.of(context).size.height;
     double deviceWidth = MediaQuery.of(context).size.width;
@@ -30,17 +31,18 @@ class MainPageView extends StatelessWidget {
                   color: '#F5F5DC'.toColor(),
                   size: 38
                 ),
-                onPressed: () => Navigator.of(context).pushNamed('/setting'),
+                onPressed: () => Navigator.of(context).pushNamed(
+                  '/setting'
+                ),
               )
             ),
             Container(
               height: 54,
               width: 210,
               margin: EdgeInsetsDirectional.fromSTEB(0, deviceHeight * 0.0825, 0, deviceHeight * 0.193),
-              child: Text(
+              child: const Text(
                 '學中文',
                 style: TextStyle(
-                  color: '#F5F5DC'.toColor(),
                   fontSize: 46,
                 )
               )
@@ -73,17 +75,16 @@ class MainPageView extends StatelessWidget {
                   child: Text(
                     '學生字',
                     style: TextStyle(
-                      color: '#F5F5DC'.toColor(),
                       fontSize: 32,
+                      color: '#F5F5DC'.toColor(),
                     )
                   )
                 ),
               )
             ),
-            Text(
+            const Text(
               '收集生字卡',
               style: TextStyle(
-                color: '#F5F5DC'.toColor(),
                 fontSize: 22,
               )
             ),
