@@ -52,7 +52,7 @@ class BopomofoVocabContent extends StatelessWidget {
                       height: 1.1,
                       fontSize: 40,
                       color: Color.fromRGBO(245, 245, 220, 100),
-                      fontFamily: "BpmfOnly",
+                      fontFamily: 'BpmfOnly',
                     ),
                     children: <InlineSpan>[
                       TextSpan(

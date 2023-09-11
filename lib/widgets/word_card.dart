@@ -10,6 +10,7 @@ class WordCard extends StatefulWidget {
     required this.unitId,
     required this.unitTitle,
     required this.wordsStatus,
+    required this.wordsPhrase,
     required this.wordIndex,
     required this.sizedBoxWidth,
     required this.sizedBoxHeight,
@@ -25,6 +26,7 @@ class WordCard extends StatefulWidget {
   final double fontSize;
   final bool isBpmf;
   final List<WordStatus> wordsStatus;
+  final List<Map> wordsPhrase;
   final int wordIndex;
   final bool isVertical;
   
@@ -51,6 +53,7 @@ class WordCardState extends State<WordCard> {
             unitId: widget.unitId,
             unitTitle: widget.unitTitle,
             wordsStatus: widget.wordsStatus,
+            wordsPhrase: widget.wordsPhrase,
             wordIndex: widget.wordIndex,
         )));
       },

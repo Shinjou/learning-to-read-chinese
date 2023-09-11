@@ -4,13 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:ltrc/data/models/phrase_model.dart';
-import 'package:ltrc/data/models/word_model.dart';
 import 'package:ltrc/data/models/word_status_model.dart';
-import 'package:ltrc/data/providers/word_provider.dart';
 import 'package:ltrc/extensions.dart';
-import 'package:ltrc/data/providers/phrase_provider.dart';
-import 'package:ltrc/data/providers/word_phrase_provider.dart';
 import 'package:ltrc/widgets/mainPage/left_right_switch.dart';
 import 'package:ltrc/widgets/teach_word/bpmf_vocab_content.dart';
 import 'package:ltrc/widgets/teach_word/card_title.dart';
@@ -26,6 +21,7 @@ class TeachWordView extends StatefulWidget {
   final String unitTitle;
   final bool isBpmf;
   final List<WordStatus> wordsStatus;
+  final List<Map> wordsPhrase;
   final int wordIndex;
 
   const TeachWordView({
@@ -34,6 +30,7 @@ class TeachWordView extends StatefulWidget {
     required this.unitTitle,
     required this.isBpmf,
     required this.wordsStatus,
+    required this.wordsPhrase,
     required this.wordIndex,
   });
 
@@ -46,15 +43,7 @@ class _TeachWordViewState extends State<TeachWordView>
   late StrokeOrderAnimationController _strokeOrderAnimationControllers;
   late TabController _tabController;
   FlutterTts ftts = FlutterTts();
-  // Map wordObj = {
-  //       "word": "tmp",
-  //       "vocab1": "",
-  //       "meaning1": "",
-  //       "sentence1": "",
-  //       "vocab2": "",
-  //       "meaning2": "",
-  //       "sentence2": "",
-  //     };
+  late Map wordsPhrase;
   late Map wordObj;
   int vocabCnt = 0;
   bool img1Exist = false;
@@ -67,24 +56,6 @@ class _TeachWordViewState extends State<TeachWordView>
     return response.replaceAll("\"", "\'");
   }
 
-  // void getWord() async {
-  //   Phrase phrase = await PhraseProvider.getPhraseById(inputPhraseId: widget.wordStatus[widget.wordIndex].id);
-  //   // await WordProvider.getWord(inputWord: widget.char);
-  //   print(phrase);
-  //   setState(() {
-  //     wordObj = {
-  //       "word": widget.wordStatus[widget.wordIndex].word,
-  //       "vocab1": phrase.phrase,
-  //       "meaning1": phrase.definition,
-  //       "sentence1": phrase.sentence,
-  //       "vocab2": "",
-  //       "meaning2": "",
-  //       "sentence2": "",
-  //     };
-  //   });
-  //   print(wordObj);
-  // }
-
   Future myLoadAsset(String path) async {
     try {
       return await rootBundle.load(path);
@@ -94,46 +65,9 @@ class _TeachWordViewState extends State<TeachWordView>
   }
 
   void getWord() async {
-    Word word = await WordProvider.getWord(inputWord: widget.wordsStatus[widget.wordIndex].word);
-    List<int> phraseId = await WordPhraseProvider.getPhrasesId(inputWordId: word.id);
-    Phrase phrase1 = await PhraseProvider.getPhraseById(inputPhraseId: phraseId[0]);
-    Phrase phrase2 = phraseId.length > 1 ? await PhraseProvider.getPhraseById(inputPhraseId: phraseId[1]) : phrase1;
-    // print("wordIndex id phraseId");
-    print(word.id);
-    // print(widget.wordsStatus[widget.wordIndex].id);
-    print(phrase1);
     setState(() {
-      wordObj = {
-        "word": widget.wordsStatus[widget.wordIndex].word,
-        "vocab1": phrase1.phrase,
-        "meaning1": phrase1.definition,
-        "sentence1": phrase1.sentence,
-        "vocab2": phraseId.length == 1 ? "" : phrase2.phrase,
-        "meaning2": phraseId.length == 1 ? "" : phrase2.definition,
-        "sentence2": phraseId.length == 1 ? "" : phrase2.sentence,
-      };
+      wordObj = widget.wordsPhrase[widget.wordIndex];
     });
-    print(wordObj);
-    // setState(() {
-    //   wordObj = {
-    //     "word": "日",
-    //     "vocab1": "日記",
-    //     "meaning1": "就是每天把自己做過的事情、心情寫下來的記錄。",
-    //     "sentence1": "今天我開始養成寫日記的好習慣，把每天的所見所聞都記錄下來。",
-    //     "vocab2": "日出",
-    //     "meaning2": "描述凌晨太陽昇起。",
-    //     "sentence2": "日出的时候，海上的景色特别美麗。",
-    //   };
-      // wordObj = {
-      //   "word": "我",
-      //   "vocab1": "我們",
-      //   "meaning1": "包括自己在內的一組人。",
-      //   "sentence1": "悲傷的電影，常常讓我們淚流滿面。",
-      //   "vocab2": "",
-      //   "meaning2": "",
-      //   "sentence2": "",
-      // };
-    // });
     if (wordObj['vocab1'] != "") {
       vocabCnt += 1;
       var imgAsset = await myLoadAsset(
@@ -195,6 +129,7 @@ class _TeachWordViewState extends State<TeachWordView>
     Tab(icon: Icon(Icons.create)),
     Tab(icon: Icon(Icons.school)),
   ];
+  int vocabIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -204,7 +139,6 @@ class _TeachWordViewState extends State<TeachWordView>
     int unitId = widget.unitId;
     String unitTitle = widget.unitTitle;
     bool isBpmf = widget.isBpmf;
-    int vocabIndex = 0;
     List<Widget> useTabView = [
       TeachWordTabBarView(
         content: Column(
@@ -353,7 +287,7 @@ class _TeachWordViewState extends State<TeachWordView>
             ],
           ))
         : Container()];
-
+    
     return DefaultTabController(
       length: teachWordTabs.length,
       child: Scaffold(
@@ -603,7 +537,7 @@ class _TeachWordViewState extends State<TeachWordView>
                 }),
               ),
             ),
-            useTabView[1],
+            useTabView[vocabIndex]
           ]),
         bottomNavigationBar: BottomAppBar(
           height: 100,
@@ -616,6 +550,7 @@ class _TeachWordViewState extends State<TeachWordView>
               unitId: unitId,
               unitTitle: unitTitle,
               wordsStatus: widget.wordsStatus,
+              wordsPhrase: widget.wordsPhrase,
               wordIndex: widget.wordIndex,
               sizedBoxWidth: 125,
               sizedBoxHeight: 88,
@@ -632,6 +567,7 @@ class _TeachWordViewState extends State<TeachWordView>
                   unitId: widget.unitId,
                   unitTitle: widget.unitTitle,
                   wordsStatus: widget.wordsStatus,
+                  wordsPhrase: widget.wordsPhrase,
                   wordIndex: widget.wordIndex - 1,
               )));
             },
@@ -642,6 +578,7 @@ class _TeachWordViewState extends State<TeachWordView>
                   unitId: widget.unitId,
                   unitTitle: widget.unitTitle,
                   wordsStatus: widget.wordsStatus,
+                  wordsPhrase: widget.wordsPhrase,
                   wordIndex: widget.wordIndex + 1,
               )));
             }

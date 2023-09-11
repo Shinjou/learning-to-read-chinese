@@ -14,6 +14,8 @@ class WordsView extends ConsumerWidget {
     Unit unit = obj["unit"];
     List<WordStatus> newWordsStatus = obj["newWordsStatus"];
     List<WordStatus> extraWordsStatus = obj["extraWordsStatus"];
+    List<Map> newWordsPhrase = obj["newWordsPhrase"];
+    List<Map> extraWordsPhrase = obj["extraWordsPhrase"];
 
     return Scaffold(
         appBar: AppBar(
@@ -48,6 +50,7 @@ class WordsView extends ConsumerWidget {
                     unitId: unit.unitId,
                     unitTitle: unit.unitTitle,
                     wordsStatus: newWordsStatus,
+                    wordsPhrase: newWordsPhrase,
                     wordIndex: index,
                     sizedBoxWidth: 30,
                     sizedBoxHeight: 155,
@@ -87,6 +90,7 @@ class WordsView extends ConsumerWidget {
                     unitId: unit.unitId,
                     unitTitle: unit.unitTitle,
                     wordsStatus: extraWordsStatus,
+                    wordsPhrase: extraWordsPhrase,
                     wordIndex: index,
                     sizedBoxWidth: 30,
                     sizedBoxHeight: 155,

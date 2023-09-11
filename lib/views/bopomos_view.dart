@@ -10,7 +10,8 @@ class BopomosView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     dynamic obj = ModalRoute.of(context)!.settings.arguments;
-    List<WordStatus> wordStatus = obj['wordStatus']; 
+    List<WordStatus> wordsStatus = obj['wordStatus']; 
+    List<Map> wordsPhrase = obj['wordsPhrase']; 
 
     return Scaffold(
       appBar: AppBar(
@@ -43,7 +44,8 @@ class BopomosView extends StatelessWidget {
                     isBpmf: true,
                     unitId: 0,
                     unitTitle: "學注音",
-                    wordsStatus: wordStatus,
+                    wordsStatus: wordsStatus,
+                    wordsPhrase: wordsPhrase,
                     wordIndex: index,
                     sizedBoxWidth: 30,
                     sizedBoxHeight: 155,
@@ -51,7 +53,7 @@ class BopomosView extends StatelessWidget {
                     isVertical: true,
                   );
                 },
-                childCount: wordStatus.length,
+                childCount: wordsStatus.length,
               ),
             ),
           ),

@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/contants/bopomos.dart';
+import 'package:ltrc/data/models/phrase_model.dart';
+import 'package:ltrc/data/models/word_model.dart';
 import 'package:ltrc/data/models/word_status_model.dart';
+import 'package:ltrc/data/providers/phrase_provider.dart';
+import 'package:ltrc/data/providers/word_phrase_provider.dart';
+import 'package:ltrc/data/providers/word_provider.dart';
 import 'package:ltrc/data/providers/word_status_provider.dart';
 import 'package:ltrc/extensions.dart';
 import 'package:ltrc/providers.dart';
@@ -31,6 +36,44 @@ class UnitsViewState extends ConsumerState<UnitsView> {
     
     dynamic obj = ModalRoute.of(context)!.settings.arguments;
     List<Unit> units = obj["units"];
+
+    Future<List<Map>> getWordsPhrase(List<WordStatus> wordsStatus) async {
+      List<Map> wordsPhrase = [];
+      for (var wordStatus in wordsStatus) {
+        Word word = await WordProvider.getWord(inputWord: wordStatus.word);
+        List<int> phraseId = await WordPhraseProvider.getPhrasesId(inputWordId: word.id);
+        if (phraseId.isEmpty) {
+          wordsPhrase.add(
+            {
+              "word": wordStatus.word,
+              "vocab1": "",
+              "meaning1": "",
+              "sentence1": "",
+              "vocab2": "",
+              "meaning2": "",
+              "sentence2": "",
+            }
+          );
+        }
+        else {
+          Phrase phrase1 = await PhraseProvider.getPhraseById(inputPhraseId: phraseId[0]);
+          Phrase phrase2 = phraseId.length > 1 ? await PhraseProvider.getPhraseById(inputPhraseId: phraseId[1]) : phrase1;
+          wordsPhrase.add(
+            {
+              "word": wordStatus.word,
+              "vocab1": phrase1.phrase,
+              "meaning1": phrase1.definition,
+              "sentence1": phrase1.sentence,
+              "vocab2": phraseId.length == 1 ? "" : phrase2.phrase,
+              "meaning2": phraseId.length == 1 ? "" : phrase2.definition,
+              "sentence2": phraseId.length == 1 ? "" : phrase2.sentence,
+            }
+          );
+        }
+        
+      }
+      return wordsPhrase;
+    }
     
     return Scaffold(
       appBar: AppBar(
@@ -63,15 +106,17 @@ class UnitsViewState extends ConsumerState<UnitsView> {
                           ).toList()
                         );
 
-                        List<WordStatus> wordStatus = await WordStatusProvider.getWordsStatus(
+                        List<WordStatus> wordsStatus = await WordStatusProvider.getWordsStatus(
                           account: ref.read(accountProvider.notifier).state,
                           words: bopomos, 
                         );
+                        List<Map> bpmfWordsPhrase = await getWordsPhrase(wordsStatus);
 
                         Navigator.of(context).pushNamed(
                           '/bopomos', 
                           arguments: {
-                            'wordStatus' : wordStatus,
+                            'wordStatus' : wordsStatus,
+                            'wordsPhrase' : bpmfWordsPhrase
                           }
                         );
                       },
@@ -133,13 +178,17 @@ class UnitsViewState extends ConsumerState<UnitsView> {
                           account: ref.read(accountProvider.notifier).state,
                           words: unit.extraWords, 
                         );
+                        List<Map> newWordsPhrase = await getWordsPhrase(newWordsStatus);
+                        List<Map> extraWordsPhrase = await getWordsPhrase(extraWordsStatus);
 
                         Navigator.of(context).pushNamed(
                           '/words', 
                           arguments: {
                             'unit' : unit,
                             'newWordsStatus' : newWordsStatus,
-                            'extraWordsStatus' : extraWordsStatus
+                            'extraWordsStatus' : extraWordsStatus,
+                            'newWordsPhrase' : newWordsPhrase,
+                            'extraWordsPhrase' : extraWordsPhrase
                           }
                         );
                       },
