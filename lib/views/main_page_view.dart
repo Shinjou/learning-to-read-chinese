@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ltrc/contants/publisher_code.dart';
 import 'package:ltrc/data/models/unit_model.dart';
 import 'package:ltrc/data/providers/unit_provider.dart';
 import 'package:ltrc/extensions.dart';
+import 'package:ltrc/providers.dart';
 import 'package:ltrc/widgets/progressBar.dart';
 
 class MainPageView extends ConsumerWidget {
@@ -54,8 +56,10 @@ class MainPageView extends ConsumerWidget {
                 height: deviceHeight * 0.095,
                 child: ElevatedButton(
                   onPressed: () async {
+                    int publisherCode = ref.watch(publisherCodeProvider);
                     List<Unit> units = await UnitProvider.getUnits(
-                      inputGrade: 3,
+                      inputPublisher: publisherCodeTable[publisherCode]!,
+                      inputGrade: ref.watch(gradeProvider),
                       inputSemester: "上"
                     );
                     Navigator.of(context).pushNamed(

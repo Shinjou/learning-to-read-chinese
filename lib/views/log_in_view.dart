@@ -49,7 +49,7 @@ class LogInViewState extends ConsumerState<LogInView> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             SizedBox(height: deviceHeight * 0.157),
-            Text(
+            const Text(
                 '學中文',
                 style: TextStyle(
                   fontSize: 46.0,
@@ -139,7 +139,7 @@ class LogInViewState extends ConsumerState<LogInView> {
                     style: TextButton.styleFrom(
                       fixedSize: const Size(110, 14),
                     ),
-                    child: Text(
+                    child: const Text(
                       '忘記密碼',
                       style: TextStyle(
                         fontSize: 14.0,
@@ -177,7 +177,7 @@ class LogInViewState extends ConsumerState<LogInView> {
                       if (accountController.text.length < 6){
                         setState(() {
                           showErrorHint = accountLengthErrorHint;
-                        }); 
+                        });
                       }
                       else {
                         try {
@@ -202,14 +202,14 @@ class LogInViewState extends ConsumerState<LogInView> {
                     style: TextButton.styleFrom(
                       fixedSize: const Size(110, 45),
                     ),
-                    child: Text(
+                    child: const Text(
                       '登入',
                       style: TextStyle(
                         fontSize: 24.0,
                       )
                     )
                   ),
-                  Text(
+                  const Text(
                     '/',
                     style: TextStyle(
                       fontSize: 24.0,
@@ -220,7 +220,7 @@ class LogInViewState extends ConsumerState<LogInView> {
                     style: TextButton.styleFrom(
                       fixedSize: const Size(110, 45),
                     ),
-                    child: Text(
+                    child: const Text(
                       '註冊',
                       style: TextStyle(
                         fontSize: 24.0,
