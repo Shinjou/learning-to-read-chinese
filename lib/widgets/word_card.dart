@@ -9,7 +9,7 @@ class WordCard extends StatefulWidget {
     super.key,
     required this.unitId,
     required this.unitTitle,
-    required this.wordStatus,
+    required this.wordsStatus,
     required this.wordIndex,
     required this.sizedBoxWidth,
     required this.sizedBoxHeight,
@@ -24,7 +24,7 @@ class WordCard extends StatefulWidget {
   final double sizedBoxHeight;
   final double fontSize;
   final bool isBpmf;
-  final List<WordStatus> wordStatus;
+  final List<WordStatus> wordsStatus;
   final int wordIndex;
   final bool isVertical;
   
@@ -37,7 +37,7 @@ class WordCardState extends State<WordCard> {
   bool liked = false;
 
   @override void initState() {
-    liked = widget.wordStatus[widget.wordIndex].liked;
+    liked = widget.wordsStatus[widget.wordIndex].liked;
     super.initState();
   }
 
@@ -50,7 +50,7 @@ class WordCardState extends State<WordCard> {
             isBpmf: widget.isBpmf,
             unitId: widget.unitId,
             unitTitle: widget.unitTitle,
-            wordStatus: widget.wordStatus,
+            wordsStatus: widget.wordsStatus,
             wordIndex: widget.wordIndex,
         )));
       },
@@ -58,7 +58,7 @@ class WordCardState extends State<WordCard> {
         width: widget.sizedBoxWidth,
         height: widget.sizedBoxHeight,
         decoration: BoxDecoration(
-          color: widget.wordStatus[widget.wordIndex].learned ? "#F8F88E".toColor():"#F5F5DC".toColor(),
+          color: widget.wordsStatus[widget.wordIndex].learned ? "#F8F88E".toColor():"#F5F5DC".toColor(),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Wrap(
@@ -84,7 +84,7 @@ class WordCardState extends State<WordCard> {
                           setState(() {
                             liked = !liked;
                           });
-                          WordStatus newStatus = widget.wordStatus[widget.wordIndex];
+                          WordStatus newStatus = widget.wordsStatus[widget.wordIndex];
                           newStatus.liked = liked;
                           await WordStatusProvider.updateWordStatus(
                             status: newStatus
@@ -92,16 +92,16 @@ class WordCardState extends State<WordCard> {
                         },
                       ),
                       Icon(
-                        widget.wordStatus[widget.wordIndex].learned ? Icons.check_circle : Icons.circle_outlined,
+                        widget.wordsStatus[widget.wordIndex].learned ? Icons.check_circle : Icons.circle_outlined,
                         size: 16,
-                        color: widget.wordStatus[widget.wordIndex].learned ? "#F8A339".toColor() : "#999999".toColor(),
+                        color: widget.wordsStatus[widget.wordIndex].learned ? "#F8A339".toColor() : "#999999".toColor(),
                       ),
                     ]
                   ),
               ),
             ),
             Text(
-              widget.wordStatus[widget.wordIndex].word, 
+              widget.wordsStatus[widget.wordIndex].word, 
               style: TextStyle(
                 fontSize: widget.fontSize,
                 fontWeight: FontWeight.w900,

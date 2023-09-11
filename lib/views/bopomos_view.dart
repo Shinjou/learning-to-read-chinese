@@ -43,7 +43,7 @@ class BopomosView extends StatelessWidget {
                     isBpmf: true,
                     unitId: 0,
                     unitTitle: "學注音",
-                    wordStatus: wordStatus,
+                    wordsStatus: wordStatus,
                     wordIndex: index,
                     sizedBoxWidth: 30,
                     sizedBoxHeight: 155,
