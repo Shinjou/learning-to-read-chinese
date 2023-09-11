@@ -85,13 +85,13 @@ class _SafetyHintRegisterState extends State<SafetyHintRegisterView> {
             children: <Widget>[
               SizedBox(height: deviceHeight * 0.04),
               
-              Text(
+              const Text(
                 '選取安全提示',
                 style: TextStyle(
                   fontSize: 28.0,
                 )
               ),
-              Text(
+              const Text(
                 '問題&答案',
                 style: TextStyle(
                   fontSize: 28.0,
@@ -232,21 +232,21 @@ class _SafetyHintRegisterState extends State<SafetyHintRegisterView> {
               
               SizedBox(height: deviceHeight * 0.02),
 
-              Text(
+              const Text(
                 '如果你忘記你的密碼，',
                 style: TextStyle(
                   fontSize: 14.0,
                 )
               ),
 
-              Text(
+              const Text(
                 '這些問題可用來驗證你的身分，',
                 style: TextStyle(
                   fontSize: 14.0,
                 )
               ),
 
-              Text(
+              const Text(
                 '協助你取回密碼。',
                 style: TextStyle(
                   fontSize: 14.0,
@@ -279,7 +279,7 @@ class _SafetyHintRegisterState extends State<SafetyHintRegisterView> {
                     );
                   }
                 },
-                child: Text(
+                child: const Text(
                   '下一步',
                   style: TextStyle(
                     fontSize: 24.0,

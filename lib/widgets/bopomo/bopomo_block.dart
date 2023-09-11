@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:ltrc/extensions.dart';
 
 import 'bopomo_container.dart';
 
