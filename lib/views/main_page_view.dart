@@ -18,26 +18,23 @@ class MainPageView extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: '#28231D'.toColor(),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            icon: const Icon(
+              Icons.settings,
+              size: 38,
+            ), 
+            onPressed: () => Navigator.of(context).pushNamed(
+              '/setting'
+            ),)
+        ],
+      ),
       body: SizedBox.expand(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Container(
-              height: 63,
-              width: deviceWidth,
-              padding: EdgeInsetsDirectional.fromSTEB(0, deviceHeight * 0.05, deviceWidth * 0.04, 0),
-              alignment: AlignmentDirectional.centerEnd,
-              child : IconButton( 
-                icon : Icon(
-                  Icons.settings,
-                  color: '#F5F5DC'.toColor(),
-                  size: 38
-                ),
-                onPressed: () => Navigator.of(context).pushNamed(
-                  '/setting'
-                ),
-              )
-            ),
             Container(
               height: 54,
               width: 210,

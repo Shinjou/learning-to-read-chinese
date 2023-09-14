@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ltrc/contants/publisher_code.dart';
 import 'package:ltrc/data/models/user_model.dart';
 import 'package:ltrc/data/providers/user_provider.dart';
 import 'package:ltrc/extensions.dart';
@@ -193,6 +194,8 @@ class LogInViewState extends ConsumerState<LogInView> {
                           else {
                             ref.read(accountProvider.notifier).state = accountController.text;
                             ref.read(userNameProvider.notifier).state = user.username;
+                            ref.read(gradeProvider.notifier).state = user.grade;
+                            ref.read(publisherCodeProvider.notifier).state = publisherCodeTable.keys.firstWhere((e) => publisherCodeTable[e] == user.publisher);
                             Navigator.of(context).pushNamed('/mainPage');
                           }
                         } catch (e){

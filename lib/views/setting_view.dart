@@ -239,10 +239,14 @@ class SettingViewState extends ConsumerState<SettingView> {
                                 ),
                                 dropdownMenuEntries: gradeEntries,
                                 initialSelection: selectedGrade,
-                                onSelected: (int? grade) {
+                                onSelected: (int? grade) async {
+                                  User userToUpdate = await UserProvider.getUser(inputAccount: account);
+                                  userToUpdate.grade = grade!;
+                                  await UserProvider.updateUser(user: userToUpdate);
                                   setState(() {
-                                    selectedGrade = grade!;
+                                    selectedGrade = grade;
                                   });
+                                  ref.read(gradeProvider.notifier).state = grade;
                                 },
                               ),
                             ),
@@ -282,10 +286,14 @@ class SettingViewState extends ConsumerState<SettingView> {
                               ),
                               dropdownMenuEntries: publisherEntries,
                               initialSelection: selectedPublisher,
-                              onSelected: (int? publisher) {
+                              onSelected: (int? publisher) async {
+                                User userToUpdate = await UserProvider.getUser(inputAccount: account);
+                                userToUpdate.publisher = publisherCodeTable[publisher]!;
+                                await UserProvider.updateUser(user: userToUpdate);
                                 setState(() {
                                   selectedPublisher = publisher!;
                                 });
+                                ref.read(publisherCodeProvider.notifier).state = publisher!;
                               },
                             ),
                           ]
