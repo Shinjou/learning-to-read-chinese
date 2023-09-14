@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ltrc/contants/bopomos.dart';
 import 'package:ltrc/extensions.dart';
-import '../widgets/bopomo/bopomo_block.dart';
 import '../widgets/bopomo/bopomo_container.dart';
 
 
@@ -14,19 +13,36 @@ class BopomoSpellingView extends StatefulWidget {
 
 class _BopomoSpellingState extends State<BopomoSpellingView>{ 
   final vowels = List.from(prenuclear)..addAll(finals);
+  late String caughtTone;
+  late String caughtInitial;
+  late String caughtPrenuclear;
+  late String caughtFinal;
+
+  @override
+  void initState() {
+    super.initState();
+    caughtFinal = "";
+    caughtInitial = "";
+    caughtPrenuclear = "";
+    caughtTone = "";
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    String caughtInitial ='';
-    String caughtFinal ='';
-    String caughtTone ='';
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(icon: const Icon(Icons.chevron_left), onPressed: () => Navigator.pop(context),),
         title: const Text("拼拼看"),
         actions: [
           IconButton(
-            icon: const Icon(Icons.home),
+            icon: const Icon(
+              Icons.home,
+            ),
             onPressed: () => Navigator.of(context).pushNamed('/mainPage'),
           )
         ],
@@ -44,7 +60,21 @@ class _BopomoSpellingState extends State<BopomoSpellingView>{
               ),
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) {
-                  return BopomoBlock(character: tones[index], color: "#01316D".toColor(),);
+                  return (tones[index] == caughtTone) ? 
+                    BopomoContainer(
+                      character: tones[index], 
+                      color: "#404040".toColor(),
+                      onPressed: () => setState(() {
+                        caughtTone = '';
+                      }),
+                    ) : 
+                    BopomoContainer(
+                      character: tones[index], 
+                      color: "#B65454".toColor(),
+                      onPressed: () => setState(() {
+                        caughtTone = tones[index];
+                      }),
+                    );
                 },
                 childCount: tones.length,
               ),
@@ -61,91 +91,162 @@ class _BopomoSpellingState extends State<BopomoSpellingView>{
               ),
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) {
-                  return BopomoBlock(character: initials[index], color: "#48742C".toColor(),);
+                  return initials[index] == caughtInitial ?
+                  BopomoContainer(
+                    character: initials[index], 
+                    color: "#404040".toColor(),
+                    onPressed: () => setState(() {
+                      caughtInitial = '';
+                    }),  
+                  ) :
+                  BopomoContainer(
+                    character: initials[index], 
+                    color: "#48742C".toColor(),
+                    onPressed: () => setState(() {
+                      caughtInitial = initials[index];
+                    }),  
+                  );
                 },
                 childCount: initials.length,
               ),
             ),
           ),
           SliverPadding(
-            padding: const EdgeInsets.fromLTRB(92, 8, 92, 8),
-            sliver: SliverGrid(
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 260,
-                mainAxisSpacing: 10.0,
-                crossAxisSpacing: 10.0,
-                childAspectRatio: 210/140,
-              ),
-              delegate: SliverChildBuilderDelegate(
-                (BuildContext context, int index) {
-                  return Row(
+            padding: const EdgeInsets.fromLTRB(92, 10, 92, 10),
+            sliver: SliverToBoxAdapter(
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Column(
                     children: [
-                      SizedBox(
-                        width: 140,
-                        height: 140,
-                        child: Container(
-                            decoration: BoxDecoration(
-                              color: '023E6E'.toColor(),
-                              border: Border.all(
-                                width: 5,
-                                color: '#F5F5DC'.toColor(),
-                              ),
-                            ),
-                            child: Row (
+                      IconButton(
+                        icon: Icon(
+                          Icons.volume_up,
+                          color: "#F5F5DC".toColor(),
+                        ),
+                        onPressed: (){
+                        },
+                      ),
+                      const Text('讀音'),
+                      IconButton(
+                        icon: Icon(
+                          Icons.lightbulb,
+                          color: "#F5F5DC".toColor(),
+                        ), 
+                        onPressed: (){},),
+                      const Text('提示'),
+                    ],
+                  ),
+                  SizedBox(
+                    width: 140,
+                    height: 140,
+                    child: Container(
+                        decoration: BoxDecoration(
+                          color: '023E6E'.toColor(),
+                          border: Border.all(
+                            width: 5,
+                            color: '#F5F5DC'.toColor(),
+                          ),
+                        ),
+                        child: Row (
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Column(
                               mainAxisAlignment: MainAxisAlignment.center,
+                              //crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  //crossAxisAlignment: CrossAxisAlignment.stretch,
-                                  children: [
-                                    DragTarget<String>(
-                                      onAccept: (data) => {caughtInitial = data},
-                                      builder: (BuildContext context, List<dynamic> accepted, List<dynamic> rejected) {
-                                        return BopomoContainer( 
-                                          character : accepted.isEmpty ? caughtInitial : ' ', 
-                                          color : "#48742C".toColor()
-                                        );
-                                      },
-                                      onWillAccept: (data) => initials.contains(data),
-                                    ),
-                                    DragTarget<String>(
-                                      onAccept: (data) => {caughtFinal = data},
-                                      builder: (BuildContext context, List<dynamic> accepted, List<dynamic> rejected) {
-                                        return BopomoContainer( 
-                                          character : accepted.isEmpty ? caughtFinal : ' ', 
-                                          color : "#404040".toColor()
-                                        );
-                                      },
-                                      onWillAccept: (data) => (List.from(prenuclear)..addAll(vowels)).contains(data),
-                                    ),
-                                  ],
+                                BopomoContainer( 
+                                  character : (caughtInitial.isNotEmpty && caughtTone == "˙") ? null :
+                                    (caughtTone == "˙") ? "˙" : caughtInitial,
+                                  innerWidget: (caughtInitial.isNotEmpty && caughtTone == "˙") ? Column(
+                                    children: [
+                                      const Text(
+                                        "˙",
+                                        style: TextStyle(
+                                          fontSize: 16
+                                        ),
+                                      ),
+                                      Text(
+                                        caughtInitial,
+                                        style: const TextStyle(
+                                          fontSize: 16
+                                        ),
+                                      )
+                                    ],
+                                  ) : null,
+                                  color : "#48742C".toColor(),
+                                  onPressed: () => setState(() {
+                                    caughtInitial = '';
+                                    if (caughtTone == '˙'){
+                                      caughtTone = '';
+                                    }
+                                  }),
                                 ),
-                                DragTarget<String>(
-                                  onAccept: (data) => {caughtTone = data},
-                                  builder: (BuildContext context, List<dynamic> accepted, List<dynamic> rejected) {
-                                    return BopomoContainer( 
-                                          character : accepted.isEmpty ? caughtTone : ' ', 
-                                          color : "#01316D".toColor()
-                                        );
-                                  },
-                                  onWillAccept: (data) => tones.contains(data),
+                                BopomoContainer( 
+                                  character: (caughtPrenuclear.isNotEmpty && caughtFinal.isNotEmpty) ? null :
+                                    (caughtPrenuclear.isNotEmpty) ? caughtPrenuclear : caughtFinal, 
+                                  innerWidget: (caughtPrenuclear.isNotEmpty && caughtFinal.isNotEmpty) ? Column(
+                                    children: [
+                                      Text(
+                                        caughtPrenuclear,
+                                        style: const TextStyle(
+                                          fontSize: 16
+                                        ),
+                                      ),
+                                      Text(
+                                        caughtFinal,
+                                        style: const TextStyle(
+                                          fontSize: 16
+                                        ),
+                                      )
+                                    ],
+                                  ) : null,
+                                  color : "#D19131".toColor(),
+                                  onPressed: () => setState(() {
+                                    caughtFinal = '';
+                                    caughtPrenuclear = '';
+                                  }),
                                 ),
-                              ]
+                              ],
                             ),
+                            BopomoContainer( 
+                              character : caughtTone == "˙" ? "" : caughtTone, 
+                              color : "#B65454".toColor(),
+                              onPressed: () => setState(() {
+                                caughtTone = '';
+                              }),
+                            ),
+                          ]
                         ),
                       ),
-                      Column(
-                        children: [
-                          IconButton(icon: const Icon(Icons.replay), onPressed: (){},),
-                          const Text('清除'),
-                          IconButton(icon: const Icon(Icons.done_outline), onPressed: (){},),
-                          const Text('確認'),
-                        ],
-                      ),
-                    ],
-                  );
-                },
-                childCount: 1,
+                    ),
+                    Column(
+                      children: [
+                        IconButton(
+                          icon: Icon(
+                            Icons.replay,
+                            color: "#F5F5DC".toColor(),
+                          ),
+                          onPressed: (){
+                            setState(() {
+                              caughtFinal = "";
+                              caughtInitial = "";
+                              caughtPrenuclear = "";
+                              caughtTone = "";
+                            });
+                          },
+                        ),
+                        const Text('清除'),
+                        IconButton(
+                          icon: Icon(
+                            Icons.done_outline,
+                            color: "#F5F5DC".toColor(),
+                          ), 
+                          onPressed: (){},),
+                        const Text('確認'),
+                      ],
+                    ),
+                  ],
               ),
             ),
           ),
@@ -160,7 +261,40 @@ class _BopomoSpellingState extends State<BopomoSpellingView>{
               ),
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) {
-                  return BopomoBlock(character: vowels[index], color: "#404040".toColor(),);
+                  if (index < 3){
+                    return prenuclear[index] == caughtPrenuclear?
+                      BopomoContainer(
+                        character: prenuclear[index], 
+                        color: "#404040".toColor(),
+                        onPressed: () => setState(() {
+                          caughtPrenuclear = '';
+                        }),  
+                      ):
+                      BopomoContainer(
+                        character: prenuclear[index], 
+                        color: "#D19131".toColor(),
+                        onPressed: () => setState(() {
+                          caughtPrenuclear = prenuclear[index];
+                        }),
+                      );
+                  }
+                  else {
+                    return finals[index-3] == caughtFinal?
+                      BopomoContainer(
+                        character: finals[index-3], 
+                        color: "#404040".toColor(),
+                        onPressed: () => setState(() {
+                          caughtFinal = '';
+                        }),  
+                      ):
+                      BopomoContainer(
+                        character: finals[index-3], 
+                        color: "#D19131".toColor(),
+                        onPressed: () => setState(() {
+                          caughtFinal = finals[index-3];
+                        }),  
+                      );
+                  }
                 },
                 childCount: vowels.length,
               ),

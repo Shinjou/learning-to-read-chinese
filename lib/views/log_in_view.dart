@@ -68,6 +68,7 @@ class LogInViewState extends ConsumerState<LogInView> {
                 padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
                 child: TextField(
                   controller: accountController,
+                  style: TextStyle(color: '#1C1B1F'.toColor(),),
                   decoration: InputDecoration(
                     prefixIcon: Icon(
                       Icons.account_circle,
@@ -101,6 +102,7 @@ class LogInViewState extends ConsumerState<LogInView> {
                   child: TextField(
                     controller: pwdController,
                     obscureText: pwdVisible,
+                    style: TextStyle(color: '#1C1B1F'.toColor(),),
                     decoration: InputDecoration(
                       prefixIcon: Icon(
                         Icons.lock,
@@ -110,7 +112,7 @@ class LogInViewState extends ConsumerState<LogInView> {
                       hintText: '密碼',
                       hintStyle: TextStyle(
                         fontSize: 20.0,
-                        color: '#013E6D'.toColor()
+                        color: '#1C1B1F'.toColor(),
                       ),
                       floatingLabelBehavior: FloatingLabelBehavior.always,
                       floatingLabelAlignment: FloatingLabelAlignment.center,
@@ -139,10 +141,11 @@ class LogInViewState extends ConsumerState<LogInView> {
                     style: TextButton.styleFrom(
                       fixedSize: const Size(110, 14),
                     ),
-                    child: const Text(
+                    child: Text(
                       '忘記密碼',
                       style: TextStyle(
                         fontSize: 14.0,
+                        color: '#F5F5DC'.toColor(),
                       )
                     ),
                   ),
@@ -202,10 +205,11 @@ class LogInViewState extends ConsumerState<LogInView> {
                     style: TextButton.styleFrom(
                       fixedSize: const Size(110, 45),
                     ),
-                    child: const Text(
+                    child: Text(
                       '登入',
                       style: TextStyle(
                         fontSize: 24.0,
+                        color: '#F5F5DC'.toColor(),
                       )
                     )
                   ),
@@ -220,10 +224,11 @@ class LogInViewState extends ConsumerState<LogInView> {
                     style: TextButton.styleFrom(
                       fixedSize: const Size(110, 45),
                     ),
-                    child: const Text(
+                    child: Text(
                       '註冊',
                       style: TextStyle(
                         fontSize: 24.0,
+                        color: '#F5F5DC'.toColor(),
                       )
                     )
                   )
