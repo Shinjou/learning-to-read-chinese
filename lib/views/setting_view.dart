@@ -6,8 +6,8 @@ import 'package:ltrc/data/models/user_model.dart';
 import 'package:ltrc/data/providers/user_provider.dart';
 import 'package:ltrc/extensions.dart';
 import 'package:ltrc/providers.dart';
-import 'package:ltrc/widgets/grade_and_provider_button.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:ltrc/widgets/setting/setting_divider.dart';
 
 class SettingView extends ConsumerStatefulWidget {
   const SettingView({super.key});
@@ -17,25 +17,21 @@ class SettingView extends ConsumerStatefulWidget {
 }
 
 class SettingViewState extends ConsumerState<SettingView> {
-  late TextEditingController controller;
-  late String userName;
+  late TextEditingController nameController;
   late String account;
   final TextEditingController gradeController = TextEditingController();
   final TextEditingController publisherController = TextEditingController();
-  int selectedGrade = 1;
-  int selectedPublisher = 0;
 
   @override 
   void initState() {
     super.initState();
-    controller = TextEditingController();
-    userName = "";
+    nameController = TextEditingController();
     account = "";
   }
 
   @override
   void dispose(){
-    controller.dispose();
+    nameController.dispose();
     super.dispose();
   }
 
@@ -46,6 +42,11 @@ class SettingViewState extends ConsumerState<SettingView> {
 
     final List<DropdownMenuEntry<int>> gradeEntries = [];
     final List<DropdownMenuEntry<int>> publisherEntries = [];
+
+    final userName = ref.watch(userNameProvider);
+    int selectedGrade = ref.watch(gradeProvider);
+    int selectedPublisher = ref.watch(publisherCodeProvider);
+    
     
     for (var key in [1, 2, 3, 4, 5, 6]) {
       gradeEntries.add(
@@ -66,10 +67,7 @@ class SettingViewState extends ConsumerState<SettingView> {
     }
 
     setState(() {
-      userName = ref.watch(userNameProvider);
       account = ref.watch(accountProvider);
-      selectedGrade = ref.watch(gradeProvider);
-      selectedPublisher = ref.watch(publisherCodeProvider);
     });
 
     return Scaffold(
@@ -146,17 +144,19 @@ class SettingViewState extends ConsumerState<SettingView> {
                           Icon(
                             Icons.account_circle,
                             color: '#1C1B1F'.toColor(),
-                            size: 48
+                            size: 40
                           ),
-                          Container( width: 15 ),
-                          Text(
-                            userName,
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 20,
-                            )
+                          Container( width: 12 ),
+                          Flexible(
+                            child: Text(
+                              userName,
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: (userName.length)<5 ? 20 : (userName.length)<12 ? 16 : 14,
+                              )
+                            ),
                           ),
-                          Container( width: 30 ),
+                          Container( width: 12 ),
                           InkWell(
                             onTap: (){
                               showDialog(
@@ -164,24 +164,28 @@ class SettingViewState extends ConsumerState<SettingView> {
                                 builder: (context) => AlertDialog(
                                   backgroundColor: "#F5F5DC".toColor(),
                                   title: const Text("編輯名稱"),
-                                  content: const TextField(
-                                    decoration: InputDecoration(
+                                  content: TextField(
+                                    style: TextStyle( color: '#1C1B1F'.toColor(),),
+                                    decoration: const InputDecoration(
                                       hintText: "請輸入你的名稱"
                                     ),
-
+                                    controller: nameController,
                                   ),
                                   actions: [
                                     TextButton(
                                       onPressed: () async {
-                                        setState(() {
-                                          userName = controller.text;
-                                        });
+                                        ref.read(userNameProvider.notifier).state = nameController.text;
                                         User userToUpdate = await UserProvider.getUser(inputAccount: account);
-                                        userToUpdate.username = userName;
+                                        userToUpdate.username = nameController.text;
                                         await UserProvider.updateUser(user: userToUpdate);
                                         Navigator.of(context).pop();
                                       },
-                                      child: const Text('確認')
+                                      child: Text(
+                                        '確認', 
+                                        style: TextStyle(
+                                          color: "#1C1B1F".toColor(),
+                                        ),  
+                                      )
                                     )
                                   ],
                                 )
@@ -202,147 +206,107 @@ class SettingViewState extends ConsumerState<SettingView> {
                                 )
                               ],
                             )
-                          )
+                          ),
+                          Container( width: 12,)
                         ]
                       ),
                     ),
-                    Divider(
-                      color: '#999999'.toColor(),
-                      indent: 12,
-                      endIndent: 12,
-                      height: 4,
-                    ),
+                    const SettingDivider(),
                     Padding(
-                      padding: EdgeInsetsDirectional.symmetric(horizontal: 0, vertical: deviceHeight * 0.03),
-                      child: Container(
-                        height: 40,
-                        width: deviceWidth * 0.8,
-                        margin: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 5),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children : [
-                            const Text(
-                              '年級',
-                              style: TextStyle(
-                                fontSize: 24,
-                                color: Colors.black
-                              )
-                            ),
-                            SizedBox(
-                              height: 20,
-                              child: DropdownMenu<int>(
-                                controller: gradeController,
-                                width: 110,
-                                textStyle: const TextStyle(
-                                  fontSize: 12,
-                                ),
-                                dropdownMenuEntries: gradeEntries,
-                                initialSelection: selectedGrade,
-                                onSelected: (int? grade) async {
-                                  User userToUpdate = await UserProvider.getUser(inputAccount: account);
-                                  userToUpdate.grade = grade!;
-                                  await UserProvider.updateUser(user: userToUpdate);
-                                  setState(() {
-                                    selectedGrade = grade;
-                                  });
-                                  ref.read(gradeProvider.notifier).state = grade;
-                                },
-                              ),
-                            ),
-                          ]
-                        )
-                      ),
-                    ),
-                    Divider(
-                      color: '#999999'.toColor(),
-                      indent: 12,
-                      endIndent: 12,
-                      height: 4,
-                    ),
-                    Padding(
-                      padding: EdgeInsetsDirectional.symmetric(horizontal: 0, vertical: deviceHeight * 0.03),
-                      child: Container(
-                        height: 30,
-                        width: deviceWidth * 0.8,
-                        margin: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 5),
-                        alignment: Alignment.center,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children : [
-                            const Text(
-                              '課本版本',
-                              style: TextStyle(
-                                fontSize: 24,
-                                color: Colors.black
-                              )
-                            ),
-                            DropdownMenu<int>(
-                              controller: publisherController,
-                              width: 110,
-                              textStyle: const TextStyle(
-                                fontSize: 12,
-                              ),
-                              dropdownMenuEntries: publisherEntries,
-                              initialSelection: selectedPublisher,
-                              onSelected: (int? publisher) async {
-                                User userToUpdate = await UserProvider.getUser(inputAccount: account);
-                                userToUpdate.publisher = publisherCodeTable[publisher]!;
-                                await UserProvider.updateUser(user: userToUpdate);
-                                setState(() {
-                                  selectedPublisher = publisher!;
-                                });
-                                ref.read(publisherCodeProvider.notifier).state = publisher!;
-                              },
-                            ),
-                          ]
-                        )
-                      ),
-                    ),
-                    Divider(
-                      color: '#999999'.toColor(),
-                      indent: 12,
-                      endIndent: 12,
-                      height: 4,
-                    ),
-                    Padding(
-                      padding: EdgeInsetsDirectional.symmetric(horizontal: 0, vertical: deviceHeight * 0.03),
-                      child: SizedBox(
-                        height: 30,
-                        width: deviceWidth * 0.8,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            const Text(
-                              '聲音',
-                              style: TextStyle(
-                                color: Color.fromRGBO(0, 0, 0, 1),
-                                fontSize: 24,
-                              )
-                            ),
-                            CupertinoSwitch(
-                              onChanged: (bool? value){
-                                ref.read(soundOnProvider.notifier).state = !ref.read(soundOnProvider.notifier).state;
-                              },
-                              value: ref.watch(soundOnProvider),
-                              activeColor: CupertinoColors.black,
-                            )
-                          ]
-                        )
-                      )
-                    ),
-                    Divider(
-                      color: '#999999'.toColor(),
-                      indent: 12,
-                      endIndent: 12,
-                      height: 4,
-                    ),
-                    SizedBox(
-                      height: 26,
-                      width: deviceWidth * 0.8,
+                      padding: EdgeInsetsDirectional.symmetric(horizontal: 12, vertical: deviceHeight * 0.02),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisSize: MainAxisSize.max,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children : [
+                          const Text(
+                            '年級',
+                            style: TextStyle(
+                              fontSize: 24,
+                              color: Colors.black
+                            )
+                          ),
+                          DropdownMenu<int>(
+                            controller: gradeController,
+                            width: 110,
+                            textStyle: const TextStyle(
+                              fontSize: 12,
+                            ),
+                            dropdownMenuEntries: gradeEntries,
+                            initialSelection: selectedGrade,
+                            onSelected: (int? grade) async {
+                              User userToUpdate = await UserProvider.getUser(inputAccount: account);
+                              userToUpdate.grade = grade!;
+                              await UserProvider.updateUser(user: userToUpdate);
+                              ref.read(gradeProvider.notifier).state = grade;
+                            },
+                          ),
+                        ]
+                      ),
+                    ),
+                    const SettingDivider(),
+                    Padding(
+                      padding: EdgeInsetsDirectional.symmetric(horizontal: 12, vertical: deviceHeight * 0.02),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisSize: MainAxisSize.max,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children : [
+                          const Text(
+                            '課本版本',
+                            style: TextStyle(
+                              fontSize: 24,
+                              color: Colors.black
+                            )
+                          ),
+                          DropdownMenu<int>(
+                            controller: publisherController,
+                            width: 110,
+                            textStyle: const TextStyle(
+                              fontSize: 12,
+                            ),
+                            dropdownMenuEntries: publisherEntries,
+                            initialSelection: selectedPublisher,
+                            onSelected: (int? publisher) async {
+                              User userToUpdate = await UserProvider.getUser(inputAccount: account);
+                              userToUpdate.publisher = publisherCodeTable[publisher]!;
+                              await UserProvider.updateUser(user: userToUpdate);
+                              ref.read(publisherCodeProvider.notifier).state = publisher!;
+                            },
+                          ),
+                        ]
+                      ),
+                    ),
+                    const SettingDivider(),
+                    Padding(
+                      padding: EdgeInsetsDirectional.symmetric(horizontal: 12, vertical: deviceHeight * 0.01),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisSize: MainAxisSize.max,
+                        children: <Widget>[
+                          const Text(
+                            '聲音',
+                            style: TextStyle(
+                              color: Color.fromRGBO(0, 0, 0, 1),
+                              fontSize: 24,
+                            )
+                          ),
+                          CupertinoSwitch(
+                            onChanged: (bool? value){
+                              ref.read(soundOnProvider.notifier).state = !ref.read(soundOnProvider.notifier).state;
+                            },
+                            value: ref.watch(soundOnProvider),
+                            activeColor: CupertinoColors.black,
+                          )
+                        ]
+                      )
+                    ),
+                    const SettingDivider(),
+                    Padding(
+                      padding: EdgeInsetsDirectional.symmetric(horizontal: 12, vertical: deviceHeight * 0.01),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisSize: MainAxisSize.max,
                         children: <Widget>[
                           const Text(
                             '資源出處',
@@ -355,7 +319,7 @@ class SettingViewState extends ConsumerState<SettingView> {
                             onPressed: () => Navigator.of(context).pushNamed('/acknowledge'),
                             icon: const Icon(Icons.arrow_forward_ios),
                             color: Colors.black,
-                            iconSize: 25
+                            iconSize: 22
                           )
                         ]
                       )

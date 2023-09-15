@@ -78,8 +78,8 @@ class LogInViewState extends ConsumerState<LogInView> {
                     ),
                     hintText: '帳號名稱',
                     hintStyle: TextStyle(
-                        fontSize: 20.0,
-                        color: '#013E6D'.toColor()
+                      fontSize: 20.0,
+                      color: '#1C1B1F'.toColor(),
                     ),
                     floatingLabelBehavior: FloatingLabelBehavior.always,
                     floatingLabelAlignment: FloatingLabelAlignment.center,
