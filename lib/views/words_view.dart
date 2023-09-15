@@ -21,7 +21,7 @@ class WordsView extends ConsumerWidget {
           icon: const Icon(Icons.chevron_left),
           onPressed: () => Navigator.pop(context),
         ),
-        title: (unit.id == -1) ? Text("${unit.unitId.toString().padLeft(2,'0')} | ${unit.unitTitle}") : Text(unit.unitTitle),
+        title: (unit.id == -1) ? Text(unit.unitTitle) : Text("${unit.unitId.toString().padLeft(2,'0')} | ${unit.unitTitle}"),
         actions: [
           IconButton(
             icon: const Icon(Icons.home),
@@ -49,11 +49,11 @@ class WordsView extends ConsumerWidget {
                     fontSize: 48,
                   );
                 },
-                childCount: unit.newWords.length,
+                childCount: newWordsStatus.length,
               ),
             ),
           ),
-          (unit.extraWords.isEmpty) ? const SliverToBoxAdapter(child: Text('')) : 
+          (extraWordsStatus.isEmpty) ? const SliverToBoxAdapter(child: Text('')) : 
           const SliverPadding(
             padding: EdgeInsets.fromLTRB(24, 0, 0, 0),
             sliver: SliverToBoxAdapter(
@@ -83,7 +83,7 @@ class WordsView extends ConsumerWidget {
                     fontSize: 48,
                   );
                 },
-                childCount: unit.extraWords.length,
+                childCount: extraWordsStatus.length,
               ),
             ),
           ),
