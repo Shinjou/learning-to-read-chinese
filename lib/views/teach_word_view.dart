@@ -14,6 +14,7 @@ import 'package:ltrc/widgets/teach_word/stroke_order_animator.dart';
 import 'package:ltrc/widgets/teach_word/stroke_order_animation_controller.dart';
 import 'package:ltrc/widgets/teach_word/word_vocab_content.dart';
 import 'package:ltrc/widgets/word_card.dart';
+import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 
 class TeachWordView extends StatefulWidget {
@@ -287,7 +288,53 @@ class _TeachWordViewState extends State<TeachWordView>
             ],
           ))
         : Container()];
+    List<bool> stepComplete = [];
+    int stepId = 1;
+    List<Widget> stepsSnackBarContent = [  
+        // 看一看
+        Text.rich(
+          textAlign: TextAlign.left,
+          TextSpan(
+            text: '按',
+            style: const TextStyle(
+              fontSize: 20,
+            ),  
+            children: [
+              const WidgetSpan(child: Icon(Icons.chevron_right,color: Color.fromRGBO(245, 245, 220, 100),)),
+              TextSpan(text: '去聽一聽 "$word" 怎麼讀！'),
+            ]
+          ),
+        ),
+        // 聽一聽
+        Text.rich(
+          textAlign: TextAlign.left,
+          TextSpan(
+            text: '按',
+            style: const TextStyle(
+              fontSize: 20,
+            ),  
+            children: [
+              const WidgetSpan(child: Icon(Icons.chevron_right,color: Color.fromRGBO(245, 245, 220, 100),)),
+              TextSpan(text: '寫寫看 "$word"！'),
+            ]
+          ),
+        ),
+        // 寫一寫
+        // 用一用
+    ];
     
+    final snackBar = SnackBar(
+      duration: const Duration(seconds: 15),
+      content: stepsSnackBarContent[stepId],
+          // color: Color.fromRGBO(245, 245, 220, 100),
+      action: SnackBarAction(
+        label: '好！',
+        onPressed: () {
+          // Some code to undo the change.
+        },
+      ),
+    );
+
     return DefaultTabController(
       length: teachWordTabs.length,
       child: Scaffold(
@@ -389,6 +436,21 @@ class _TeachWordViewState extends State<TeachWordView>
                             color: const Color.fromRGBO(245, 245, 220, 100),
                             onPressed: () async {
                               var result = await ftts.speak(word);
+                              // final snackBar = SnackBar(
+                              //   content: const Text('你好嗨嗨嗨嗨嗨',
+                              //     textAlign: TextAlign.right,
+                              //     style: TextStyle(
+                              //       fontSize: 17.5,
+                              //       color: Color.fromRGBO(245, 245, 220, 100),
+                              //   )),
+                              //   action: SnackBarAction(
+                              //     label: 'Undo',
+                              //     onPressed: () {
+                              //       // Some code to undo the change.
+                              //     },
+                              //   ),
+                              // );
+                              ScaffoldMessenger.of(context).showSnackBar(snackBar);
                             },
                             icon: const Icon(Icons.volume_up)),
                           const Text('讀音',
