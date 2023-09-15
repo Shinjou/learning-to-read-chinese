@@ -418,7 +418,7 @@ class _TeachWordViewState extends State<TeachWordView>
                               iconsColor: '#D9D9D9'.toColor(),
                               iconsSize: 35,
                               middleWidget: TeachWordCardTitle(
-                                sectionName: '聽一聽', iconsColor: '#D9D9D9'.toColor()),
+                                sectionName: '寫一寫', iconsColor: '#D9D9D9'.toColor()),
                               isFirst: false,
                               isLast: false,
                     onLeftClicked: () => _tabController.animateTo(_tabController.index - 1),
@@ -431,13 +431,19 @@ class _TeachWordViewState extends State<TeachWordView>
                                   image: AssetImage("lib/assets/img/box.png"),
                                   fit: BoxFit.fitWidth,
                                 ),
-                              ),
-                              child: FittedBox(
-                                child: StrokeOrderAnimator(
-                                  _strokeOrderAnimationControllers,
-                                  key: UniqueKey(),
-                                ),
-                              ),
+                              )
+                              // decoration: !isBpmf ? const BoxDecoration(
+                              //   image: DecorationImage(
+                              //     image: AssetImage("lib/assets/img/box.png"),
+                              //     fit: BoxFit.fitWidth,
+                              //   ),
+                              // ) : BoxDecoration(color: '#28231D'.toColor()),
+                              // child: FittedBox(
+                              //   child: StrokeOrderAnimator(
+                              //     _strokeOrderAnimationControllers,
+                              //     key: UniqueKey(),
+                              //   ),
+                              // ),
                             ),
                             const SizedBox(height: 7.5,),
                             Flexible(
