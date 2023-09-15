@@ -105,15 +105,23 @@ class UnitsViewState extends ConsumerState<UnitsView> {
                     ) :
                     InkWell( 
                       onTap: () async {
-                        List<WordStatus> wordStatus = await WordStatusProvider.getWordsStatus(
-                          account: ref.read(accountProvider.notifier).state,
-                          words: [""], 
+                        List<WordStatus> likedWords = await WordStatusProvider.getLikedWordsStatus(
+                          account: ref.watch(accountProvider), 
                         );
-
                         Navigator.of(context).pushNamed(
-                          '/bopomos', 
+                          '/words', 
                           arguments: {
-                            'wordStatus' : wordStatus,
+                            'unit' : Unit(
+                              id: -1, 
+                              publisher: '', 
+                              grade: 1, 
+                              semester: '', 
+                              unitId: -1, 
+                              unitTitle: "❤️最愛",
+                              newWords: [] ,
+                              extraWords:[]
+                            ),
+                            'newWordsStatus' : likedWords,
                           }
                         );
                       },
@@ -126,7 +134,7 @@ class UnitsViewState extends ConsumerState<UnitsView> {
                           color: "#013E6D".toColor(),
                         ),
                         child: const Text(
-                          "最愛", 
+                          "❤️最愛", 
                           style: TextStyle(
                             fontSize: 24,
                           ), 

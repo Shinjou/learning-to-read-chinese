@@ -13,7 +13,7 @@ class WordsView extends ConsumerWidget {
     dynamic obj = ModalRoute.of(context)!.settings.arguments;
     Unit unit = obj["unit"];
     List<WordStatus> newWordsStatus = obj["newWordsStatus"];
-    List<WordStatus> extraWordsStatus = obj["extraWordsStatus"];
+    List<WordStatus> extraWordsStatus = obj["extraWordsStatus"] ?? [];
 
     return Scaffold(
       appBar: AppBar(
@@ -21,7 +21,7 @@ class WordsView extends ConsumerWidget {
           icon: const Icon(Icons.chevron_left),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text("${unit.unitId.toString().padLeft(2,'0')} | ${unit.unitTitle}"),
+        title: (unit.id == -1) ? Text("${unit.unitId.toString().padLeft(2,'0')} | ${unit.unitTitle}") : Text(unit.unitTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.home),
