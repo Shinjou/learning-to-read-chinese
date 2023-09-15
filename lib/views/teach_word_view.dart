@@ -426,24 +426,24 @@ class _TeachWordViewState extends State<TeachWordView>
                             ),
                             const SizedBox(height: 30),
                             Container(
-                              decoration: const BoxDecoration(
-                                image: DecorationImage(
-                                  image: AssetImage("lib/assets/img/box.png"),
-                                  fit: BoxFit.fitWidth,
-                                ),
-                              )
-                              // decoration: !isBpmf ? const BoxDecoration(
+                              // decoration: const BoxDecoration(
                               //   image: DecorationImage(
                               //     image: AssetImage("lib/assets/img/box.png"),
                               //     fit: BoxFit.fitWidth,
                               //   ),
-                              // ) : BoxDecoration(color: '#28231D'.toColor()),
-                              // child: FittedBox(
-                              //   child: StrokeOrderAnimator(
-                              //     _strokeOrderAnimationControllers,
-                              //     key: UniqueKey(),
-                              //   ),
                               // ),
+                              decoration: !isBpmf ? const BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage("lib/assets/img/box.png"),
+                                  fit: BoxFit.fitWidth,
+                                ),
+                              ) : BoxDecoration(color: '#28231D'.toColor()),
+                              child: FittedBox(
+                                child: StrokeOrderAnimator(
+                                  _strokeOrderAnimationControllers,
+                                  key: UniqueKey(),
+                                ),
+                              ),
                             ),
                             const SizedBox(height: 7.5,),
                             Flexible(
