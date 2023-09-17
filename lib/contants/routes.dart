@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ltrc/views/bopomo_spelling.dart';
+import 'package:ltrc/views/bopomo_quiz.dart';
 import 'package:ltrc/views/bopomos_view.dart';
 import 'package:ltrc/views/log_in_view.dart';
 import 'package:ltrc/views/main_page_view.dart';
@@ -36,7 +36,7 @@ class AppRoutes {
   static Map<String, WidgetBuilder> define() {
     return {
       bopomos: (context) => BopomosView(),
-      bopomoSpelling: (context) => const BopomoSpellingView(),
+      bopomoSpelling: (context) => const BopomoQuizView(),
       login: (context) => const LogInView(),
       mainPage: (context) => const MainPageView(),
       units: (context) => const UnitsView(),

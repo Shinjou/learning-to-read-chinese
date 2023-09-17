@@ -46,7 +46,7 @@ class RegisterViewState extends ConsumerState<RegisterView> {
               height: deviceHeight * 0.33,
               width: deviceWidth,
               decoration: BoxDecoration(
-                color: '013E6D'.toColor(),
+                color: '#013E6D'.toColor(),
               ),
               alignment: Alignment.center,
               child: Column(
@@ -55,7 +55,7 @@ class RegisterViewState extends ConsumerState<RegisterView> {
                   Text(
                     '年級',
                     style: TextStyle(
-                      color: 'F5F5DC'.toColor(),
+                      color: '#F5F5DC'.toColor(),
                       fontSize: 44,
                     )
                   ),
@@ -64,13 +64,13 @@ class RegisterViewState extends ConsumerState<RegisterView> {
                     child: Container(
                       height: 9,
                       width: 84,
-                      color: 'F5F5DC'.toColor()
+                      color: '#F5F5DC'.toColor()
                     )
                   ),
                   Text(
                     '課本版本',
                     style: TextStyle(
-                      color: 'F5F5DC'.toColor(),
+                      color: '#F5F5DC'.toColor(),
                       fontSize: 44,
                     )
                   )
@@ -80,13 +80,13 @@ class RegisterViewState extends ConsumerState<RegisterView> {
             SizedBox(height: deviceHeight * 0.057),
             Icon(
               Icons.home_filled,
-              color: 'F8A23A'.toColor(),
+              color: '#F8A23A'.toColor(),
               size: deviceHeight * 0.083,
             ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: deviceHeight * 0.04),
               child: LeftRightSwitch(
-                iconsColor: 'F5F5DC'.toColor(),
+                iconsColor: '#F5F5DC'.toColor(),
                 iconsSize: deviceWidth * 0.15,
                 onLeftClicked: () => {ref.read(gradeProvider.notifier).state = (ref.read(gradeProvider.notifier).state-2) % 6 + 1},
                 onRightClicked: () => {ref.read(gradeProvider.notifier).state = (ref.read(gradeProvider.notifier).state) % 6 + 1},
@@ -96,12 +96,12 @@ class RegisterViewState extends ConsumerState<RegisterView> {
                   height: deviceHeight * 0.067,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadiusDirectional.circular(20),
-                      color: '7DDEF8'.toColor()
+                      color: '#7DDEF8'.toColor()
                   ),
                   child: Text(
                     '${numeralToChinese[grade]}年級',
                     style: TextStyle(
-                      color: '000000'.toColor(),
+                      color: '#000000'.toColor(),
                       fontSize: 34.0,
                     )
                   )
@@ -109,7 +109,7 @@ class RegisterViewState extends ConsumerState<RegisterView> {
               )
             ),
             LeftRightSwitch(
-              iconsColor: 'F5F5DC'.toColor(),
+              iconsColor: '#F5F5DC'.toColor(),
               iconsSize: deviceWidth * 0.15,
               onLeftClicked: () => {ref.read(publisherCodeProvider.notifier).state = (ref.read(publisherCodeProvider.notifier).state-1) % 3},
               onRightClicked: () => {ref.read(publisherCodeProvider.notifier).state = (ref.read(publisherCodeProvider.notifier).state+1) % 3},
@@ -119,12 +119,12 @@ class RegisterViewState extends ConsumerState<RegisterView> {
                 height: deviceHeight * 0.067,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadiusDirectional.circular(20),
-                  color: '7DDEF8'.toColor()
+                  color: '#7DDEF8'.toColor()
                 ),
                 child: Text(
                   publisherCodeTable[publisherCode]!,
                   style: TextStyle(
-                    color: '000000'.toColor(),
+                    color: '#000000'.toColor(),
                     fontSize: 34.0,
                   )
                 )

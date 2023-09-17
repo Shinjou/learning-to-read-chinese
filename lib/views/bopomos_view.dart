@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:ltrc/contants/bopomos.dart';
 import 'package:ltrc/data/models/word_status_model.dart';
 import 'package:ltrc/extensions.dart';
 import '../widgets/word_card.dart';
 
 class BopomosView extends StatelessWidget {
-  BopomosView({super.key});
+  const BopomosView({super.key});
 
   @override
   Widget build(BuildContext context) {
