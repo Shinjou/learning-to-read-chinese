@@ -52,10 +52,9 @@ class RegisterViewState extends ConsumerState<RegisterView> {
               child: Column(
                 children: <Widget>[
                   SizedBox(height: deviceHeight * 0.06),
-                  Text(
+                  const Text(
                     '年級',
                     style: TextStyle(
-                      color: 'F5F5DC'.toColor(),
                       fontSize: 44,
                     )
                   ),
@@ -67,10 +66,9 @@ class RegisterViewState extends ConsumerState<RegisterView> {
                       color: 'F5F5DC'.toColor()
                     )
                   ),
-                  Text(
+                  const Text(
                     '課本版本',
                     style: TextStyle(
-                      color: 'F5F5DC'.toColor(),
                       fontSize: 44,
                     )
                   )
@@ -95,8 +93,8 @@ class RegisterViewState extends ConsumerState<RegisterView> {
                   width: deviceWidth * 0.57,
                   height: deviceHeight * 0.067,
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadiusDirectional.circular(20),
-                      color: '7DDEF8'.toColor()
+                    borderRadius: BorderRadiusDirectional.circular(20),
+                    color: '7DDEF8'.toColor()
                   ),
                   child: Text(
                     '${numeralToChinese[grade]}年級',

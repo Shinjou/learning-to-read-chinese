@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/data/models/unit_model.dart';
 import 'package:ltrc/data/models/word_status_model.dart';
-import 'package:ltrc/extensions.dart';
 import '../widgets/word_card.dart';
 
 class WordsView extends ConsumerWidget {
@@ -14,7 +13,7 @@ class WordsView extends ConsumerWidget {
     dynamic obj = ModalRoute.of(context)!.settings.arguments;
     Unit unit = obj["unit"];
     List<WordStatus> newWordsStatus = obj["newWordsStatus"];
-    List<WordStatus> extraWordsStatus = obj["extraWordsStatus"];
+    List<WordStatus> extraWordsStatus = obj["extraWordsStatus"] ?? [];
 
     return Scaffold(
       appBar: AppBar(
@@ -22,7 +21,7 @@ class WordsView extends ConsumerWidget {
           icon: const Icon(Icons.chevron_left),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text("${unit.unitId.toString().padLeft(2,'0')} | ${unit.unitTitle}"),
+        title: (unit.id == -1) ? Text(unit.unitTitle) : Text("${unit.unitId.toString().padLeft(2,'0')} | ${unit.unitTitle}"),
         actions: [
           IconButton(
             icon: const Icon(Icons.home),
@@ -50,18 +49,17 @@ class WordsView extends ConsumerWidget {
                     fontSize: 48,
                   );
                 },
-                childCount: unit.newWords.length,
+                childCount: newWordsStatus.length,
               ),
             ),
           ),
-          (unit.extraWords.isEmpty) ? const SliverToBoxAdapter(child: Text('')) : 
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(24, 0, 0, 0),
+          (extraWordsStatus.isEmpty) ? const SliverToBoxAdapter(child: Text('')) : 
+          const SliverPadding(
+            padding: EdgeInsets.fromLTRB(24, 0, 0, 0),
             sliver: SliverToBoxAdapter(
               child: Text(
                   "唸唸看",
                   style: TextStyle(
-                    color: "#F5F5DC".toColor(),
                     fontSize: 24,
                   ),
                 )
@@ -85,7 +83,7 @@ class WordsView extends ConsumerWidget {
                     fontSize: 48,
                   );
                 },
-                childCount: unit.extraWords.length,
+                childCount: extraWordsStatus.length,
               ),
             ),
           ),

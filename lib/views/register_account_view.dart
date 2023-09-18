@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ltrc/data/models/user_model.dart';
 import 'package:ltrc/data/providers/user_provider.dart';
 import 'package:ltrc/extensions.dart';
 import 'package:ltrc/providers.dart';
@@ -107,6 +106,7 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
                     },
                     child: TextField(
                       controller: accountController,
+                      style: TextStyle(color: '#1C1B1F'.toColor(),),
                       decoration: InputDecoration(
                         prefixIcon: Icon(
                           Icons.account_circle,
@@ -166,6 +166,7 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
                     child: TextField(
                       controller: pwdController,
                       obscureText: pwdVisible,
+                      style: TextStyle(color: '#1C1B1F'.toColor(),),
                       decoration: InputDecoration(
                         prefixIcon: Icon(
                           Icons.lock,
@@ -206,6 +207,7 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
                   child: TextField(
                     controller: confirmPwdController,
                     obscureText: confirmPwdVisible,
+                    style: TextStyle(color: '#1C1B1F'.toColor(),),
                     decoration: InputDecoration(
                       prefixIcon: Icon(
                         Icons.lock,

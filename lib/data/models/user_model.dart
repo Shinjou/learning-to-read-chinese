@@ -13,13 +13,13 @@ class User {
   
   final String account;
   String password;
-  final String username;
+  String username;
   final int safetyQuestionId1;
   final String safetyAnswer1;
   final int safetyQuestionId2;
   final String safetyAnswer2;
-  final int grade;
-  final String publisher;
+  int grade;
+  String publisher;
 
   Map<String, dynamic> toMap() {
     return {

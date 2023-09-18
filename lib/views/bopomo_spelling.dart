@@ -70,7 +70,7 @@ class _BopomoSpellingState extends State<BopomoSpellingView>{
                     ) : 
                     BopomoContainer(
                       character: tones[index], 
-                      color: "#01316D".toColor(),
+                      color: "#B65454".toColor(),
                       onPressed: () => setState(() {
                         caughtTone = tones[index];
                       }),
@@ -112,132 +112,141 @@ class _BopomoSpellingState extends State<BopomoSpellingView>{
             ),
           ),
           SliverPadding(
-            padding: const EdgeInsets.fromLTRB(92, 8, 92, 8),
-            sliver: SliverGrid(
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 260,
-                mainAxisSpacing: 10.0,
-                crossAxisSpacing: 10.0,
-                childAspectRatio: 210/140,
-              ),
-              delegate: SliverChildBuilderDelegate(
-                (BuildContext context, int index) {
-                  return Row(
-                    mainAxisSize: MainAxisSize.max,
+            padding: const EdgeInsets.fromLTRB(92, 10, 92, 10),
+            sliver: SliverToBoxAdapter(
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Column(
                     children: [
-                      SizedBox(
-                        width: 140,
-                        height: 140,
-                        child: Container(
-                            decoration: BoxDecoration(
-                              color: '023E6E'.toColor(),
-                              border: Border.all(
-                                width: 5,
-                                color: '#F5F5DC'.toColor(),
-                              ),
-                            ),
-                            child: Row (
+                      IconButton(
+                        icon: Icon(
+                          Icons.volume_up,
+                          color: "#F5F5DC".toColor(),
+                        ),
+                        onPressed: (){
+                        },
+                      ),
+                      const Text('讀音'),
+                      IconButton(
+                        icon: Icon(
+                          Icons.lightbulb,
+                          color: "#F5F5DC".toColor(),
+                        ), 
+                        onPressed: (){},),
+                      const Text('提示'),
+                    ],
+                  ),
+                  SizedBox(
+                    width: 140,
+                    height: 140,
+                    child: Container(
+                        decoration: BoxDecoration(
+                          color: '023E6E'.toColor(),
+                          border: Border.all(
+                            width: 5,
+                            color: '#F5F5DC'.toColor(),
+                          ),
+                        ),
+                        child: Row (
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Column(
                               mainAxisAlignment: MainAxisAlignment.center,
+                              //crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  //crossAxisAlignment: CrossAxisAlignment.stretch,
-                                  children: [
-                                    BopomoContainer( 
-                                      character : (caughtInitial.isNotEmpty && caughtTone == "˙") ? null :
-                                        (caughtTone == "˙") ? "˙" : caughtInitial,
-                                      innerWidget: (caughtInitial.isNotEmpty && caughtTone == "˙") ? Column(
-                                        children: [
-                                          const Text(
-                                            "˙",
-                                            style: TextStyle(
-                                              fontSize: 16
-                                            ),
-                                          ),
-                                          Text(
-                                            caughtInitial,
-                                            style: const TextStyle(
-                                              fontSize: 16
-                                            ),
-                                          )
-                                        ],
-                                      ) : null,
-                                      color : "#48742C".toColor(),
-                                      onPressed: () => setState(() {
-                                        caughtInitial = '';
-                                        if (caughtTone == '˙'){
-                                          caughtTone = '';
-                                        }
-                                      }),
-                                    ),
-                                    BopomoContainer( 
-                                      character: (caughtPrenuclear.isNotEmpty && caughtFinal.isNotEmpty) ? null :
-                                        (caughtPrenuclear.isNotEmpty) ? caughtPrenuclear : caughtFinal, 
-                                      innerWidget: (caughtPrenuclear.isNotEmpty && caughtFinal.isNotEmpty) ? Column(
-                                        children: [
-                                          Text(
-                                            caughtPrenuclear,
-                                            style: const TextStyle(
-                                              fontSize: 16
-                                            ),
-                                          ),
-                                          Text(
-                                            caughtFinal,
-                                            style: const TextStyle(
-                                              fontSize: 16
-                                            ),
-                                          )
-                                        ],
-                                      ) : null,
-                                      color : "#D19131".toColor(),
-                                      onPressed: () => setState(() {
-                                        caughtFinal = '';
-                                        caughtPrenuclear = '';
-                                      }),
-                                    ),
-                                  ],
-                                ),
                                 BopomoContainer( 
-                                  character : caughtTone == "˙" ? "" : caughtTone, 
-                                  color : "#01316D".toColor(),
+                                  character : (caughtInitial.isNotEmpty && caughtTone == "˙") ? null :
+                                    (caughtTone == "˙") ? "˙" : caughtInitial,
+                                  innerWidget: (caughtInitial.isNotEmpty && caughtTone == "˙") ? Column(
+                                    children: [
+                                      const Text(
+                                        "˙",
+                                        style: TextStyle(
+                                          fontSize: 16
+                                        ),
+                                      ),
+                                      Text(
+                                        caughtInitial,
+                                        style: const TextStyle(
+                                          fontSize: 16
+                                        ),
+                                      )
+                                    ],
+                                  ) : null,
+                                  color : "#48742C".toColor(),
                                   onPressed: () => setState(() {
-                                    caughtTone = '';
+                                    caughtInitial = '';
+                                    if (caughtTone == '˙'){
+                                      caughtTone = '';
+                                    }
                                   }),
                                 ),
-                              ]
+                                BopomoContainer( 
+                                  character: (caughtPrenuclear.isNotEmpty && caughtFinal.isNotEmpty) ? null :
+                                    (caughtPrenuclear.isNotEmpty) ? caughtPrenuclear : caughtFinal, 
+                                  innerWidget: (caughtPrenuclear.isNotEmpty && caughtFinal.isNotEmpty) ? Column(
+                                    children: [
+                                      Text(
+                                        caughtPrenuclear,
+                                        style: const TextStyle(
+                                          fontSize: 16
+                                        ),
+                                      ),
+                                      Text(
+                                        caughtFinal,
+                                        style: const TextStyle(
+                                          fontSize: 16
+                                        ),
+                                      )
+                                    ],
+                                  ) : null,
+                                  color : "#D19131".toColor(),
+                                  onPressed: () => setState(() {
+                                    caughtFinal = '';
+                                    caughtPrenuclear = '';
+                                  }),
+                                ),
+                              ],
                             ),
+                            BopomoContainer( 
+                              character : caughtTone == "˙" ? "" : caughtTone, 
+                              color : "#B65454".toColor(),
+                              onPressed: () => setState(() {
+                                caughtTone = '';
+                              }),
+                            ),
+                          ]
                         ),
                       ),
-                      Column(
-                        children: [
-                          IconButton(
-                            icon: Icon(
-                              Icons.replay,
-                              color: "#F5F5DC".toColor(),
-                            ),
-                            onPressed: (){
-                              setState(() {
-                                caughtFinal = "";
-                                caughtInitial = "";
-                                caughtPrenuclear = "";
-                                caughtTone = "";
-                              });
-                            },
+                    ),
+                    Column(
+                      children: [
+                        IconButton(
+                          icon: Icon(
+                            Icons.replay,
+                            color: "#F5F5DC".toColor(),
                           ),
-                          const Text('清除'),
-                          IconButton(
-                            icon: Icon(
-                              Icons.done_outline,
-                              color: "#F5F5DC".toColor(),
-                            ), 
-                            onPressed: (){},),
-                          const Text('確認'),
-                        ],
-                      ),
-                    ],
-                  );
-                },
-                childCount: 1,
+                          onPressed: (){
+                            setState(() {
+                              caughtFinal = "";
+                              caughtInitial = "";
+                              caughtPrenuclear = "";
+                              caughtTone = "";
+                            });
+                          },
+                        ),
+                        const Text('清除'),
+                        IconButton(
+                          icon: Icon(
+                            Icons.done_outline,
+                            color: "#F5F5DC".toColor(),
+                          ), 
+                          onPressed: (){},),
+                        const Text('確認'),
+                      ],
+                    ),
+                  ],
               ),
             ),
           ),

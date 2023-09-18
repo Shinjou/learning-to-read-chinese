@@ -90,6 +90,28 @@ class WordStatusProvider {
     return statuses;
   }
 
+  static Future<List<WordStatus>> getLikedWordsStatus({required String account}) async {
+    final Database db = await getDBConnect();
+    List<WordStatus> statuses = [];
+    List<Map<String, dynamic>> maps = await db.query(tableName,
+      columns: ['*'],
+      where: "$databaseUserAccount = ? and $databaseLiked = ?",
+      whereArgs: [account, 1]
+    );
+    for (var entry in maps){
+      statuses.add(
+        WordStatus(
+          id: entry[databaseId],
+          userAccount: entry[databaseUserAccount],
+          word: entry[databaseWord],
+          learned: (entry[databaseLearned] == 1) ? true : false,
+          liked: (entry[databaseLiked] == 1) ? true : false
+        )
+      );
+    }
+    return statuses;
+  }
+
   static Future<void> updateWordStatus({required WordStatus status}) async {
     final Database db = await getDBConnect();
     await db.update(

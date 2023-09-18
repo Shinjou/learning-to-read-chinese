@@ -46,7 +46,8 @@ dependencies:
   svg_path_parser: ^1.1.1
   sqflite: ^2.3.0
   sqflite_common_ffi: 2.3.0+2
-  sqlite3_flutter_libs: 0.5.15
+  sqflite_common_ffi_web: 0.4.0
+  sqlite3_flutter_libs: ^0.5.16
 
 
 dev_dependencies:

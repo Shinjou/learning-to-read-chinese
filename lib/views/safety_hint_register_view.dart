@@ -85,17 +85,15 @@ class _SafetyHintRegisterState extends State<SafetyHintRegisterView> {
             children: <Widget>[
               SizedBox(height: deviceHeight * 0.04),
               
-              Text(
+              const Text(
                 '選取安全提示',
                 style: TextStyle(
-                  color: '#F5F5DC'.toColor(),
                   fontSize: 28.0,
                 )
               ),
-              Text(
+              const Text(
                 '問題&答案',
                 style: TextStyle(
-                  color: '#F5F5DC'.toColor(),
                   fontSize: 28.0,
                 )
               ),
@@ -116,8 +114,9 @@ class _SafetyHintRegisterState extends State<SafetyHintRegisterView> {
                   ),
                   controller: q1Controller,
                   width: 303,
-                  textStyle: const TextStyle(
+                  textStyle: TextStyle(
                     fontSize: 18,
+                    color: '#1C1B1F'.toColor(),
                   ),
                   dropdownMenuEntries: q1Entries,
                   onSelected: (RegisterQuestionLabel? questionLabel) {
@@ -143,11 +142,12 @@ class _SafetyHintRegisterState extends State<SafetyHintRegisterView> {
                   padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
                   child: TextField(
                     controller: a1Controller,
+                    style: TextStyle(color: '#1C1B1F'.toColor()),
                     decoration: InputDecoration(
                       hintText: '回答 1',
                       hintStyle: TextStyle(
                         fontSize: 18.0,
-                        color: '#013E6D'.toColor()
+                        color: '#1C1B1F'.toColor()
                       ),
                       enabledBorder: InputBorder.none,
                       focusedBorder: InputBorder.none,
@@ -164,16 +164,18 @@ class _SafetyHintRegisterState extends State<SafetyHintRegisterView> {
                   borderRadius: BorderRadius.circular(5),
                 ),
                 child: DropdownMenu<RegisterQuestionLabel>(
-                  label: const Text(
+                  label: Text(
                     "請選擇問題 2 ",
                     style: TextStyle(
                       fontSize: 18,
+                      color: '#1C1B1F'.toColor(),
                     ),
                   ),
                   controller: q2Controller,
                   width: 303,
-                  textStyle: const TextStyle(
+                  textStyle: TextStyle(
                     fontSize: 16,
+                    color: '#1C1B1F'.toColor(),
                   ),
                   dropdownMenuEntries: q2Entries,
                   onSelected: (RegisterQuestionLabel? questionLabel) {
@@ -197,12 +199,13 @@ class _SafetyHintRegisterState extends State<SafetyHintRegisterView> {
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
                   child: TextField(
+                    style: TextStyle( color: '#1C1B1F'.toColor(), ),
                     controller: a2Controller,
                     decoration: InputDecoration(
                       hintText: '回答 2',
                       hintStyle: TextStyle(
                         fontSize: 18.0,
-                        color: '#013E6D'.toColor()
+                        color: '#1C1B1F'.toColor(),
                       ),
                       enabledBorder: InputBorder.none,
                       focusedBorder: InputBorder.none,
@@ -234,26 +237,23 @@ class _SafetyHintRegisterState extends State<SafetyHintRegisterView> {
               
               SizedBox(height: deviceHeight * 0.02),
 
-              Text(
+              const Text(
                 '如果你忘記你的密碼，',
                 style: TextStyle(
-                  color: '#F5F5DC'.toColor(),
                   fontSize: 14.0,
                 )
               ),
 
-              Text(
+              const Text(
                 '這些問題可用來驗證你的身分，',
                 style: TextStyle(
-                  color: '#F5F5DC'.toColor(),
                   fontSize: 14.0,
                 )
               ),
 
-              Text(
+              const Text(
                 '協助你取回密碼。',
                 style: TextStyle(
-                  color: '#F5F5DC'.toColor(),
                   fontSize: 14.0,
                 )
               ),

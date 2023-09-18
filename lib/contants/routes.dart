@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ltrc/views/acknowledge.dart';
 import 'package:ltrc/views/bopomo_spelling.dart';
 import 'package:ltrc/views/bopomos_view.dart';
 import 'package:ltrc/views/log_in_view.dart';
@@ -16,7 +17,7 @@ import 'package:ltrc/views/register_account_view.dart';
 
 class AppRoutes {
   AppRoutes._();
-
+  static const String acknowledge = '/acknowledge';
   static const String bopomos = '/bopomos';
   static const String bopomoSpelling = '/bopomoSpelling';
   static const String login = '/login';
@@ -35,13 +36,11 @@ class AppRoutes {
 
   static Map<String, WidgetBuilder> define() {
     return {
+      acknowledge: (context) => const AcknowledgeView(),
       bopomos: (context) => BopomosView(),
       bopomoSpelling: (context) => const BopomoSpellingView(),
       login: (context) => const LogInView(),
       mainPage: (context) => const MainPageView(),
-      units: (context) => const UnitsView(),
-      words: (context) => const WordsView(),
-      teachWord: (context) => const TeachWordView(),
       register: (context) => const RegisterView(),
       registerAccount: (context) => const RegisterAccountView(),
       resetPwdAccount: (context) => const ResetPwdAccountView(),
@@ -49,6 +48,9 @@ class AppRoutes {
       safetyHintVerify: (context) => const SafetyHintVerifyView(),
       setNewPwd: (context) => const ResetPwdView(),
       setting: (context) => const SettingView(),
+      units: (context) => const UnitsView(),
+      words: (context) => const WordsView(),
+      teachWord: (context) => const TeachWordView(),
     };
   }
 }

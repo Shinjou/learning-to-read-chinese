@@ -5,7 +5,7 @@ import 'package:ltrc/data/models/word_status_model.dart';
 import 'package:ltrc/data/providers/word_status_provider.dart';
 import 'package:ltrc/extensions.dart';
 import 'package:ltrc/providers.dart';
-import 'package:provider/provider.dart';
+import 'package:ltrc/views/acknowledge.dart';
 
 import '../contants/arabic_numerals_to_chinese.dart';
 import '../data/models/unit_model.dart';
@@ -18,6 +18,8 @@ class UnitsView extends ConsumerStatefulWidget {
   UnitsViewState createState() => UnitsViewState();
 }
 class UnitsViewState extends ConsumerState<UnitsView> {
+  List<Unit> units = [];
+  
   @override
   void initState() {
     super.initState();
@@ -31,25 +33,31 @@ class UnitsViewState extends ConsumerState<UnitsView> {
   Widget build(BuildContext context) {
     
     dynamic obj = ModalRoute.of(context)!.settings.arguments;
-    List<Unit> units = obj["units"];
+    setState(() {
+      units = obj["units"];
+    });
     
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(icon: const Icon(Icons.chevron_left), onPressed: () => Navigator.pop(context),),
         title: const Text("課程單元"),
-        actions: [
-          IconButton(icon: const Icon(Icons.settings), onPressed: () => Navigator.of(context).pushNamed('/setting'),)
-        ],
       ),
 
       body: CustomScrollView(
           slivers: [
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(23, 20, 23, 14),
-              sliver: SliverList(
+             SliverPadding(
+              padding: const EdgeInsets.fromLTRB(23, 14, 23, 20),
+                sliver: SliverGrid(
+                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 180.0,
+                  mainAxisSpacing: 13.0,
+                  crossAxisSpacing: 13.0,
+                  childAspectRatio: 2,
+                ),
                 delegate: SliverChildBuilderDelegate(
-                  (BuildContext context, int idx){
-                    return InkWell( 
+                  (BuildContext context, int index) {
+                    return index == 0 ?
+                    InkWell( 
                       onTap: () async {
                         List<String> bopomos = List.from(initials)..addAll(prenuclear)..addAll(finals);
                         await WordStatusProvider.addWordsStatus(
@@ -77,25 +85,62 @@ class UnitsViewState extends ConsumerState<UnitsView> {
                         );
                       },
                       child: Container(
-                        width: 297,
+                        width: 140,
                         height: 80,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
                           borderRadius: const BorderRadius.all(Radius.circular(14)),
                           color: "#013E6D".toColor(),
                         ),
-                        child: Text(
+                        child: const Text(
                           "學注音", 
                           style: TextStyle(
-                            fontSize: 32,
-                            color: "#F5F5DC".toColor(),
+                            fontSize: 24,
+                          ), 
+                          textAlign: TextAlign.center,),
+                      ),
+                    ) :
+                    InkWell( 
+                      onTap: () async {
+                        List<WordStatus> likedWords = await WordStatusProvider.getLikedWordsStatus(
+                          account: ref.watch(accountProvider), 
+                        );
+                        Navigator.of(context).pushNamed(
+                          '/words', 
+                          arguments: {
+                            'unit' : Unit(
+                              id: -1, 
+                              publisher: '', 
+                              grade: 1, 
+                              semester: '', 
+                              unitId: -1, 
+                              unitTitle: "❤️最愛",
+                              newWords: [] ,
+                              extraWords:[]
+                            ),
+                            'newWordsStatus' : likedWords,
+                          }
+                        );
+                      },
+                      child: Container(
+                        width: 140,
+                        height: 80,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.all(Radius.circular(14)),
+                          color: "#013E6D".toColor(),
+                        ),
+                        child: const Text(
+                          "❤️最愛", 
+                          style: TextStyle(
+                            fontSize: 24,
                           ), 
                           textAlign: TextAlign.center,),
                       ),
                     );
                   },
-                  childCount: 1,
-                )
+                  childCount: resourceList.length,
+                ),
               ),
             ),
             SliverPadding(
@@ -156,16 +201,14 @@ class UnitsViewState extends ConsumerState<UnitsView> {
                           children: [
                             Text(
                               "第$classNum課", 
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 16,
-                                color: "#F5F5DC".toColor(),
                               )
                             ),
                             Text(
                               units[index].unitTitle, 
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 24,
-                                color: "#F5F5DC".toColor(),
                               ),
                               textAlign: TextAlign.center,
                             )
