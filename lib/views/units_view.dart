@@ -18,6 +18,8 @@ class UnitsView extends ConsumerStatefulWidget {
   UnitsViewState createState() => UnitsViewState();
 }
 class UnitsViewState extends ConsumerState<UnitsView> {
+  List<Unit> units = [];
+  
   @override
   void initState() {
     super.initState();
@@ -31,19 +33,14 @@ class UnitsViewState extends ConsumerState<UnitsView> {
   Widget build(BuildContext context) {
     
     dynamic obj = ModalRoute.of(context)!.settings.arguments;
-    List<Unit> units = obj["units"];
+    setState(() {
+      units = obj["units"];
+    });
     
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(icon: const Icon(Icons.chevron_left), onPressed: () => Navigator.pop(context),),
         title: const Text("課程單元"),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings), 
-            onPressed: () => Navigator.of(context).pushNamed(
-              '/setting'
-            ),)
-        ],
       ),
 
       body: CustomScrollView(

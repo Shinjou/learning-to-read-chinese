@@ -47,6 +47,9 @@ class SettingViewState extends ConsumerState<SettingView> {
     int selectedGrade = ref.watch(gradeProvider);
     int selectedPublisher = ref.watch(publisherCodeProvider);
     
+    nameController.text = userName;
+    gradeController.text = numeralToChinese[selectedGrade]!;
+    publisherController.text = publisherCodeTable[selectedPublisher]!;
     
     for (var key in [1, 2, 3, 4, 5, 6]) {
       gradeEntries.add(
@@ -98,7 +101,9 @@ class SettingViewState extends ConsumerState<SettingView> {
                     size: 40,
                     shadows: const [Shadow(color: Colors.black, blurRadius: 10, offset: Offset(0, 4.5))],
                   ),
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
                 )
               )
             ),
@@ -228,9 +233,10 @@ class SettingViewState extends ConsumerState<SettingView> {
                           ),
                           DropdownMenu<int>(
                             controller: gradeController,
-                            width: 110,
+                            width: 120,
                             textStyle: const TextStyle(
-                              fontSize: 12,
+                              color: Colors.black,
+                              fontSize: 16,
                             ),
                             dropdownMenuEntries: gradeEntries,
                             initialSelection: selectedGrade,
@@ -261,9 +267,10 @@ class SettingViewState extends ConsumerState<SettingView> {
                           ),
                           DropdownMenu<int>(
                             controller: publisherController,
-                            width: 110,
+                            width: 120,
                             textStyle: const TextStyle(
-                              fontSize: 12,
+                              color: Colors.black,
+                              fontSize: 16,
                             ),
                             dropdownMenuEntries: publisherEntries,
                             initialSelection: selectedPublisher,
