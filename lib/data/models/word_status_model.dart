@@ -10,7 +10,7 @@ class WordStatus {
   final int id;
   final String userAccount;
   final String word;
-  final bool learned;
+  bool learned;
   bool liked;
 
   Map<String, dynamic> toMap() {

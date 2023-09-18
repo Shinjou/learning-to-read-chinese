@@ -6,6 +6,7 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:ltrc/data/models/word_status_model.dart';
 import 'package:ltrc/extensions.dart';
+import 'package:ltrc/data/providers/word_status_provider.dart';
 import 'package:ltrc/widgets/mainPage/left_right_switch.dart';
 import 'package:ltrc/widgets/teach_word/bpmf_vocab_content.dart';
 import 'package:ltrc/widgets/teach_word/card_title.dart';
@@ -98,7 +99,7 @@ class _TeachWordViewState extends State<TeachWordView>
     ftts.setSpeechRate(0.5);
     ftts.setVolume(1.0);
     getWord();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 4, vsync: this, animationDuration: Duration.zero);
     readJson().then((result) {
       setState(() {
         _strokeOrderAnimationControllers = StrokeOrderAnimationController(
@@ -112,6 +113,55 @@ class _TeachWordViewState extends State<TeachWordView>
                 " mistakes"
               ].join()
             );
+            // if (summary.nTotalMistakes == 0) {
+            //   final snackBar = SnackBar(
+            //     duration: const Duration(seconds: 5),
+            //     content: Text('恭喜！筆畫全部正確！讓我們再練習3次哦！',
+            //       textAlign: TextAlign.center,
+            //       style: const TextStyle(
+            //         fontSize: 20,
+            //     )),
+            //     action: SnackBarAction(
+            //       label: '好！',
+            //       onPressed: () {
+            //         // Some code to undo the change.
+            //       },
+            //     ),
+            //   );
+            //   // setState() {
+            //   //   nextStepId -= 2;
+            //   //   if (controller.showOutline) {
+            //   //     setState(() {
+            //   //       nextStepId += 1;
+            //   //     }); 
+            //   //   } 
+            //   // }
+            // }
+            // else {
+            //   final snackBar = SnackBar(
+            //     duration: const Duration(seconds: 5),
+            //     content: Text('${summary.nTotalMistakes} 個筆畫錯誤～再練習看看！',
+            //       textAlign: TextAlign.center,
+            //       style: const TextStyle(
+            //         fontSize: 20,
+            //     )),
+            //     action: SnackBarAction(
+            //       label: '好！',
+            //       onPressed: () {
+            //         // Some code to undo the change.
+            //       },
+            //     ),
+            //   );
+            //   // setState() {
+            //   //   nextStepId -= 2;
+            //   //   if (controller.showOutline) {
+            //   //     setState(() {
+            //   //       nextStepId += 1;
+            //   //     }); 
+            //   //   } 
+            //   // }
+            // }
+            // // ScaffoldMessenger.of(context).showSnackBar(snackBar);
           },
         );
       });
@@ -132,6 +182,26 @@ class _TeachWordViewState extends State<TeachWordView>
   ];
   int vocabIndex = 0;
 
+  Map<String, int> steps = {
+    'goToSection2': 0,
+    'listenInSection2': 1,
+    'goToSection3': 2,
+    'seeAnimation': 3,
+    'turnBorderOn1': 4,
+    'practiceWithBorder1': 5,
+    'turnBorderOn2': 6,
+    'practiceWithBorder2': 7,
+    'turnBorderOn3': 8,
+    'practiceWithBorder3': 9,
+    'turnBorderOff1': 10,
+    'practiceWithoutBorder1': 11,
+    'goToSection4': 12,
+    'listenPhrase1': 13,
+    'goToPhrase2': 14,
+    'listenPhrase2': 15
+  };
+  int nextStepId = 0;
+
   @override
   Widget build(BuildContext context) {
     // double deviceHeight = MediaQuery.of(context).size.height;
@@ -148,6 +218,7 @@ class _TeachWordViewState extends State<TeachWordView>
             LeftRightSwitch(
               iconsColor: '#D9D9D9'.toColor(),
               iconsSize: 35,
+              rightBorder: nextStepId == steps['goToPhrase2'],
               middleWidget: TeachWordCardTitle(
                 sectionName: '用一用', iconsColor: '#D9D9D9'.toColor()),
               isFirst: false,
@@ -157,6 +228,11 @@ class _TeachWordViewState extends State<TeachWordView>
                 setState(() {
                   vocabIndex = 1;
                 });
+                if (nextStepId == steps['goToPhrase2']) {
+                  setState(() {
+                    nextStepId += 1;
+                  }); 
+                }
               },
             ),
             isBpmf ? 
@@ -179,14 +255,31 @@ class _TeachWordViewState extends State<TeachWordView>
                   direction: Axis.vertical, 
                   spacing: 0,
                   children: <Widget>[
-                    IconButton(
+                    Container(
+                  decoration: BoxDecoration(
+                      border: nextStepId == steps['listenPhrase1'] ? Border.all(color: '#FFFF93'.toColor(), width: 1.5) : null,
+                    ),
+                    child: IconButton(
                       iconSize: 30,
                       color: Color.fromRGBO(245, 245, 220, 100),
                       onPressed: () async {
                         var result = await ftts.speak(
                           "${wordObj['vocab1']}。${wordObj['sentence1']}");
+                        if (nextStepId == steps['listenPhrase1']) {
+                          setState(() {
+                            nextStepId += 1;
+                          }); 
+                          if (vocabCnt == 1) {
+                            WordStatus newStatus = widget.wordsStatus[widget.wordIndex];
+                            newStatus.learned = true;
+                            await WordStatusProvider.updateWordStatus(
+                              status: newStatus
+                            );
+                          }
+                        }
                       },
-                      icon: const Icon(Icons.volume_up)),
+                      icon: const Icon(Icons.volume_up)
+                    ),),
                     const Text('讀音',
                       textAlign: TextAlign.center,
                       style: TextStyle(
@@ -222,6 +315,7 @@ class _TeachWordViewState extends State<TeachWordView>
               LeftRightSwitch(
                 iconsColor: '#D9D9D9'.toColor(),
                 iconsSize: 35,
+                rightBorder: false,
                 middleWidget: TeachWordCardTitle(
                   sectionName: '用一用', iconsColor: '#D9D9D9'.toColor()),
                 isFirst: false,
@@ -252,14 +346,29 @@ class _TeachWordViewState extends State<TeachWordView>
                   direction: Axis.vertical, 
                   spacing: 0,
                   children: <Widget>[
-                    IconButton(
-                      iconSize: 30,
-                      color: Color.fromRGBO(245, 245, 220, 100),
-                      onPressed: () async {
-                        var result = await ftts.speak(
-                          "${wordObj['vocab2']}。${wordObj['sentence2']}");
-                      },
+                    Container(
+                  decoration: BoxDecoration(
+                    border: nextStepId == steps['listenPhrase2'] ? Border.all(color: '#FFFF93'.toColor(), width: 1.5) : null,
+                    ),
+                    child: IconButton(
+                        iconSize: 30,
+                        color: Color.fromRGBO(245, 245, 220, 100),
+                        onPressed: () async {
+                          var result = await ftts.speak(
+                            "${wordObj['vocab2']}。${wordObj['sentence2']}");
+                          if (nextStepId == steps['listenPhrase2']) {
+                            setState(() {
+                              nextStepId += 1;
+                            }); 
+                            WordStatus newStatus = widget.wordsStatus[widget.wordIndex];
+                            newStatus.learned = true;
+                            await WordStatusProvider.updateWordStatus(
+                              status: newStatus
+                            );
+                          }
+                        },
                       icon: const Icon(Icons.volume_up)),
+                    ),
                     const Text('讀音',
                       textAlign: TextAlign.center,
                       style: TextStyle(
@@ -288,8 +397,7 @@ class _TeachWordViewState extends State<TeachWordView>
             ],
           ))
         : Container()];
-    List<bool> stepComplete = [];
-    int stepId = 1;
+    
     List<Widget> stepsSnackBarContent = [  
         // 看一看
         Text.rich(
@@ -325,7 +433,7 @@ class _TeachWordViewState extends State<TeachWordView>
     
     final snackBar = SnackBar(
       duration: const Duration(seconds: 15),
-      content: stepsSnackBarContent[stepId],
+      content: stepsSnackBarContent[0],
           // color: Color.fromRGBO(245, 245, 220, 100),
       action: SnackBarAction(
         label: '好！',
@@ -356,7 +464,15 @@ class _TeachWordViewState extends State<TeachWordView>
               onPressed: () => Navigator.of(context).pushNamed('/mainPage'),
               icon: const Icon(Icons.home_filled)),
           ],
-          bottom: TabBar(
+          bottom: 
+          TabBar(
+            // onTap: (index) {
+            //   if (_tabController.indexIsChanging) { 
+            //     _tabController.index = _tabController.previousIndex; 
+            //   } else { 
+            //     return;
+            //   }
+            // },
             tabs: teachWordTabs,
             controller: _tabController,
             labelColor: '#28231D'.toColor(),
@@ -382,11 +498,20 @@ class _TeachWordViewState extends State<TeachWordView>
                   LeftRightSwitch(
                     iconsColor: '#D9D9D9'.toColor(),
                     iconsSize: 35,
+                    rightBorder: nextStepId == steps['goToSection2'],
                     middleWidget: TeachWordCardTitle(
                       sectionName: '看一看', iconsColor: '#D9D9D9'.toColor()),
                     isFirst: true,
                     isLast: false,
-                    onRightClicked: () => _tabController.animateTo(_tabController.index + 1),
+                    onRightClicked: () {
+                      if (nextStepId == steps['goToSection2']) {
+                        setState(() {
+                          nextStepId += 1;
+                        }); 
+                        print(nextStepId);
+                      }
+                      return _tabController.animateTo(_tabController.index + 1);
+                    },
                   ),
                   const SizedBox(height: 60,),
                   Image(
@@ -402,12 +527,20 @@ class _TeachWordViewState extends State<TeachWordView>
                   LeftRightSwitch(
                     iconsColor: '#D9D9D9'.toColor(),
                     iconsSize: 35,
+                    rightBorder: nextStepId == steps['goToSection3'],
                     middleWidget: TeachWordCardTitle(
                       sectionName: '聽一聽', iconsColor: '#D9D9D9'.toColor()),
                     isFirst: false,
                     isLast: false,
                     onLeftClicked: () => _tabController.animateTo(_tabController.index - 1),
-                    onRightClicked: () => _tabController.animateTo(_tabController.index + 1),
+                    onRightClicked: () {
+                      if (nextStepId == steps['goToSection3']) {
+                        setState(() {
+                          nextStepId += 1;
+                        }); 
+                      }
+                      return _tabController.animateTo(_tabController.index + 1);
+                    },
                   ),
                   const SizedBox(height: 20,),
                   Padding(
@@ -450,15 +583,25 @@ class _TeachWordViewState extends State<TeachWordView>
                               //     },
                               //   ),
                               // );
-                              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                              // ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                              if (nextStepId == steps['listenInSection2']) {
+                                setState(() {
+                                  nextStepId += 1;
+                                }); 
+                              }
                             },
-                            icon: const Icon(Icons.volume_up)),
+                            icon: Container(
+                              decoration: BoxDecoration(
+                                border: nextStepId == steps['listenInSection2'] ? Border.all(color: '#FFFF93'.toColor(), width: 1.5) : null,
+                              ),
+                              child: Icon(Icons.volume_up)
+                          )),
                           const Text('讀音',
                             textAlign: TextAlign.right,
                             style: TextStyle(
                               fontSize: 17.5,
                               color: Color.fromRGBO(245, 245, 220, 100),
-                            )),
+                          )),
                         ],
                       ),
                     ),
@@ -479,12 +622,20 @@ class _TeachWordViewState extends State<TeachWordView>
                             LeftRightSwitch(
                               iconsColor: '#D9D9D9'.toColor(),
                               iconsSize: 35,
+                              rightBorder: nextStepId == steps['goToSection4'],
                               middleWidget: TeachWordCardTitle(
                                 sectionName: '寫一寫', iconsColor: '#D9D9D9'.toColor()),
                               isFirst: false,
                               isLast: false,
-                    onLeftClicked: () => _tabController.animateTo(_tabController.index - 1),
-                    onRightClicked: () => _tabController.animateTo(_tabController.index + 1),
+                              onLeftClicked: () => _tabController.animateTo(_tabController.index - 1),
+                              onRightClicked: () {
+                                if (nextStepId == steps['goToSection4']) {
+                                  setState(() {
+                                    nextStepId += 1;
+                                  }); 
+                                }
+                                return _tabController.animateTo(_tabController.index + 1);
+                              },
                             ),
                             const SizedBox(height: 30),
                             Container(
@@ -500,11 +651,45 @@ class _TeachWordViewState extends State<TeachWordView>
                                   fit: BoxFit.fitWidth,
                                 ),
                               ) : BoxDecoration(color: '#28231D'.toColor()),
-                              child: FittedBox(
-                                child: StrokeOrderAnimator(
-                                  _strokeOrderAnimationControllers,
-                                  key: UniqueKey(),
-                                ),
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  Positioned(
+                                    left: 10,
+                                    top: 5,
+                                    child: Column(
+                                      children: [
+                                        Icon(
+                                          Icons.check_circle,
+                                          color: '#F8A339'.toColor(),
+                                          size: 25.0,
+                                        ),
+                                        Icon(
+                                          Icons.check_circle_outline_outlined,
+                                          color: '#999999'.toColor(),
+                                          size: 25.0,
+                                        ),
+                                        Icon(
+                                          Icons.check_circle_outline_outlined,
+                                          color: '#999999'.toColor(),
+                                          size: 25.0,
+                                        ),
+                                        const SizedBox(height: 15,),
+                                        Icon(
+                                          Icons.check_circle_outline_outlined,
+                                          color: '#F8A3A9'.toColor(),
+                                          size: 25.0,
+                                        ),
+                                      ]
+                                    ),
+                                  ),
+                                  FittedBox(
+                                    child: StrokeOrderAnimator(
+                                      _strokeOrderAnimationControllers,
+                                      key: UniqueKey(),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                             const SizedBox(height: 7.5,),
@@ -512,56 +697,105 @@ class _TeachWordViewState extends State<TeachWordView>
                               child: GridView(
                                 gridDelegate:
                                   const SliverGridDelegateWithFixedCrossAxisCount(
-                                    childAspectRatio: 2,
+                                    childAspectRatio: 1.5,
                                     crossAxisCount: 4,
                                     mainAxisSpacing: 6,
                                   ),
                                 primary: false,
                                 children: <Widget>[
-                                  IconButton(
-                                    iconSize: 35,
-                                    color: const Color.fromRGBO(245, 245, 220, 100),
-                                    isSelected: controller.isAnimating,
-                                    icon: const Icon(Icons.play_arrow),
-                                    selectedIcon: const Icon(Icons.pause),
-                                    onPressed: !controller.isQuizzing
-                                      ? () async {
-                                        if (!controller.isAnimating) {
-                                          controller.startAnimation();
-                                          var result = await ftts.speak(word);
-                                        } else {
-                                          controller.stopAnimation();
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      border: nextStepId == steps['seeAnimation'] ? Border.all(color: '#FFFF93'.toColor(), width: 1.5) : null,
+                                    ),
+                                    child: IconButton(
+                                      iconSize: 35,
+                                      color: const Color.fromRGBO(245, 245, 220, 100),
+                                      isSelected: controller.isAnimating,
+                                      icon: const Icon(Icons.play_arrow),
+                                      selectedIcon: const Icon(Icons.pause),
+                                      onPressed: !controller.isQuizzing
+                                        ? () async {
+                                          // controller.startAnimation();
+                                          // var result = await ftts.speak(word);
+                                          // if (nextStepId == steps['seeAnimation']) {
+                                          //   setState(() {
+                                          //     nextStepId += 1;
+                                          //   }); 
+                                          // }
+                                          if (!controller.isAnimating) {
+                                            controller.startAnimation();
+                                            var result = await ftts.speak(word);
+                                            if (nextStepId == steps['seeAnimation']) {
+                                              setState(() {
+                                                nextStepId += 1;
+                                              }); 
+                                              if (controller.showOutline) {
+                                                setState(() {
+                                                  nextStepId += 1;
+                                                }); 
+                                              }
+                                            }
+                                          } else {
+                                            controller.stopAnimation();
+                                          }
                                         }
-                                      }
-                                    : null,
-                                  ),
-                                  IconButton(
-                                    iconSize: 35,
-                                    color: const Color.fromRGBO(245, 245, 220, 100),
-                                    isSelected: controller.isQuizzing,
-                                    icon: const Icon(Icons.edit),
-                                    selectedIcon: const Icon(Icons.edit_off),
-                                    onPressed: () async {
-                                      if (!controller.isQuizzing) {
-                                        controller.startQuiz();
-                                        var result = await ftts.speak(word);
-                                      } else {
-                                        controller.stopQuiz();
-                                      }
-                                    },
-                                  ),
-                                  IconButton(
-                                    iconSize: 35,
-                                    color: const Color.fromRGBO(245, 245, 220, 100),
-                                    isSelected: controller.showOutline,
-                                    icon: const Icon(
-                                      Icons.remove_red_eye_outlined),
-                                    selectedIcon:
-                                      const Icon(Icons.remove_red_eye),
-                                    onPressed: () {
-                                      controller.setShowOutline(!controller.showOutline);
-                                    },
-                                  ),
+                                      : null,
+                                  )),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      border: (nextStepId == steps['practiceWithBorder1'] || nextStepId == steps['practiceWithBorder2'] || nextStepId == steps['practiceWithBorder3'] || nextStepId == steps['practiceWithoutBorder1']) ? Border.all(color: '#FFFF93'.toColor(), width: 1.5) : null,
+                                    ),
+                                    child: IconButton(
+                                      iconSize: 35,
+                                      color: const Color.fromRGBO(245, 245, 220, 100),
+                                      isSelected: controller.isQuizzing,
+                                      icon: const Icon(Icons.edit),
+                                      selectedIcon: const Icon(Icons.edit_off),
+                                      onPressed: () async {
+                                        if (!controller.isQuizzing) {
+                                          controller.startQuiz();
+                                          var result = await ftts.speak(word);
+                                          if (nextStepId == steps['practiceWithBorder1'] || nextStepId == steps['practiceWithBorder2'] || nextStepId == steps['practiceWithBorder3'] || nextStepId == steps['practiceWithoutBorder1']) {
+                                            setState(() {
+                                              nextStepId += 1;
+                                            });
+                                            if (controller.showOutline && nextStepId != steps['goToSection4']) {
+                                              setState(() {
+                                                nextStepId += 1;
+                                              }); 
+                                            } 
+                                          }
+                                        } else {
+                                          controller.stopQuiz();
+                                        }
+                                      },
+                                  )),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      border: (nextStepId == steps['turnBorderOn1'] || nextStepId == steps['turnBorderOn2'] || nextStepId == steps['turnBorderOn3'] || nextStepId == steps['turnBorderOff1']) ? Border.all(color: '#FFFF93'.toColor(), width: 1.5) : null,
+                                    ),
+                                    child:IconButton(
+                                      iconSize: 35,
+                                      color: const Color.fromRGBO(245, 245, 220, 100),
+                                      isSelected: controller.showOutline,
+                                      icon: const Icon(
+                                        Icons.remove_red_eye_outlined),
+                                      selectedIcon:
+                                        const Icon(Icons.remove_red_eye),
+                                      onPressed: () {
+                                        if (nextStepId == steps['turnBorderOn1'] || nextStepId == steps['turnBorderOn2'] || nextStepId == steps['turnBorderOn3'] || nextStepId == steps['turnBorderOff1']) {
+                                          setState(() {
+                                            nextStepId += 1;
+                                          }); 
+                                        }
+                                        else if (nextStepId == steps['practiceWithBorder1'] || nextStepId == steps['practiceWithBorder2'] || nextStepId == steps['practiceWithBorder3'] || nextStepId == steps['practiceWithoutBorder1']) {
+                                          setState(() {
+                                            nextStepId -= 1;
+                                          }); 
+                                        }
+                                        controller.setShowOutline(!controller.showOutline);
+                                      },
+                                  )),
                                 IconButton(
                                   iconSize: 35,
                                   color: const Color.fromRGBO(245, 245, 220, 100),
@@ -614,6 +848,7 @@ class _TeachWordViewState extends State<TeachWordView>
           child: LeftRightSwitch(
             iconsColor: '#F5F5DC'.toColor(),
             iconsSize: 48,
+            rightBorder: false,
             middleWidget: WordCard(
               unitId: unitId,
               unitTitle: unitTitle,

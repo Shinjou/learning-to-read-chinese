@@ -88,6 +88,7 @@ class RegisterViewState extends ConsumerState<RegisterView> {
               child: LeftRightSwitch(
                 iconsColor: 'F5F5DC'.toColor(),
                 iconsSize: deviceWidth * 0.15,
+                rightBorder: false,
                 onLeftClicked: () => {ref.read(gradeProvider.notifier).state = (ref.read(gradeProvider.notifier).state-2) % 6 + 1},
                 onRightClicked: () => {ref.read(gradeProvider.notifier).state = (ref.read(gradeProvider.notifier).state) % 6 + 1},
                 middleWidget: Container(
@@ -113,6 +114,7 @@ class RegisterViewState extends ConsumerState<RegisterView> {
             LeftRightSwitch(
               iconsColor: 'F5F5DC'.toColor(),
               iconsSize: deviceWidth * 0.15,
+              rightBorder: false,
               onLeftClicked: () => {ref.read(publisherCodeProvider.notifier).state = (ref.read(publisherCodeProvider.notifier).state-1) % 3},
               onRightClicked: () => {ref.read(publisherCodeProvider.notifier).state = (ref.read(publisherCodeProvider.notifier).state+1) % 3},
               middleWidget: Container(
