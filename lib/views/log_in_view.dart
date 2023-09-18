@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ltrc/contants/publisher_code.dart';
 import 'package:ltrc/data/models/user_model.dart';
 import 'package:ltrc/data/providers/user_provider.dart';
 import 'package:ltrc/extensions.dart';
+import 'package:ltrc/providers.dart';
 
-class LogInView extends StatefulWidget {
+class LogInView extends ConsumerStatefulWidget {
   const LogInView({super.key});
 
   @override
-  State<LogInView> createState() => _LogInViewState();
+  LogInViewState createState() => LogInViewState();
 }
 
 const String pwdConfirmErrorHint = "帳號/密碼錯誤";
 const String accountLengthErrorHint = "帳號長度不足 6 位英/數字";
 
-class _LogInViewState extends State<LogInView> {
+class LogInViewState extends ConsumerState<LogInView> {
 
   TextEditingController accountController = TextEditingController();
   TextEditingController pwdController = TextEditingController();
@@ -47,10 +50,9 @@ class _LogInViewState extends State<LogInView> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             SizedBox(height: deviceHeight * 0.157),
-            Text(
+            const Text(
                 '學中文',
                 style: TextStyle(
-                  color: '#F5F5DC'.toColor(),
                   fontSize: 46.0,
                 )
             ),
@@ -67,6 +69,7 @@ class _LogInViewState extends State<LogInView> {
                 padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
                 child: TextField(
                   controller: accountController,
+                  style: TextStyle(color: '#1C1B1F'.toColor(),),
                   decoration: InputDecoration(
                     prefixIcon: Icon(
                       Icons.account_circle,
@@ -75,8 +78,8 @@ class _LogInViewState extends State<LogInView> {
                     ),
                     hintText: '帳號名稱',
                     hintStyle: TextStyle(
-                        fontSize: 20.0,
-                        color: '#013E6D'.toColor()
+                      fontSize: 20.0,
+                      color: '#1C1B1F'.toColor(),
                     ),
                     floatingLabelBehavior: FloatingLabelBehavior.always,
                     floatingLabelAlignment: FloatingLabelAlignment.center,
@@ -100,6 +103,7 @@ class _LogInViewState extends State<LogInView> {
                   child: TextField(
                     controller: pwdController,
                     obscureText: pwdVisible,
+                    style: TextStyle(color: '#1C1B1F'.toColor(),),
                     decoration: InputDecoration(
                       prefixIcon: Icon(
                         Icons.lock,
@@ -109,7 +113,7 @@ class _LogInViewState extends State<LogInView> {
                       hintText: '密碼',
                       hintStyle: TextStyle(
                         fontSize: 20.0,
-                        color: '#013E6D'.toColor()
+                        color: '#1C1B1F'.toColor(),
                       ),
                       floatingLabelBehavior: FloatingLabelBehavior.always,
                       floatingLabelAlignment: FloatingLabelAlignment.center,
@@ -141,8 +145,8 @@ class _LogInViewState extends State<LogInView> {
                     child: Text(
                       '忘記密碼',
                       style: TextStyle(
-                        color: '#F5F5DC'.toColor(),
                         fontSize: 14.0,
+                        color: '#F5F5DC'.toColor(),
                       )
                     ),
                   ),
@@ -188,6 +192,10 @@ class _LogInViewState extends State<LogInView> {
                             });
                           }
                           else {
+                            ref.read(accountProvider.notifier).state = accountController.text;
+                            ref.read(userNameProvider.notifier).state = user.username;
+                            ref.read(gradeProvider.notifier).state = user.grade;
+                            ref.read(publisherCodeProvider.notifier).state = publisherCodeTable.keys.firstWhere((e) => publisherCodeTable[e] == user.publisher);
                             Navigator.of(context).pushNamed('/mainPage');
                           }
                         } catch (e){
@@ -208,11 +216,10 @@ class _LogInViewState extends State<LogInView> {
                       )
                     )
                   ),
-                  Text(
+                  const Text(
                     '/',
                     style: TextStyle(
                       fontSize: 24.0,
-                      color: '#F5F5DC'.toColor(),
                     )
                   ),
                   TextButton(

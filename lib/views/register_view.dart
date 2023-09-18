@@ -95,8 +95,8 @@ class RegisterViewState extends ConsumerState<RegisterView> {
                   width: deviceWidth * 0.57,
                   height: deviceHeight * 0.067,
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadiusDirectional.circular(20),
-                      color: '#7DDEF8'.toColor()
+                    borderRadius: BorderRadiusDirectional.circular(20),
+                    color: '#7DDEF8'.toColor()
                   ),
                   child: Text(
                     '${numeralToChinese[grade]}年級',

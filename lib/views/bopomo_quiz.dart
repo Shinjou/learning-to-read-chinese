@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
@@ -62,8 +61,7 @@ class _BopomoQuizState extends State<BopomoQuizView>{
         default:
           break;
       }
-      int answerTone = answerWord.tone;
-      answer.tone = answerTone;
+      answer.tone = answerWord.tone;
     }
   }
 
@@ -136,7 +134,10 @@ class _BopomoQuizState extends State<BopomoQuizView>{
                     ),
                     child: const Text(
                       "?",
-                      style: TextStyle(fontSize: 18,),
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.black,
+                      ),
                     ),
                   )
                 ]

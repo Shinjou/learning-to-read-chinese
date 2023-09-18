@@ -63,7 +63,6 @@ class UnitProvider {
       whereArgs: [inputPublisher, inputGrade, inputSemester]
     );
     return List.generate(maps.length, (i) {
-      debugPrint(maps.toString());
       return Unit(
         id: maps[i][databaseId],
         publisher: inputPublisher,
