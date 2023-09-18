@@ -305,30 +305,33 @@ class _BopomoQuizState extends State<BopomoQuizView>{
                           color: "#F5F5DC".toColor(),
                         ), 
                         onPressed: (){
-                          _getAnswer();
-                          debugPrint(answer.toString());
-                          debugPrint(caught.toString());
-                          if (answer == caught){
-                            setState(() {
-                              answerBoxBorderColor = Colors.green;
-                            });
-                            Timer(const Duration(seconds: 2), () {
+                          if (problemId < bopomoSpellingWords.length-1){
+                            _getAnswer();
+                            if (answer == caught){
                               setState(() {
-                                problemId += 1;
-                                caught = BopomoSpelling();
-                                answer = BopomoSpelling();
-                                answerBoxBorderColor = '#F5F5DC'.toColor();
+                                answerBoxBorderColor = Colors.green;
                               });
-                            });
+                              Timer(const Duration(seconds: 0), () {
+                                setState(() {
+                                  problemId += 1;
+                                  caught = BopomoSpelling();
+                                  answer = BopomoSpelling();
+                                  answerBoxBorderColor = '#F5F5DC'.toColor();
+                                });
+                              });
+                            }
+                            else {
+                              setState(() {
+                                answerBoxBorderColor = Colors.red;
+                              });
+                              Timer(const Duration(seconds: 2), () {
+                                setState(() {
+                                  answerBoxBorderColor = '#F5F5DC'.toColor();
+                                });
+                              });
+                             }
                           } else {
-                            setState(() {
-                              answerBoxBorderColor = Colors.red;
-                            });
-                            Timer(const Duration(seconds: 2), () {
-                              setState(() {
-                                answerBoxBorderColor = '#F5F5DC'.toColor();
-                              });
-                            });
+                            Navigator.pushNamed(context, '/bopomoQuizFinish');
                           }
                         },
                       ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ltrc/views/acknowledge.dart';
 import 'package:ltrc/views/bopomo_quiz.dart';
+import 'package:ltrc/views/bopomo_quiz_finish.dart';
 import 'package:ltrc/views/bopomos_view.dart';
 import 'package:ltrc/views/log_in_view.dart';
 import 'package:ltrc/views/main_page_view.dart';
@@ -20,7 +21,8 @@ class AppRoutes {
   AppRoutes._();
   static const String acknowledge = '/acknowledge';
   static const String bopomos = '/bopomos';
-  static const String bopomoSpelling = '/bopomoSpelling';
+  static const String bopomoQuiz = '/bopomoQuiz';
+  static const String bopomoQuizFinish = '/bopomoQuizFinish';
   static const String login = '/login';
   static const String mainPage = '/mainPage';
   static const String register = '/register';
@@ -39,7 +41,8 @@ class AppRoutes {
     return {
       acknowledge: (context) => const AcknowledgeView(),
       bopomos: (context) => const BopomosView(),
-      bopomoSpelling: (context) => const BopomoQuizView(),
+      bopomoQuiz: (context) => const BopomoQuizView(),
+      bopomoQuizFinish: (context) => const BopomoQuizFinishView(),
       login: (context) => const LogInView(),
       mainPage: (context) => const MainPageView(),
       register: (context) => const RegisterView(),

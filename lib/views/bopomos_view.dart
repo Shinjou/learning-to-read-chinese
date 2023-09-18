@@ -52,7 +52,7 @@ class BopomosView extends StatelessWidget {
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int idx){
                   return InkWell(
-                    onTap: () => Navigator.of(context).pushNamed('/bopomoSpelling'),
+                    onTap: () => Navigator.of(context).pushNamed('/bopomoQuiz'),
                     child: Container(
                       width: 297,
                       height: 80,
