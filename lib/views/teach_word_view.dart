@@ -50,6 +50,8 @@ class _TeachWordViewState extends State<TeachWordView>
   int vocabCnt = 0;
   bool img1Exist = false;
   bool img2Exist = false;
+  int practiceTimeLeft = 4;
+  int nextStepId = 0;
 
   Future<String> readJson() async {
     final String response =
@@ -106,62 +108,67 @@ class _TeachWordViewState extends State<TeachWordView>
           result,
           this,
           onQuizCompleteCallback: (summary) {
-            Fluttertoast.showToast(
-              msg: [
-                "Quiz finished. ",
-                summary.nTotalMistakes.toString(),
-                " mistakes"
-              ].join()
-            );
-            // if (summary.nTotalMistakes == 0) {
-            //   final snackBar = SnackBar(
-            //     duration: const Duration(seconds: 5),
-            //     content: Text('恭喜！筆畫全部正確！讓我們再練習3次哦！',
-            //       textAlign: TextAlign.center,
-            //       style: const TextStyle(
-            //         fontSize: 20,
-            //     )),
-            //     action: SnackBarAction(
-            //       label: '好！',
-            //       onPressed: () {
-            //         // Some code to undo the change.
-            //       },
-            //     ),
-            //   );
-            //   // setState() {
-            //   //   nextStepId -= 2;
-            //   //   if (controller.showOutline) {
-            //   //     setState(() {
-            //   //       nextStepId += 1;
-            //   //     }); 
-            //   //   } 
-            //   // }
-            // }
-            // else {
-            //   final snackBar = SnackBar(
-            //     duration: const Duration(seconds: 5),
-            //     content: Text('${summary.nTotalMistakes} 個筆畫錯誤～再練習看看！',
-            //       textAlign: TextAlign.center,
-            //       style: const TextStyle(
-            //         fontSize: 20,
-            //     )),
-            //     action: SnackBarAction(
-            //       label: '好！',
-            //       onPressed: () {
-            //         // Some code to undo the change.
-            //       },
-            //     ),
-            //   );
-            //   // setState() {
-            //   //   nextStepId -= 2;
-            //   //   if (controller.showOutline) {
-            //   //     setState(() {
-            //   //       nextStepId += 1;
-            //   //     }); 
-            //   //   } 
-            //   // }
-            // }
-            // // ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            // Fluttertoast.showToast(
+            //   msg: [
+            //     summary.nTotalMistakes.toString(),
+            //     " 個筆畫錯誤～再練習看看！"
+            //   ].join(),
+            //   fontSize: 30,
+            // );
+            if (summary.nTotalMistakes == 0) {
+              if (nextStepId == steps['practiceWithBorder1'] || nextStepId == steps['practiceWithBorder2']) {
+                setState(() {
+                  practiceTimeLeft -= 1;
+                  nextStepId += 1;
+                });
+                Fluttertoast.showToast(
+                  msg: [
+                    "恭喜！筆畫全部正確！讓我們再練習 ${practiceTimeLeft} 次哦！"
+                  ].join(),
+                  fontSize: 30,
+                );
+              }
+              else if (nextStepId == steps['practiceWithBorder3']) {
+                setState(() {
+                  practiceTimeLeft -= 1;
+                  nextStepId += 1;
+                });
+                Fluttertoast.showToast(
+                  msg: [
+                    "恭喜！筆畫全部正確！讓我們 去掉邊框 再練習 ${practiceTimeLeft} 遍哦！"
+                  ].join(),
+                  fontSize: 30,
+                );
+              }
+              else {
+                if (nextStepId == steps['practiceWithoutBorder1']) {
+                  setState(() {
+                    practiceTimeLeft -= 1;
+                    nextStepId += 1;
+                  });
+                }
+                Fluttertoast.showToast(
+                  msg: [
+                    "恭喜！筆畫全部正確！"
+                  ].join(),
+                  fontSize: 30,
+                );
+              }
+            }
+            else {
+              // if (nextStepId == steps['practiceWithBorder1'] || nextStepId == steps['practiceWithBorder2'] || nextStepId == steps['practiceWithBorder3'] || nextStepId == steps['practiceWithoutBorder1']) {
+              //   setState(() {
+              //     nextStepId -= 2;
+              //   });
+              // }
+              Fluttertoast.showToast(
+                msg: [
+                  summary.nTotalMistakes.toString(),
+                  " 個筆畫錯誤～再練習看看！"
+                ].join(),
+                fontSize: 30,
+              );
+            }
           },
         );
       });
@@ -200,7 +207,6 @@ class _TeachWordViewState extends State<TeachWordView>
     'goToPhrase2': 14,
     'listenPhrase2': 15
   };
-  int nextStepId = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -660,24 +666,24 @@ class _TeachWordViewState extends State<TeachWordView>
                                     child: Column(
                                       children: [
                                         Icon(
-                                          Icons.check_circle,
-                                          color: '#F8A339'.toColor(),
+                                          (practiceTimeLeft >= 4) ? Icons.check_circle_outline_outlined : Icons.check_circle,
+                                          color: (practiceTimeLeft >= 4) ? '#999999'.toColor() : '#F8A339'.toColor(),
                                           size: 25.0,
                                         ),
                                         Icon(
-                                          Icons.check_circle_outline_outlined,
-                                          color: '#999999'.toColor(),
+                                          (practiceTimeLeft >= 3) ? Icons.check_circle_outline_outlined : Icons.check_circle,
+                                          color: (practiceTimeLeft >= 3) ? '#999999'.toColor() : '#F8A339'.toColor(),
                                           size: 25.0,
                                         ),
                                         Icon(
-                                          Icons.check_circle_outline_outlined,
-                                          color: '#999999'.toColor(),
+                                          (practiceTimeLeft >= 2) ? Icons.check_circle_outline_outlined : Icons.check_circle,
+                                          color: (practiceTimeLeft >= 2) ? '#999999'.toColor() : '#F8A339'.toColor(),
                                           size: 25.0,
                                         ),
                                         const SizedBox(height: 15,),
                                         Icon(
-                                          Icons.check_circle_outline_outlined,
-                                          color: '#F8A3A9'.toColor(),
+                                          (practiceTimeLeft >= 1) ? Icons.check_circle_outline_outlined : Icons.check_circle,
+                                          color: (practiceTimeLeft >= 1) ? '#999999'.toColor() : '#F8A3A9'.toColor(),
                                           size: 25.0,
                                         ),
                                       ]
@@ -750,24 +756,26 @@ class _TeachWordViewState extends State<TeachWordView>
                                       color: const Color.fromRGBO(245, 245, 220, 100),
                                       isSelected: controller.isQuizzing,
                                       icon: const Icon(Icons.edit),
-                                      selectedIcon: const Icon(Icons.edit_off),
+                                      // selectedIcon: const Icon(Icons.edit_off),
                                       onPressed: () async {
-                                        if (!controller.isQuizzing) {
-                                          controller.startQuiz();
-                                          var result = await ftts.speak(word);
-                                          if (nextStepId == steps['practiceWithBorder1'] || nextStepId == steps['practiceWithBorder2'] || nextStepId == steps['practiceWithBorder3'] || nextStepId == steps['practiceWithoutBorder1']) {
-                                            setState(() {
-                                              nextStepId += 1;
-                                            });
-                                            if (controller.showOutline && nextStepId != steps['goToSection4']) {
-                                              setState(() {
-                                                nextStepId += 1;
-                                              }); 
-                                            } 
-                                          }
-                                        } else {
-                                          controller.stopQuiz();
-                                        }
+                                        controller.startQuiz();
+                                        var result = await ftts.speak(word);
+                                        // if (!controller.isQuizzing) {
+                                          // controller.startQuiz();
+                                          // var result = await ftts.speak(word);
+                                          // if (nextStepId == steps['practiceWithBorder1'] || nextStepId == steps['practiceWithBorder2'] || nextStepId == steps['practiceWithBorder3'] || nextStepId == steps['practiceWithoutBorder1']) {
+                                            // setState(() {
+                                            //   nextStepId += 1;
+                                            // });
+                                            // if (controller.showOutline && nextStepId != steps['goToSection4']) {
+                                            //   setState(() {
+                                            //     nextStepId += 1;
+                                            //   }); 
+                                            // } 
+                                          // }
+                                        // } else {
+                                        //   controller.stopQuiz();
+                                        // }
                                       },
                                   )),
                                   Container(
@@ -783,16 +791,17 @@ class _TeachWordViewState extends State<TeachWordView>
                                       selectedIcon:
                                         const Icon(Icons.remove_red_eye),
                                       onPressed: () {
+                                        print(nextStepId);
                                         if (nextStepId == steps['turnBorderOn1'] || nextStepId == steps['turnBorderOn2'] || nextStepId == steps['turnBorderOn3'] || nextStepId == steps['turnBorderOff1']) {
                                           setState(() {
                                             nextStepId += 1;
                                           }); 
                                         }
-                                        else if (nextStepId == steps['practiceWithBorder1'] || nextStepId == steps['practiceWithBorder2'] || nextStepId == steps['practiceWithBorder3'] || nextStepId == steps['practiceWithoutBorder1']) {
-                                          setState(() {
-                                            nextStepId -= 1;
-                                          }); 
-                                        }
+                                        // else if (nextStepId == steps['practiceWithBorder1'] || nextStepId == steps['practiceWithBorder2'] || nextStepId == steps['practiceWithBorder3'] || nextStepId == steps['practiceWithoutBorder1']) {
+                                        //   setState(() {
+                                        //     nextStepId -= 1;
+                                        //   }); 
+                                        // }
                                         controller.setShowOutline(!controller.showOutline);
                                       },
                                   )),

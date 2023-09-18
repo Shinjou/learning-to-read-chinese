@@ -52,10 +52,9 @@ class _ResetPwdViewState extends State<ResetPwdView> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             SizedBox(height: deviceHeight * 0.08),
-            Text(
+            const Text(
               '重設密碼',
               style: TextStyle(
-                color: '#F5F5DC'.toColor(),
                 fontSize: 46.0,
               )
             ),
@@ -70,10 +69,9 @@ class _ResetPwdViewState extends State<ResetPwdView> {
                 height: 24,
                 width: 303,
                 alignment: AlignmentDirectional.topStart,
-                child: Text(
+                child: const Text(
                   '至少4個數字',
                   style: TextStyle(
-                    color: '#F5F5DC'.toColor(),
                     fontSize: 14,
                   )
                 )
@@ -177,8 +175,7 @@ class _ResetPwdViewState extends State<ResetPwdView> {
                 alignment: AlignmentDirectional.topStart,
                 child: Text(
                   showErrorHint,
-                  style: TextStyle(
-                    color: '#F5F5DC'.toColor(),
+                  style: const TextStyle(
                     fontSize: 14,
                   )
                 )
@@ -203,11 +200,10 @@ class _ResetPwdViewState extends State<ResetPwdView> {
                   Navigator.of(context).pushNamed('/mainPage');
                 }
               },
-              child: Text(
+              child: const Text(
                 '完成',
                 style: TextStyle(
                   fontSize: 24.0,
-                  color: '#F5F5DC'.toColor(),
                 )
               )
             )

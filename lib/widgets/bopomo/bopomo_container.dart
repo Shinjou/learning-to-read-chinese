@@ -20,7 +20,7 @@ class BopomoContainer extends StatelessWidget {
       onTap : onPressed,
       child : Container(
         width: 44,
-        height: 51,
+        height: 50,
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: color,
@@ -36,7 +36,7 @@ class BopomoContainer extends StatelessWidget {
         child: (character == null) ? innerWidget :
           Text(
             character!, 
-            style: const TextStyle(fontSize: 36),
+            style: const TextStyle(fontSize: 30),
             textAlign: TextAlign.center,
           ),
       ),

@@ -13,7 +13,7 @@ class WordsView extends ConsumerWidget {
     dynamic obj = ModalRoute.of(context)!.settings.arguments;
     Unit unit = obj["unit"];
     List<WordStatus> newWordsStatus = obj["newWordsStatus"];
-    List<WordStatus> extraWordsStatus = obj["extraWordsStatus"];
+    List<WordStatus> extraWordsStatus = obj["extraWordsStatus"] ?? [];
     List<Map> newWordsPhrase = obj["newWordsPhrase"];
     List<Map> extraWordsPhrase = obj["extraWordsPhrase"];
 
@@ -23,8 +23,7 @@ class WordsView extends ConsumerWidget {
             icon: const Icon(Icons.chevron_left),
             onPressed: () => Navigator.pop(context),
           ),
-          title: Text(
-              "${unit.unitId.toString().padLeft(2, '0')} | ${unit.unitTitle}"),
+          title: (unit.id == -1) ? Text(unit.unitTitle) : Text("${unit.unitId.toString().padLeft(2,'0')} | ${unit.unitTitle}"),
           actions: [
             IconButton(
               icon: const Icon(Icons.home),
@@ -58,21 +57,20 @@ class WordsView extends ConsumerWidget {
                     isVertical: true,
                   );
                 },
-                childCount: unit.newWords.length,
+                childCount: newWordsStatus.length,
               ),
-            )),
-            (unit.extraWords.isEmpty)
-                ? const SliverToBoxAdapter(child: Text(''))
-                : SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(24, 0, 0, 0),
-                    sliver: SliverToBoxAdapter(
-                        child: Text(
-                      "唸唸看",
-                      style: TextStyle(
-                        color: "#F5F5DC".toColor(),
-                        fontSize: 24,
-                      ),
-                    )),
+            ),
+          ),
+          (extraWordsStatus.isEmpty) ? const SliverToBoxAdapter(child: Text('')) : 
+          const SliverPadding(
+            padding: EdgeInsets.fromLTRB(24, 0, 0, 0),
+            sliver: SliverToBoxAdapter(
+              child: Text(
+                  "唸唸看",
+                  style: TextStyle(
+                    fontSize: 24,
+                  )
+              ))
                   ),
           SliverPadding(
             padding: const EdgeInsets.all(20),
@@ -98,7 +96,7 @@ class WordsView extends ConsumerWidget {
                     isVertical: true,
                   );
                 },
-                childCount: unit.extraWords.length,
+                childCount: extraWordsStatus.length,
               ),
             ),
           )],

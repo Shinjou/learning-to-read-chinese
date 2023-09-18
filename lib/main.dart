@@ -21,12 +21,19 @@ class MyApp extends ConsumerWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         appBarTheme: AppBarTheme(
-            iconTheme: IconThemeData(color: "#F5F5DC".toColor()),
-            foregroundColor: "#F5F5DC".toColor(),
-            color: "#28231D".toColor()),
+          iconTheme: IconThemeData(color: "#F5F5DC".toColor()),
+          foregroundColor: "#F5F5DC".toColor(),
+          color: "#28231D".toColor()
+        ),
         scaffoldBackgroundColor: "#28231D".toColor(),
         useMaterial3: true,
         fontFamily: 'Serif',
+        textTheme: const TextTheme(
+          bodyMedium: TextStyle(),
+          bodyLarge: TextStyle(),
+        ).apply(
+          bodyColor: "#F5F5DC".toColor(),
+        )
       ),
       routes: AppRoutes.define(),
       home: const HomePage(),

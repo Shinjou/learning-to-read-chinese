@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:ltrc/contants/bopomos.dart';
 import 'package:ltrc/data/models/word_status_model.dart';
 import 'package:ltrc/extensions.dart';
 import '../widgets/word_card.dart';
 
 class BopomosView extends StatelessWidget {
-  BopomosView({super.key});
-  
+  const BopomosView({super.key});
+
   @override
   Widget build(BuildContext context) {
     dynamic obj = ModalRoute.of(context)!.settings.arguments;
@@ -63,8 +62,7 @@ class BopomosView extends StatelessWidget {
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int idx) {
                   return InkWell(
-                    onTap: () =>
-                      Navigator.of(context).pushNamed('/bopomoSpelling'),
+                    onTap: () => Navigator.of(context).pushNamed('/bopomoQuiz'),
                     child: Container(
                       width: 297,
                       height: 80,
