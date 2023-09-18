@@ -4,7 +4,7 @@ import 'package:ltrc/extensions.dart';
 import '../widgets/word_card.dart';
 
 class BopomosView extends StatelessWidget {
-  BopomosView({super.key});
+  const BopomosView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +52,7 @@ class BopomosView extends StatelessWidget {
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int idx){
                   return InkWell(
-                    onTap: () => Navigator.of(context).pushNamed('/bopomoSpelling'),
+                    onTap: () => Navigator.of(context).pushNamed('/bopomoQuiz'),
                     child: Container(
                       width: 297,
                       height: 80,
