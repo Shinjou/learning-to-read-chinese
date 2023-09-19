@@ -49,7 +49,6 @@ class WordCardState extends State<WordCard> {
       onTap: () {
         Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => TeachWordView(
-            isBpmf: widget.isBpmf,
             unitId: widget.unitId,
             unitTitle: widget.unitTitle,
             wordsStatus: widget.wordsStatus,

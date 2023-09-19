@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ltrc/contants/bopomos.dart';
 import 'package:ltrc/data/models/unit_model.dart';
 import 'package:ltrc/data/models/word_status_model.dart';
-import '../widgets/word_card.dart';
+import 'package:ltrc/widgets/word_card.dart';
 
 class WordsView extends ConsumerWidget {
   const WordsView({super.key});
@@ -44,7 +45,7 @@ class WordsView extends ConsumerWidget {
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) {
                   return WordCard(
-                    isBpmf: false,
+                    isBpmf: (initials.contains(newWordsStatus[index].word) || prenuclear.contains(newWordsStatus[index].word) || finals.contains(newWordsStatus[index].word)),
                     unitId: unit.unitId,
                     unitTitle: unit.unitTitle,
                     wordsStatus: newWordsStatus,

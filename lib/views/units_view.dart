@@ -165,7 +165,7 @@ class UnitsViewState extends ConsumerState<UnitsView> {
                               extraWords:[]
                             ),
                             'newWordsStatus' : likedWords,
-                            'wordsPhrase' : likedWordsPhrase
+                            'newWordsPhrase' : likedWordsPhrase
                           }
                         );
                       },

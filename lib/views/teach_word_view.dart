@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:ltrc/contants/bopomos.dart';
 import 'package:ltrc/data/models/word_status_model.dart';
-import 'package:ltrc/extensions.dart';
 import 'package:ltrc/data/providers/word_status_provider.dart';
+import 'package:ltrc/extensions.dart';
 import 'package:ltrc/widgets/mainPage/left_right_switch.dart';
 import 'package:ltrc/widgets/teach_word/bpmf_vocab_content.dart';
 import 'package:ltrc/widgets/teach_word/card_title.dart';
@@ -20,7 +21,6 @@ import 'package:provider/provider.dart';
 class TeachWordView extends StatefulWidget {
   final int unitId;
   final String unitTitle;
-  final bool isBpmf;
   final List<WordStatus> wordsStatus;
   final List<Map> wordsPhrase;
   final int wordIndex;
@@ -29,7 +29,6 @@ class TeachWordView extends StatefulWidget {
     super.key,
     required this.unitId,
     required this.unitTitle,
-    required this.isBpmf,
     required this.wordsStatus,
     required this.wordsPhrase,
     required this.wordIndex,
@@ -51,6 +50,7 @@ class _TeachWordViewState extends State<TeachWordView>
   bool img2Exist = false;
   int practiceTimeLeft = 4;
   int nextStepId = 0;
+  bool isBpmf = false;
 
   Future<String> readJson() async {
     final String response =
@@ -99,8 +99,9 @@ class _TeachWordViewState extends State<TeachWordView>
     ftts.setLanguage("zh-tw");
     ftts.setSpeechRate(0.5);
     ftts.setVolume(1.0);
+    isBpmf = (initials.contains(widget.wordsStatus[widget.wordIndex].word) || prenuclear.contains(widget.wordsStatus[widget.wordIndex].word) || finals.contains(widget.wordsStatus[widget.wordIndex].word));
     getWord();
-    _tabController = widget.isBpmf ? TabController(length: 4, vsync: this, animationDuration: Duration.zero) : TabController(length: 4, vsync: this, animationDuration: Duration.zero);
+    _tabController = isBpmf ? TabController(length: 4, vsync: this, animationDuration: Duration.zero) : TabController(length: 4, vsync: this, animationDuration: Duration.zero);
     readJson().then((result) {
       setState(() {
         _strokeOrderAnimationControllers = StrokeOrderAnimationController(
@@ -168,7 +169,7 @@ class _TeachWordViewState extends State<TeachWordView>
     _tabController.dispose();
   }
 
-  // static List<Tab> teachWordTabs = widget.isBpmf ? [
+  // static List<Tab> teachWordTabs = isBpmf ? [
   //   Tab(icon: Icon(Icons.image)),
   //   Tab(icon: Icon(Icons.hearing)),
   //   Tab(icon: Icon(Icons.create)),
@@ -206,7 +207,6 @@ class _TeachWordViewState extends State<TeachWordView>
     String word = widget.wordsStatus[widget.wordIndex].word;
     int unitId = widget.unitId;
     String unitTitle = widget.unitTitle;
-    bool isBpmf = widget.isBpmf;
     List<Widget> useTabView = [
       TeachWordTabBarView(
         content: Column(
@@ -405,7 +405,7 @@ class _TeachWordViewState extends State<TeachWordView>
             onPressed: () => Navigator.pop(context),
           ),
           centerTitle: true,
-          title: Text("${unitId.toString().padLeft(2, '0')} | $unitTitle"),
+          title: (unitId == -1) ? Text(unitTitle) : Text("${unitId.toString().padLeft(2, '0')} | $unitTitle"),
           titleTextStyle: TextStyle(
             color: "#F5F5DC".toColor(),
             fontSize: 30,
@@ -464,7 +464,6 @@ class _TeachWordViewState extends State<TeachWordView>
                         setState(() {
                           nextStepId += 1;
                         }); 
-                        print(nextStepId);
                       }
                       return _tabController.animateTo(_tabController.index + 1);
                     },
@@ -567,7 +566,6 @@ class _TeachWordViewState extends State<TeachWordView>
                         setState(() {
                           nextStepId += 1;
                         }); 
-                        print(nextStepId);
                       }
                       return _tabController.animateTo(_tabController.index + 1);
                     },
@@ -799,7 +797,6 @@ class _TeachWordViewState extends State<TeachWordView>
                                       selectedIcon:
                                         const Icon(Icons.remove_red_eye),
                                       onPressed: () {
-                                        print(nextStepId);
                                         if (nextStepId == steps['turnBorderOn1'] || nextStepId == steps['turnBorderOn2'] || nextStepId == steps['turnBorderOn3'] || nextStepId == steps['turnBorderOff1']) {
                                           setState(() {
                                             nextStepId += 1;
@@ -878,7 +875,6 @@ class _TeachWordViewState extends State<TeachWordView>
             onLeftClicked: () {
               Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => TeachWordView(
-                  isBpmf: widget.isBpmf,
                   unitId: widget.unitId,
                   unitTitle: widget.unitTitle,
                   wordsStatus: widget.wordsStatus,
@@ -889,7 +885,6 @@ class _TeachWordViewState extends State<TeachWordView>
             onRightClicked: () {
               Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => TeachWordView(
-                  isBpmf: widget.isBpmf,
                   unitId: widget.unitId,
                   unitTitle: widget.unitTitle,
                   wordsStatus: widget.wordsStatus,

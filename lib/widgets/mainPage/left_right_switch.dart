@@ -25,7 +25,6 @@ class LeftRightSwitch extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(rightBorder);
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
