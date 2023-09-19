@@ -25,7 +25,7 @@ class _BopomoQuizState extends State<BopomoQuizView>{
   BopomoSpelling caught = BopomoSpelling();
   BopomoSpelling answer = BopomoSpelling();
 
-  void _getAnswer() async {
+  Future<void> _getAnswer() async {
     if (answer.initial.isEmpty && answer.prenuclear.isEmpty && answer.finals.isEmpty){
       Word answerWord = await WordProvider.getWord(inputWord: bopomoSpellingWords[problemId]);
       String answerSpelling = answerWord.phonetic;
@@ -157,6 +157,7 @@ class _BopomoQuizState extends State<BopomoQuizView>{
                         icon: Icon(
                           Icons.volume_up,
                           color: "#F5F5DC".toColor(),
+                          size: 32,
                         ),
                         onPressed: () {
                           ftts.setLanguage("zh-tw");
@@ -173,9 +174,10 @@ class _BopomoQuizState extends State<BopomoQuizView>{
                         icon: Icon(
                           Icons.lightbulb,
                           color: "#F5F5DC".toColor(),
+                          size: 32,
                         ), 
-                        onPressed: (){
-                          _getAnswer();
+                        onPressed: () async {
+                          await _getAnswer();
                           if (answer.initial != caught.initial){
                             setState(() {
                               caught.initial = answer.initial;
@@ -202,84 +204,85 @@ class _BopomoQuizState extends State<BopomoQuizView>{
                   ),
                   SizedBox(
                     width: 140,
-                    height: 140,
+                    height: 180,
                     child: Container(
-                        decoration: BoxDecoration(
-                          color: '023E6E'.toColor(),
-                          border: Border.all(
-                            width: 5,
-                            color: answerBoxBorderColor,
+                      decoration: BoxDecoration(
+                        color: '023E6E'.toColor(),
+                        border: Border.all(
+                          width: 5,
+                          color: answerBoxBorderColor,
+                        ),
+                      ),
+                      child: Row (
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              BopomoContainer( 
+                                character : (caught.initial.isNotEmpty && caught.tone == 5) ? null :
+                                  (caught.tone == 5) ? "˙" : caught.initial,
+                                innerWidget: (caught.initial.isNotEmpty && caught.tone == 5) ? Column(
+                                  children: [
+                                    const Text(
+                                      "˙",
+                                      style: TextStyle(
+                                        fontSize: 16
+                                      ),
+                                    ),
+                                    Text(
+                                      caught.initial,
+                                      style: const TextStyle(
+                                        fontSize: 16
+                                      ),
+                                    )
+                                  ],
+                                ) : null,
+                                color : "#48742C".toColor(),
+                                onPressed: () => setState(() {
+                                  caught.initial = '';
+                                  if (caught.tone == 5){
+                                    caught.tone = 1;
+                                  }
+                                }),
+                              ),
+                              BopomoContainer( 
+                                character: caught.prenuclear, 
+                                innerWidget: Text(
+                                  caught.prenuclear,
+                                  style: const TextStyle(
+                                    fontSize: 16
+                                  ),
+                                ),
+                                color : "#D19131".toColor(),
+                                onPressed: () => setState(() {
+                                  caught.prenuclear = '';
+                                }),
+                              ),
+                              BopomoContainer( 
+                                character: caught.finals,
+                                innerWidget: Text(
+                                  caught.finals,
+                                  style: const TextStyle(
+                                    fontSize: 16
+                                  ),
+                                ),
+                                color : "#D19131".toColor(),
+                                onPressed: () => setState(() {
+                                  caught.finals = '';
+                                }),
+                              ),
+                            ],
                           ),
-                        ),
-                        child: Row (
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                BopomoContainer( 
-                                  character : (caught.initial.isNotEmpty && caught.tone == 5) ? null :
-                                    (caught.tone == 5) ? "˙" : caught.initial,
-                                  innerWidget: (caught.initial.isNotEmpty && caught.tone == 5) ? Column(
-                                    children: [
-                                      const Text(
-                                        "˙",
-                                        style: TextStyle(
-                                          fontSize: 16
-                                        ),
-                                      ),
-                                      Text(
-                                        caught.initial,
-                                        style: const TextStyle(
-                                          fontSize: 16
-                                        ),
-                                      )
-                                    ],
-                                  ) : null,
-                                  color : "#48742C".toColor(),
-                                  onPressed: () => setState(() {
-                                    caught.initial = '';
-                                    if (caught.tone == 5){
-                                      caught.tone = 1;
-                                    }
-                                  }),
-                                ),
-                                BopomoContainer( 
-                                  character: (caught.prenuclear.isNotEmpty && caught.finals.isNotEmpty) ? null :
-                                    (caught.prenuclear.isNotEmpty) ? caught.prenuclear : caught.finals, 
-                                  innerWidget: (caught.prenuclear.isNotEmpty && caught.finals.isNotEmpty) ? Column(
-                                    children: [
-                                      Text(
-                                        caught.prenuclear,
-                                        style: const TextStyle(
-                                          fontSize: 16
-                                        ),
-                                      ),
-                                      Text(
-                                        caught.finals,
-                                        style: const TextStyle(
-                                          fontSize: 16
-                                        ),
-                                      )
-                                    ],
-                                  ) : null,
-                                  color : "#D19131".toColor(),
-                                  onPressed: () => setState(() {
-                                    caught.finals = '';
-                                    caught.prenuclear = '';
-                                  }),
-                                ),
-                              ],
-                            ),
-                            BopomoContainer( 
-                              character : (caught.tone == 5 || caught.tone == 1) ? "" : tones[caught.tone-2], 
-                              color : "#B65454".toColor(),
-                              onPressed: () => setState(() {
-                                caught.tone = 1;
-                              }),
-                            ),
-                          ]
-                        ),
+                          BopomoContainer(
+                            character : (caught.tone == 5 || caught.tone == 1) ? "" : tones[caught.tone-2], 
+                            color : "#B65454".toColor(),
+                            onPressed: () => setState(() {
+                              caught.tone = 1;
+                            }),
+                          ),
+                        ]
+                      ),
                     ),
                   ),
                   Column(
@@ -288,6 +291,7 @@ class _BopomoQuizState extends State<BopomoQuizView>{
                         icon: Icon(
                           Icons.replay,
                           color: "#F5F5DC".toColor(),
+                          size: 32,
                         ),
                         onPressed: (){
                           setState(() {
@@ -303,15 +307,16 @@ class _BopomoQuizState extends State<BopomoQuizView>{
                         icon: Icon(
                           Icons.done_outline,
                           color: "#F5F5DC".toColor(),
+                          size: 32,
                         ), 
-                        onPressed: (){
+                        onPressed: () async {
                           if (problemId < bopomoSpellingWords.length-1){
-                            _getAnswer();
+                            await _getAnswer();
                             if (answer == caught){
                               setState(() {
                                 answerBoxBorderColor = Colors.green;
                               });
-                              Timer(const Duration(seconds: 0), () {
+                              Timer(const Duration(seconds: 1), () {
                                 setState(() {
                                   problemId += 1;
                                   caught = BopomoSpelling();
@@ -324,7 +329,7 @@ class _BopomoQuizState extends State<BopomoQuizView>{
                               setState(() {
                                 answerBoxBorderColor = Colors.red;
                               });
-                              Timer(const Duration(seconds: 2), () {
+                              Timer(const Duration(seconds: 1), () {
                                 setState(() {
                                   answerBoxBorderColor = '#F5F5DC'.toColor();
                                 });

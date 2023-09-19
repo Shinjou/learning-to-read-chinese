@@ -46,6 +46,7 @@ class SettingViewState extends ConsumerState<SettingView> {
     final userName = ref.watch(userNameProvider);
     int selectedGrade = ref.watch(gradeProvider);
     int selectedPublisher = ref.watch(publisherCodeProvider);
+    double _currentSliderValue = 0.5;
     
     nameController.text = userName;
     gradeController.text = numeralToChinese[selectedGrade]!;
@@ -292,18 +293,15 @@ class SettingViewState extends ConsumerState<SettingView> {
                         mainAxisSize: MainAxisSize.max,
                         children: <Widget>[
                           const Text(
-                            '聲音',
+                            '撥放速度',
                             style: TextStyle(
                               color: Color.fromRGBO(0, 0, 0, 1),
                               fontSize: 24,
                             )
                           ),
-                          CupertinoSwitch(
-                            onChanged: (bool? value){
-                              ref.read(soundOnProvider.notifier).state = !ref.read(soundOnProvider.notifier).state;
-                            },
-                            value: ref.watch(soundOnProvider),
-                            activeColor: CupertinoColors.black,
+                          Slider(
+                            value: _currentSliderValue, 
+                            onChanged: (double value) {  },
                           )
                         ]
                       )

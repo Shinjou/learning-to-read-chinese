@@ -135,11 +135,12 @@ class UnitsViewState extends ConsumerState<UnitsView> {
                           style: TextStyle(
                             fontSize: 24,
                           ), 
-                          textAlign: TextAlign.center,),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                     );
                   },
-                  childCount: resourceList.length,
+                  childCount: 2,
                 ),
               ),
             ),
