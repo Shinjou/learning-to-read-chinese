@@ -22,6 +22,7 @@ class TeachWordCardTitle extends StatelessWidget {
         style: const TextStyle(
           fontSize: 24,
           fontWeight: FontWeight.w900,
+          color: Colors.black,
         ),
       )
     );

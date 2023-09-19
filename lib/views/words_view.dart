@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/data/models/unit_model.dart';
 import 'package:ltrc/data/models/word_status_model.dart';
-import 'package:ltrc/extensions.dart';
 import '../widgets/word_card.dart';
 
 class WordsView extends ConsumerWidget {
@@ -15,7 +14,7 @@ class WordsView extends ConsumerWidget {
     List<WordStatus> newWordsStatus = obj["newWordsStatus"];
     List<WordStatus> extraWordsStatus = obj["extraWordsStatus"] ?? [];
     List<Map> newWordsPhrase = obj["newWordsPhrase"];
-    List<Map> extraWordsPhrase = obj["extraWordsPhrase"];
+    List<Map> extraWordsPhrase = obj["extraWordsPhrase"] ?? [];
 
     return Scaffold(
         appBar: AppBar(

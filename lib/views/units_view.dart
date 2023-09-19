@@ -38,7 +38,7 @@ class UnitsViewState extends ConsumerState<UnitsView> {
   Widget build(BuildContext context) {
     
     dynamic obj = ModalRoute.of(context)!.settings.arguments;
-    
+
     setState(() {
       units = obj["units"];
     });
@@ -76,7 +76,6 @@ class UnitsViewState extends ConsumerState<UnitsView> {
             }
           );
         }
-        
       }
       return wordsPhrase;
     }
@@ -151,6 +150,7 @@ class UnitsViewState extends ConsumerState<UnitsView> {
                         List<WordStatus> likedWords = await WordStatusProvider.getLikedWordsStatus(
                           account: ref.watch(accountProvider), 
                         );
+                        List<Map> likedWordsPhrase = await getWordsPhrase(likedWords);
                         Navigator.of(context).pushNamed(
                           '/words', 
                           arguments: {
@@ -165,6 +165,7 @@ class UnitsViewState extends ConsumerState<UnitsView> {
                               extraWords:[]
                             ),
                             'newWordsStatus' : likedWords,
+                            'wordsPhrase' : likedWordsPhrase
                           }
                         );
                       },
