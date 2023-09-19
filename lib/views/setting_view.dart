@@ -6,7 +6,6 @@ import 'package:ltrc/data/models/user_model.dart';
 import 'package:ltrc/data/providers/user_provider.dart';
 import 'package:ltrc/extensions.dart';
 import 'package:ltrc/providers.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:ltrc/widgets/setting/setting_divider.dart';
 
 class SettingView extends ConsumerStatefulWidget {
@@ -21,6 +20,7 @@ class SettingViewState extends ConsumerState<SettingView> {
   late String account;
   final TextEditingController gradeController = TextEditingController();
   final TextEditingController publisherController = TextEditingController();
+  var currentSliderValue = 0.5;
 
   @override 
   void initState() {
@@ -46,11 +46,12 @@ class SettingViewState extends ConsumerState<SettingView> {
     final userName = ref.watch(userNameProvider);
     int selectedGrade = ref.watch(gradeProvider);
     int selectedPublisher = ref.watch(publisherCodeProvider);
-    double _currentSliderValue = 0.5;
     
     nameController.text = userName;
     gradeController.text = numeralToChinese[selectedGrade]!;
     publisherController.text = publisherCodeTable[selectedPublisher]!;
+
+    currentSliderValue = ref.watch(soundSpeedProvider);
     
     for (var key in [1, 2, 3, 4, 5, 6]) {
       gradeEntries.add(
@@ -299,9 +300,19 @@ class SettingViewState extends ConsumerState<SettingView> {
                               fontSize: 24,
                             )
                           ),
-                          Slider(
-                            value: _currentSliderValue, 
-                            onChanged: (double value) {  },
+                          SizedBox(
+                            width: 140,
+                            child: Slider(
+                              value: currentSliderValue,
+                              max: 1.0,
+                              divisions: 10,
+                              onChanged: (double value) {  
+                                setState(() {
+                                  currentSliderValue = value;
+                                });
+                                ref.read(soundSpeedProvider.notifier).state = value;
+                              },
+                            )
                           )
                         ]
                       )

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:ltrc/contants/bopomo_spelling_problem.dart';
 import 'package:ltrc/contants/bopomos.dart';
@@ -7,6 +8,7 @@ import 'package:ltrc/data/models/bopomo_spelling_model.dart';
 import 'package:ltrc/data/models/word_model.dart';
 import 'package:ltrc/data/providers/word_provider.dart';
 import 'package:ltrc/extensions.dart';
+import 'package:ltrc/providers.dart';
 import '../widgets/bopomo/bopomo_container.dart';
 
 
@@ -153,19 +155,22 @@ class _BopomoQuizState extends State<BopomoQuizView>{
                 children: [
                   Column(
                     children: [
-                      IconButton(
-                        icon: Icon(
-                          Icons.volume_up,
-                          color: "#F5F5DC".toColor(),
-                          size: 32,
-                        ),
-                        onPressed: () {
-                          ftts.setLanguage("zh-tw");
-                          ftts.setSpeechRate(0.5);
-                          ftts.setVolume(1.0);
-                          ftts.speak(bopomoSpellingWords[problemId]);
-                        },
-                      ),
+                      Consumer(builder: (context, ref, child){
+                        return IconButton(
+                          icon: Icon(
+                            Icons.volume_up,
+                            color: "#F5F5DC".toColor(),
+                            size: 32,
+                          ),
+                          onPressed: () {
+                            debugPrint(ref.watch(soundSpeedProvider).toString());
+                            ftts.setLanguage("zh-tw");
+                            ftts.setSpeechRate(ref.watch(soundSpeedProvider));
+                            ftts.setVolume(1.0);
+                            ftts.speak(bopomoSpellingWords[problemId]);
+                          },
+                        );
+                      }), 
                       Text(
                         '讀音',
                         style: TextStyle(color: "#F5F5DC".toColor()),
