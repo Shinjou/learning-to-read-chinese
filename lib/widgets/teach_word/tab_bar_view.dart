@@ -10,22 +10,16 @@ import 'card_title.dart';
 
 class TeachWordTabBarView extends ConsumerWidget {
   final Widget content;
-  // final String word;
-  // final String sectionName;
-  // final bool isBpmf;
   const TeachWordTabBarView({
     Key? key,
-    // required this.sectionName,
-    // required this.word,
     required this.content,
-    // required this.isBpmf,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Column(children: [
       SizedBox(
-        height: MediaQuery.of(context).size.height * 0.68,
+        height: MediaQuery.of(context).size.height * 0.65,
         width: MediaQuery.of(context).size.width,
         child: Container(
           decoration: BoxDecoration(

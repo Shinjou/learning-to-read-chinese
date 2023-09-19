@@ -15,7 +15,6 @@ import 'package:ltrc/widgets/teach_word/stroke_order_animator.dart';
 import 'package:ltrc/widgets/teach_word/stroke_order_animation_controller.dart';
 import 'package:ltrc/widgets/teach_word/word_vocab_content.dart';
 import 'package:ltrc/widgets/word_card.dart';
-import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 
 class TeachWordView extends StatefulWidget {
@@ -108,13 +107,6 @@ class _TeachWordViewState extends State<TeachWordView>
           result,
           this,
           onQuizCompleteCallback: (summary) {
-            // Fluttertoast.showToast(
-            //   msg: [
-            //     summary.nTotalMistakes.toString(),
-            //     " 個筆畫錯誤～再練習看看！"
-            //   ].join(),
-            //   fontSize: 30,
-            // );
             if (summary.nTotalMistakes == 0) {
               if (nextStepId == steps['practiceWithBorder1'] || nextStepId == steps['practiceWithBorder2']) {
                 setState(() {
@@ -156,11 +148,6 @@ class _TeachWordViewState extends State<TeachWordView>
               }
             }
             else {
-              // if (nextStepId == steps['practiceWithBorder1'] || nextStepId == steps['practiceWithBorder2'] || nextStepId == steps['practiceWithBorder3'] || nextStepId == steps['practiceWithoutBorder1']) {
-              //   setState(() {
-              //     nextStepId -= 2;
-              //   });
-              // }
               Fluttertoast.showToast(
                 msg: [
                   summary.nTotalMistakes.toString(),
@@ -214,7 +201,7 @@ class _TeachWordViewState extends State<TeachWordView>
 
   @override
   Widget build(BuildContext context) {
-    // double deviceHeight = MediaQuery.of(context).size.height;
+    double deviceHeight = MediaQuery.of(context).size.height;
 
     String word = widget.wordsStatus[widget.wordIndex].word;
     int unitId = widget.unitId;
@@ -408,51 +395,6 @@ class _TeachWordViewState extends State<TeachWordView>
           ))
         : Container()];
     
-    List<Widget> stepsSnackBarContent = [  
-        // 看一看
-        Text.rich(
-          textAlign: TextAlign.left,
-          TextSpan(
-            text: '按',
-            style: const TextStyle(
-              fontSize: 20,
-            ),  
-            children: [
-              const WidgetSpan(child: Icon(Icons.chevron_right,color: Color.fromRGBO(245, 245, 220, 100),)),
-              TextSpan(text: '去聽一聽 "$word" 怎麼讀！'),
-            ]
-          ),
-        ),
-        // 聽一聽
-        Text.rich(
-          textAlign: TextAlign.left,
-          TextSpan(
-            text: '按',
-            style: const TextStyle(
-              fontSize: 20,
-            ),  
-            children: [
-              const WidgetSpan(child: Icon(Icons.chevron_right,color: Color.fromRGBO(245, 245, 220, 100),)),
-              TextSpan(text: '寫寫看 "$word"！'),
-            ]
-          ),
-        ),
-        // 寫一寫
-        // 用一用
-    ];
-    
-    final snackBar = SnackBar(
-      duration: const Duration(seconds: 15),
-      content: stepsSnackBarContent[0],
-          // color: Color.fromRGBO(245, 245, 220, 100),
-      action: SnackBarAction(
-        label: '好！',
-        onPressed: () {
-          // Some code to undo the change.
-        },
-      ),
-    );
-
     return DefaultTabController(
       // length: teachWordTabs.length,
       length: isBpmf ? 3 : 4,
@@ -477,13 +419,6 @@ class _TeachWordViewState extends State<TeachWordView>
           ],
           bottom: 
           TabBar(
-            // onTap: (index) {
-            //   if (_tabController.indexIsChanging) { 
-            //     _tabController.index = _tabController.previousIndex; 
-            //   } else { 
-            //     return;
-            //   }
-            // },
             // tabs: teachWordTabs,
             tabs: isBpmf ? [
               Tab(icon: Icon(Icons.image)),
@@ -557,7 +492,7 @@ class _TeachWordViewState extends State<TeachWordView>
                     onRightClicked: () {
                       if (nextStepId == steps['goToSection3']) {
                         setState(() {
-                          nextStepId += 1;
+                          nextStepId += 11;
                         }); 
                       }
                       return _tabController.animateTo(_tabController.index + 1);
@@ -567,7 +502,7 @@ class _TeachWordViewState extends State<TeachWordView>
                   Padding(
                     padding: isBpmf ? const EdgeInsets.fromLTRB(0, 0, 0, 0) : const EdgeInsets.fromLTRB(50, 0, 0, 0),
                     child: Container(
-                      height: 300,
+                      height: 250,
                       alignment: Alignment.center,
                       child: Text(word,
                         textAlign: TextAlign.center,
@@ -590,21 +525,6 @@ class _TeachWordViewState extends State<TeachWordView>
                             color: const Color.fromRGBO(245, 245, 220, 100),
                             onPressed: () async {
                               var result = await ftts.speak(word);
-                              // final snackBar = SnackBar(
-                              //   content: const Text('你好嗨嗨嗨嗨嗨',
-                              //     textAlign: TextAlign.right,
-                              //     style: TextStyle(
-                              //       fontSize: 17.5,
-                              //       color: Color.fromRGBO(245, 245, 220, 100),
-                              //   )),
-                              //   action: SnackBarAction(
-                              //     label: 'Undo',
-                              //     onPressed: () {
-                              //       // Some code to undo the change.
-                              //     },
-                              //   ),
-                              // );
-                              // ScaffoldMessenger.of(context).showSnackBar(snackBar);
                               if (nextStepId == steps['listenInSection2']) {
                                 setState(() {
                                   nextStepId += 1;
@@ -652,7 +572,7 @@ class _TeachWordViewState extends State<TeachWordView>
                       return _tabController.animateTo(_tabController.index + 1);
                     },
                   ),
-                  const SizedBox(height: 60,),
+                  const SizedBox(height: 30,),
                   Image(
                     width: 300,
                     image: isBpmf ? 
@@ -685,7 +605,7 @@ class _TeachWordViewState extends State<TeachWordView>
                   Padding(
                     padding: isBpmf ? const EdgeInsets.fromLTRB(0, 0, 0, 0) : const EdgeInsets.fromLTRB(50, 0, 0, 0),
                     child: Container(
-                      height: 300,
+                      height: 250,
                       alignment: Alignment.center,
                       child: Text(word,
                         textAlign: TextAlign.center,
@@ -708,21 +628,6 @@ class _TeachWordViewState extends State<TeachWordView>
                             color: const Color.fromRGBO(245, 245, 220, 100),
                             onPressed: () async {
                               var result = await ftts.speak(word);
-                              // final snackBar = SnackBar(
-                              //   content: const Text('你好嗨嗨嗨嗨嗨',
-                              //     textAlign: TextAlign.right,
-                              //     style: TextStyle(
-                              //       fontSize: 17.5,
-                              //       color: Color.fromRGBO(245, 245, 220, 100),
-                              //   )),
-                              //   action: SnackBarAction(
-                              //     label: 'Undo',
-                              //     onPressed: () {
-                              //       // Some code to undo the change.
-                              //     },
-                              //   ),
-                              // );
-                              // ScaffoldMessenger.of(context).showSnackBar(snackBar);
                               if (nextStepId == steps['listenInSection2']) {
                                 setState(() {
                                   nextStepId += 1;
@@ -776,14 +681,8 @@ class _TeachWordViewState extends State<TeachWordView>
                                 return _tabController.animateTo(_tabController.index + 1);
                               },
                             ),
-                            const SizedBox(height: 30),
+                            const SizedBox(height: 10),
                             Container(
-                              // decoration: const BoxDecoration(
-                              //   image: DecorationImage(
-                              //     image: AssetImage("lib/assets/img/box.png"),
-                              //     fit: BoxFit.fitWidth,
-                              //   ),
-                              // ),
                               decoration: !isBpmf ? const BoxDecoration(
                                 image: DecorationImage(
                                   image: AssetImage("lib/assets/img/box.png"),
@@ -854,13 +753,6 @@ class _TeachWordViewState extends State<TeachWordView>
                                       selectedIcon: const Icon(Icons.pause),
                                       onPressed: !controller.isQuizzing
                                         ? () async {
-                                          // controller.startAnimation();
-                                          // var result = await ftts.speak(word);
-                                          // if (nextStepId == steps['seeAnimation']) {
-                                          //   setState(() {
-                                          //     nextStepId += 1;
-                                          //   }); 
-                                          // }
                                           if (!controller.isAnimating) {
                                             controller.startAnimation();
                                             var result = await ftts.speak(word);
@@ -889,26 +781,9 @@ class _TeachWordViewState extends State<TeachWordView>
                                       color: const Color.fromRGBO(245, 245, 220, 100),
                                       isSelected: controller.isQuizzing,
                                       icon: const Icon(Icons.edit),
-                                      // selectedIcon: const Icon(Icons.edit_off),
                                       onPressed: () async {
                                         controller.startQuiz();
                                         var result = await ftts.speak(word);
-                                        // if (!controller.isQuizzing) {
-                                          // controller.startQuiz();
-                                          // var result = await ftts.speak(word);
-                                          // if (nextStepId == steps['practiceWithBorder1'] || nextStepId == steps['practiceWithBorder2'] || nextStepId == steps['practiceWithBorder3'] || nextStepId == steps['practiceWithoutBorder1']) {
-                                            // setState(() {
-                                            //   nextStepId += 1;
-                                            // });
-                                            // if (controller.showOutline && nextStepId != steps['goToSection4']) {
-                                            //   setState(() {
-                                            //     nextStepId += 1;
-                                            //   }); 
-                                            // } 
-                                          // }
-                                        // } else {
-                                        //   controller.stopQuiz();
-                                        // }
                                       },
                                   )),
                                   Container(
@@ -930,11 +805,6 @@ class _TeachWordViewState extends State<TeachWordView>
                                             nextStepId += 1;
                                           }); 
                                         }
-                                        // else if (nextStepId == steps['practiceWithBorder1'] || nextStepId == steps['practiceWithBorder2'] || nextStepId == steps['practiceWithBorder3'] || nextStepId == steps['practiceWithoutBorder1']) {
-                                        //   setState(() {
-                                        //     nextStepId -= 1;
-                                        //   }); 
-                                        // }
                                         controller.setShowOutline(!controller.showOutline);
                                       },
                                   )),
