@@ -169,16 +169,6 @@ class _TeachWordViewState extends State<TeachWordView>
     _tabController.dispose();
   }
 
-  // static List<Tab> teachWordTabs = isBpmf ? [
-  //   Tab(icon: Icon(Icons.image)),
-  //   Tab(icon: Icon(Icons.hearing)),
-  //   Tab(icon: Icon(Icons.create)),
-  //   Tab(icon: Icon(Icons.school)),
-  // ] : [
-  //   Tab(icon: Icon(Icons.image)),
-  //   Tab(icon: Icon(Icons.hearing)),
-  //   Tab(icon: Icon(Icons.school)),
-  // ];
   int vocabIndex = 0;
 
   Map<String, int> steps = {
@@ -203,6 +193,7 @@ class _TeachWordViewState extends State<TeachWordView>
   @override
   Widget build(BuildContext context) {
     double deviceHeight = MediaQuery.of(context).size.height;
+    double deviceWidth = MediaQuery.of(context).size.width;
 
     String word = widget.wordsStatus[widget.wordIndex].word;
     int unitId = widget.unitId;
@@ -258,7 +249,7 @@ class _TeachWordViewState extends State<TeachWordView>
                     ),
                     child: IconButton(
                       iconSize: 30,
-                      color: Color.fromRGBO(245, 245, 220, 100),
+                      color: const Color.fromRGBO(245, 245, 220, 100),
                       onPressed: () async {
                         var result = await ftts.speak(
                           "${wordObj['vocab1']}。${wordObj['sentence1']}");
@@ -349,7 +340,7 @@ class _TeachWordViewState extends State<TeachWordView>
                     ),
                     child: IconButton(
                         iconSize: 30,
-                        color: Color.fromRGBO(245, 245, 220, 100),
+                        color: const Color.fromRGBO(245, 245, 220, 100),
                         onPressed: () async {
                           var result = await ftts.speak(
                             "${wordObj['vocab2']}。${wordObj['sentence2']}");
@@ -404,14 +395,7 @@ class _TeachWordViewState extends State<TeachWordView>
             icon: const Icon(Icons.chevron_left),
             onPressed: () => Navigator.pop(context),
           ),
-          centerTitle: true,
           title: (unitId == -1) ? Text(unitTitle) : Text("${unitId.toString().padLeft(2, '0')} | $unitTitle"),
-          titleTextStyle: TextStyle(
-            color: "#F5F5DC".toColor(),
-            fontSize: 30,
-            fontWeight: FontWeight.w900,
-            fontFamily: "Serif",
-          ),
           actions: <Widget>[
             IconButton(
               onPressed: () => Navigator.of(context).pushNamed('/mainPage'),
@@ -421,14 +405,14 @@ class _TeachWordViewState extends State<TeachWordView>
           TabBar(
             // tabs: teachWordTabs,
             tabs: isBpmf ? [
-              Tab(icon: Icon(Icons.image)),
-              Tab(icon: Icon(Icons.hearing)),
-              Tab(icon: Icon(Icons.school)),
+              const Tab(icon: Icon(Icons.image)),
+              const Tab(icon: Icon(Icons.hearing)),
+              const Tab(icon: Icon(Icons.school)),
             ] : [
-              Tab(icon: Icon(Icons.image)),
-              Tab(icon: Icon(Icons.hearing)),
-              Tab(icon: Icon(Icons.create)),
-              Tab(icon: Icon(Icons.school)),
+              const Tab(icon: Icon(Icons.image)),
+              const Tab(icon: Icon(Icons.hearing)),
+              const Tab(icon: Icon(Icons.create)),
+              const Tab(icon: Icon(Icons.school)),
             ],
             controller: _tabController,
             labelColor: '#28231D'.toColor(),
@@ -534,7 +518,7 @@ class _TeachWordViewState extends State<TeachWordView>
                               decoration: BoxDecoration(
                                 border: nextStepId == steps['listenInSection2'] ? Border.all(color: '#FFFF93'.toColor(), width: 1.5) : null,
                               ),
-                              child: Icon(Icons.volume_up)
+                              child: const Icon(Icons.volume_up)
                           )),
                           const Text('讀音',
                             textAlign: TextAlign.right,
@@ -636,7 +620,7 @@ class _TeachWordViewState extends State<TeachWordView>
                               decoration: BoxDecoration(
                                 border: nextStepId == steps['listenInSection2'] ? Border.all(color: '#FFFF93'.toColor(), width: 1.5) : null,
                               ),
-                              child: Icon(Icons.volume_up)
+                              child: const Icon(Icons.volume_up)
                           )),
                           const Text('讀音',
                             textAlign: TextAlign.right,
@@ -658,7 +642,7 @@ class _TeachWordViewState extends State<TeachWordView>
                   builder: (context, controller, child) {
                     return Center(
                       child: SizedBox(
-                        width: 300,
+                        width: deviceWidth * 0.8,
                         child: Column(
                           children: <Widget>[
                             LeftRightSwitch(
@@ -728,7 +712,7 @@ class _TeachWordViewState extends State<TeachWordView>
                                 ],
                               ),
                             ),
-                            const SizedBox(height: 7.5,),
+                            const SizedBox(height: 5,),
                             Flexible(
                               child: GridView(
                                 gridDelegate:
@@ -744,7 +728,7 @@ class _TeachWordViewState extends State<TeachWordView>
                                       border: nextStepId == steps['seeAnimation'] ? Border.all(color: '#FFFF93'.toColor(), width: 1.5) : null,
                                     ),
                                     child: IconButton(
-                                      iconSize: 35,
+                                      iconSize: 34,
                                       color: const Color.fromRGBO(245, 245, 220, 100),
                                       isSelected: controller.isAnimating,
                                       icon: const Icon(Icons.play_arrow),
@@ -775,7 +759,7 @@ class _TeachWordViewState extends State<TeachWordView>
                                       border: (nextStepId == steps['practiceWithBorder1'] || nextStepId == steps['practiceWithBorder2'] || nextStepId == steps['practiceWithBorder3'] || nextStepId == steps['practiceWithoutBorder1']) ? Border.all(color: '#FFFF93'.toColor(), width: 1.5) : null,
                                     ),
                                     child: IconButton(
-                                      iconSize: 35,
+                                      iconSize: 34,
                                       color: const Color.fromRGBO(245, 245, 220, 100),
                                       isSelected: controller.isQuizzing,
                                       icon: const Icon(Icons.edit),
@@ -789,7 +773,7 @@ class _TeachWordViewState extends State<TeachWordView>
                                       border: (nextStepId == steps['turnBorderOn1'] || nextStepId == steps['turnBorderOn2'] || nextStepId == steps['turnBorderOn3'] || nextStepId == steps['turnBorderOff1']) ? Border.all(color: '#FFFF93'.toColor(), width: 1.5) : null,
                                     ),
                                     child:IconButton(
-                                      iconSize: 35,
+                                      iconSize: 34,
                                       color: const Color.fromRGBO(245, 245, 220, 100),
                                       isSelected: controller.showOutline,
                                       icon: const Icon(
@@ -806,7 +790,7 @@ class _TeachWordViewState extends State<TeachWordView>
                                       },
                                   )),
                                 IconButton(
-                                  iconSize: 35,
+                                  iconSize: 34,
                                   color: const Color.fromRGBO(245, 245, 220, 100),
                                   icon: const Icon(Icons.restart_alt),
                                   onPressed: () {
@@ -816,26 +800,26 @@ class _TeachWordViewState extends State<TeachWordView>
                                 const Text('筆順',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                    fontSize: 17.5,
+                                    fontSize: 17,
                                     color: Color.fromRGBO(
                                         245, 245, 220, 100),
                                 )),
                                 const Text('寫字',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                    fontSize: 17.5,
+                                    fontSize: 17,
                                     color: Color.fromRGBO(245, 245, 220, 100),
                                 )),
                                 const Text('邊框',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                    fontSize: 17.5,
+                                    fontSize: 17,
                                     color: Color.fromRGBO(245, 245, 220, 100),
                                 )),
                                 const Text('重新',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                    fontSize: 17.5,
+                                    fontSize: 17,
                                     color: Color.fromRGBO(245, 245, 220, 100),
                                 )),
                               ],
