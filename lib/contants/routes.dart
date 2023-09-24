@@ -54,7 +54,7 @@ class AppRoutes {
       setting: (context) => const SettingView(),
       units: (context) => const UnitsView(),
       words: (context) => const WordsView(),
-      teachWord: (context) => const TeachWordView(),
+      // teachWord: (context) => const TeachWordView(),
     };
   }
 }

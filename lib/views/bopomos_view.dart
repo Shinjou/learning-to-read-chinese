@@ -9,11 +9,15 @@ class BopomosView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     dynamic obj = ModalRoute.of(context)!.settings.arguments;
-    List<WordStatus> wordStatus = obj['wordStatus']; 
+    List<WordStatus> wordsStatus = obj['wordStatus']; 
+    List<Map> wordsPhrase = obj['wordsPhrase']; 
 
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(icon: const Icon(Icons.chevron_left), onPressed: () => Navigator.pop(context),),
+        leading: IconButton(
+          icon: const Icon(Icons.chevron_left),
+          onPressed: () => Navigator.pop(context),
+        ),
         title: const Text("00 | 學注音"),
         actions: [
           IconButton(
@@ -31,18 +35,24 @@ class BopomosView extends StatelessWidget {
                 maxCrossAxisExtent: 125.0,
                 mainAxisSpacing: 10.0,
                 crossAxisSpacing: 10.0,
-                childAspectRatio: 113/166,
+                childAspectRatio: 113 / 166,
               ),
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) {
                   return WordCard(
-                    wordStatus : wordStatus[index],
+                    isBpmf: true,
+                    unitId: 0,
+                    unitTitle: "學注音",
+                    wordsStatus: wordsStatus,
+                    wordsPhrase: wordsPhrase,
+                    wordIndex: index,
                     sizedBoxWidth: 30,
                     sizedBoxHeight: 155,
                     fontSize: 48,
+                    isVertical: true,
                   );
                 },
-                childCount: wordStatus.length,
+                childCount: wordsStatus.length,
               ),
             ),
           ),
@@ -50,7 +60,7 @@ class BopomosView extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(46, 16, 46, 16),
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
-                (BuildContext context, int idx){
+                (BuildContext context, int idx) {
                   return InkWell(
                     onTap: () => Navigator.of(context).pushNamed('/bopomoQuiz'),
                     child: Container(
@@ -58,25 +68,25 @@ class BopomosView extends StatelessWidget {
                       height: 80,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        borderRadius: const BorderRadius.all(Radius.circular(14)),
+                        borderRadius:
+                          const BorderRadius.all(Radius.circular(14)),
                         color: "#F5F5DC".toColor(),
                       ),
                       child: Text(
-                        "拼拼看", 
+                        "拼拼看",
                         style: TextStyle(
                           fontSize: 32,
                           color: "#28231D".toColor(),
-                        ), 
-                        textAlign: TextAlign.center,),
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                   );
                 },
                 childCount: 1,
-              )
-            ),
+              )),
           ),
         ],
-      )
-    );
+      ));
   }
 }

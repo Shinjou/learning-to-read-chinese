@@ -10,10 +10,8 @@ import 'card_title.dart';
 
 class TeachWordTabBarView extends ConsumerWidget {
   final Widget content;
-  final String sectionName;
   const TeachWordTabBarView({
     Key? key,
-    required this.sectionName,
     required this.content,
   }) : super(key: key);
 
@@ -21,7 +19,7 @@ class TeachWordTabBarView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Column(children: [
       SizedBox(
-        height: MediaQuery.of(context).size.height * 0.6,
+        height: MediaQuery.of(context).size.height * 0.65,
         width: MediaQuery.of(context).size.width,
         child: Container(
           decoration: BoxDecoration(
@@ -34,31 +32,9 @@ class TeachWordTabBarView extends ConsumerWidget {
               const SizedBox(
                 height: 10,
               ),
-              LeftRightSwitch(
-                iconsColor: '#D9D9D9'.toColor(),
-                iconsSize: 35,
-                middleWidget: TeachWordCardTitle(
-                    sectionName: sectionName, iconsColor: '#D9D9D9'.toColor()),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
               Expanded(child: content),
             ],
           ),
-        ),
-      ),
-      const SizedBox(
-        height: 45,
-      ),
-      LeftRightSwitch(
-        iconsColor: '#F5F5DC'.toColor(),
-        iconsSize: 48,
-        middleWidget: WordCard(
-          wordStatus: WordStatus(id: 10000, userAccount: ref.watch(accountProvider), word: '手', learned: true, liked: true),
-          sizedBoxWidth: 67,
-          sizedBoxHeight: 88,
-          fontSize: 23,
         ),
       ),
     ]);

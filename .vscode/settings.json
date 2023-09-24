@@ -1,0 +1,5 @@
+{
+    "dart.lineLength": 200,
+    "editor.tabSize": 2,
+    "dart.enableSdkFormatter": false
+}
