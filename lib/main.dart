@@ -9,7 +9,7 @@ import 'package:ltrc/extensions.dart';
 
 Future main() async{
   sqfliteFfiInit();
-  runApp(ProviderScope(child: MyApp()));
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends ConsumerWidget {

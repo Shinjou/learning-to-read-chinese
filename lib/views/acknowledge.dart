@@ -15,6 +15,14 @@ final List<Resource> resourceList = [
   Resource(
     resource: "字型演變",
     description: "來自中央研究院開發之「小學堂」字型演變資料庫。"
+  ),
+  Resource(
+    resource: "筆順動畫",
+    description: "來自文鼎科技開發股份有限公司提供之開源漢字、注音筆順素材與技術支持。"
+  ),
+  Resource(
+    resource: "諮詢顧問",
+    description: "鄭漢文校長與陳素慧老師擔任諮詢顧問，分享現場教師觀點。"
   )
 ];
 
