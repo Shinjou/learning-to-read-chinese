@@ -3,7 +3,7 @@ import 'package:ltrc/extensions.dart';
 
 class ProgressBar extends StatelessWidget {
   const ProgressBar({super.key, required this.maxCount, required this.value});
-  final double value;
+  final int value;
   final int maxCount;
   final iconSize = 58.0;
 
@@ -25,7 +25,7 @@ class ProgressBar extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10)),
                 child: LinearProgressIndicator(
                   backgroundColor: '#D9D9D9'.toColor(),
-                  value: value,
+                  value: value/maxCount,
                   valueColor:
                       AlwaysStoppedAnimation<Color>('#F8A23A'.toColor()),
                 ),
@@ -47,12 +47,11 @@ class ProgressBar extends StatelessWidget {
           padding: const EdgeInsetsDirectional.only(start: 21, end: 11),
           child: Row(
             children: [
-              const Align(
+              Align(
                 alignment: Alignment.centerLeft,
-                child: Text('0',
-                  style: TextStyle(
+                child: Text(value.toString(),
+                  style: const TextStyle(
                     fontSize: 24,
-                    fontFamily: 'Iceberg'
                   )
                 )
               ),
@@ -61,7 +60,6 @@ class ProgressBar extends StatelessWidget {
                 maxCount.toString(),
                 style: const TextStyle(
                   fontSize: 24,
-                  fontFamily: 'Iceberg'
                 )
               )
             ]

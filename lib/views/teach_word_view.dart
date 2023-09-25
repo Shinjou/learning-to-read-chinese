@@ -103,7 +103,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
     ftts.setVolume(1.0);
     isBpmf = (initials.contains(widget.wordsStatus[widget.wordIndex].word) || prenuclear.contains(widget.wordsStatus[widget.wordIndex].word) || finals.contains(widget.wordsStatus[widget.wordIndex].word));
     getWord();
-    _tabController = isBpmf ? TabController(length: 4, vsync: this, animationDuration: Duration.zero) : TabController(length: 4, vsync: this, animationDuration: Duration.zero);
+    _tabController = isBpmf ? TabController(length: 3, vsync: this, animationDuration: Duration.zero) : TabController(length: 4, vsync: this, animationDuration: Duration.zero);
     readJson().then((result) {
       setState(() {
         _strokeOrderAnimationControllers = StrokeOrderAnimationController(
@@ -262,7 +262,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                           if (vocabCnt == 1) {
                             WordStatus newStatus = widget.wordsStatus[widget.wordIndex];
                             newStatus.learned = true;
-                            ref.watch(learnedWordCountProvider.notifier).state += 1 ;
+                            ref.read(learnedWordCountProvider.notifier).state += 1 ;
                             await WordStatusProvider.updateWordStatus(
                               status: newStatus
                             );
@@ -274,19 +274,19 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                     const Text('讀音',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontSize: 17.5,
+                        fontSize: 17,
                         color: Color.fromRGBO(245, 245, 220, 100),
                       )),
                   ],
                 ),
                 (img1Exist && !isBpmf)
                   ? Image(
-                    height: 150,
+                    height: deviceHeight*0.15,
                     image: AssetImage(
                       'lib/assets/img/vocabulary/${wordObj['vocab1']}.png'),
                   )
                   : Container(
-                    height: isBpmf ? 80 : 150,
+                    height: deviceHeight*0.08
                   ),
                 Text("1 / $vocabCnt",
                   style: const TextStyle(
@@ -353,7 +353,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                             }); 
                             WordStatus newStatus = widget.wordsStatus[widget.wordIndex];
                             newStatus.learned = true;
-                            ref.watch(learnedWordCountProvider.notifier).state += 1 ;
+                            ref.read(learnedWordCountProvider.notifier).state += 1 ;
                             await WordStatusProvider.updateWordStatus(
                               status: newStatus
                             );

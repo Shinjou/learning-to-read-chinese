@@ -16,7 +16,7 @@ class LogInView extends ConsumerStatefulWidget {
 
 const String pwdConfirmErrorHint = "帳號/密碼錯誤";
 const String accountLengthErrorHint = "帳號長度不足 6 位英/數字";
-
+const String abnormalErrorHint = "不正常的錯誤發生了，請告知老師";
 class LogInViewState extends ConsumerState<LogInView> {
 
   TextEditingController accountController = TextEditingController();
@@ -212,7 +212,7 @@ class LogInViewState extends ConsumerState<LogInView> {
                           }
                         } catch (e){
                           setState(() {
-                            showErrorHint = pwdConfirmErrorHint;
+                            showErrorHint = abnormalErrorHint;
                           });
                         }
                       }

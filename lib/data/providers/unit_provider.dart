@@ -59,7 +59,17 @@ class UnitProvider {
 
   static Future<int> getTotalWordCount({required String inputPublisher, required int inputGrade, required String inputSemester}) async {
     final Database db = await getDBConnect();
-    int count = Sqflite.firstIntValue(await db.rawQuery("SELECT COUNT(*) FROM $tableName WHERE $databaseGrade = '$inputGrade' AND $databaseSemester = '$inputSemester' "))!;
+    List<Map<String, Object?>> unitWords = await db.query(
+      tableName,
+      columns: [databaseNewWords, databaseExtraWords],
+      where: '$databaseGrade = ? and $databaseSemester = ? and $databasePublisher = ?',
+      whereArgs: [inputGrade, inputSemester, inputPublisher]
+    );
+    int count = 0;
+    for (var unit in unitWords) {
+      count += unit[databaseNewWords]!.toString().length;
+      count += unit[databaseExtraWords]!.toString().length;
+    }
     return count;
   }
 
@@ -70,15 +80,21 @@ class UnitProvider {
       inputSemester: inputSemester
     );
     int count = 0;
+
     for (var unit in units){
-      List<WordStatus> wordStatuses = await WordStatusProvider.getWordsStatus(
-        words: List.from(unit.newWords)..addAll(unit.extraWords),
-        account:inputAccount
-      );
-      for (var status in wordStatuses){
-        count += status.learned ? 1 : 0 ;
+      try {
+        List<WordStatus> wordStatuses = await WordStatusProvider.getWordsStatus(
+          words: List.from(unit.newWords)..addAll(unit.extraWords),
+          account: inputAccount
+        );
+        for (var status in wordStatuses){
+          count += status.learned ? 1 : 0 ;
+        }
+      } catch(e) {
+        debugPrint('Unit ${unit.unitId} hasn\'t been read before');
       }
     }
+    debugPrint(count.toString());
     return count;
   }
     

@@ -92,7 +92,7 @@ class MainPageView extends ConsumerWidget {
                 fontSize: 22,
               )
             ),
-            ProgressBar(maxCount: totalWordCount, value: learnedWordCount/totalWordCount),
+            ProgressBar(maxCount: totalWordCount, value: learnedWordCount),
           ]
         ),
       )

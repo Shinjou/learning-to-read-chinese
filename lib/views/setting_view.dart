@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/contants/arabic_numerals_to_chinese.dart';
 import 'package:ltrc/contants/publisher_code.dart';
 import 'package:ltrc/data/models/user_model.dart';
+import 'package:ltrc/data/providers/unit_provider.dart';
 import 'package:ltrc/data/providers/user_provider.dart';
 import 'package:ltrc/extensions.dart';
 import 'package:ltrc/providers.dart';
@@ -247,6 +248,17 @@ class SettingViewState extends ConsumerState<SettingView> {
                               userToUpdate.grade = grade!;
                               await UserProvider.updateUser(user: userToUpdate);
                               ref.read(gradeProvider.notifier).state = grade;
+                              ref.read(totalWordCountProvider.notifier).state = await UnitProvider.getTotalWordCount(
+                                inputPublisher: publisherCodeTable[selectedPublisher]!, 
+                                inputGrade: grade, 
+                                inputSemester: "上"
+                              );
+                              ref.read(learnedWordCountProvider.notifier).state = await UnitProvider.getLearnedWordCount(
+                                inputAccount: account,
+                                inputPublisher: publisherCodeTable[selectedPublisher]!, 
+                                inputGrade: grade, 
+                                inputSemester: "上"
+                              );
                             },
                           ),
                         ]
@@ -281,6 +293,17 @@ class SettingViewState extends ConsumerState<SettingView> {
                               userToUpdate.publisher = publisherCodeTable[publisher]!;
                               await UserProvider.updateUser(user: userToUpdate);
                               ref.read(publisherCodeProvider.notifier).state = publisher!;
+                              ref.read(totalWordCountProvider.notifier).state = await UnitProvider.getTotalWordCount(
+                                inputPublisher: publisherCodeTable[publisher]!, 
+                                inputGrade: selectedGrade,
+                                inputSemester: "上"
+                              );
+                              ref.read(learnedWordCountProvider.notifier).state = await UnitProvider.getLearnedWordCount(
+                                inputAccount: account,
+                                inputPublisher: publisherCodeTable[publisher]!, 
+                                inputGrade: selectedGrade, 
+                                inputSemester: "上"
+                              );
                             },
                           ),
                         ]

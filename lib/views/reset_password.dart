@@ -99,6 +99,9 @@ class _ResetPwdViewState extends State<ResetPwdView> {
                     child: TextField(
                       controller: pwdController,
                       obscureText: pwdVisible,
+                      style: const TextStyle(
+                        color: Colors.black
+                      ),
                       decoration: InputDecoration(
                         prefixIcon: Icon(
                           Icons.lock,
@@ -130,15 +133,18 @@ class _ResetPwdViewState extends State<ResetPwdView> {
                 height: 60.0,
                 width: 303.0,
                 decoration: BoxDecoration(
-                    color: '#7DDEF8'.toColor(),
-                    borderRadius: BorderRadius.circular(5),
-                    border: Border.all(width: 5.0, color: '#F5F5DC'.toColor())
+                  color: '#7DDEF8'.toColor(),
+                  borderRadius: BorderRadius.circular(5),
+                  border: Border.all(width: 5.0, color: '#F5F5DC'.toColor())
                 ),
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
                   child: TextField(
                     controller: confirmPwdController,
                     obscureText: confirmPwdVisible,
+                    style: const TextStyle(
+                      color: Colors.black
+                    ),
                     decoration: InputDecoration(
                       prefixIcon: Icon(
                         Icons.lock,
@@ -197,13 +203,14 @@ class _ResetPwdViewState extends State<ResetPwdView> {
                 else{
                   user.password = pwdController.text;
                   UserProvider.updateUser(user: user);
-                  Navigator.of(context).pushNamed('/mainPage');
+                  Navigator.of(context).pushNamed('/login');
                 }
               },
-              child: const Text(
+              child: Text(
                 '完成',
                 style: TextStyle(
                   fontSize: 24.0,
+                  color: '#F5F5DC'.toColor(),
                 )
               )
             )
