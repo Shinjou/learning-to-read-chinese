@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final soundOnProvider = StateProvider((ref) => true);
+final soundSpeedProvider = StateProvider<double>((ref) => 0.5);
 final chuyinOnProvider = Provider((ref) => true);
 
 final gradeProvider = StateProvider<int>((ref) => 1);

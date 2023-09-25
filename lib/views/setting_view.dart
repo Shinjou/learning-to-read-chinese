@@ -6,7 +6,6 @@ import 'package:ltrc/data/models/user_model.dart';
 import 'package:ltrc/data/providers/user_provider.dart';
 import 'package:ltrc/extensions.dart';
 import 'package:ltrc/providers.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:ltrc/widgets/setting/setting_divider.dart';
 
 class SettingView extends ConsumerStatefulWidget {
@@ -21,6 +20,7 @@ class SettingViewState extends ConsumerState<SettingView> {
   late String account;
   final TextEditingController gradeController = TextEditingController();
   final TextEditingController publisherController = TextEditingController();
+  var currentSliderValue = 0.5;
 
   @override 
   void initState() {
@@ -50,6 +50,8 @@ class SettingViewState extends ConsumerState<SettingView> {
     nameController.text = userName;
     gradeController.text = numeralToChinese[selectedGrade]!;
     publisherController.text = publisherCodeTable[selectedPublisher]!;
+
+    currentSliderValue = ref.watch(soundSpeedProvider);
     
     for (var key in [1, 2, 3, 4, 5, 6]) {
       gradeEntries.add(
@@ -292,18 +294,25 @@ class SettingViewState extends ConsumerState<SettingView> {
                         mainAxisSize: MainAxisSize.max,
                         children: <Widget>[
                           const Text(
-                            '聲音',
+                            '撥放速度',
                             style: TextStyle(
                               color: Color.fromRGBO(0, 0, 0, 1),
                               fontSize: 24,
                             )
                           ),
-                          CupertinoSwitch(
-                            onChanged: (bool? value){
-                              ref.read(soundOnProvider.notifier).state = !ref.read(soundOnProvider.notifier).state;
-                            },
-                            value: ref.watch(soundOnProvider),
-                            activeColor: CupertinoColors.black,
+                          SizedBox(
+                            width: 140,
+                            child: Slider(
+                              value: currentSliderValue,
+                              max: 1.0,
+                              divisions: 10,
+                              onChanged: (double value) {  
+                                setState(() {
+                                  currentSliderValue = value;
+                                });
+                                ref.read(soundSpeedProvider.notifier).state = value;
+                              },
+                            )
                           )
                         ]
                       )
