@@ -26,10 +26,10 @@ class StrokeOrderAnimationController extends ChangeNotifier {
   List<List<Offset>> _medians = List.empty();
   List<List<Offset>> get medians => _medians;
 
-  AnimationController _strokeAnimationController;
+  final AnimationController _strokeAnimationController;
   AnimationController get strokeAnimationController =>
       _strokeAnimationController;
-  AnimationController _hintAnimationController;
+  final AnimationController _hintAnimationController;
   AnimationController get hintAnimationController => _hintAnimationController;
   bool _isAnimating = false;
   bool get isAnimating => _isAnimating;
@@ -41,9 +41,9 @@ class StrokeOrderAnimationController extends ChangeNotifier {
   QuizSummary _summary = QuizSummary(0);
   QuizSummary get summary => _summary;
 
-  List<Function> _onQuizCompleteCallbacks = [];
-  List<Function> _onWrongStrokeCallbacks = [];
-  List<Function> _onCorrectStrokeCallbacks = [];
+  final List<Function> _onQuizCompleteCallbacks = [];
+  final List<Function> _onWrongStrokeCallbacks = [];
+  final List<Function> _onCorrectStrokeCallbacks = [];
 
   bool _showStroke;
   bool _showOutline;
@@ -368,7 +368,7 @@ class StrokeOrderAnimationController extends ChangeNotifier {
     try {
       parsedJson = json.decode(strokeOrder.replaceAll("'", '"'));
     } catch (e) {
-      throw FormatException("Invalid JSON string for stroke order.");
+      throw const FormatException("Invalid JSON string for stroke order.");
     }
 
     try {
@@ -379,7 +379,7 @@ class StrokeOrderAnimationController extends ChangeNotifier {
               Matrix4(1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0, 0, 900, 0, 1)
                   .storage));
     } catch (e) {
-      throw FormatException("Invalid strokes in stroke order JSON.");
+      throw const FormatException("Invalid strokes in stroke order JSON.");
     }
 
     try {
@@ -392,11 +392,11 @@ class StrokeOrderAnimationController extends ChangeNotifier {
         });
       });
     } catch (e) {
-      throw FormatException("Invalid medians in stroke order JSON.");
+      throw const FormatException("Invalid medians in stroke order JSON.");
     }
 
     if (tmpMedians.length != tmpStrokes.length) {
-      throw FormatException("Number of strokes and medians not equal.");
+      throw const FormatException("Number of strokes and medians not equal.");
     }
 
     try {
@@ -404,7 +404,7 @@ class StrokeOrderAnimationController extends ChangeNotifier {
           parsedJson['radStrokes'].length,
           (index) => parsedJson['radStrokes'][index]);
     } catch (e) {
-      print("Could not read radical stroke indices from JSON.");
+      debugPrint("Could not read radical stroke indices from JSON.");
       tmpRadicalStrokeIndices = [];
     }
 
@@ -613,7 +613,7 @@ class StrokeOrderAnimationController extends ChangeNotifier {
 }
 
 class QuizSummary {
-  int _nStrokes;
+  final int _nStrokes;
   int get nStrokes => _nStrokes;
 
   late List<int> mistakes;

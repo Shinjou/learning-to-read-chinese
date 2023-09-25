@@ -15,7 +15,7 @@ class BopomofoVocabContent extends StatelessWidget {
   Widget build(BuildContext context) {
     String subSentence = sentence;
     if (subSentence.length > 25) {
-      subSentence = subSentence.substring(0, 25) + "...。";
+      subSentence = "${subSentence.substring(0, 25)}...。";
     }
 
     return Column(

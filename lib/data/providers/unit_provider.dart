@@ -2,8 +2,10 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:ltrc/data/models/word_status_model.dart';
+import 'package:ltrc/data/providers/word_status_provider.dart';
 import 'package:path/path.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:sqflite/sqflite.dart';
 
 import '../models/unit_model.dart';
 
@@ -53,6 +55,31 @@ class UnitProvider {
       unit.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
+  }
+
+  static Future<int> getTotalWordCount({required String inputPublisher, required int inputGrade, required String inputSemester}) async {
+    final Database db = await getDBConnect();
+    int count = Sqflite.firstIntValue(await db.rawQuery("SELECT COUNT(*) FROM $tableName WHERE $databaseGrade = '$inputGrade' AND $databaseSemester = '$inputSemester' "))!;
+    return count;
+  }
+
+  static Future<int> getLearnedWordCount({required String inputAccount, required String inputPublisher, required int inputGrade, required String inputSemester}) async {
+    List<Unit> units = await getUnits(
+      inputGrade: inputGrade, 
+      inputPublisher: inputPublisher, 
+      inputSemester: inputSemester
+    );
+    int count = 0;
+    for (var unit in units){
+      List<WordStatus> wordStatuses = await WordStatusProvider.getWordsStatus(
+        words: List.from(unit.newWords)..addAll(unit.extraWords),
+        account:inputAccount
+      );
+      for (var status in wordStatuses){
+        count += status.learned ? 1 : 0 ;
+      }
+    }
+    return count;
   }
     
   static Future<List<Unit>> getUnits({required String inputPublisher, required int inputGrade, required String inputSemester}) async {

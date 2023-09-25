@@ -1,17 +1,17 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ltrc/extensions.dart';
 
 class ProgressBar extends StatelessWidget {
-  const ProgressBar({this.value});
-  final value;
+  const ProgressBar({super.key, required this.maxCount, required this.value});
+  final double value;
+  final int maxCount;
   final iconSize = 58.0;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Container(
+        SizedBox(
           width: 298,
           height: 58,
           child: Stack(clipBehavior: Clip.none, children: <Widget>[
@@ -28,7 +28,6 @@ class ProgressBar extends StatelessWidget {
                   value: value,
                   valueColor:
                       AlwaysStoppedAnimation<Color>('#F8A23A'.toColor()),
-                  // borderRadius: BorderRadius.circular(5)
                 ),
               ),
             ),
@@ -45,22 +44,28 @@ class ProgressBar extends StatelessWidget {
         Container(
           width: 298,
           height: 25,
-          padding: EdgeInsetsDirectional.only(start: 21, end: 11),
-          child: Row(children: [
-            Align(
+          padding: const EdgeInsetsDirectional.only(start: 21, end: 11),
+          child: Row(
+            children: [
+              const Align(
                 alignment: Alignment.centerLeft,
                 child: Text('0',
-                    style: TextStyle(
-                        color: '#F5F5DC'.toColor(),
-                        fontSize: 24,
-                        fontFamily: 'Iceberg'))),
-            Expanded(child: Container()),
-            Text('186',
-                style: TextStyle(
-                    color: '#F5F5DC'.toColor(),
+                  style: TextStyle(
                     fontSize: 24,
-                    fontFamily: 'Iceberg'))
-          ]),
+                    fontFamily: 'Iceberg'
+                  )
+                )
+              ),
+              Expanded(child: Container()),
+              Text(
+                maxCount.toString(),
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontFamily: 'Iceberg'
+                )
+              )
+            ]
+          ),
         )
       ],
     );

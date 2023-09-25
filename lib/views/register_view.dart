@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/contants/arabic_numerals_to_chinese.dart';
 import 'package:ltrc/contants/publisher_code.dart';
 import 'package:ltrc/data/models/user_model.dart';
+import 'package:ltrc/data/providers/unit_provider.dart';
 import 'package:ltrc/data/providers/user_provider.dart';
 import 'package:ltrc/providers.dart';
 import 'package:ltrc/extensions.dart';
@@ -20,8 +21,6 @@ class RegisterViewState extends ConsumerState<RegisterView> {
   @override
   void initState() {
     super.initState();
-    ref.read(gradeProvider);
-    ref.read(publisherCodeProvider);
   }
 
 
@@ -167,6 +166,14 @@ class RegisterViewState extends ConsumerState<RegisterView> {
                     } catch(e){
                       throw("create user error: $e");
                     }
+
+                    ref.read(totalWordCountProvider.notifier).state = await UnitProvider.getTotalWordCount(
+                      inputPublisher: publisherCodeTable[publisherCode]!, 
+                      inputGrade: grade, 
+                      inputSemester: "上",
+                    );
+
+                    ref.read(learnedWordCountProvider.notifier).state = 0;
                     Navigator.of(context).pushNamed('/mainPage');
                   },
                 )

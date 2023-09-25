@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/contants/publisher_code.dart';
 import 'package:ltrc/data/models/user_model.dart';
+import 'package:ltrc/data/providers/unit_provider.dart';
 import 'package:ltrc/data/providers/user_provider.dart';
 import 'package:ltrc/extensions.dart';
 import 'package:ltrc/providers.dart';
@@ -196,6 +197,17 @@ class LogInViewState extends ConsumerState<LogInView> {
                             ref.read(userNameProvider.notifier).state = user.username;
                             ref.read(gradeProvider.notifier).state = user.grade;
                             ref.read(publisherCodeProvider.notifier).state = publisherCodeTable.keys.firstWhere((e) => publisherCodeTable[e] == user.publisher);
+                            ref.read(totalWordCountProvider.notifier).state = await UnitProvider.getTotalWordCount(
+                              inputPublisher: user.publisher, 
+                              inputGrade: user.grade, 
+                              inputSemester: "上",
+                            );
+                            ref.read(learnedWordCountProvider.notifier).state = await UnitProvider.getLearnedWordCount(
+                              inputAccount: accountController.text,
+                              inputPublisher: user.publisher, 
+                              inputGrade: user.grade, 
+                              inputSemester: "上",
+                            );
                             Navigator.of(context).pushNamed('/mainPage');
                           }
                         } catch (e){
