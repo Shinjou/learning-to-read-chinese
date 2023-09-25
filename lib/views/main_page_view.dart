@@ -41,6 +41,7 @@ class MainPageView extends ConsumerWidget {
             Container(
               height: 54,
               width: 210,
+              alignment: Alignment.center,
               margin: EdgeInsetsDirectional.fromSTEB(0, deviceHeight * 0.0825, 0, deviceHeight * 0.193),
               child: const Text(
                 '學中文',
