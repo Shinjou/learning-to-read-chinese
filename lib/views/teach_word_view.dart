@@ -173,21 +173,20 @@ class _TeachWordViewState extends State<TeachWordView>
 
   Map<String, int> steps = {
     'goToSection2': 0,
-    'listenInSection2': 1,
-    'goToSection3': 2,
-    'seeAnimation': 3,
-    'turnBorderOn1': 4,
-    'practiceWithBorder1': 5,
-    'turnBorderOn2': 6,
-    'practiceWithBorder2': 7,
-    'turnBorderOn3': 8,
-    'practiceWithBorder3': 9,
-    'turnBorderOff1': 10,
-    'practiceWithoutBorder1': 11,
-    'goToSection4': 12,
-    'listenPhrase1': 13,
-    'goToPhrase2': 14,
-    'listenPhrase2': 15
+    'goToSection3': 1,
+    'seeAnimation': 2,
+    'turnBorderOn1': 3,
+    'practiceWithBorder1': 4,
+    'turnBorderOn2': 5,
+    'practiceWithBorder2': 6,
+    'turnBorderOn3': 7,
+    'practiceWithBorder3': 8,
+    'turnBorderOff1': 9,
+    'practiceWithoutBorder1': 10,
+    'goToSection4': 11,
+    'listenPhrase1': 12,
+    'goToPhrase2': 13,
+    'listenPhrase2': 14
   };
 
   @override
@@ -388,7 +387,6 @@ class _TeachWordViewState extends State<TeachWordView>
     
     return DefaultTabController(
       length: 4,
-      // length: isBpmf ? 3 : 4,
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(
@@ -409,18 +407,6 @@ class _TeachWordViewState extends State<TeachWordView>
               Tab(icon: Icon(Icons.create)),
               Tab(icon: Icon(Icons.school)),
             ],
-            // tabs: teachWordTabs,
-            // tabs: 
-            // isBpmf ? [
-            //   const Tab(icon: Icon(Icons.image)),
-            //   const Tab(icon: Icon(Icons.hearing)),
-            //   const Tab(icon: Icon(Icons.school)),
-            // ] : [
-            //   const Tab(icon: Icon(Icons.image)),
-            //   const Tab(icon: Icon(Icons.hearing)),
-            //   const Tab(icon: Icon(Icons.create)),
-            //   const Tab(icon: Icon(Icons.school)),
-            // ],
             controller: _tabController,
             labelColor: '#28231D'.toColor(),
             dividerColor: '#999999'.toColor(),
@@ -450,7 +436,7 @@ class _TeachWordViewState extends State<TeachWordView>
                       sectionName: '看一看', iconsColor: '#D9D9D9'.toColor()),
                     isFirst: true,
                     isLast: false,
-                    onRightClicked: () {
+                    onRightClicked: (nextStepId < steps['goToSection2']!) ? null : () {
                       if (nextStepId == steps['goToSection2']) {
                         setState(() {
                           nextStepId += 1;

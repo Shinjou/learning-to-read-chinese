@@ -47,6 +47,7 @@ class WordVocabContent extends StatelessWidget {
                 ),
                 TextSpan(
                   text: sentence,
+                  // text: "一二三四五六七八九。一二三四五六七八九。一二三四五六七八九。一二三四五六七八九。一二三四五六七八九。一二三四五六七八九。一二三四五六七八九。".substring(0, 60),
                   style: const TextStyle(
                     color: Color.fromRGBO(245, 245, 220, 100),
                   ),
