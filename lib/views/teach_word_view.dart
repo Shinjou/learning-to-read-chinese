@@ -387,8 +387,8 @@ class _TeachWordViewState extends State<TeachWordView>
         : Container()];
     
     return DefaultTabController(
-      // length: teachWordTabs.length,
-      length: isBpmf ? 3 : 4,
+      length: 4,
+      // length: isBpmf ? 3 : 4,
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(
@@ -403,17 +403,24 @@ class _TeachWordViewState extends State<TeachWordView>
           ],
           bottom: 
           TabBar(
-            // tabs: teachWordTabs,
-            tabs: isBpmf ? [
-              const Tab(icon: Icon(Icons.image)),
-              const Tab(icon: Icon(Icons.hearing)),
-              const Tab(icon: Icon(Icons.school)),
-            ] : [
-              const Tab(icon: Icon(Icons.image)),
-              const Tab(icon: Icon(Icons.hearing)),
-              const Tab(icon: Icon(Icons.create)),
-              const Tab(icon: Icon(Icons.school)),
+            tabs: const [
+              Tab(icon: Icon(Icons.image)),
+              Tab(icon: Icon(Icons.hearing)),
+              Tab(icon: Icon(Icons.create)),
+              Tab(icon: Icon(Icons.school)),
             ],
+            // tabs: teachWordTabs,
+            // tabs: 
+            // isBpmf ? [
+            //   const Tab(icon: Icon(Icons.image)),
+            //   const Tab(icon: Icon(Icons.hearing)),
+            //   const Tab(icon: Icon(Icons.school)),
+            // ] : [
+            //   const Tab(icon: Icon(Icons.image)),
+            //   const Tab(icon: Icon(Icons.hearing)),
+            //   const Tab(icon: Icon(Icons.create)),
+            //   const Tab(icon: Icon(Icons.school)),
+            // ],
             controller: _tabController,
             labelColor: '#28231D'.toColor(),
             dividerColor: '#999999'.toColor(),
@@ -431,109 +438,7 @@ class _TeachWordViewState extends State<TeachWordView>
         body: TabBarView(
                 physics: const NeverScrollableScrollPhysics(),
                 controller: _tabController,
-          children: isBpmf ? [
-            TeachWordTabBarView(
-              content: Column(
-                children: [
-                  LeftRightSwitch(
-                    iconsColor: '#D9D9D9'.toColor(),
-                    iconsSize: 35,
-                    rightBorder: nextStepId == steps['goToSection2'],
-                    middleWidget: TeachWordCardTitle(
-                      sectionName: '看一看', iconsColor: '#D9D9D9'.toColor()),
-                    isFirst: true,
-                    isLast: false,
-                    onRightClicked: () {
-                      if (nextStepId == steps['goToSection2']) {
-                        setState(() {
-                          nextStepId += 1;
-                        }); 
-                      }
-                      return _tabController.animateTo(_tabController.index + 1);
-                    },
-                  ),
-                  const SizedBox(height: 60,),
-                  Image(
-                    width: 300,
-                    image: isBpmf ? 
-                      AssetImage('lib/assets/img/bopomo/$word.png') : AssetImage('lib/assets/img/oldWords/$word.png'),
-                  ),
-                ],
-              )),
-            TeachWordTabBarView(
-              content: Column(
-                children: [
-                  LeftRightSwitch(
-                    iconsColor: '#D9D9D9'.toColor(),
-                    iconsSize: 35,
-                    rightBorder: nextStepId == steps['goToSection3'],
-                    middleWidget: TeachWordCardTitle(
-                      sectionName: '聽一聽', iconsColor: '#D9D9D9'.toColor()),
-                    isFirst: false,
-                    isLast: false,
-                    onLeftClicked: () => _tabController.animateTo(_tabController.index - 1),
-                    onRightClicked: () {
-                      if (nextStepId == steps['goToSection3']) {
-                        setState(() {
-                          nextStepId += 11;
-                        }); 
-                      }
-                      return _tabController.animateTo(_tabController.index + 1);
-                    },
-                  ),
-                  const SizedBox(height: 20,),
-                  Padding(
-                    padding: isBpmf ? const EdgeInsets.fromLTRB(0, 0, 0, 0) : const EdgeInsets.fromLTRB(50, 0, 0, 0),
-                    child: Container(
-                      height: 250,
-                      alignment: Alignment.center,
-                      child: Text(word,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 150,
-                          color: const Color.fromRGBO(245, 245, 220, 100),
-                          fontWeight: FontWeight.w100,
-                          fontFamily: isBpmf ? "BpmfOnly" : "Serif",
-                        )),
-                    ),
-                  ),
-                  Container(
-                    alignment: Alignment.bottomLeft,
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(10, 0, 0, 1),
-                      child: Column(
-                        children: [
-                          IconButton(
-                            iconSize: 35,
-                            color: const Color.fromRGBO(245, 245, 220, 100),
-                            onPressed: () async {
-                              var result = await ftts.speak(word);
-                              if (nextStepId == steps['listenInSection2']) {
-                                setState(() {
-                                  nextStepId += 1;
-                                }); 
-                              }
-                            },
-                            icon: Container(
-                              decoration: BoxDecoration(
-                                border: nextStepId == steps['listenInSection2'] ? Border.all(color: '#FFFF93'.toColor(), width: 1.5) : null,
-                              ),
-                              child: const Icon(Icons.volume_up)
-                          )),
-                          const Text('讀音',
-                            textAlign: TextAlign.right,
-                            style: TextStyle(
-                              fontSize: 17.5,
-                              color: Color.fromRGBO(245, 245, 220, 100),
-                          )),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              )),
-            useTabView[vocabIndex]
-          ] : [
+          children: [
             TeachWordTabBarView(
               content: Column(
                 children: [
