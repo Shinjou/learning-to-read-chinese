@@ -30,7 +30,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_riverpod: ^2.4.0
+  flutter_riverpod: ^2.4.4
   flutter_tts: ^3.8.3
   flutter_sound: 9.2.13
 
@@ -41,7 +41,7 @@ dependencies:
   fluttertoast: ^8.2.2
   path: ^1.8.3
   provider: ^6.0.5
-  shared_preferences: ^2.2.1
+  shared_preferences: ^2.2.2
   svg_path_parser: ^1.1.1
   sqflite: ^2.3.0
   sqflite_common_ffi: 2.3.0+2

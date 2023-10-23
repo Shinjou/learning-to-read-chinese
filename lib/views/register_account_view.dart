@@ -48,11 +48,11 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
         }
       },
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           backgroundColor: '#1E1E1E'.toColor(),
           leading: IconButton(icon: const Icon(Icons.chevron_left), onPressed: () => Navigator.pop(context),),
         ),
-        resizeToAvoidBottomInset: false,
         backgroundColor: '#1E1E1E'.toColor(),
         body: SizedBox.expand(
           child: Column(
