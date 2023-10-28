@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/contants/arabic_numerals_to_chinese.dart';
@@ -55,14 +56,14 @@ class RegisterViewState extends ConsumerState<RegisterView> {
                     '年級',
                     style: TextStyle(
                       color: '#F5F5DC'.toColor(),
-                      fontSize: 44,
+                      fontSize: min(deviceWidth * 44 / 360, 50),
                     )
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: deviceHeight * 0.027),
                     child: Container(
                       height: 9,
-                      width: 84,
+                      width: min(deviceWidth * 84 / 360, 94),
                       color: '#F5F5DC'.toColor()
                     )
                   ),
@@ -70,7 +71,7 @@ class RegisterViewState extends ConsumerState<RegisterView> {
                     '課本版本',
                     style: TextStyle(
                       color: '#F5F5DC'.toColor(),
-                      fontSize: 44,
+                      fontSize: min(deviceWidth * 44 / 360, 50),
                     )
                   )
                 ],
@@ -102,7 +103,7 @@ class RegisterViewState extends ConsumerState<RegisterView> {
                     '${numeralToChinese[grade]}年級',
                     style: TextStyle(
                       color: '#000000'.toColor(),
-                      fontSize: 34.0,
+                      fontSize: min(deviceWidth * 0.166, deviceHeight * 0.044),
                     )
                   )
                 ),
@@ -128,7 +129,7 @@ class RegisterViewState extends ConsumerState<RegisterView> {
                   publisherCodeTable[publisherCode]!,
                   style: TextStyle(
                     color: '#000000'.toColor(),
-                    fontSize: 34.0,
+                    fontSize: min(deviceWidth * 0.166, deviceHeight * 0.044),
                   )
                 )
               ),

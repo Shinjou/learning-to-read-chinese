@@ -9,16 +9,17 @@ class ProgressBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double deviceWidth = MediaQuery.of(context).size.width;
     return Column(
       children: [
         SizedBox(
-          width: 298,
+          width: 0.87 * deviceWidth,
           height: 58,
           child: Stack(clipBehavior: Clip.none, children: <Widget>[
             Align(
               alignment: Alignment.center,
               child: Container(
-                width: 240,
+                width: 0.66 * deviceWidth,
                 height: 24,
                 decoration: BoxDecoration(
                     border: Border.all(color: '#F5F5DC'.toColor(), width: 3),
@@ -42,8 +43,7 @@ class ProgressBar extends StatelessWidget {
           ]),
         ),
         Container(
-          width: 298,
-          height: 25,
+          width: 0.87 * deviceWidth,
           padding: const EdgeInsetsDirectional.only(start: 21, end: 11),
           child: Row(
             children: [

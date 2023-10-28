@@ -8,6 +8,8 @@ class TeachWordCardTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double deviceWidth = MediaQuery.of(context).size.width;
+    
     return Container(
       width: MediaQuery.of(context).size.width * 0.44,
       height: 38,
@@ -19,8 +21,8 @@ class TeachWordCardTitle extends StatelessWidget {
       ),
       child: Text(
         sectionName,
-        style: const TextStyle(
-          fontSize: 24,
+        style: TextStyle(
+          fontSize: deviceWidth * 24/360,
           fontWeight: FontWeight.w900,
           color: Colors.black,
         ),

@@ -1,5 +1,6 @@
 // ignore_for_file: unused_local_variable
 
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_riverpod/flutter_riverpod.dart' hide ChangeNotifierProvider, Consumer;
@@ -646,7 +647,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                   builder: (context, controller, child) {
                     return Center(
                       child: SizedBox(
-                        width: deviceWidth * 0.8,
+                        width: min(deviceWidth * 0.8, deviceHeight * 0.684 - 184),
                         child: Column(
                           children: <Widget>[
                             LeftRightSwitch(

@@ -238,14 +238,14 @@ class _SafetyHintRegisterState extends State<SafetyHintRegisterView> {
               SizedBox(height: deviceHeight * 0.02),
 
               const Text(
-                '如果你忘記你的密碼，',
+                '如果你忘記密碼，',
                 style: TextStyle(
                   fontSize: 14.0,
                 )
               ),
 
               const Text(
-                '這些問題可用來驗證你的身分，',
+                '這些問題可驗證你的身份，',
                 style: TextStyle(
                   fontSize: 14.0,
                 )

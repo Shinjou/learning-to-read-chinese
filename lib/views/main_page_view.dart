@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/contants/publisher_code.dart';
@@ -40,13 +41,12 @@ class MainPageView extends ConsumerWidget {
           children: <Widget>[
             Container(
               height: 54,
-              width: 210,
               alignment: Alignment.center,
               margin: EdgeInsetsDirectional.fromSTEB(0, deviceHeight * 0.0825, 0, deviceHeight * 0.193),
-              child: const Text(
+              child: Text(
                 '學中文',
                 style: TextStyle(
-                  fontSize: 46,
+                  fontSize: min(deviceWidth * 46 / 360, 52),
                 )
               )
             ),

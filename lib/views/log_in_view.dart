@@ -36,7 +36,7 @@ class LogInViewState extends ConsumerState<LogInView> {
   Widget build(BuildContext context) {
     
     double deviceHeight = MediaQuery.of(context).size.height;
-
+    double deviceWidth = MediaQuery.of(context).size.width;
     return GestureDetector(
       onTap: () {
         FocusScopeNode currentFocus = FocusScope.of(context);
@@ -51,16 +51,16 @@ class LogInViewState extends ConsumerState<LogInView> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             SizedBox(height: deviceHeight * 0.157),
-            const Text(
+            Text(
                 '學中文',
                 style: TextStyle(
-                  fontSize: 46.0,
+                  fontSize: deviceWidth * 46/360,
                 )
             ),
             SizedBox(height: deviceHeight * 0.162),
             Container(
-              height: 60.0,
-              width: 303.0,
+              height: deviceHeight * 60/712,
+              width: deviceWidth * 5/6,
               decoration: BoxDecoration(
                 color: '#7DDEF8'.toColor(),
                 borderRadius: BorderRadius.circular(5),
@@ -92,8 +92,8 @@ class LogInViewState extends ConsumerState<LogInView> {
             ),
             SizedBox(height: deviceHeight * 0.073),
             Container(
-                height: 60.0,
-                width: 303.0,
+                height: deviceHeight * 60/712,
+                width: deviceWidth * 5/6,
                 decoration: BoxDecoration(
                   color: '#7DDEF8'.toColor(),
                   borderRadius: BorderRadius.circular(5),
@@ -134,14 +134,13 @@ class LogInViewState extends ConsumerState<LogInView> {
             ),
             Center(
               child: SizedBox(
-                height: 50.0,
-                width: 303.0,
+                width: deviceWidth * 5/6,
                 child: Align(
                   alignment: AlignmentDirectional.bottomEnd,
                   child: TextButton(
                     onPressed: () => Navigator.of(context).pushNamed('/resetPwdAccount'),
                     style: TextButton.styleFrom(
-                      fixedSize: const Size(110, 14),
+                      minimumSize: const Size(110, 16),
                     ),
                     child: Text(
                       '忘記密碼',
@@ -160,8 +159,7 @@ class LogInViewState extends ConsumerState<LogInView> {
               maintainSize: true,
               maintainState: true,
               child: Container(
-                height: 24,
-                width: 303,
+                width: deviceWidth * 5/6,
                 alignment: AlignmentDirectional.topStart,
                 child: Text(
                   showErrorHint,
@@ -218,7 +216,7 @@ class LogInViewState extends ConsumerState<LogInView> {
                       }
                     },
                     style: TextButton.styleFrom(
-                      fixedSize: const Size(110, 45),
+                      minimumSize: const Size(110, 30),
                     ),
                     child: Text(
                       '登入',
@@ -237,7 +235,7 @@ class LogInViewState extends ConsumerState<LogInView> {
                   TextButton(
                     onPressed: () => Navigator.of(context).pushNamed('/registerAccount'),
                     style: TextButton.styleFrom(
-                      fixedSize: const Size(110, 45),
+                      minimumSize: const Size(110, 30),
                     ),
                     child: Text(
                       '註冊',
