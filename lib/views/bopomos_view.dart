@@ -40,6 +40,7 @@ class BopomosView extends StatelessWidget {
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) {
                   return WordCard(
+                    disable: false,
                     isBpmf: true,
                     unitId: 0,
                     unitTitle: "學注音",

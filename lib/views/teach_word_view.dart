@@ -146,6 +146,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
             setState(() {
               nextStepId = 100;
             });
+            ref.read(learnedWordCountProvider.notifier).state += 1 ;
             await WordStatusProvider.updateWordStatus(
               status: newStatus
             );
@@ -164,6 +165,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
           setState(() {
             nextStepId = 100;
           });
+          ref.read(learnedWordCountProvider.notifier).state += 1 ;
           await WordStatusProvider.updateWordStatus(
             status: newStatus
           );
@@ -731,6 +733,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
               fontSize: 30,
               isBpmf: isBpmf,
               isVertical: false,
+              disable: true
             ),
             isFirst: (widget.wordIndex == 0),
             isLast: (widget.wordIndex == widget.wordsStatus.length - 1),
