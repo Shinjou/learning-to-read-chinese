@@ -15,7 +15,7 @@ class BopomofoVocabContent extends StatelessWidget {
   Widget build(BuildContext context) {
     String subSentence = sentence;
     if (subSentence.length > 25) {
-      subSentence = subSentence.substring(0, 25) + "...。";
+      subSentence = "${subSentence.substring(0, 25)}...。";
     }
 
     return Column(
@@ -29,7 +29,7 @@ class BopomofoVocabContent extends StatelessWidget {
               Text(vocab,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
-                  fontSize: 55,
+                  fontSize: 48,
                   color: Color.fromRGBO(245, 245, 220, 100),
                   fontFamily: 'BpmfOnly',
               )),
@@ -50,7 +50,7 @@ class BopomofoVocabContent extends StatelessWidget {
                     text: subSentence.split(vocab)[0],
                     style: const TextStyle(
                       height: 1.1,
-                      fontSize: 40,
+                      fontSize: 36,
                       color: Color.fromRGBO(245, 245, 220, 100),
                       fontFamily: 'BpmfOnly',
                     ),

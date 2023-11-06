@@ -107,7 +107,6 @@ class WordCardState extends State<WordCard> {
               style: TextStyle(
                 fontSize: widget.fontSize,
                 fontWeight: FontWeight.w900,
-                fontFamily: widget.isBpmf ? "BpmfOnly" : "Serif",
                 color: Colors.black,
               ),
             ),

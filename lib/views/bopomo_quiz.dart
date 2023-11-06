@@ -101,13 +101,34 @@ class _BopomoQuizState extends State<BopomoQuizView>{
               decoration: BoxDecoration(
                 color: '#013E6D'.toColor(),
               ),
-              child: Text(
-                '第${problemId+1}題\n請拼出「${bopomoSpellingWords[problemId]}」的注音',
+              child: RichText(
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 18,
-                  color: "#F5F5DC".toColor(),
-                )
+                text: TextSpan(
+                  text: '第${problemId+1}題\n請拼出「',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontFamily: 'Serif',
+                    color: "#F5F5DC".toColor(),
+                  ),
+                  children: [
+                    TextSpan(
+                      text: bopomoSpellingWords[problemId],
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontFamily: 'Iceberg',
+                        color: "#F5F5DC".toColor(),
+                      )
+                    ),
+                    TextSpan(
+                      text: '」的注音',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontFamily: 'Serif',
+                        color: "#F5F5DC".toColor(),
+                      )
+                    ),
+                  ]
+                ),
               )
             ),
           ),
@@ -137,6 +158,7 @@ class _BopomoQuizState extends State<BopomoQuizView>{
                     child: const Text(
                       "?",
                       style: TextStyle(
+                        fontFamily: 'BpmfOnly',
                         fontSize: 18,
                         color: Colors.black,
                       ),

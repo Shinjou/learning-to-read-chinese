@@ -10,7 +10,6 @@ import 'package:ltrc/data/providers/word_provider.dart';
 import 'package:ltrc/data/providers/word_status_provider.dart';
 import 'package:ltrc/extensions.dart';
 import 'package:ltrc/providers.dart';
-import 'package:ltrc/views/acknowledge.dart';
 
 import '../contants/arabic_numerals_to_chinese.dart';
 import '../data/models/unit_model.dart';

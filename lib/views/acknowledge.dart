@@ -9,12 +9,16 @@ class Resource{
 
 final List<Resource> resourceList = [
   Resource(
+    resource: "各年級生字表",
+    description: "由中研院語言學研究所李佳穎老師提供，用於所有功能。"
+  ),
+  Resource(
     resource: "注音字卡", 
-    description: "由郭俊成老師提供,來自fb粉絲專頁「麻辣飛天郭」。"
+    description: "由郭俊成老師提供,來自fb粉絲專頁「麻辣飛天郭」,用於注音「看一看」、「用一用」及「拼拼看」。"
   ),
   Resource(
     resource: "字型演變",
-    description: "來自中央研究院開發之「小學堂」字型演變資料庫。"
+    description: "來自中央研究院歷史語言學研究所與資訊科學研究所開發之「小學堂」字型演變資料庫。"
   ),
   Resource(
     resource: "筆順動畫",
@@ -23,6 +27,10 @@ final List<Resource> resourceList = [
   Resource(
     resource: "諮詢顧問",
     description: "鄭漢文校長與陳素慧老師擔任諮詢顧問，分享現場教師觀點。"
+  ),
+  Resource(
+    resource: "APP開發",
+    description: "林羿成、蔡伊甯、王藝錡、李昊翰合力開發此軟體，版權歸誠致教育基金會所有。"
   )
 ];
 

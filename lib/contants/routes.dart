@@ -12,7 +12,6 @@ import 'package:ltrc/views/reset_pwd_account.dart';
 import 'package:ltrc/views/safety_hint_register_view.dart';
 import 'package:ltrc/views/safety_hint_verify_view.dart';
 import 'package:ltrc/views/setting_view.dart';
-import 'package:ltrc/views/teach_word_view.dart';
 import 'package:ltrc/views/units_view.dart';
 import 'package:ltrc/views/words_view.dart';
 

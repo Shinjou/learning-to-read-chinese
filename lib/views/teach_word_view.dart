@@ -1,13 +1,16 @@
 // ignore_for_file: unused_local_variable
 
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter_riverpod/flutter_riverpod.dart' hide ChangeNotifierProvider, Consumer;
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:ltrc/contants/bopomos.dart';
 import 'package:ltrc/data/models/word_status_model.dart';
 import 'package:ltrc/data/providers/word_status_provider.dart';
 import 'package:ltrc/extensions.dart';
+import 'package:ltrc/providers.dart';
 import 'package:ltrc/widgets/mainPage/left_right_switch.dart';
 import 'package:ltrc/widgets/teach_word/bpmf_vocab_content.dart';
 import 'package:ltrc/widgets/teach_word/card_title.dart';
@@ -18,7 +21,7 @@ import 'package:ltrc/widgets/teach_word/word_vocab_content.dart';
 import 'package:ltrc/widgets/word_card.dart';
 import 'package:provider/provider.dart';
 
-class TeachWordView extends StatefulWidget {
+class TeachWordView extends ConsumerStatefulWidget {
   final int unitId;
   final String unitTitle;
   final List<WordStatus> wordsStatus;
@@ -35,10 +38,10 @@ class TeachWordView extends StatefulWidget {
   });
 
   @override
-  State<TeachWordView> createState() => _TeachWordViewState();
+  TeachWordViewState createState() => TeachWordViewState();
 }
 
-class _TeachWordViewState extends State<TeachWordView>
+class TeachWordViewState extends ConsumerState<TeachWordView>
     with TickerProviderStateMixin {
   late StrokeOrderAnimationController _strokeOrderAnimationControllers;
   late TabController _tabController;
@@ -56,7 +59,7 @@ class _TeachWordViewState extends State<TeachWordView>
     final String response =
         await rootBundle.loadString('lib/assets/svg/${widget.wordsStatus[widget.wordIndex].word}.json');
 
-    return response.replaceAll("\"", "\'");
+    return response.replaceAll("\"", "'");
   }
 
   Future myLoadAsset(String path) async {
@@ -101,7 +104,7 @@ class _TeachWordViewState extends State<TeachWordView>
     ftts.setVolume(1.0);
     isBpmf = (initials.contains(widget.wordsStatus[widget.wordIndex].word) || prenuclear.contains(widget.wordsStatus[widget.wordIndex].word) || finals.contains(widget.wordsStatus[widget.wordIndex].word));
     getWord();
-    _tabController = isBpmf ? TabController(length: 4, vsync: this, animationDuration: Duration.zero) : TabController(length: 4, vsync: this, animationDuration: Duration.zero);
+    _tabController = isBpmf ? TabController(length: 3, vsync: this, animationDuration: Duration.zero) : TabController(length: 4, vsync: this, animationDuration: Duration.zero);
     readJson().then((result) {
       setState(() {
         _strokeOrderAnimationControllers = StrokeOrderAnimationController(
@@ -116,7 +119,7 @@ class _TeachWordViewState extends State<TeachWordView>
                 });
                 Fluttertoast.showToast(
                   msg: [
-                    "恭喜！筆畫全部正確！讓我們再練習 ${practiceTimeLeft} 次哦！"
+                    "恭喜！筆畫全部正確！讓我們再練習 $practiceTimeLeft 次哦！"
                   ].join(),
                   fontSize: 30,
                 );
@@ -128,7 +131,7 @@ class _TeachWordViewState extends State<TeachWordView>
                 });
                 Fluttertoast.showToast(
                   msg: [
-                    "恭喜！筆畫全部正確！讓我們 去掉邊框 再練習 ${practiceTimeLeft} 遍哦！"
+                    "恭喜！筆畫全部正確！讓我們 去掉邊框 再練習 $practiceTimeLeft 遍哦！"
                   ].join(),
                   fontSize: 30,
                 );
@@ -260,6 +263,7 @@ class _TeachWordViewState extends State<TeachWordView>
                           if (vocabCnt == 1) {
                             WordStatus newStatus = widget.wordsStatus[widget.wordIndex];
                             newStatus.learned = true;
+                            ref.read(learnedWordCountProvider.notifier).state += 1 ;
                             await WordStatusProvider.updateWordStatus(
                               status: newStatus
                             );
@@ -271,19 +275,19 @@ class _TeachWordViewState extends State<TeachWordView>
                     const Text('讀音',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontSize: 17.5,
+                        fontSize: 17,
                         color: Color.fromRGBO(245, 245, 220, 100),
                       )),
                   ],
                 ),
                 (img1Exist && !isBpmf)
                   ? Image(
-                    height: 150,
+                    height: deviceHeight*0.15,
                     image: AssetImage(
                       'lib/assets/img/vocabulary/${wordObj['vocab1']}.png'),
                   )
                   : Container(
-                    height: isBpmf ? 80 : 150,
+                    height: deviceHeight*0.08
                   ),
                 Text("1 / $vocabCnt",
                   style: const TextStyle(
@@ -350,6 +354,7 @@ class _TeachWordViewState extends State<TeachWordView>
                             }); 
                             WordStatus newStatus = widget.wordsStatus[widget.wordIndex];
                             newStatus.learned = true;
+                            ref.read(learnedWordCountProvider.notifier).state += 1 ;
                             await WordStatusProvider.updateWordStatus(
                               status: newStatus
                             );
@@ -642,7 +647,7 @@ class _TeachWordViewState extends State<TeachWordView>
                   builder: (context, controller, child) {
                     return Center(
                       child: SizedBox(
-                        width: deviceWidth * 0.8,
+                        width: min(deviceWidth * 0.8, deviceHeight * 0.684 - 184),
                         child: Column(
                           children: <Widget>[
                             LeftRightSwitch(

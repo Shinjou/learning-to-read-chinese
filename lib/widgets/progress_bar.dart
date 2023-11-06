@@ -1,34 +1,34 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ltrc/extensions.dart';
 
 class ProgressBar extends StatelessWidget {
-  const ProgressBar({this.value});
-  final value;
+  const ProgressBar({super.key, required this.maxCount, required this.value});
+  final int value;
+  final int maxCount;
   final iconSize = 58.0;
 
   @override
   Widget build(BuildContext context) {
+    double deviceWidth = MediaQuery.of(context).size.width;
     return Column(
       children: [
-        Container(
-          width: 298,
+        SizedBox(
+          width: 0.87 * deviceWidth,
           height: 58,
           child: Stack(clipBehavior: Clip.none, children: <Widget>[
             Align(
               alignment: Alignment.center,
               child: Container(
-                width: 240,
+                width: 0.66 * deviceWidth,
                 height: 24,
                 decoration: BoxDecoration(
                     border: Border.all(color: '#F5F5DC'.toColor(), width: 3),
                     borderRadius: BorderRadius.circular(10)),
                 child: LinearProgressIndicator(
                   backgroundColor: '#D9D9D9'.toColor(),
-                  value: value,
+                  value: value/maxCount,
                   valueColor:
                       AlwaysStoppedAnimation<Color>('#F8A23A'.toColor()),
-                  // borderRadius: BorderRadius.circular(5)
                 ),
               ),
             ),
@@ -43,24 +43,27 @@ class ProgressBar extends StatelessWidget {
           ]),
         ),
         Container(
-          width: 298,
-          height: 25,
-          padding: EdgeInsetsDirectional.only(start: 21, end: 11),
-          child: Row(children: [
-            Align(
+          width: 0.87 * deviceWidth,
+          padding: const EdgeInsetsDirectional.only(start: 21, end: 11),
+          child: Row(
+            children: [
+              Align(
                 alignment: Alignment.centerLeft,
-                child: Text('0',
-                    style: TextStyle(
-                        color: '#F5F5DC'.toColor(),
-                        fontSize: 24,
-                        fontFamily: 'Iceberg'))),
-            Expanded(child: Container()),
-            Text('186',
-                style: TextStyle(
-                    color: '#F5F5DC'.toColor(),
+                child: Text(value.toString(),
+                  style: const TextStyle(
                     fontSize: 24,
-                    fontFamily: 'Iceberg'))
-          ]),
+                  )
+                )
+              ),
+              Expanded(child: Container()),
+              Text(
+                maxCount.toString(),
+                style: const TextStyle(
+                  fontSize: 24,
+                )
+              )
+            ]
+          ),
         )
       ],
     );

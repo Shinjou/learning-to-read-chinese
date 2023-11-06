@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ltrc/providers.dart';
 import 'package:ltrc/views/log_in_view.dart';
 
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -17,6 +18,7 @@ class MyApp extends ConsumerWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    int grade = ref.watch(gradeProvider); 
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -27,7 +29,7 @@ class MyApp extends ConsumerWidget {
         ),
         scaffoldBackgroundColor: "#28231D".toColor(),
         useMaterial3: true,
-        fontFamily: 'Serif',
+        fontFamily: grade < 3 ? 'Serif': 'Iceberg', 
         textTheme: const TextTheme(
           bodyMedium: TextStyle(),
           bodyLarge: TextStyle(),

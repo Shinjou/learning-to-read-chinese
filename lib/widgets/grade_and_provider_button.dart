@@ -42,7 +42,7 @@ class GradeAndProviderButton extends StatelessWidget {
           backgroundColor: MaterialStatePropertyAll('#D9D9D9'.toColor())
         ),
         child: Text(
-          '$text',
+          text,
           style: TextStyle(
             color: '#000000'.toColor(),
             fontSize: fontSize,
