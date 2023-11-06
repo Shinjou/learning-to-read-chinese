@@ -8,13 +8,13 @@ import 'stroke_order_animation_controller.dart';
 class StrokeOrderAnimator extends StatefulWidget {
   final StrokeOrderAnimationController _controller;
 
-  StrokeOrderAnimator(this._controller, {Key? key}) : super(key: key);
+  const StrokeOrderAnimator(this._controller, {Key? key}) : super(key: key);
 
   @override
-  _StrokeOrderAnimatorState createState() => _StrokeOrderAnimatorState();
+  StrokeOrderAnimatorState createState() => StrokeOrderAnimatorState();
 }
 
-class _StrokeOrderAnimatorState extends State<StrokeOrderAnimator> {
+class StrokeOrderAnimatorState extends State<StrokeOrderAnimator> {
   List<Offset?> _points = <Offset>[];
 
   @override
@@ -94,11 +94,10 @@ class _StrokeOrderAnimatorState extends State<StrokeOrderAnimator> {
                 brushColor: widget._controller.brushColor,
                 brushWidth: widget._controller.brushWidth),
           if (widget._controller.isQuizzing)
-            Container(
-              child: CustomPaint(
-                painter: Brush(_points,
-                    brushColor: widget._controller.brushColor,
-                    brushWidth: widget._controller.brushWidth),
+            CustomPaint(
+              painter: Brush(_points,
+                brushColor: widget._controller.brushColor,
+                brushWidth: widget._controller.brushWidth
               ),
             ),
         ],
@@ -106,20 +105,18 @@ class _StrokeOrderAnimatorState extends State<StrokeOrderAnimator> {
     );
   }
 
-  List<Container> paintCorrectStrokes(List<List<Offset>> correctStrokePaths,
+  List<CustomPaint> paintCorrectStrokes(List<List<Offset>> correctStrokePaths,
       {Color brushColor = Colors.black, double brushWidth = 8}) {
-    final List<Container> brushStrokes = [];
+    final List<CustomPaint> brushStrokes = [];
 
     for (var strokePath in correctStrokePaths) {
       if (strokePath.isNotEmpty) {
         brushStrokes.add(
-          Container(
-            child: CustomPaint(
-              painter: Brush(
-                strokePath,
-                brushColor: brushColor,
-                brushWidth: brushWidth,
-              ),
+          CustomPaint(
+            painter: Brush(
+              strokePath,
+              brushColor: brushColor,
+              brushWidth: brushWidth,
             ),
           ),
         );
@@ -194,7 +191,7 @@ class StrokePainter extends CustomPainter {
             contourPaths.last.computeMetrics().first.extractPath(
                 lenSecondPath - (animation?.value ?? 1) * lenSecondPath,
                 lenSecondPath),
-            Offset(0, 0));
+            const Offset(0, 0));
 
         canvas.drawPath(finalOutlinePath, strokePaint);
       }
@@ -240,10 +237,10 @@ List<Path> extractContourPaths(
     path1 = metrics.extractPath(strokeStartLength, strokeEndLength);
     path2 = metrics.extractPath(strokeEndLength, metrics.length);
     path2.extendWithPath(
-        metrics.extractPath(0, strokeStartLength), Offset(0, 0));
+        metrics.extractPath(0, strokeStartLength), const Offset(0, 0));
   } else {
     path1 = metrics.extractPath(strokeStartLength, metrics.length);
-    path1.extendWithPath(metrics.extractPath(0, strokeEndLength), Offset(0, 0));
+    path1.extendWithPath(metrics.extractPath(0, strokeEndLength), const Offset(0, 0));
     path2 = metrics.extractPath(strokeEndLength, strokeStartLength);
   }
 
@@ -304,6 +301,7 @@ class Brush extends CustomPainter {
     return oldDelegate.points != points;
   }
 
+  @override
   void paint(Canvas canvas, Size size) {
     Paint paint = Paint()
       ..color = brushColor

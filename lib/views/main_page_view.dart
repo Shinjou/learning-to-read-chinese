@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/contants/publisher_code.dart';
@@ -5,7 +6,7 @@ import 'package:ltrc/data/models/unit_model.dart';
 import 'package:ltrc/data/providers/unit_provider.dart';
 import 'package:ltrc/extensions.dart';
 import 'package:ltrc/providers.dart';
-import 'package:ltrc/widgets/progressBar.dart';
+import 'package:ltrc/widgets/progress_bar.dart';
 
 class MainPageView extends ConsumerWidget {
   const MainPageView({super.key});
@@ -15,6 +16,9 @@ class MainPageView extends ConsumerWidget {
 
     double deviceHeight = MediaQuery.of(context).size.height;
     double deviceWidth = MediaQuery.of(context).size.width;
+    int totalWordCount = ref.watch(totalWordCountProvider);
+    int learnedWordCount = ref.watch(learnedWordCountProvider);
+
 
     return Scaffold(
       backgroundColor: '#28231D'.toColor(),
@@ -37,12 +41,12 @@ class MainPageView extends ConsumerWidget {
           children: <Widget>[
             Container(
               height: 54,
-              width: 210,
+              alignment: Alignment.center,
               margin: EdgeInsetsDirectional.fromSTEB(0, deviceHeight * 0.0825, 0, deviceHeight * 0.193),
-              child: const Text(
+              child: Text(
                 '學中文',
                 style: TextStyle(
-                  fontSize: 46,
+                  fontSize: min(deviceWidth * 46 / 360, 52),
                 )
               )
             ),
@@ -84,12 +88,12 @@ class MainPageView extends ConsumerWidget {
               )
             ),
             const Text(
-              '收集生字卡',
+              '學過的生字卡',
               style: TextStyle(
                 fontSize: 22,
               )
             ),
-            const ProgressBar(value: 0.0)
+            ProgressBar(maxCount: totalWordCount, value: learnedWordCount),
           ]
         ),
       )

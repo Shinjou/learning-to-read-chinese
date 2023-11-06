@@ -13,15 +13,18 @@ class WordVocabContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    double deviceWidth = MediaQuery.of(context).size.width;
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(vocab,
           textAlign: TextAlign.center,
-          style: const TextStyle(
-            fontSize: 45,
-            color: Color.fromRGBO(245, 245, 220, 100),
+          style: TextStyle(
+            fontSize: deviceWidth * 0.125,
+            color: const Color.fromRGBO(245, 245, 220, 100),
           )),
         Padding(
           padding: const EdgeInsets.all(10.0),
@@ -29,27 +32,31 @@ class WordVocabContent extends StatelessWidget {
             textAlign: TextAlign.start,
             TextSpan(
               text: "解釋：\n",
-              style: const TextStyle(
+              style: TextStyle(
                 height: 1.1,
-                fontSize: 18,
-                color: Color.fromRGBO(228, 219, 124, 1),
+                fontSize: deviceWidth / 20,
+                color: const Color.fromRGBO(228, 219, 124, 1),
                 fontWeight: FontWeight.bold,
               ),
               children: <InlineSpan>[
                 TextSpan(
                   text: meaning,
-                  style: const TextStyle(
-                    color: Color.fromRGBO(245, 245, 220, 100),
+                  style: TextStyle(
+                    fontSize: deviceWidth / 20,
+                    color: const Color.fromRGBO(245, 245, 220, 100),
                   ),
                 ),
-                const TextSpan(
+                TextSpan(
                   text: '\n\n例句：\n',
+                  style: TextStyle(
+                    fontSize: deviceWidth / 20,
+                  ),
                 ),
                 TextSpan(
                   text: sentence,
-                  // text: "一二三四五六七八九。一二三四五六七八九。一二三四五六七八九。一二三四五六七八九。一二三四五六七八九。一二三四五六七八九。一二三四五六七八九。".substring(0, 60),
-                  style: const TextStyle(
-                    color: Color.fromRGBO(245, 245, 220, 100),
+                  style: TextStyle(
+                    fontSize: deviceWidth / 20,
+                    color: const Color.fromRGBO(245, 245, 220, 100),
                   ),
                 ),
               ])),

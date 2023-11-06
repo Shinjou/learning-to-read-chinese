@@ -14,7 +14,7 @@ class RegisterAccountView extends StatefulWidget {
 const String accountLengthErrorHint = "帳號長度不足 6 位英/數字";
 const String pwdLengthErrorHint = "密碼長度不足 4 位英/數字";
 const String pwdConfirmErrorHint = "確認密碼錯誤";
-const String duplicateAccountErrorHint = "此帳號已被其他人建立";
+const String duplicateAccountErrorHint = "此帳號已被建立";
 
 class _RegisterAccountViewState extends State<RegisterAccountView> {
 
@@ -39,6 +39,7 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
   Widget build(BuildContext context) {
 
     double deviceHeight = MediaQuery.of(context).size.height;
+    double deviceWidth = MediaQuery.of(context).size.width;
 
     return GestureDetector(
       onTap: () {
@@ -48,11 +49,11 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
         }
       },
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           backgroundColor: '#1E1E1E'.toColor(),
           leading: IconButton(icon: const Icon(Icons.chevron_left), onPressed: () => Navigator.pop(context),),
         ),
-        resizeToAvoidBottomInset: false,
         backgroundColor: '#1E1E1E'.toColor(),
         body: SizedBox.expand(
           child: Column(
@@ -63,7 +64,7 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
                 '學中文',
                 style: TextStyle(
                   color: '#F5F5DC'.toColor(),
-                  fontSize: 46.0,
+                  fontSize: deviceWidth * 46/360,
                 )
               ),
               SizedBox(height: deviceHeight * 0.050),
@@ -74,7 +75,7 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
                 maintainState: true,
                 child: Container(
                   height: 24,
-                  width: 303,
+                  width: deviceWidth * 5/6,
                   alignment: AlignmentDirectional.topStart,
                   child: Text(
                     '至少6個字母/數字',
@@ -87,7 +88,7 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
               ),
               Container(
                 height: 60.0,
-                width: 303.0,
+                width: deviceWidth * 5/6,
                 decoration: BoxDecoration(
                   color: '#7DDEF8'.toColor(),
                   borderRadius: BorderRadius.circular(5),
@@ -133,7 +134,7 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
                 maintainState: true,
                 child: Container(
                   height: 24,
-                  width: 303,
+                  width: deviceWidth * 5/6,
                   alignment: AlignmentDirectional.topStart,
                   child: Text(
                     '至少4個數字',
@@ -146,7 +147,7 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
               ),
               Container(
                 height: 60.0,
-                width: 303.0,
+                width: deviceWidth * 5/6,
                 decoration: BoxDecoration(
                   color: '#7DDEF8'.toColor(),
                   borderRadius: BorderRadius.circular(5),
@@ -196,7 +197,7 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
               SizedBox(height: deviceHeight * 0.0343),
               Container(
                 height: 60.0,
-                width: 303.0,
+                width: deviceWidth * 5/6,
                 decoration: BoxDecoration(
                   color: '#7DDEF8'.toColor(),
                   borderRadius: BorderRadius.circular(5),
@@ -241,7 +242,7 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
                 maintainState: true,
                 child: Container(
                   height: 24,
-                  width: 303,
+                  width: deviceWidth * 5/6,
                   alignment: AlignmentDirectional.topStart,
                   child: Text(
                     showErrorHint,
