@@ -610,8 +610,8 @@ class _TeachWordViewState extends State<TeachWordView>
                               child: GridView(
                                 gridDelegate:
                                   const SliverGridDelegateWithFixedCrossAxisCount(
-                                    childAspectRatio: 1.5,
-                                    crossAxisCount: 4,
+                                    childAspectRatio: 2.25,
+                                    crossAxisCount: 3,
                                     mainAxisSpacing: 6,
                                   ),
                                 primary: false,
@@ -678,14 +678,6 @@ class _TeachWordViewState extends State<TeachWordView>
                                         controller.setShowOutline(!controller.showOutline);
                                       } : null,
                                   )),
-                                IconButton(
-                                  iconSize: 34,
-                                  color: const Color.fromRGBO(245, 245, 220, 100),
-                                  icon: const Icon(Icons.restart_alt),
-                                  onPressed: () {
-                                    controller.reset();
-                                  },
-                                ),
                                 const Text('筆順',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
@@ -700,12 +692,6 @@ class _TeachWordViewState extends State<TeachWordView>
                                     color: Color.fromRGBO(245, 245, 220, 100),
                                 )),
                                 const Text('邊框',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 17,
-                                    color: Color.fromRGBO(245, 245, 220, 100),
-                                )),
-                                const Text('重新',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontSize: 17,
