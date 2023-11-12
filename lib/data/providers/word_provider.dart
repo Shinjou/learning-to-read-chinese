@@ -43,7 +43,7 @@ class WordProvider {
   static Future<Database> initDatabase() async =>
     database ??= await openDatabase(
       join(await getDatabasesPath(), 'all.sqlite'),
-      version: 1,
+      version: 2,
       onConfigure: (Database db) async => await db.execute("PRAGMA foreign_keys = ON"),
     );
 

@@ -34,7 +34,7 @@ class WordPhraseProvider {
   static Future<Database> initDatabase() async =>
     database ??= await openDatabase(
       join(await getDatabasesPath(), 'all.sqlite'),
-      version: 1,
+      version: 2,
     );
 
   static Future<List<int>> getPhrasesId({required int inputWordId}) async {

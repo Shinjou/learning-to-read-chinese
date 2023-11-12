@@ -33,7 +33,7 @@ class UserProvider {
           "CREATE TABLE $tableName($databaseAccount TEXT PRIMARY KEY, $databasePassword TEXT, $databaseUserName TEXT, $databaseSafetyQuestionId1 INTEGER, $databaseSafetyAnswer1 TEXT, $databaseSafetyQuestionId2 INTEGER, $databaseSafetyAnswer2 TEXT, $databaseGrade INTEGER, $databasePublisher TEXT)",
         );
       },
-      version: 1,
+      version: 2,
     );
 
   static Future<void> addUser({required User user}) async {

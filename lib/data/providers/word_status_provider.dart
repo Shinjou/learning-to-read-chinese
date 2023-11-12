@@ -29,7 +29,7 @@ class WordStatusProvider {
           "CREATE TABLE $tableName($databaseId INTEGER PRIMARY KEY AUTOINCREMENT, $databaseUserAccount TEXT, $databaseWord TEXT, $databaseLearned INTEGER, $databaseLiked INTEGER, UNIQUE($databaseUserAccount, $databaseWord))",
         );
       },
-      version: 1,
+      version: 2,
     );
 
   static Future<void> addWordStatus({required WordStatus status}) async {
