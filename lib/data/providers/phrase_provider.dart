@@ -38,7 +38,7 @@ class PhraseProvider {
   static Future<Database> initDatabase() async =>
     database ??= await openDatabase(
       join(await getDatabasesPath(), 'all.sqlite'),
-      version: 1,
+      version: 2,
     );
 
   static Future<void> addPhrase(Phrase phrase) async {

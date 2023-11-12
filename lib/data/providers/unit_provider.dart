@@ -45,7 +45,7 @@ class UnitProvider {
   static Future<Database> initDatabase() async =>
     database ??= await openDatabase(
       join(await getDatabasesPath(), 'all.sqlite'),
-      version: 1,
+      version: 2,
     );
 
   static Future<void> addWordsInUnit(Unit unit) async {
