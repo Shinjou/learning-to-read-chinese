@@ -17,6 +17,7 @@ class WordCard extends StatefulWidget {
     required this.fontSize,
     required this.isBpmf,
     required this.isVertical,
+    required this.disable
   });
 
   final int unitId;
@@ -29,6 +30,7 @@ class WordCard extends StatefulWidget {
   final List<Map> wordsPhrase;
   final int wordIndex;
   final bool isVertical;
+  final bool disable;
   
   @override
   WordCardState createState() => WordCardState();
@@ -46,7 +48,7 @@ class WordCardState extends State<WordCard> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
+      onTap: widget.disable ? () {} : () {
         Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => TeachWordView(
             unitId: widget.unitId,

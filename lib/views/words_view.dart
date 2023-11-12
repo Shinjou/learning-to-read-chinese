@@ -55,6 +55,7 @@ class WordsView extends ConsumerWidget {
                     sizedBoxHeight: 155,
                     fontSize: 48,
                     isVertical: true,
+                    disable: false,
                   );
                 },
                 childCount: newWordsStatus.length,
@@ -94,6 +95,7 @@ class WordsView extends ConsumerWidget {
                     sizedBoxHeight: 155,
                     fontSize: 48,
                     isVertical: true,
+                    disable: false
                   );
                 },
                 childCount: extraWordsStatus.length,
