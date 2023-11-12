@@ -578,24 +578,24 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                     child: Column(
                                       children: [
                                         Icon(
-                                          (practiceTimeLeft >= 4) ? Icons.check_circle_outline_outlined : Icons.check_circle,
-                                          color: (practiceTimeLeft >= 4) ? '#999999'.toColor() : '#F8A339'.toColor(),
+                                          (practiceTimeLeft >= 4 && !wordIsLearned) ? Icons.check_circle_outline_outlined : Icons.check_circle,
+                                          color: (practiceTimeLeft >= 4 && !wordIsLearned) ? '#999999'.toColor() : '#F8A339'.toColor(),
                                           size: 25.0,
                                         ),
                                         Icon(
-                                          (practiceTimeLeft >= 3) ? Icons.check_circle_outline_outlined : Icons.check_circle,
-                                          color: (practiceTimeLeft >= 3) ? '#999999'.toColor() : '#F8A339'.toColor(),
+                                          (practiceTimeLeft >= 3 && !wordIsLearned) ? Icons.check_circle_outline_outlined : Icons.check_circle,
+                                          color: (practiceTimeLeft >= 3 && !wordIsLearned) ? '#999999'.toColor() : '#F8A339'.toColor(),
                                           size: 25.0,
                                         ),
                                         Icon(
-                                          (practiceTimeLeft >= 2) ? Icons.check_circle_outline_outlined : Icons.check_circle,
-                                          color: (practiceTimeLeft >= 2) ? '#999999'.toColor() : '#F8A339'.toColor(),
+                                          (practiceTimeLeft >= 2 && !wordIsLearned) ? Icons.check_circle_outline_outlined : Icons.check_circle,
+                                          color: (practiceTimeLeft >= 2 && !wordIsLearned) ? '#999999'.toColor() : '#F8A339'.toColor(),
                                           size: 25.0,
                                         ),
                                         const SizedBox(height: 15,),
                                         Icon(
-                                          (practiceTimeLeft >= 1) ? Icons.check_circle_outline_outlined : Icons.check_circle,
-                                          color: (practiceTimeLeft >= 1) ? '#999999'.toColor() : '#F8A3A9'.toColor(),
+                                          (practiceTimeLeft >= 1 && !wordIsLearned) ? Icons.check_circle_outline_outlined : Icons.check_circle,
+                                          color: (practiceTimeLeft >= 1 && !wordIsLearned) ? '#999999'.toColor() : '#F8A3A9'.toColor(),
                                           size: 25.0,
                                         ),
                                       ]
