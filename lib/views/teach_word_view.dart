@@ -55,11 +55,11 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
   int nextStepId = 0;
   bool isBpmf = false;
   ValueNotifier<int> currentTabIndex = ValueNotifier(0);
-  void NextTab() async {
+  void nextTab() async {
     currentTabIndex.value++;
     bool wordIsLearned = widget.wordsStatus[widget.wordIndex].learned;
     if(!wordIsLearned) {
-      print(nextStepId);
+      debugPrint(nextStepId.toString());
       if (nextStepId == steps['goToSection2']) {
         setState(() {
           nextStepId += 1;
@@ -102,7 +102,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
     if (wordObj['vocab1'] != "") {
       vocabCnt += 1;
       var imgAsset = await myLoadAsset(
-          'lib/assets/img/vocabulary/${wordObj['vocab1']}.png');
+          'lib/assets/img/vocabulary/${wordObj['vocab1']}.webp');
       if (imgAsset == null) {
         img1Exist = false;
       } else {
@@ -112,7 +112,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
     if (wordObj['vocab2'] != "") {
       vocabCnt += 1;
       var imgAsset = await myLoadAsset(
-          'lib/assets/img/vocabulary/${wordObj['vocab2']}.png');
+          'lib/assets/img/vocabulary/${wordObj['vocab2']}.webp');
       if (imgAsset == null) {
         img2Exist = false;
       } else {
@@ -128,7 +128,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
     ftts.setSpeechRate(0.5);
     ftts.setVolume(1.0);
     ftts.setCompletionHandler(() async {
-      print(nextStepId);
+      debugPrint(nextStepId.toString());
       bool wordIsLearned = widget.wordsStatus[widget.wordIndex].learned;
       if(!wordIsLearned) {
         if (nextStepId == steps['goToSection2']) {
@@ -137,7 +137,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
           }); 
         }
         else if (nextStepId == steps['goToSection4']) {
-          print(vocabCnt);
+          debugPrint(vocabCnt.toString());
           if (vocabCnt == 1) {
             WordStatus newStatus = widget.wordsStatus[widget.wordIndex];
             setState(() {
@@ -171,7 +171,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
           );
         }
       }
-      print("Speech has completed");
+      debugPrint("Speech has completed");
     });
     if(widget.wordsStatus[widget.wordIndex].learned) nextStepId = 100;
     isBpmf = (initials.contains(widget.wordsStatus[widget.wordIndex].word) || prenuclear.contains(widget.wordsStatus[widget.wordIndex].word) || finals.contains(widget.wordsStatus[widget.wordIndex].word));
@@ -313,7 +313,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                   ? Image(
                     height: deviceHeight*0.15,
                     image: AssetImage(
-                      'lib/assets/img/vocabulary/${wordObj['vocab1']}.png'),
+                      'lib/assets/img/vocabulary/${wordObj['vocab1']}.webp'),
                   )
                   : Container(
                     height: deviceHeight*0.08
@@ -387,7 +387,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                     ? Image(
                         height: 150,
                         image: AssetImage(
-                        'lib/assets/img/vocabulary/${wordObj['vocab2']}.png'),
+                        'lib/assets/img/vocabulary/${wordObj['vocab2']}.webp'),
                       )
                     : Container(
                         height: isBpmf ? 0 : 150,
@@ -459,7 +459,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                     isFirst: true,
                     isLast: false,
                     onRightClicked: (nextStepId == steps['goToSection2']! || wordIsLearned) ? () async {
-                      NextTab();
+                      nextTab();
                       var result = await ftts.speak(word);
                       return _tabController.animateTo(_tabController.index + 1);
                     } : null,
@@ -468,7 +468,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                   Image(
                     width: 300,
                     image: isBpmf ? 
-                      AssetImage('lib/assets/img/bopomo/$word.png') : AssetImage('lib/assets/img/oldWords/$word.png'),
+                      AssetImage('lib/assets/img/bopomo/$word.png') : AssetImage('lib/assets/img/oldWords/$word.webp'),
                   ),
                 ],
               )),
@@ -488,7 +488,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                       return _tabController.animateTo(_tabController.index - 1);
                     } : null,
                     onRightClicked: (nextStepId == steps['goToSection3'] || wordIsLearned) ? () {
-                      NextTab();
+                      nextTab();
                       return _tabController.animateTo(_tabController.index + 1);
                     } : null,
                   ),
@@ -557,7 +557,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                 return _tabController.animateTo(_tabController.index - 1);
                               } : null,
                               onRightClicked: (nextStepId == steps['goToSection4'] || wordIsLearned) ? () {
-                                NextTab();
+                                nextTab();
                                 return _tabController.animateTo(_tabController.index + 1);
                               } : null,
                             ),
@@ -643,7 +643,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                             }
                                           } else {
                                             controller.stopAnimation();
-                                            print("stop animation // nextStepId update time");
+                                            debugPrint("stop animation // nextStepId update time");
                                           }
                                         }
                                       : null,

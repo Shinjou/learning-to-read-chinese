@@ -12,7 +12,7 @@ class LeftRightSwitch extends StatelessWidget {
   final VoidCallback? onRightClicked;
 
   const LeftRightSwitch({
-    Key? key,
+    super.key,
     required this.iconsColor,
     required this.iconsSize,
     required this.rightBorder,
@@ -21,7 +21,7 @@ class LeftRightSwitch extends StatelessWidget {
     required this.isLast,
     this.onLeftClicked,
     this.onRightClicked,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

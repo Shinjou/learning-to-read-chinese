@@ -5,11 +5,11 @@ class BopomofoVocabContent extends StatelessWidget {
   final String vocab;
   final String sentence;
   const BopomofoVocabContent({
-    Key? key,
+    super.key,
     required this.word,
     required this.vocab,
     required this.sentence,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

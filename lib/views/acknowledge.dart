@@ -73,7 +73,7 @@ class AcknowledgeView extends StatelessWidget {
                         )
                       )
                     );
-                  }).toList()
+                  })
                 ]
               ),
             )

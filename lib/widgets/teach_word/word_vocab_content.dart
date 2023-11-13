@@ -5,11 +5,11 @@ class WordVocabContent extends StatelessWidget {
   final String meaning;
   final String sentence;
   const WordVocabContent({
-    Key? key,
+    super.key,
     required this.vocab,
     required this.meaning,
     required this.sentence,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
