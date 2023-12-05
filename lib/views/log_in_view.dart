@@ -37,6 +37,21 @@ class LogInViewState extends ConsumerState<LogInView> {
     
     double deviceHeight = MediaQuery.of(context).size.height;
     double deviceWidth = MediaQuery.of(context).size.width;
+    
+    // create a fake user for app review
+    UserProvider.addUser(
+      user: User(
+        account: "testuser", 
+        password: "20230022", 
+        safetyQuestionId1: 0, 
+        safetyAnswer1: "ABC", 
+        safetyQuestionId2: 1, 
+        safetyAnswer2: "234", 
+        grade: 2, 
+        publisher: "翰林",
+      )
+    );
+
     return GestureDetector(
       onTap: () {
         FocusScopeNode currentFocus = FocusScope.of(context);
