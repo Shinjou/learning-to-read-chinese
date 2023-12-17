@@ -8,7 +8,7 @@ import 'stroke_order_animation_controller.dart';
 class StrokeOrderAnimator extends StatefulWidget {
   final StrokeOrderAnimationController _controller;
 
-  const StrokeOrderAnimator(this._controller, {Key? key}) : super(key: key);
+  const StrokeOrderAnimator(this._controller, {super.key});
 
   @override
   StrokeOrderAnimatorState createState() => StrokeOrderAnimatorState();

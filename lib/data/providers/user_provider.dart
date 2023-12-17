@@ -41,7 +41,7 @@ class UserProvider {
     await db.insert(
       tableName,
       user.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
+      conflictAlgorithm: ConflictAlgorithm.ignore,
     );
   }
     

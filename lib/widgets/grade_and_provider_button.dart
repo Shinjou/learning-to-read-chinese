@@ -6,11 +6,10 @@ class GradeAndProviderButton extends StatelessWidget {
   final double buttonHeight;
   final String text;
   const GradeAndProviderButton(
-      {Key? key,
+      {super.key,
         required this.buttonWidth,
         required this.buttonHeight,
-        required this.text})
-      : super(key: key);
+        required this.text});
 
   @override
   Widget build(BuildContext context) {

@@ -6,9 +6,9 @@ import 'package:ltrc/extensions.dart';
 class TeachWordTabBarView extends ConsumerWidget {
   final Widget content;
   const TeachWordTabBarView({
-    Key? key,
+    super.key,
     required this.content,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
