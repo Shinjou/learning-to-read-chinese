@@ -105,7 +105,6 @@
 				A6C1E7BEAF1395D450E12516 /* Pods-RunnerTests.release.xcconfig */,
 				6271630FF8C4C57E5D324FE7 /* Pods-RunnerTests.profile.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -215,7 +214,7 @@
 		97C146E61CF9000F007C117D /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1430;
+				LastUpgradeCheck = 1300;
 				ORGANIZATIONNAME = "";
 				TargetAttributes = {
 					331C8080294A63A400263BE5 = {
@@ -474,6 +473,40 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-l\"sqlite3\"",
+					"-framework",
+					"\"AVFoundation\"",
+					"-framework",
+					"\"FMDB\"",
+					"-framework",
+					"\"MediaPlayer\"",
+					"-framework",
+					"\"QuartzCore\"",
+					"-framework",
+					"\"Toast\"",
+					"-framework",
+					"\"flutter_sound\"",
+					"-framework",
+					"\"flutter_sound_core\"",
+					"-framework",
+					"\"flutter_tts\"",
+					"-framework",
+					"\"fluttertoast\"",
+					"-framework",
+					"\"path_provider_foundation\"",
+					"-framework",
+					"\"shared_preferences_foundation\"",
+					"-framework",
+					"\"sqflite\"",
+					"-framework",
+					"\"sqlite3\"",
+					"-framework",
+					"\"sqlite3_flutter_libs\"",
+					"-lc++",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.chengzhiedu.ltrc;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
@@ -652,6 +685,40 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				"OTHER_LDFLAGS[arch=*]" = (
+					"$(inherited)",
+					"-ObjC",
+					"-l\"sqlite3\"",
+					"-framework",
+					"\"AVFoundation\"",
+					"-framework",
+					"\"FMDB\"",
+					"-framework",
+					"\"MediaPlayer\"",
+					"-framework",
+					"\"QuartzCore\"",
+					"-framework",
+					"\"Toast\"",
+					"-framework",
+					"\"flutter_sound\"",
+					"-framework",
+					"\"flutter_sound_core\"",
+					"-framework",
+					"\"flutter_tts\"",
+					"-framework",
+					"\"fluttertoast\"",
+					"-framework",
+					"\"path_provider_foundation\"",
+					"-framework",
+					"\"shared_preferences_foundation\"",
+					"-framework",
+					"\"sqflite\"",
+					"-framework",
+					"\"sqlite3\"",
+					"-framework",
+					"\"sqlite3_flutter_libs\"",
+					"-lc++",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.chengzhiedu.ltrc;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
@@ -673,6 +740,40 @@
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
+				);
+				"OTHER_LDFLAGS[arch=*]" = (
+					"$(inherited)",
+					"-ObjC",
+					"-l\"sqlite3\"",
+					"-framework",
+					"\"AVFoundation\"",
+					"-framework",
+					"\"FMDB\"",
+					"-framework",
+					"\"MediaPlayer\"",
+					"-framework",
+					"\"QuartzCore\"",
+					"-framework",
+					"\"Toast\"",
+					"-framework",
+					"\"flutter_sound\"",
+					"-framework",
+					"\"flutter_sound_core\"",
+					"-framework",
+					"\"flutter_tts\"",
+					"-framework",
+					"\"fluttertoast\"",
+					"-framework",
+					"\"path_provider_foundation\"",
+					"-framework",
+					"\"shared_preferences_foundation\"",
+					"-framework",
+					"\"sqflite\"",
+					"-framework",
+					"\"sqlite3\"",
+					"-framework",
+					"\"sqlite3_flutter_libs\"",
+					"-lc++",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.chengzhiedu.ltrc;
 				PRODUCT_NAME = "$(TARGET_NAME)";

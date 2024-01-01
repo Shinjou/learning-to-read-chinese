@@ -3,6 +3,7 @@ import 'package:ltrc/data/models/word_status_model.dart';
 import 'package:ltrc/data/providers/word_status_provider.dart';
 import 'package:ltrc/extensions.dart';
 import 'package:ltrc/views/teach_word_view.dart';
+import 'package:ltrc/views/view_utils.dart';
 
 class WordCard extends StatefulWidget {
   const WordCard({
@@ -47,6 +48,7 @@ class WordCardState extends State<WordCard> {
 
   @override
   Widget build(BuildContext context) {
+    double fontSize = getFontSize(context, 16); // 16 is the base font size for 360dp width
     return InkWell(
       onTap: widget.disable ? () {} : () {
         Navigator.of(context).push(MaterialPageRoute(
@@ -62,7 +64,7 @@ class WordCardState extends State<WordCard> {
         width: widget.sizedBoxWidth,
         height: widget.sizedBoxHeight,
         decoration: BoxDecoration(
-          color: widget.wordsStatus[widget.wordIndex].learned ? "#F8F88E".toColor():"#F5F5DC".toColor(),
+          color: widget.wordsStatus[widget.wordIndex].learned ? "#F8F88E".toColor():"#F5F5DC".toColor(), // Colors.yellow[100],
           borderRadius: BorderRadius.circular(12),
         ),
         child: Wrap(
@@ -83,7 +85,7 @@ class WordCardState extends State<WordCard> {
                       IconButton(
                         icon: liked ? const Icon(Icons.favorite) : const Icon(Icons.favorite_border),
                         iconSize: 16,
-                        color: liked ? "#FF0303".toColor() : "#999999".toColor(),
+                        color: liked ? "#FF0303".toColor() : "#999999".toColor(),// Colors.red,
                         onPressed: () async {
                           setState(() {
                             liked = !liked;
@@ -97,8 +99,8 @@ class WordCardState extends State<WordCard> {
                       ),
                       Icon(
                         widget.wordsStatus[widget.wordIndex].learned ? Icons.check_circle : Icons.circle_outlined,
-                        size: 16,
-                        color: widget.wordsStatus[widget.wordIndex].learned ? "#F8A339".toColor() : "#999999".toColor(),
+                        size: fontSize,
+                        color: widget.wordsStatus[widget.wordIndex].learned ? "#F8A339".toColor() : "#999999".toColor(),  // Colors.orange,
                       ),
                     ]
                   ),

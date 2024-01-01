@@ -8,6 +8,7 @@ import 'package:ltrc/data/providers/user_provider.dart';
 import 'package:ltrc/extensions.dart';
 import 'package:ltrc/providers.dart';
 import 'package:ltrc/widgets/setting/setting_divider.dart';
+import 'package:ltrc/views/view_utils.dart';
 
 class SettingView extends ConsumerStatefulWidget {
   const SettingView({super.key});
@@ -40,6 +41,9 @@ class SettingViewState extends ConsumerState<SettingView> {
   Widget build(BuildContext context) {
     double deviceHeight = MediaQuery.of(context).size.height;
     double deviceWidth = MediaQuery.of(context).size.width;
+    double fontSize = getFontSize(context, 16); // 16 is the base font size for 360dp width
+
+    const Color colorBlack = Color.fromRGBO(0, 0, 0, 1);
 
     final List<DropdownMenuEntry<int>> gradeEntries = [];
     final List<DropdownMenuEntry<int>> publisherEntries = [];
@@ -59,6 +63,14 @@ class SettingViewState extends ConsumerState<SettingView> {
         DropdownMenuEntry<int>(
           value: key, 
           label: numeralToChinese[key]!, 
+          style: ButtonStyle(
+              textStyle: MaterialStateProperty.all<TextStyle>(
+                TextStyle(
+                  fontSize: fontSize * 0.6,
+                  color: '#1C1B1F'.toColor(),
+                ),
+              ),
+            ),                 
         )
       );
     }
@@ -68,6 +80,14 @@ class SettingViewState extends ConsumerState<SettingView> {
         DropdownMenuEntry<int>(
           value: key, 
           label: publisherCodeTable[key]!, 
+          style: ButtonStyle(
+              textStyle: MaterialStateProperty.all<TextStyle>(
+                TextStyle(
+                  fontSize: fontSize * 0.6,
+                  color: '#1C1B1F'.toColor(),
+                ),
+              ),
+            ),                 
         )
       );
     }
@@ -101,7 +121,7 @@ class SettingViewState extends ConsumerState<SettingView> {
                   icon: Icon(
                     Icons.close,
                     color: '#F5F5DC'.toColor(),
-                    size: 40,
+                    size: fontSize * 2.4,
                     shadows: const [Shadow(color: Colors.black, blurRadius: 10, offset: Offset(0, 4.5))],
                   ),
                   onPressed: () {
@@ -117,14 +137,14 @@ class SettingViewState extends ConsumerState<SettingView> {
                   Icon(
                     Icons.settings,
                     color: '#F5F5DC'.toColor(),
-                    size: 36
+                    size: fontSize * 2.0,
                   ),
                   Container(
                     padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 0, 0),
-                    child: const Text(
+                    child: Text(
                       '設定',
                       style: TextStyle(
-                        fontSize: 36,
+                        fontSize: fontSize * 2.0,
                       )
                     )
                   )
@@ -144,7 +164,7 @@ class SettingViewState extends ConsumerState<SettingView> {
                 child: Column(
                   children: [
                     Container(
-                      height: 50,
+                      height: fontSize * 2.9,
                       width: deviceWidth * 0.85,
                       margin: EdgeInsetsDirectional.fromSTEB(deviceWidth * 0.0513, deviceHeight * 0.032, 0, deviceHeight * 0.024),
                       child: Row(
@@ -152,26 +172,28 @@ class SettingViewState extends ConsumerState<SettingView> {
                           Icon(
                             Icons.account_circle,
                             color: '#1C1B1F'.toColor(),
-                            size: 40
+                            size: fontSize * 2.4,
                           ),
-                          Container( width: 12 ),
+                          Container( width: fontSize * 0.7, ),
                           Flexible(
                             child: Text(
                               userName,
                               style: TextStyle(
                                 color: Colors.black,
-                                fontSize: (userName.length)<5 ? 20 : (userName.length)<12 ? 16 : 14,
+                                fontSize: (userName.length)<5 ? fontSize : (userName.length)<12 ? fontSize : fontSize * 0.8,
                               )
                             ),
                           ),
-                          Container( width: 12 ),
+                          Container( width: fontSize * 0.7 ),
                           InkWell(
                             onTap: (){
                               showDialog(
                                 context: context, 
                                 builder: (context) => AlertDialog(
                                   backgroundColor: "#F5F5DC".toColor(),
-                                  title: const Text("編輯名稱"),
+                                  title: Text(
+                                    "編輯名稱", 
+                                    style: TextStyle(fontSize: fontSize * 1.0,)),
                                   content: TextField(
                                     style: TextStyle( color: '#1C1B1F'.toColor(),),
                                     decoration: const InputDecoration(
@@ -215,7 +237,7 @@ class SettingViewState extends ConsumerState<SettingView> {
                               ],
                             )
                           ),
-                          Container( width: 12,)
+                          Container( width: fontSize * 0.7,)
                         ]
                       ),
                     ),
@@ -227,19 +249,19 @@ class SettingViewState extends ConsumerState<SettingView> {
                         mainAxisSize: MainAxisSize.max,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children : [
-                          const Text(
+                          Text(
                             '年級',
                             style: TextStyle(
-                              fontSize: 24,
+                              fontSize: fontSize * 1.4,
                               color: Colors.black
                             )
                           ),
                           DropdownMenu<int>(
                             controller: gradeController,
-                            width: 120,
-                            textStyle: const TextStyle(
+                            width: 7.1 * fontSize,
+                            textStyle: TextStyle(
                               color: Colors.black,
-                              fontSize: 16,
+                              fontSize: fontSize,
                             ),
                             dropdownMenuEntries: gradeEntries,
                             initialSelection: selectedGrade,
@@ -272,19 +294,19 @@ class SettingViewState extends ConsumerState<SettingView> {
                         mainAxisSize: MainAxisSize.max,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children : [
-                          const Text(
+                          Text(
                             '課本版本',
                             style: TextStyle(
-                              fontSize: 24,
+                              fontSize: fontSize * 1.4,
                               color: Colors.black
                             )
                           ),
                           DropdownMenu<int>(
                             controller: publisherController,
-                            width: 120,
-                            textStyle: const TextStyle(
+                            width: 7.1 * fontSize,
+                            textStyle: TextStyle(
                               color: Colors.black,
-                              fontSize: 16,
+                              fontSize: fontSize,
                             ),
                             dropdownMenuEntries: publisherEntries,
                             initialSelection: selectedPublisher,
@@ -316,15 +338,15 @@ class SettingViewState extends ConsumerState<SettingView> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         mainAxisSize: MainAxisSize.max,
                         children: <Widget>[
-                          const Text(
+                          Text(
                             '撥放速度',
                             style: TextStyle(
-                              color: Color.fromRGBO(0, 0, 0, 1),
-                              fontSize: 24,
+                              color: colorBlack,
+                              fontSize: fontSize * 1.4,
                             )
                           ),
                           SizedBox(
-                            width: 140,
+                            width: 8.2 * fontSize,
                             child: Slider(
                               value: currentSliderValue,
                               max: 1.0,
@@ -347,18 +369,18 @@ class SettingViewState extends ConsumerState<SettingView> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         mainAxisSize: MainAxisSize.max,
                         children: <Widget>[
-                          const Text(
+                          Text(
                             '資源出處',
                             style: TextStyle(
                               color: Colors.black,
-                              fontSize: 24,
+                              fontSize: fontSize * 1.4,
                             )
                           ),
                           IconButton(
                             onPressed: () => Navigator.of(context).pushNamed('/acknowledge'),
                             icon: const Icon(Icons.arrow_forward_ios),
                             color: Colors.black,
-                            iconSize: 22
+                            iconSize: fontSize * 1.3,
                           )
                         ]
                       )
@@ -377,13 +399,13 @@ class SettingViewState extends ConsumerState<SettingView> {
                           ref.read(publisherCodeProvider.notifier).state = 0;
                         },
                         style: TextButton.styleFrom(
-                          fixedSize: const Size.fromHeight(30),
+                          fixedSize: Size.fromHeight(fontSize * 2.0),
                         ),
-                        child: const Text(
+                        child: Text(
                           '登出',
                           style: TextStyle(
                             color: Colors.black,
-                            fontSize: 24,
+                            fontSize: fontSize * 1.4,
                           )
                         ),
                       )

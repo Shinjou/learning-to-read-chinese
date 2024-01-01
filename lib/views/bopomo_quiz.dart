@@ -10,6 +10,7 @@ import 'package:ltrc/data/providers/word_provider.dart';
 import 'package:ltrc/extensions.dart';
 import 'package:ltrc/providers.dart';
 import '../widgets/bopomo/bopomo_container.dart';
+import 'package:ltrc/views/view_utils.dart';
 
 
 class BopomoQuizView extends StatefulWidget {
@@ -79,34 +80,44 @@ class _BopomoQuizState extends State<BopomoQuizView>{
 
   @override
   Widget build(BuildContext context) {
+    double fontSize = getFontSize(context, 16); // 16 is the base font size for 360dp width
+
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(icon: const Icon(Icons.chevron_left), onPressed: () => Navigator.pop(context),),
-        title: const Text("拼拼看"),
+      appBar: AppBar(  // 拼拼看
+        leading: IconButton(
+          icon: Icon(Icons.chevron_left, size: fontSize * 0.75),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          "拼拼看",
+          style: TextStyle(fontSize: fontSize * 0.75), // Set the font size for the title
+        ),
         actions: [
           IconButton(
-            icon: const Icon(
+            icon: Icon(
               Icons.home,
+              size: fontSize * 0.75,
             ),
             onPressed: () => Navigator.of(context).pushNamed('/mainPage'),
           )
         ],
       ),
+
       body: CustomScrollView(
         slivers: [
-          SliverToBoxAdapter(
+          SliverToBoxAdapter(  // 第${problemId+1}題\n請拼出「${bopomoSpellingWords[problemId]}」的注音
             child: Container(
-              height: 60,
+              height: fontSize * 1.7,
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 color: '#013E6D'.toColor(),
               ),
-              child: RichText(
+              child: RichText(  // 第${problemId+1}題\n請拼出「${bopomoSpellingWords[problemId]}」的注音
                 textAlign: TextAlign.center,
                 text: TextSpan(
-                  text: '第${problemId+1}題\n請拼出「',
+                  text: '第${problemId+1}題：請拼出「',
                   style: TextStyle(
-                    fontSize: 18,
+                    fontSize: fontSize,
                     fontFamily: 'Serif',
                     color: "#F5F5DC".toColor(),
                   ),
@@ -114,7 +125,7 @@ class _BopomoQuizState extends State<BopomoQuizView>{
                     TextSpan(
                       text: bopomoSpellingWords[problemId],
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: fontSize,
                         fontFamily: 'Iceberg',
                         color: "#F5F5DC".toColor(),
                       )
@@ -122,7 +133,7 @@ class _BopomoQuizState extends State<BopomoQuizView>{
                     TextSpan(
                       text: '」的注音',
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: fontSize,
                         fontFamily: 'Serif',
                         color: "#F5F5DC".toColor(),
                       )
@@ -132,8 +143,8 @@ class _BopomoQuizState extends State<BopomoQuizView>{
               )
             ),
           ),
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
+          SliverPadding(  // 讀音、提示、答案、清除、確認
+            padding: const EdgeInsets.fromLTRB(4, 4, 4, 4),
             sliver: SliverToBoxAdapter(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -141,48 +152,18 @@ class _BopomoQuizState extends State<BopomoQuizView>{
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Image(
-                    height: 180,
+                    height: fontSize * 8.0,
                     image: AssetImage('lib/assets/img/bopomo_spelling/${bopomoSpellingWords[problemId]}.png'),
                   ),
-                  Container(
-                    width: 15
-                  ),
-                  Container(
-                    width: 30,
-                    height: 90,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.all(Radius.circular(5)),
-                      color: "#F8F88E".toColor(),
-                    ),
-                    child: const Text(
-                      "?",
-                      style: TextStyle(
-                        fontFamily: 'BpmfOnly',
-                        fontSize: 18,
-                        color: Colors.black,
-                      ),
-                    ),
-                  )
-                ]
-              ),
-            )
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
-            sliver: SliverToBoxAdapter( 
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Column(
+
+                  Column( // 讀音、提示
                     children: [
                       Consumer(builder: (context, ref, child){
                         return IconButton(
                           icon: Icon(
                             Icons.volume_up,
                             color: "#F5F5DC".toColor(),
-                            size: 32,
+                            size: 1.2 * fontSize,
                           ),
                           onPressed: () {
                             debugPrint(ref.watch(soundSpeedProvider).toString());
@@ -194,14 +175,14 @@ class _BopomoQuizState extends State<BopomoQuizView>{
                         );
                       }), 
                       Text(
-                        '讀音',
-                        style: TextStyle(color: "#F5F5DC".toColor()),
+                        '讀\n音',
+                        style: TextStyle(color: "#F5F5DC".toColor(), fontSize: fontSize * 0.75),
                       ),
                       IconButton(
                         icon: Icon(
                           Icons.lightbulb,
                           color: "#F5F5DC".toColor(),
-                          size: 32,
+                          size: 1.2 * fontSize,
                         ), 
                         onPressed: () async {
                           await _getAnswer();
@@ -224,19 +205,19 @@ class _BopomoQuizState extends State<BopomoQuizView>{
                           }
                         },),
                       Text(
-                        '提示',
-                        style: TextStyle(color: "#F5F5DC".toColor()),
+                        '提\n示',
+                        style: TextStyle(color: "#F5F5DC".toColor(), fontSize: fontSize * 0.75),
                       ),
                     ],
                   ),
-                  SizedBox(
-                    width: 140,
-                    height: 180,
+                  SizedBox( // 答案
+                    width: 8.2 * fontSize,
+                    height: 10.6 * fontSize,
                     child: Container(
                       decoration: BoxDecoration(
                         color: '023E6E'.toColor(),
                         border: Border.all(
-                          width: 5,
+                          width: 0.1 * fontSize,
                           color: answerBoxBorderColor,
                         ),
                       ),
@@ -251,16 +232,16 @@ class _BopomoQuizState extends State<BopomoQuizView>{
                                   (caught.tone == 5) ? "˙" : caught.initial,
                                 innerWidget: (caught.initial.isNotEmpty && caught.tone == 5) ? Column(
                                   children: [
-                                    const Text(
+                                    Text(
                                       "˙",
                                       style: TextStyle(
-                                        fontSize: 16
+                                        fontSize: fontSize
                                       ),
                                     ),
                                     Text(
                                       caught.initial,
-                                      style: const TextStyle(
-                                        fontSize: 16
+                                      style: TextStyle(
+                                        fontSize: fontSize
                                       ),
                                     )
                                   ],
@@ -277,8 +258,8 @@ class _BopomoQuizState extends State<BopomoQuizView>{
                                 character: caught.prenuclear, 
                                 innerWidget: Text(
                                   caught.prenuclear,
-                                  style: const TextStyle(
-                                    fontSize: 16
+                                  style: TextStyle(
+                                    fontSize: fontSize
                                   ),
                                 ),
                                 color : "#D19131".toColor(),
@@ -290,8 +271,8 @@ class _BopomoQuizState extends State<BopomoQuizView>{
                                 character: caught.finals,
                                 innerWidget: Text(
                                   caught.finals,
-                                  style: const TextStyle(
-                                    fontSize: 16
+                                  style: TextStyle(
+                                    fontSize: fontSize
                                   ),
                                 ),
                                 color : "#D19131".toColor(),
@@ -312,13 +293,13 @@ class _BopomoQuizState extends State<BopomoQuizView>{
                       ),
                     ),
                   ),
-                  Column(
+                  Column( // 清除、確認
                     children: [
                       IconButton(
                         icon: Icon(
                           Icons.replay,
                           color: "#F5F5DC".toColor(),
-                          size: 32,
+                          size: 1.2 * fontSize,
                         ),
                         onPressed: (){
                           setState(() {
@@ -327,14 +308,14 @@ class _BopomoQuizState extends State<BopomoQuizView>{
                         },
                       ),
                       Text(
-                        '清除',
-                        style: TextStyle(color: "#F5F5DC".toColor()),
+                        '清\n除',
+                        style: TextStyle(color: "#F5F5DC".toColor(), fontSize: fontSize * 0.75),
                       ),
                       IconButton(
                         icon: Icon(
                           Icons.done_outline,
                           color: "#F5F5DC".toColor(),
-                          size: 32,
+                          size: 1.2 * fontSize,
                         ), 
                         onPressed: () async {
                           if (problemId < bopomoSpellingWords.length-1){
@@ -368,28 +349,29 @@ class _BopomoQuizState extends State<BopomoQuizView>{
                         },
                       ),
                       Text(
-                        '確認',
-                        style: TextStyle(color: "#F5F5DC".toColor()),
+                        '確\n認',
+                        style: TextStyle(color: "#F5F5DC".toColor(), fontSize: fontSize * 0.75),
                       ),
                     ],
                   ),
-                ],
-              )
-            ),
+                ], // children                
+              ),
+            )
           ),
-          SliverPadding(
+
+          SliverPadding( // 四聲
             padding: const EdgeInsets.fromLTRB(25, 5, 25, 5),
             sliver: SliverGrid(
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 40,
-                mainAxisSpacing: 8.0,
-                crossAxisSpacing: 8.0,
-                childAspectRatio: 0.9,
+              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: fontSize * 1.2, // was 40
+                mainAxisSpacing: fontSize * 0.75, // was 8.0,
+                crossAxisSpacing: fontSize * 0.75, // was 8.0
+                childAspectRatio: 1 / 1,
               ),
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) {
                   return (index == caught.tone-2) ? 
-                    BopomoContainer(
+                    BopomoContainer( // The top right hand box
                       character: tones[index], 
                       color: "#404040".toColor(),
                       onPressed: () => setState(() {
@@ -408,14 +390,14 @@ class _BopomoQuizState extends State<BopomoQuizView>{
               ),
             ),
           ),
-          SliverPadding(
+          SliverPadding(  // ㄅㄆㄇㄈ
             padding: const EdgeInsets.fromLTRB(25, 5, 25, 5),
             sliver: SliverGrid(
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 40,
-                mainAxisSpacing: 8.0,
-                crossAxisSpacing: 8.0,
-                childAspectRatio: 0.9,
+              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: fontSize * 1.2, // was 40
+                mainAxisSpacing: fontSize * 0.75, // was 8.0,
+                crossAxisSpacing: fontSize * 0.75, // was 8.0                
+                childAspectRatio: 1 / 1,
               ),
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) {
@@ -439,14 +421,14 @@ class _BopomoQuizState extends State<BopomoQuizView>{
               ),
             ),
           ),
-          SliverPadding(
+          SliverPadding(  // ㄧㄨㄩ
             padding: const EdgeInsets.fromLTRB(25, 5, 25, 5),
             sliver: SliverGrid(
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 40,
-                mainAxisSpacing: 8.0,
-                crossAxisSpacing: 8.0,
-                childAspectRatio: 0.9,
+              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: fontSize * 1.2, // was 40
+                mainAxisSpacing: fontSize * 0.75, // was 8.0,
+                crossAxisSpacing: fontSize * 0.75, // was 8.0
+                childAspectRatio: 1 / 1,
               ),
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) {

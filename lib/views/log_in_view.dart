@@ -6,6 +6,7 @@ import 'package:ltrc/data/providers/unit_provider.dart';
 import 'package:ltrc/data/providers/user_provider.dart';
 import 'package:ltrc/extensions.dart';
 import 'package:ltrc/providers.dart';
+import 'package:ltrc/views/view_utils.dart';
 
 class LogInView extends ConsumerStatefulWidget {
   const LogInView({super.key});
@@ -37,6 +38,8 @@ class LogInViewState extends ConsumerState<LogInView> {
     
     double deviceHeight = MediaQuery.of(context).size.height;
     double deviceWidth = MediaQuery.of(context).size.width;
+    double fontSize = getFontSize(context, 16); // 16 is the base font size for 360dp width
+
     return GestureDetector(
       onTap: () {
         FocusScopeNode currentFocus = FocusScope.of(context);
@@ -50,36 +53,36 @@ class LogInViewState extends ConsumerState<LogInView> {
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            SizedBox(height: deviceHeight * 0.157),
+            SizedBox(height: deviceHeight * 0.1),
             Text(
-                '學中文',
+                '學國語',
                 style: TextStyle(
-                  fontSize: deviceWidth * 46/360,
+                  fontSize: fontSize * 4.0,
                 )
             ),
-            SizedBox(height: deviceHeight * 0.162),
+            SizedBox(height: fontSize * 2.0),
             Container(
               height: deviceHeight * 60/712,
-              width: deviceWidth * 5/6,
+              width: deviceWidth * 5 / 6,
               decoration: BoxDecoration(
                 color: '#7DDEF8'.toColor(),
                 borderRadius: BorderRadius.circular(5),
-                border: Border.all(width: 5.0, color: '#F5F5DC'.toColor())
+                border: Border.all(width: 0.3 * fontSize, color: '#F5F5DC'.toColor())
               ),
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
                 child: TextField(
                   controller: accountController,
-                  style: TextStyle(color: '#1C1B1F'.toColor(),),
+                  style: TextStyle(color: '#1C1B1F'.toColor(), fontSize: fontSize),
                   decoration: InputDecoration(
                     prefixIcon: Icon(
                       Icons.account_circle,
-                      size: 30.0,
+                      size: fontSize * 1.8,
                       color: '#1C1B1F'.toColor(),
                     ),
                     hintText: '帳號名稱',
                     hintStyle: TextStyle(
-                      fontSize: 20.0,
+                      fontSize: fontSize * 1.2,
                       color: '#1C1B1F'.toColor(),
                     ),
                     floatingLabelBehavior: FloatingLabelBehavior.always,
@@ -97,23 +100,23 @@ class LogInViewState extends ConsumerState<LogInView> {
                 decoration: BoxDecoration(
                   color: '#7DDEF8'.toColor(),
                   borderRadius: BorderRadius.circular(5),
-                  border: Border.all(width: 5.0, color: '#F5F5DC'.toColor())
+                  border: Border.all(width: 0.3 * fontSize, color: '#F5F5DC'.toColor())
                 ),
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
                   child: TextField(
                     controller: pwdController,
                     obscureText: pwdVisible,
-                    style: TextStyle(color: '#1C1B1F'.toColor(),),
+                    style: TextStyle(color: '#1C1B1F'.toColor(), fontSize: fontSize),
                     decoration: InputDecoration(
                       prefixIcon: Icon(
                         Icons.lock,
-                        size: 30.0,
+                        size: fontSize * 1.8,
                         color: '#1C1B1F'.toColor(),
                       ),
                       hintText: '密碼',
                       hintStyle: TextStyle(
-                        fontSize: 20.0,
+                        fontSize: fontSize * 1.2,
                         color: '#1C1B1F'.toColor(),
                       ),
                       floatingLabelBehavior: FloatingLabelBehavior.always,
@@ -122,6 +125,7 @@ class LogInViewState extends ConsumerState<LogInView> {
                       enabledBorder: InputBorder.none,
                       suffixIcon: IconButton(
                         icon: Icon(pwdVisible ? Icons.visibility : Icons.visibility_off),
+                        iconSize: fontSize,
                         onPressed: () {
                           setState(() {
                             pwdVisible = !pwdVisible;
@@ -145,7 +149,7 @@ class LogInViewState extends ConsumerState<LogInView> {
                     child: Text(
                       '忘記密碼',
                       style: TextStyle(
-                        fontSize: 14.0,
+                        fontSize: fontSize * 0.8,
                         color: '#F5F5DC'.toColor(),
                       )
                     ),
@@ -165,7 +169,7 @@ class LogInViewState extends ConsumerState<LogInView> {
                   showErrorHint,
                   style: TextStyle(
                     color: '#FF0303'.toColor(),
-                    fontSize: 14,
+                    fontSize: 0.8 * fontSize,
                   )
                 )
               )
@@ -221,15 +225,15 @@ class LogInViewState extends ConsumerState<LogInView> {
                     child: Text(
                       '登入',
                       style: TextStyle(
-                        fontSize: 24.0,
+                        fontSize: fontSize * 1.4,
                         color: '#F5F5DC'.toColor(),
                       )
                     )
                   ),
-                  const Text(
+                  Text(
                     '/',
                     style: TextStyle(
-                      fontSize: 24.0,
+                      fontSize: fontSize  * 1.4,
                     )
                   ),
                   TextButton(
@@ -240,7 +244,7 @@ class LogInViewState extends ConsumerState<LogInView> {
                     child: Text(
                       '註冊',
                       style: TextStyle(
-                        fontSize: 24.0,
+                        fontSize: fontSize * 1.4,
                         color: '#F5F5DC'.toColor(),
                       )
                     )

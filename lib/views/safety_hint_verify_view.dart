@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ltrc/contants/register_question_label.dart';
 import 'package:ltrc/data/models/user_model.dart';
 import 'package:ltrc/extensions.dart';
+import 'package:ltrc/views/view_utils.dart';
 
 class SafetyHintVerifyView extends StatefulWidget {
   const SafetyHintVerifyView({super.key});
@@ -30,6 +31,7 @@ class _SafetyHintVerifyState extends State<SafetyHintVerifyView> {
   Widget build(BuildContext context) {
 
     double deviceHeight = MediaQuery.of(context).size.height;
+    double fontSize = getFontSize(context, 16); // 16 is the base font size for 360dp width
 
     dynamic obj = ModalRoute.of(context)!.settings.arguments;
     User user = obj['user']; 
@@ -49,7 +51,7 @@ class _SafetyHintVerifyState extends State<SafetyHintVerifyView> {
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(
-            icon: const Icon(Icons.chevron_left), 
+            icon: Icon(Icons.chevron_left, size: fontSize * 0.75), 
             onPressed: () => Navigator.pop(context),
           ),
         ),
@@ -60,30 +62,30 @@ class _SafetyHintVerifyState extends State<SafetyHintVerifyView> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               SizedBox(height: deviceHeight * 0.04),
-              const Text(
+              Text(
                 '忘記密碼',
                 style: TextStyle(
-                  fontSize: 46.0,
+                  fontSize: fontSize * 2.7,
                 )
               ),
               SizedBox(height: deviceHeight * 0.015),
-              const Text(
+              Text(
                 '請回答安全提示問題',
                 style: TextStyle(
-                  fontSize: 20.0,
+                  fontSize: fontSize * 1.2,
                 )
               ),
               
               SizedBox(height: deviceHeight * 0.08),
               
               SizedBox(
-                height: 24,
-                width: 303,
+                height: fontSize * 1.4,
+                width: fontSize * 17.8,
                 child:Text(
                   question1,
                   textAlign: TextAlign.left,
-                  style: const TextStyle(
-                    fontSize: 16,            
+                  style: TextStyle(
+                    fontSize: fontSize,            
                   ),
                 ),
               ),
@@ -91,13 +93,13 @@ class _SafetyHintVerifyState extends State<SafetyHintVerifyView> {
               SizedBox(height: deviceHeight * 0.01),
 
               Container(
-                height: 55.0,
-                width: 303.0,
+                height: fontSize * 3.2,
+                width: fontSize * 17.8,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: '#D9D9D9'.toColor(),
                   borderRadius: BorderRadius.circular(5),
-                  border: Border.all(width: 1.0, color: '#F5F5DC'.toColor())
+                  border: Border.all(width: 0.1 * fontSize, color: '#F5F5DC'.toColor())
                 ),
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
@@ -107,7 +109,7 @@ class _SafetyHintVerifyState extends State<SafetyHintVerifyView> {
                     decoration: InputDecoration(
                       hintText: '回答 1',
                       hintStyle: TextStyle(
-                        fontSize: 16.0,
+                        fontSize: fontSize,
                         color: '#013E6D'.toColor()
                       ),
                       enabledBorder: InputBorder.none,
@@ -120,13 +122,13 @@ class _SafetyHintVerifyState extends State<SafetyHintVerifyView> {
               SizedBox(height: deviceHeight * 0.04),
               
               SizedBox(
-                height: 24,
-                width: 303,
+                height: fontSize * 1.4,
+                width: fontSize * 17.8,
                 child:Text(
                   question2,
                   textAlign: TextAlign.left,
-                  style: const TextStyle(
-                    fontSize: 16,
+                  style: TextStyle(
+                    fontSize: fontSize,
                   ),
                 ),
               ),
@@ -134,12 +136,12 @@ class _SafetyHintVerifyState extends State<SafetyHintVerifyView> {
               SizedBox(height: deviceHeight * 0.01),
               
               Container(
-                height: 55.0,
-                width: 303.0,
+                height: fontSize * 3.2,
+                width: fontSize * 17.8,
                 decoration: BoxDecoration(
                   color: '#D9D9D9'.toColor(),
                   borderRadius: BorderRadius.circular(5),
-                  border: Border.all(width: 1.0, color: '#F5F5DC'.toColor())
+                  border: Border.all(width: 0.1 * fontSize, color: '#F5F5DC'.toColor())
                 ),
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
@@ -149,7 +151,7 @@ class _SafetyHintVerifyState extends State<SafetyHintVerifyView> {
                     decoration: InputDecoration(
                       hintText: '回答 2',
                       hintStyle: TextStyle(
-                        fontSize: 16.0,
+                        fontSize: fontSize,
                         color: '#013E6D'.toColor()
                       ),
                       enabledBorder: InputBorder.none,
@@ -167,14 +169,14 @@ class _SafetyHintVerifyState extends State<SafetyHintVerifyView> {
                 maintainSize: true,
                 maintainState: true,
                 child: Container(
-                  height: 18,
-                  width: 303,
+                  height: fontSize,
+                  width: fontSize * 17.8,
                   alignment: AlignmentDirectional.topStart,
                   child: Text(
                     showErrorHint,
                     style: TextStyle(
                       color: '#FF0303'.toColor(),
-                      fontSize: 14,
+                      fontSize: fontSize * 0.8,
                     )
                   )
                 )
@@ -201,7 +203,7 @@ class _SafetyHintVerifyState extends State<SafetyHintVerifyView> {
                 child: Text(
                   '下一步',
                   style: TextStyle(
-                    fontSize: 24.0,
+                    fontSize: fontSize * 1.4,
                     color: 'F5F5DC'.toColor(),
                   )
                 )

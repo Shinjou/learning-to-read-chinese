@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ltrc/views/view_utils.dart';
 
 class TeachWordCardTitle extends StatelessWidget {
   final Color iconsColor;
@@ -6,13 +7,14 @@ class TeachWordCardTitle extends StatelessWidget {
   const TeachWordCardTitle(
       {required this.iconsColor, required this.sectionName, super.key});
 
+
   @override
   Widget build(BuildContext context) {
-    double deviceWidth = MediaQuery.of(context).size.width;
-    
+    double fontSize = getFontSize(context, 16); // 16 is the base font size for 360dp width
+      
     return Container(
-      width: MediaQuery.of(context).size.width * 0.44,
-      height: 38,
+      width: fontSize * 8.0, // for 3 1.5 fontSize characters  
+      height: fontSize * 2.0, // word fontSize = 1.8
       alignment: Alignment.center,
       margin: const EdgeInsets.all(8.0),
       decoration: BoxDecoration(
@@ -22,7 +24,7 @@ class TeachWordCardTitle extends StatelessWidget {
       child: Text(
         sectionName,
         style: TextStyle(
-          fontSize: deviceWidth * 24/360,
+          fontSize: fontSize * 1.5, // was 24/360
           fontWeight: FontWeight.w900,
           color: Colors.black,
         ),

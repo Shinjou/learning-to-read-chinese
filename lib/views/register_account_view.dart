@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/data/providers/user_provider.dart';
 import 'package:ltrc/extensions.dart';
 import 'package:ltrc/providers.dart';
+import 'package:ltrc/views/view_utils.dart';
 
 class RegisterAccountView extends StatefulWidget {
   const RegisterAccountView({super.key});
@@ -40,6 +41,7 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
 
     double deviceHeight = MediaQuery.of(context).size.height;
     double deviceWidth = MediaQuery.of(context).size.width;
+    double fontSize = getFontSize(context, 16); // 16 is the base font size for 360dp width
 
     return GestureDetector(
       onTap: () {
@@ -52,7 +54,7 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           backgroundColor: '#1E1E1E'.toColor(),
-          leading: IconButton(icon: const Icon(Icons.chevron_left), onPressed: () => Navigator.pop(context),),
+          leading: IconButton(icon: Icon(Icons.chevron_left, size: fontSize * 0.75), onPressed: () => Navigator.pop(context),),
         ),
         backgroundColor: '#1E1E1E'.toColor(),
         body: SizedBox.expand(
@@ -61,7 +63,7 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
             children: <Widget>[
               SizedBox(height: deviceHeight * 0.050),
               Text(
-                '學中文',
+                '學國語',
                 style: TextStyle(
                   color: '#F5F5DC'.toColor(),
                   fontSize: deviceWidth * 46/360,
@@ -74,25 +76,25 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
                 maintainSize: true,
                 maintainState: true,
                 child: Container(
-                  height: 24,
+                  height: fontSize * 1.4,
                   width: deviceWidth * 5/6,
                   alignment: AlignmentDirectional.topStart,
                   child: Text(
                     '至少6個字母/數字',
                     style: TextStyle(
                       color: '#F5F5DC'.toColor(),
-                      fontSize: 14,
+                      fontSize: fontSize * 0.8,
                     )
                   )
                 )
               ),
               Container(
-                height: 60.0,
+                height: fontSize * 3.5,
                 width: deviceWidth * 5/6,
                 decoration: BoxDecoration(
                   color: '#7DDEF8'.toColor(),
                   borderRadius: BorderRadius.circular(5),
-                  border: Border.all(width: 5.0, color: '#F5F5DC'.toColor())
+                  border: Border.all(width: 0.3 * fontSize, color: '#F5F5DC'.toColor())
                 ),
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
@@ -107,16 +109,16 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
                     },
                     child: TextField(
                       controller: accountController,
-                      style: TextStyle(color: '#1C1B1F'.toColor(),),
+                      style: TextStyle(color: '#1C1B1F'.toColor(), fontSize: fontSize),
                       decoration: InputDecoration(
                         prefixIcon: Icon(
                           Icons.account_circle,
-                          size: 30.0,
+                          size: fontSize * 1.8,
                           color: '#1C1B1F'.toColor(),
                         ),
                         hintText: '帳號名稱',
                         hintStyle: TextStyle(
-                          fontSize: 20.0,
+                          fontSize: fontSize * 1.2,
                           color: '#013E6D'.toColor()
                         ),
                         focusedBorder: InputBorder.none,
@@ -133,25 +135,25 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
                 maintainSize: true,
                 maintainState: true,
                 child: Container(
-                  height: 24,
+                  height: fontSize * 1.4,
                   width: deviceWidth * 5/6,
                   alignment: AlignmentDirectional.topStart,
                   child: Text(
                     '至少4個數字',
                     style: TextStyle(
                       color: '#F5F5DC'.toColor(),
-                      fontSize: 14,
+                      fontSize: fontSize * 0.8,
                     )
                   )
                 )
               ),
               Container(
-                height: 60.0,
+                height: fontSize * 3.5,
                 width: deviceWidth * 5/6,
                 decoration: BoxDecoration(
                   color: '#7DDEF8'.toColor(),
                   borderRadius: BorderRadius.circular(5),
-                  border: Border.all(width: 5.0, color: '#F5F5DC'.toColor())
+                  border: Border.all(width: 0.3 * fontSize, color: '#F5F5DC'.toColor())
                 ),
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
@@ -167,22 +169,23 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
                     child: TextField(
                       controller: pwdController,
                       obscureText: pwdVisible,
-                      style: TextStyle(color: '#1C1B1F'.toColor(),),
+                      style: TextStyle(color: '#1C1B1F'.toColor(), fontSize: fontSize),
                       decoration: InputDecoration(
                         prefixIcon: Icon(
                           Icons.lock,
-                          size: 30.0,
+                          size: fontSize * 1.8,
                           color: '#1C1B1F'.toColor(),
                         ),
                         hintText: '密碼',
                         hintStyle: TextStyle(
-                          fontSize: 20.0,
+                          fontSize: fontSize * 1.2,
                           color: '#013E6D'.toColor()
                         ),
                         focusedBorder: InputBorder.none,
                         enabledBorder: InputBorder.none,
                         suffixIcon: IconButton(
                           icon: Icon(pwdVisible ? Icons.visibility : Icons.visibility_off),
+                          iconSize: fontSize,
                           onPressed: () {
                             setState(() {
                               pwdVisible = !pwdVisible;
@@ -196,34 +199,35 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
               ),
               SizedBox(height: deviceHeight * 0.0343),
               Container(
-                height: 60.0,
+                height: fontSize * 3.5,
                 width: deviceWidth * 5/6,
                 decoration: BoxDecoration(
                   color: '#7DDEF8'.toColor(),
                   borderRadius: BorderRadius.circular(5),
-                  border: Border.all(width: 5.0, color: '#F5F5DC'.toColor())
+                  border: Border.all(width: 0.3 * fontSize, color: '#F5F5DC'.toColor())
                 ),
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
                   child: TextField(
                     controller: confirmPwdController,
                     obscureText: confirmPwdVisible,
-                    style: TextStyle(color: '#1C1B1F'.toColor(),),
+                    style: TextStyle(color: '#1C1B1F'.toColor(), fontSize: fontSize),
                     decoration: InputDecoration(
                       prefixIcon: Icon(
                         Icons.lock,
-                        size: 30.0,
+                        size: fontSize * 1.8,
                         color: '#1C1B1F'.toColor(),
                       ),
                       hintText: '確認密碼',
                       hintStyle: TextStyle(
-                        fontSize: 20.0,
+                        fontSize: fontSize * 1.2,
                         color: '#013E6D'.toColor()
                       ),
                       enabledBorder: InputBorder.none,
                       focusedBorder: InputBorder.none,
                       suffixIcon: IconButton(
                         icon: Icon(confirmPwdVisible ? Icons.visibility : Icons.visibility_off),
+                        iconSize: fontSize,
                         onPressed: () {
                           setState(() {
                             confirmPwdVisible = !confirmPwdVisible;
@@ -241,14 +245,14 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
                 maintainSize: true,
                 maintainState: true,
                 child: Container(
-                  height: 24,
+                  height: fontSize * 1.4,
                   width: deviceWidth * 5/6,
                   alignment: AlignmentDirectional.topStart,
                   child: Text(
                     showErrorHint,
                     style: TextStyle(
                       color: '#FF0303'.toColor(),
-                      fontSize: 14,
+                      fontSize: fontSize * 0.8,
                     )
                   )
                 )
@@ -289,7 +293,7 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
                     child: Text(
                       '下一步',
                       style: TextStyle(
-                        fontSize: 24.0,
+                        fontSize: fontSize * 1.4,
                         color: '#F5F5DC'.toColor(),
                       )
                     )

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ltrc/data/models/user_model.dart';
 import 'package:ltrc/data/providers/user_provider.dart';
 import 'package:ltrc/extensions.dart';
+import 'package:ltrc/views/view_utils.dart';
 
 class ResetPwdView extends StatefulWidget {
   const ResetPwdView({super.key});
@@ -34,6 +35,7 @@ class _ResetPwdViewState extends State<ResetPwdView> {
   Widget build(BuildContext context) {
 
     double deviceHeight = MediaQuery.of(context).size.height;
+    double fontSize = getFontSize(context, 16); // 16 is the base font size for 360dp width
 
     dynamic obj = ModalRoute.of(context)!.settings.arguments;
     User user = obj['user'];
@@ -41,7 +43,7 @@ class _ResetPwdViewState extends State<ResetPwdView> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.chevron_left), 
+          icon: Icon(Icons.chevron_left, size: fontSize * 0.75), 
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -52,10 +54,10 @@ class _ResetPwdViewState extends State<ResetPwdView> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             SizedBox(height: deviceHeight * 0.08),
-            const Text(
+            Text(
               '重設密碼',
               style: TextStyle(
-                fontSize: 46.0,
+                fontSize: fontSize * 2.7,
               )
             ),
     
@@ -66,24 +68,24 @@ class _ResetPwdViewState extends State<ResetPwdView> {
               maintainSize: true,
               maintainState: true,
               child: Container(
-                height: 24,
-                width: 303,
+                height: fontSize * 1.4,
+                width: fontSize * 17.8,
                 alignment: AlignmentDirectional.topStart,
-                child: const Text(
+                child: Text(
                   '至少4個數字',
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: fontSize * 0.8,
                   )
                 )
               )
             ),
             Container(
-                height: 60.0,
-                width: 303.0,
+                height: fontSize * 3.5,
+                width: fontSize * 17.8,
                 decoration: BoxDecoration(
                     color: '#7DDEF8'.toColor(),
                     borderRadius: BorderRadius.circular(5),
-                    border: Border.all(width: 5.0, color: '#F5F5DC'.toColor())
+                    border: Border.all(width: 0.3 * fontSize, color: '#F5F5DC'.toColor())
                 ),
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
@@ -99,24 +101,26 @@ class _ResetPwdViewState extends State<ResetPwdView> {
                     child: TextField(
                       controller: pwdController,
                       obscureText: pwdVisible,
-                      style: const TextStyle(
-                        color: Colors.black
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: fontSize,
                       ),
                       decoration: InputDecoration(
                         prefixIcon: Icon(
                           Icons.lock,
-                          size: 30.0,
+                          size: fontSize * 1.8,
                           color: '#1C1B1F'.toColor(),
                         ),
                         hintText: '密碼',
                         hintStyle: TextStyle(
-                          fontSize: 20.0,
+                          fontSize: fontSize * 1.2,
                           color: '#013E6D'.toColor()
                         ),
                         enabledBorder: InputBorder.none,
                         focusedBorder: InputBorder.none,
                         suffixIcon: IconButton(
                           icon: Icon(pwdVisible ? Icons.visibility : Icons.visibility_off),
+                          iconSize: fontSize,
                           onPressed: () {
                             setState(() {
                               pwdVisible = !pwdVisible;
@@ -130,36 +134,38 @@ class _ResetPwdViewState extends State<ResetPwdView> {
             ),
             SizedBox(height: deviceHeight * 0.0343),
             Container(
-                height: 60.0,
-                width: 303.0,
+                height: fontSize * 3.5,
+                width: fontSize * 17.8,
                 decoration: BoxDecoration(
                   color: '#7DDEF8'.toColor(),
                   borderRadius: BorderRadius.circular(5),
-                  border: Border.all(width: 5.0, color: '#F5F5DC'.toColor())
+                  border: Border.all(width: 0.3 * fontSize, color: '#F5F5DC'.toColor())
                 ),
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
                   child: TextField(
                     controller: confirmPwdController,
                     obscureText: confirmPwdVisible,
-                    style: const TextStyle(
-                      color: Colors.black
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: fontSize,
                     ),
                     decoration: InputDecoration(
                       prefixIcon: Icon(
                         Icons.lock,
-                        size: 30.0,
+                        size: fontSize * 1.8,
                         color: '#1C1B1F'.toColor(),
                       ),
                       hintText: '確認密碼',
                       hintStyle: TextStyle(
-                          fontSize: 20.0,
+                          fontSize: fontSize * 1.2,
                           color: '#013E6D'.toColor()
                       ),
                       enabledBorder: InputBorder.none,
                       focusedBorder: InputBorder.none,
                       suffixIcon: IconButton(
                         icon: Icon(confirmPwdVisible ? Icons.visibility : Icons.visibility_off),
+                        iconSize: fontSize,
                         onPressed: () {
                           setState(() {
                             confirmPwdVisible = !confirmPwdVisible;
@@ -176,13 +182,13 @@ class _ResetPwdViewState extends State<ResetPwdView> {
               maintainSize: true,
               maintainState: true,
               child: Container(
-                height: 24,
-                width: 303,
+                height: fontSize * 1.4,
+                width: fontSize * 17.8,
                 alignment: AlignmentDirectional.topStart,
                 child: Text(
                   showErrorHint,
-                  style: const TextStyle(
-                    fontSize: 14,
+                  style: TextStyle(
+                    fontSize: fontSize * 0.8,
                   )
                 )
               )
@@ -209,7 +215,7 @@ class _ResetPwdViewState extends State<ResetPwdView> {
               child: Text(
                 '完成',
                 style: TextStyle(
-                  fontSize: 24.0,
+                  fontSize: fontSize * 1.4,
                   color: '#F5F5DC'.toColor(),
                 )
               )

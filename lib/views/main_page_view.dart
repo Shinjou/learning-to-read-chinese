@@ -1,4 +1,4 @@
-import 'dart:math';
+// import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/contants/publisher_code.dart';
@@ -7,6 +7,7 @@ import 'package:ltrc/data/providers/unit_provider.dart';
 import 'package:ltrc/extensions.dart';
 import 'package:ltrc/providers.dart';
 import 'package:ltrc/widgets/progress_bar.dart';
+import 'package:ltrc/views/view_utils.dart';
 
 class MainPageView extends ConsumerWidget {
   const MainPageView({super.key});
@@ -16,6 +17,7 @@ class MainPageView extends ConsumerWidget {
 
     double deviceHeight = MediaQuery.of(context).size.height;
     double deviceWidth = MediaQuery.of(context).size.width;
+    double fontSize = getFontSize(context, 16); // 16 is the base font size for 360dp width
     int totalWordCount = ref.watch(totalWordCountProvider);
     int learnedWordCount = ref.watch(learnedWordCountProvider);
 
@@ -26,9 +28,9 @@ class MainPageView extends ConsumerWidget {
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-            icon: const Icon(
+            icon: Icon(
               Icons.settings,
-              size: 38,
+              size: fontSize,
             ), 
             onPressed: () => Navigator.of(context).pushNamed(
               '/setting'
@@ -40,13 +42,13 @@ class MainPageView extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Container(
-              height: 54,
+              height: fontSize * 3.2,
               alignment: Alignment.center,
               margin: EdgeInsetsDirectional.fromSTEB(0, deviceHeight * 0.0825, 0, deviceHeight * 0.193),
               child: Text(
-                '學中文',
+                '學國語',
                 style: TextStyle(
-                  fontSize: min(deviceWidth * 46 / 360, 52),
+                  fontSize: fontSize * 2.0,
                 )
               )
             ),
@@ -80,17 +82,17 @@ class MainPageView extends ConsumerWidget {
                   child: Text(
                     '學生字',
                     style: TextStyle(
-                      fontSize: 32,
+                      fontSize: fontSize * 1.5,
                       color: '#F5F5DC'.toColor(),
                     )
                   )
                 ),
               )
             ),
-            const Text(
+            Text(
               '學過的生字卡',
               style: TextStyle(
-                fontSize: 22,
+                fontSize: fontSize * 1.3,
               )
             ),
             ProgressBar(maxCount: totalWordCount, value: learnedWordCount),

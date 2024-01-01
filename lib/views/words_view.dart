@@ -4,12 +4,15 @@ import 'package:ltrc/contants/bopomos.dart';
 import 'package:ltrc/data/models/unit_model.dart';
 import 'package:ltrc/data/models/word_status_model.dart';
 import 'package:ltrc/widgets/word_card.dart';
+import 'package:ltrc/views/view_utils.dart';
 
 class WordsView extends ConsumerWidget {
   const WordsView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    double fontSize = getFontSize(context, 16); // 16 is the base font size for 360dp width
+
     dynamic obj = ModalRoute.of(context)!.settings.arguments;
     Unit unit = obj["unit"];
     List<WordStatus> newWordsStatus = obj["newWordsStatus"];
@@ -20,13 +23,14 @@ class WordsView extends ConsumerWidget {
     return Scaffold(
         appBar: AppBar(
           leading: IconButton(
-            icon: const Icon(Icons.chevron_left),
+            icon: Icon(Icons.chevron_left, size: fontSize * 0.75),
             onPressed: () => Navigator.pop(context),
           ),
-          title: (unit.id == -1) ? Text(unit.unitTitle) : Text("${unit.unitId.toString().padLeft(2,'0')} | ${unit.unitTitle}"),
+          title: (unit.id == -1) ? Text(unit.unitTitle, style: TextStyle(fontSize: fontSize * 0.75,)) : 
+            Text("${unit.unitId.toString().padLeft(2,'0')} | ${unit.unitTitle}", style: TextStyle(fontSize: fontSize * 0.75,)),
           actions: [
             IconButton(
-              icon: const Icon(Icons.home),
+              icon: Icon(Icons.home, size: fontSize * 0.75),
               onPressed: () => Navigator.of(context).pushNamed('/mainPage'),
             )
           ],
@@ -36,11 +40,11 @@ class WordsView extends ConsumerWidget {
           SliverPadding(
             padding: const EdgeInsets.all(20),
             sliver: SliverGrid(
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 125.0,
-                mainAxisSpacing: 10.0,
-                crossAxisSpacing: 10.0,
-                childAspectRatio: 113 / 160,
+              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: isTablet(context) ? fontSize * 8.0 : fontSize * 8.0, // This is most important
+                mainAxisSpacing: fontSize * 0.5, // was 10,
+                crossAxisSpacing: fontSize * 0.5, // was 10,
+                childAspectRatio: isTablet(context) ? 4 / 3 : 4 / 4,
               ),
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) {
@@ -51,9 +55,9 @@ class WordsView extends ConsumerWidget {
                     wordsStatus: newWordsStatus,
                     wordsPhrase: newWordsPhrase,
                     wordIndex: index,
-                    sizedBoxWidth: 30,
-                    sizedBoxHeight: 155,
-                    fontSize: 48,
+                    sizedBoxWidth: fontSize * 2.0,
+                    sizedBoxHeight: fontSize * 3.0, // was 3.0
+                    fontSize: fontSize * 2.5,
                     isVertical: true,
                     disable: false,
                   );
@@ -63,24 +67,24 @@ class WordsView extends ConsumerWidget {
             ),
           ),
           (extraWordsStatus.isEmpty) ? const SliverToBoxAdapter(child: Text('')) : 
-          const SliverPadding(
-            padding: EdgeInsets.fromLTRB(24, 0, 0, 0),
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(24, 0, 0, 0),
             sliver: SliverToBoxAdapter(
               child: Text(
                   "唸唸看",
                   style: TextStyle(
-                    fontSize: 24,
+                    fontSize: fontSize * 1.5,
                   )
               ))
                   ),
           SliverPadding(
             padding: const EdgeInsets.all(20),
             sliver: SliverGrid(
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 125.0,
-                mainAxisSpacing: 10.0,
-                crossAxisSpacing: 10.0,
-                childAspectRatio: 113 / 160,
+              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: fontSize * 15.0, // 250.0,
+                mainAxisSpacing: fontSize * 0.5, // was 15,
+                crossAxisSpacing: fontSize * 0.5, // was 15,                
+                childAspectRatio: 3 / 4,
               ),
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) {
@@ -91,9 +95,9 @@ class WordsView extends ConsumerWidget {
                     wordsStatus: extraWordsStatus,
                     wordsPhrase: extraWordsPhrase,
                     wordIndex: index,
-                    sizedBoxWidth: 30,
-                    sizedBoxHeight: 155,
-                    fontSize: 48,
+                    sizedBoxWidth: fontSize * 1.8,
+                    sizedBoxHeight: fontSize * 9.1,
+                    fontSize: fontSize * 2.0,
                     isVertical: true,
                     disable: false
                   );

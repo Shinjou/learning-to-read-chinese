@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ltrc/views/view_utils.dart';
 
 class Resource{
   final String resource;
@@ -39,11 +40,15 @@ class AcknowledgeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double fontSize = getFontSize(context, 16); // 16 is the base font size for 360dp width
+
     int count = 0;
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(icon: const Icon(Icons.chevron_left), onPressed: () => Navigator.pop(context),),
-        title: const Text("致謝"),
+        leading: IconButton(icon: Icon(Icons.chevron_left, size: fontSize * 0.75), onPressed: () => Navigator.pop(context),),
+        title: Text(
+          "致謝",
+          style: TextStyle(fontSize: fontSize * 0.75,)),
       ),
       body: CustomScrollView(
         slivers: [
@@ -54,11 +59,11 @@ class AcknowledgeView extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     "圖片資源來源：",
                     textAlign: TextAlign.left,
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: fontSize,
                       fontWeight: FontWeight.bold
                     )
                   ),
@@ -68,8 +73,8 @@ class AcknowledgeView extends StatelessWidget {
                       padding: const EdgeInsets.fromLTRB(0, 7, 0, 7),
                       child:Text(
                         "$count. ${e.resource}\n ${e.description}",
-                        style: const TextStyle(
-                          fontSize: 16
+                        style: TextStyle(
+                          fontSize: fontSize
                         )
                       )
                     );

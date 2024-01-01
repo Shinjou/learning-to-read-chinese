@@ -94,7 +94,7 @@ class UnitProvider {
         debugPrint('Unit ${unit.unitId} hasn\'t been read before');
       }
     }
-    debugPrint(count.toString());
+    debugPrint('getLearnedWordCount $count');
     return count;
   }
     

@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:ltrc/data/models/word_status_model.dart';
 import 'package:ltrc/extensions.dart';
 import '../widgets/word_card.dart';
+import '../views/view_utils.dart';
 
 class BopomosView extends StatelessWidget {
   const BopomosView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    double fontSize = getFontSize(context, 16); // 16 is the base font size for 360dp width
+
     dynamic obj = ModalRoute.of(context)!.settings.arguments;
     List<WordStatus> wordsStatus = obj['wordStatus']; 
     List<Map> wordsPhrase = obj['wordsPhrase']; 
@@ -15,13 +18,16 @@ class BopomosView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.chevron_left),
+          icon: Icon(Icons.chevron_left, size: fontSize * 0.75),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text("00 | 學注音"),
+        title: Text(
+          "00 | 學注音",
+          style: TextStyle(fontSize: fontSize * 0.75), // Set the font size for the title
+        ),        
         actions: [
           IconButton(
-            icon: const Icon(Icons.home),
+            icon: Icon(Icons.home, size: fontSize * 0.75),
             onPressed: () => Navigator.of(context).pushNamed('/mainPage'),
           )
         ],
@@ -31,11 +37,11 @@ class BopomosView extends StatelessWidget {
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(14, 8, 14, 16),
             sliver: SliverGrid(
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 125.0,
-                mainAxisSpacing: 10.0,
-                crossAxisSpacing: 10.0,
-                childAspectRatio: 113 / 166,
+              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: isTablet(context) ? fontSize * 3.0 : fontSize * 6.0, // This is most important
+                mainAxisSpacing: fontSize * 0.5, // Reduced spacing
+                crossAxisSpacing: fontSize * 0.5, // Reduced spacing
+                childAspectRatio: 1 / 1.5, // Adjusted for a tighter fit (you might need to experiment with this value)
               ),
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) {
@@ -47,9 +53,9 @@ class BopomosView extends StatelessWidget {
                     wordsStatus: wordsStatus,
                     wordsPhrase: wordsPhrase,
                     wordIndex: index,
-                    sizedBoxWidth: 30,
-                    sizedBoxHeight: 155,
-                    fontSize: 48,
+                    sizedBoxWidth: fontSize * 1.0, // 1.8 This may need to be adjusted if the cards are still too wide
+                    sizedBoxHeight: fontSize * 1.0, // 9.1 This may need to be adjusted if the cards are still too tall
+                    fontSize: fontSize * 2.0, // Ensure this is appropriate for the size of the cards
                     isVertical: true,
                   );
                 },
@@ -57,6 +63,7 @@ class BopomosView extends StatelessWidget {
               ),
             ),
           ),
+
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(46, 16, 46, 16),
             sliver: SliverList(
@@ -65,8 +72,8 @@ class BopomosView extends StatelessWidget {
                   return InkWell(
                     onTap: () => Navigator.of(context).pushNamed('/bopomoQuiz'),
                     child: Container(
-                      width: 297,
-                      height: 80,
+                      width: fontSize * 17.5,
+                      height: fontSize * 4.0,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                         borderRadius:
@@ -76,7 +83,7 @@ class BopomosView extends StatelessWidget {
                       child: Text(
                         "拼拼看",
                         style: TextStyle(
-                          fontSize: 32,
+                          fontSize: fontSize * 2.0,
                           color: "#28231D".toColor(),
                         ),
                         textAlign: TextAlign.center,

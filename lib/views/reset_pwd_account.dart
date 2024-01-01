@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ltrc/data/models/user_model.dart';
 import 'package:ltrc/data/providers/user_provider.dart';
 import 'package:ltrc/extensions.dart';
+import 'package:ltrc/views/view_utils.dart';
 
 class ResetPwdAccountView extends StatefulWidget {
   const ResetPwdAccountView({super.key});
@@ -29,6 +30,7 @@ class _ResetPwdAccountViewState extends State<ResetPwdAccountView> {
   Widget build(BuildContext context) {
 
     double deviceHeight = MediaQuery.of(context).size.height;
+    double fontSize = getFontSize(context, 16); // 16 is the base font size for 360dp width
 
     return GestureDetector(
       onTap: () {
@@ -40,7 +42,7 @@ class _ResetPwdAccountViewState extends State<ResetPwdAccountView> {
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(
-            icon: const Icon(Icons.chevron_left), 
+            icon: Icon(Icons.chevron_left, size: fontSize * 0.75), 
             onPressed: () => Navigator.pop(context),
           ),
         ),
@@ -51,17 +53,17 @@ class _ResetPwdAccountViewState extends State<ResetPwdAccountView> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               SizedBox(height: deviceHeight * 0.15),
-              const Text(
+              Text(
                 '忘記密碼',
                 style: TextStyle(
-                  fontSize: 42.0,
+                  fontSize: fontSize * 2.5,
                 )
               ),
               SizedBox(height: deviceHeight * 0.04),
-              const Text(
+              Text(
                 '請輸入帳號',
                 style: TextStyle(
-                  fontSize: 20.0,
+                  fontSize: fontSize * 1.2,
                 )
               ),
       
@@ -72,24 +74,24 @@ class _ResetPwdAccountViewState extends State<ResetPwdAccountView> {
                 maintainSize: true,
                 maintainState: true,
                 child: Container(
-                  height: 24,
-                  width: 303,
+                  height: fontSize * 1.4,
+                  width: fontSize * 17.8,
                   alignment: AlignmentDirectional.topStart,
-                  child: const Text(
+                  child: Text(
                     '至少6個字母/數字',
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: fontSize * 0.8,
                     )
                   )
                 )
               ),
               Container(
-                height: 60.0,
-                width: 303.0,
+                height: fontSize * 3.5,
+                width: fontSize * 17.8,
                 decoration: BoxDecoration(
                   color: '#7DDEF8'.toColor(),
                   borderRadius: BorderRadius.circular(5),
-                  border: Border.all(width: 5.0, color: '#F5F5DC'.toColor())
+                  border: Border.all(width: 0.3 * fontSize, color: '#F5F5DC'.toColor())
                 ),
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
@@ -104,16 +106,16 @@ class _ResetPwdAccountViewState extends State<ResetPwdAccountView> {
                     },
                     child: TextField(
                       controller: accountController,
-                      style: TextStyle( color: '#1C1B1F'.toColor(),),
+                      style: TextStyle( color: '#1C1B1F'.toColor(), fontSize: fontSize,),
                       decoration: InputDecoration(
                         prefixIcon: Icon(
                           Icons.account_circle,
-                          size: 30.0,
+                          size: fontSize * 1.8,
                           color: '#1C1B1F'.toColor(),
                         ),
                         hintText: '請輸入帳號',
                         hintStyle: TextStyle(
-                          fontSize: 20.0,
+                          fontSize: fontSize * 1.2,
                           color: '#013E6D'.toColor()
                         ),
                         enabledBorder: InputBorder.none,
@@ -130,14 +132,14 @@ class _ResetPwdAccountViewState extends State<ResetPwdAccountView> {
                 maintainSize: true,
                 maintainState: true,
                 child: Container(
-                  height: 24,
-                  width: 303,
+                  height: fontSize * 1.4,
+                  width: fontSize * 17.8,
                   alignment: AlignmentDirectional.topStart,
                   child: Text(
                     showErrorHint,
                     style: TextStyle(
                       color: '#FF0303'.toColor(),
-                      fontSize: 14,
+                      fontSize: fontSize * 0.8,
                     )
                   )
                 )
@@ -170,7 +172,7 @@ class _ResetPwdAccountViewState extends State<ResetPwdAccountView> {
                 child: Text(
                   '下一步',
                   style: TextStyle(
-                    fontSize: 24.0,
+                    fontSize: fontSize * 1.4,
                     color: '#F5F5DC'.toColor(),
                   )
                 )

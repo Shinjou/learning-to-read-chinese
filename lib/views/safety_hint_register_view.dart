@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ltrc/contants/register_question_label.dart';
 import 'package:ltrc/extensions.dart';
+import 'package:ltrc/views/view_utils.dart';
 
 class SafetyHintRegisterView extends StatefulWidget {
   const SafetyHintRegisterView({super.key});
@@ -33,6 +34,8 @@ class _SafetyHintRegisterState extends State<SafetyHintRegisterView> {
 
   @override
   Widget build(BuildContext context) {
+    double deviceHeight = MediaQuery.of(context).size.height;
+    double fontSize = getFontSize(context, 16); // 16 is the base font size for 360dp width
 
     final List<DropdownMenuEntry<RegisterQuestionLabel>> q1Entries = <DropdownMenuEntry<RegisterQuestionLabel>>[];
     final List<DropdownMenuEntry<RegisterQuestionLabel>> q2Entries = <DropdownMenuEntry<RegisterQuestionLabel>>[];
@@ -41,8 +44,16 @@ class _SafetyHintRegisterState extends State<SafetyHintRegisterView> {
       if (question.question!=""){
         q1Entries.add(
           DropdownMenuEntry<RegisterQuestionLabel>(
+            label: question.question,
             value: question, 
-            label: question.question, 
+            style: ButtonStyle(
+                textStyle: MaterialStateProperty.all<TextStyle>(
+                  TextStyle(
+                    fontSize: fontSize * 0.6,
+                    color: '#1C1B1F'.toColor(),
+                  ),
+                ),
+              ),            
             enabled: question.question != "請選擇問題" && question.question != selectedQuestion2!.question,
           )
         );
@@ -53,15 +64,21 @@ class _SafetyHintRegisterState extends State<SafetyHintRegisterView> {
       if (question.question!=""){
         q2Entries.add(
           DropdownMenuEntry<RegisterQuestionLabel>(
+            label: question.question,
             value: question, 
-            label: question.question, 
+            style: ButtonStyle(
+                textStyle: MaterialStateProperty.all<TextStyle>(
+                  TextStyle(
+                    fontSize: fontSize * 0.6,
+                    color: '#1C1B1F'.toColor(),
+                  ),
+                ),
+              ),
             enabled: question.question != "請選擇問題"  && question.question != selectedQuestion1!.question,
           ),
         );
       }
     }
-
-    double deviceHeight = MediaQuery.of(context).size.height;
 
     return GestureDetector(
       onTap: () {
@@ -73,7 +90,7 @@ class _SafetyHintRegisterState extends State<SafetyHintRegisterView> {
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(
-            icon: const Icon(Icons.chevron_left), 
+            icon: Icon(Icons.chevron_left, size: fontSize * 0.75), 
             onPressed: () => Navigator.pop(context),
           ),
         ),
@@ -85,20 +102,20 @@ class _SafetyHintRegisterState extends State<SafetyHintRegisterView> {
             children: <Widget>[
               SizedBox(height: deviceHeight * 0.04),
               
-              const Text(
+              Text(
                 '選取安全提示',
                 style: TextStyle(
-                  fontSize: 28.0,
+                  fontSize: fontSize * 1.5,
                 )
               ),
-              const Text(
+              Text(
                 '問題&答案',
                 style: TextStyle(
-                  fontSize: 28.0,
+                  fontSize: fontSize * 1.5,
                 )
               ),
               
-              SizedBox(height: deviceHeight * 0.04),
+              // SizedBox(height: deviceHeight * 0.04),
               
               Container(
                 decoration: BoxDecoration(
@@ -106,16 +123,16 @@ class _SafetyHintRegisterState extends State<SafetyHintRegisterView> {
                   borderRadius: BorderRadius.circular(5),
                 ),
                 child: DropdownMenu<RegisterQuestionLabel>(
-                  label: const Text(
+                  label: Text(
                     "請選擇問題 1 ",
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: fontSize,
                     ),
                   ),
                   controller: q1Controller,
-                  width: 303,
+                  width: 17.8 * fontSize,
                   textStyle: TextStyle(
-                    fontSize: 18,
+                    fontSize: fontSize,
                     color: '#1C1B1F'.toColor(),
                   ),
                   dropdownMenuEntries: q1Entries,
@@ -128,25 +145,27 @@ class _SafetyHintRegisterState extends State<SafetyHintRegisterView> {
               ),
                       
               SizedBox(height: deviceHeight * 0.015),
-
               Container(
-                height: 55.0,
-                width: 303.0,
+                height: 2.5 * fontSize,
+                width: 17.8 * fontSize,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: '#D9D9D9'.toColor(),
                   borderRadius: BorderRadius.circular(5),
-                  border: Border.all(width: 1.0, color: '#F5F5DC'.toColor())
+                  border: Border.all(width: 0.1 * fontSize, color: '#F5F5DC'.toColor())
                 ),
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
                   child: TextField(
                     controller: a1Controller,
-                    style: TextStyle(color: '#1C1B1F'.toColor()),
+                    style: TextStyle(
+                      fontSize: fontSize, // Set your desired font size here
+                      color: '#1C1B1F'.toColor()
+                    ),
                     decoration: InputDecoration(
                       hintText: '回答 1',
                       hintStyle: TextStyle(
-                        fontSize: 18.0,
+                        fontSize: fontSize, // Also set font size for hint text if needed
                         color: '#1C1B1F'.toColor()
                       ),
                       enabledBorder: InputBorder.none,
@@ -167,14 +186,14 @@ class _SafetyHintRegisterState extends State<SafetyHintRegisterView> {
                   label: Text(
                     "請選擇問題 2 ",
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: fontSize,
                       color: '#1C1B1F'.toColor(),
                     ),
                   ),
                   controller: q2Controller,
-                  width: 303,
+                  width: 17.8 * fontSize,
                   textStyle: TextStyle(
-                    fontSize: 16,
+                    fontSize: fontSize,
                     color: '#1C1B1F'.toColor(),
                   ),
                   dropdownMenuEntries: q2Entries,
@@ -187,25 +206,28 @@ class _SafetyHintRegisterState extends State<SafetyHintRegisterView> {
               ),
                       
               SizedBox(height: deviceHeight * 0.015),
-              
               Container(
-                height: 55.0,
-                width: 303.0,
+                height: 2.5 * fontSize,
+                width: 17.8 * fontSize,
+                alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: '#D9D9D9'.toColor(),
                   borderRadius: BorderRadius.circular(5),
-                  border: Border.all(width: 1.0, color: '#F5F5DC'.toColor())
+                  border: Border.all(width: 0.1 * fontSize, color: '#F5F5DC'.toColor())
                 ),
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
                   child: TextField(
-                    style: TextStyle( color: '#1C1B1F'.toColor(), ),
                     controller: a2Controller,
+                    style: TextStyle(
+                      fontSize: fontSize, // Set your desired font size here
+                      color: '#1C1B1F'.toColor()
+                    ),
                     decoration: InputDecoration(
                       hintText: '回答 2',
                       hintStyle: TextStyle(
-                        fontSize: 18.0,
-                        color: '#1C1B1F'.toColor(),
+                        fontSize: fontSize, // Also set font size for hint text if needed
+                        color: '#1C1B1F'.toColor()
                       ),
                       enabledBorder: InputBorder.none,
                       focusedBorder: InputBorder.none,
@@ -213,8 +235,8 @@ class _SafetyHintRegisterState extends State<SafetyHintRegisterView> {
                   ),
                 ),
               ),
-              
-              SizedBox(height: deviceHeight * 0.02),
+
+              SizedBox(height: fontSize),
 
               Visibility(
                 visible: (showErrorHint != ""),
@@ -222,39 +244,39 @@ class _SafetyHintRegisterState extends State<SafetyHintRegisterView> {
                 maintainSize: true,
                 maintainState: true,
                 child: Container(
-                  height: 18,
-                  width: 303,
+                  height: fontSize,
+                  width: fontSize * 17.8,
                   alignment: AlignmentDirectional.topStart,
                   child: Text(
                     showErrorHint,
                     style: TextStyle(
                       color: '#FF0303'.toColor(),
-                      fontSize: 14,
+                      fontSize: fontSize * 0.8,
                     )
                   )
                 )
               ),
               
-              SizedBox(height: deviceHeight * 0.02),
+              SizedBox(height: fontSize),
 
-              const Text(
+              Text(
                 '如果你忘記密碼，',
                 style: TextStyle(
-                  fontSize: 14.0,
+                  fontSize: fontSize * 0.6,
                 )
               ),
 
-              const Text(
+              Text(
                 '這些問題可驗證你的身份，',
                 style: TextStyle(
-                  fontSize: 14.0,
+                  fontSize: fontSize * 0.8,
                 )
               ),
 
-              const Text(
+              Text(
                 '協助你取回密碼。',
                 style: TextStyle(
-                  fontSize: 14.0,
+                  fontSize: fontSize * 0.8,
                 )
               ),
 
@@ -287,7 +309,7 @@ class _SafetyHintRegisterState extends State<SafetyHintRegisterView> {
                 child: Text(
                   '下一步',
                   style: TextStyle(
-                    fontSize: 24.0,
+                    fontSize: fontSize * 1.5,
                     color: '#F5F5DC'.toColor(),
                   )
                 )

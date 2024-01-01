@@ -9,6 +9,7 @@ import 'package:ltrc/data/providers/user_provider.dart';
 import 'package:ltrc/providers.dart';
 import 'package:ltrc/extensions.dart';
 import 'package:ltrc/widgets/mainPage/left_right_switch.dart';
+import 'package:ltrc/views/view_utils.dart';
 
 class RegisterView extends ConsumerStatefulWidget {
   const RegisterView({super.key});
@@ -24,12 +25,13 @@ class RegisterViewState extends ConsumerState<RegisterView> {
     super.initState();
   }
 
-
   @override
   Widget build(BuildContext context) {
 
     double deviceHeight = MediaQuery.of(context).size.height;
     double deviceWidth = MediaQuery.of(context).size.width;
+    double fontSize = getFontSize(context, 16); // 16 is the base font size for 360dp width
+
     final grade = ref.watch(gradeProvider);
     final publisherCode = ref.watch(publisherCodeProvider);
     final pwd = ref.watch(pwdProvider);
@@ -43,7 +45,7 @@ class RegisterViewState extends ConsumerState<RegisterView> {
         child: Column(
           children: <Widget>[
             Container(
-              height: deviceHeight * 0.33,
+              height: fontSize * 7.5,
               width: deviceWidth,
               decoration: BoxDecoration(
                 color: '#013E6D'.toColor(),
@@ -51,18 +53,18 @@ class RegisterViewState extends ConsumerState<RegisterView> {
               alignment: Alignment.center,
               child: Column(
                 children: <Widget>[
-                  SizedBox(height: deviceHeight * 0.06),
+                  SizedBox(height: deviceHeight * 0.03),
                   Text(
                     '年級',
                     style: TextStyle(
                       color: '#F5F5DC'.toColor(),
-                      fontSize: min(deviceWidth * 44 / 360, 50),
+                      fontSize: fontSize * 1.4,
                     )
                   ),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: deviceHeight * 0.027),
+                    padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: deviceHeight * 0.02),
                     child: Container(
-                      height: 9,
+                      height: 0.2 * fontSize,
                       width: min(deviceWidth * 84 / 360, 94),
                       color: '#F5F5DC'.toColor()
                     )
@@ -71,20 +73,20 @@ class RegisterViewState extends ConsumerState<RegisterView> {
                     '課本版本',
                     style: TextStyle(
                       color: '#F5F5DC'.toColor(),
-                      fontSize: min(deviceWidth * 44 / 360, 50),
+                      fontSize: fontSize * 1.4,
                     )
                   )
                 ],
               )
             ),
-            SizedBox(height: deviceHeight * 0.057),
+            SizedBox(height: deviceHeight * 0.03),
             Icon(
               Icons.home_filled,
               color: '#F8A23A'.toColor(),
               size: deviceHeight * 0.083,
             ),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: deviceHeight * 0.04),
+              padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: deviceHeight * 0.02),
               child: LeftRightSwitch(
                 iconsColor: '#F5F5DC'.toColor(),
                 iconsSize: deviceWidth * 0.15,
@@ -137,7 +139,7 @@ class RegisterViewState extends ConsumerState<RegisterView> {
               isLast: false,
             ),
             Padding(
-              padding: EdgeInsets.fromLTRB(0, deviceHeight * 0.0687, 0, deviceHeight * 0.05),
+              padding: EdgeInsets.fromLTRB(0, deviceHeight * 0.0687, 0, deviceHeight * 0.03),
               child: Container(
                 alignment: AlignmentDirectional.center,
                 width: deviceHeight * 0.095,
@@ -147,7 +149,7 @@ class RegisterViewState extends ConsumerState<RegisterView> {
                   shape: BoxShape.circle,
                 ),
                 child: IconButton(
-                  icon: const Icon(Icons.chevron_right),
+                  icon: Icon(Icons.chevron_right, size: fontSize * 2.0),
                   color: '#1E1E1E'.toColor(),
                   iconSize: deviceHeight * 0.09,
                   onPressed: () async {
