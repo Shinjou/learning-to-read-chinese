@@ -407,9 +407,9 @@ class StrokeOrderAnimationController extends ChangeNotifier {
               parsedJson['radStrokes'].length,  // lengh is null
               (index) => parsedJson['radStrokes'][index]);
         } catch (e, s) {
-          debugPrint("Could not read radical stroke indices from JSON.");  // why this error?
-          // debugPrint('Error: $e');
-          // debugPrint('StackTrace: $s');
+          // debugPrint("Could not read radical stroke indices from JSON.");  // why this error?
+          debugPrint('Error: $e');
+          debugPrint('StackTrace: $s');
           tmpRadicalStrokeIndices = [];
         }
       } else {
