@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/extensions.dart';
 import 'package:ltrc/views/view_utils.dart';
 
-
 class TeachWordTabBarView extends ConsumerWidget {
   final Widget content;
   const TeachWordTabBarView({
@@ -15,11 +14,13 @@ class TeachWordTabBarView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     double deviceHeight = MediaQuery.of(context).size.height;
     double deviceWidth = MediaQuery.of(context).size.width;
-    double fontSize = getFontSize(context, 16); // 16 is the base font size for 360dp width
+    double fontSize =
+        getFontSize(context, 16); // 16 is the base font size for 360dp width
 
     return Column(children: [
       SizedBox(
-        height: (deviceHeight - 110) * 0.75, // 110 is the height of the appbar? 0.75 is the ratio of the screen?
+        height: (deviceHeight - 110) *
+            0.80, // 100 did not work in iPhone 14 pro max
         width: deviceWidth,
         child: Container(
           decoration: BoxDecoration(

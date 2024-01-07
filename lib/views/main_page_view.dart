@@ -14,91 +14,81 @@ class MainPageView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
     double deviceHeight = MediaQuery.of(context).size.height;
     double deviceWidth = MediaQuery.of(context).size.width;
-    double fontSize = getFontSize(context, 16); // 16 is the base font size for 360dp width
+    double fontSize =
+        getFontSize(context, 16); // 16 is the base font size for 360dp width
     int totalWordCount = ref.watch(totalWordCountProvider);
     int learnedWordCount = ref.watch(learnedWordCountProvider);
 
-
     return Scaffold(
-      backgroundColor: '#28231D'.toColor(),
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.settings,
-              size: fontSize,
-            ), 
-            onPressed: () => Navigator.of(context).pushNamed(
-              '/setting'
-            ),)
-        ],
-      ),
-      body: SizedBox.expand(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Container(
-              height: fontSize * 3.2,
-              alignment: Alignment.center,
-              margin: EdgeInsetsDirectional.fromSTEB(0, deviceHeight * 0.0825, 0, deviceHeight * 0.193),
-              child: Text(
-                '學國語',
-                style: TextStyle(
-                  fontSize: fontSize * 2.0,
-                )
-              )
-            ),
-            Padding(
-              padding: EdgeInsetsDirectional.only(bottom: deviceHeight * 0.2),
-              child: SizedBox(
-                width: deviceWidth * 0.76,
-                height: deviceHeight * 0.095,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    int publisherCode = ref.watch(publisherCodeProvider);
-                    List<Unit> units = await UnitProvider.getUnits(
-                      inputPublisher: publisherCodeTable[publisherCode]!,
-                      inputGrade: ref.watch(gradeProvider),
-                      inputSemester: "上"
-                    );
-                    Navigator.of(context).pushNamed(
-                      '/units', 
-                      arguments: {'units' : units},
-                    );
-                  },
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all('#013E6D'.toColor()),
-                    elevation: MaterialStateProperty.all(25),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)
-                      )
-                    ),
-                  ),
-                  child: Text(
-                    '學生字',
-                    style: TextStyle(
-                      fontSize: fontSize * 1.5,
-                      color: '#F5F5DC'.toColor(),
-                    )
-                  )
-                ),
-              )
-            ),
-            Text(
-              '學過的生字卡',
-              style: TextStyle(
-                fontSize: fontSize * 1.3,
-              )
-            ),
-            ProgressBar(maxCount: totalWordCount, value: learnedWordCount),
-          ]
+        backgroundColor: '#28231D'.toColor(),
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          actions: [
+            IconButton(
+              icon: Icon(
+                Icons.settings,
+                size: fontSize,
+              ),
+              onPressed: () => Navigator.of(context).pushNamed('/setting'),
+            )
+          ],
         ),
-      )
-    );
+        body: SizedBox.expand(
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                    height: fontSize * 3.2,
+                    alignment: Alignment.center,
+                    margin: EdgeInsetsDirectional.fromSTEB(
+                        0, deviceHeight * 0.0825, 0, deviceHeight * 0.193),
+                    child: Text('學國語',
+                        style: TextStyle(
+                          fontSize: fontSize * 2.0,
+                        ))),
+                Padding(
+                    padding:
+                        EdgeInsetsDirectional.only(bottom: deviceHeight * 0.2),
+                    child: SizedBox(
+                      width: deviceWidth * 0.76,
+                      height: deviceHeight * 0.095,
+                      child: ElevatedButton(
+                          onPressed: () async {
+                            int publisherCode =
+                                ref.watch(publisherCodeProvider);
+                            List<Unit> units = await UnitProvider.getUnits(
+                                inputPublisher:
+                                    publisherCodeTable[publisherCode]!,
+                                inputGrade: ref.watch(gradeProvider),
+                                inputSemester: "上");
+                            Navigator.of(context).pushNamed(
+                              '/units',
+                              arguments: {'units': units},
+                            );
+                          },
+                          style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all('#013E6D'.toColor()),
+                            elevation: MaterialStateProperty.all(25),
+                            shape: MaterialStateProperty.all<
+                                    RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12))),
+                          ),
+                          child: Text('學生字',
+                              style: TextStyle(
+                                fontSize: fontSize * 1.5,
+                                color: '#F5F5DC'.toColor(),
+                              ))),
+                    )),
+                Text('學過的生字卡',
+                    style: TextStyle(
+                      fontSize: fontSize * 1.3,
+                    )),
+                ProgressBar(maxCount: totalWordCount, value: learnedWordCount),
+              ]),
+        ));
   }
 }

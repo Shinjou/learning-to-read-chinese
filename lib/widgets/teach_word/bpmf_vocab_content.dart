@@ -18,15 +18,16 @@ class BopomofoVocabContent extends StatelessWidget {
   Future<void> _speak(String text) async {
     int result = await ftts.speak(text); // Implement the TTS functionality
     if (result == 1) {
-      debugPrint('BopomofoVocabContent _speak succeeded!');
+      // debugPrint('BopomofoVocabContent _speak succeeded!');
     } else {
       debugPrint('BopomofoVocabContent _speak failed!');
     }
-  }  
+  }
 
   @override
   Widget build(BuildContext context) {
-    double fontSize = getFontSize(context, 16); // 16 is the base font size for 360dp width    
+    double fontSize =
+        getFontSize(context, 16); // 16 is the base font size for 360dp width
     String subSentence = sentence;
     if (subSentence.length > 25) {
       subSentence = "${subSentence.substring(0, 25)}...。";
@@ -54,7 +55,8 @@ class BopomofoVocabContent extends StatelessWidget {
                   ),
                   IconButton(
                     icon: const Icon(Icons.volume_up),
-                    iconSize: fontSize * 2.0, // Icon size to match the text size
+                    iconSize:
+                        fontSize * 2.0, // Icon size to match the text size
                     onPressed: () => _speak(vocab),
                   ),
                 ],
@@ -76,7 +78,8 @@ class BopomofoVocabContent extends StatelessWidget {
                           text: subSentence.split(vocab)[0],
                           style: TextStyle(
                             height: fontSize * 0.0, // Adjust as needed
-                            fontSize: fontSize * 2.0, // Adjust text size as needed
+                            fontSize:
+                                fontSize * 2.0, // Adjust text size as needed
                             color: const Color.fromRGBO(245, 245, 220, 100),
                             fontFamily: 'BpmfOnly',
                           ),
@@ -111,7 +114,6 @@ class BopomofoVocabContent extends StatelessWidget {
                     ),
                     textAlign: TextAlign.left,
                   ),
-
                 ],
               ),
             ],

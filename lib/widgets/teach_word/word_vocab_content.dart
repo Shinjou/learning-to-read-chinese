@@ -22,58 +22,54 @@ class WordVocabContent extends StatefulWidget {
 
 class WordVocabContentState extends State<WordVocabContent> {
   final FlutterTts ftts = FlutterTts();
+  late String vocab;
+  late String vocab2;
+  late String meaning;
+  late String sentence;
   late String displayedSentence;
   late List<String> options;
   String message = '';
   late String blankSentence;
+  late String reconstructedSentence;
 
   @override
   void initState() {
-    // Called only once by 用一用
     super.initState();
-
-    // Count the number of characters in widget.vocab
-    int vocabLength = widget.vocab.length;
-
-    // Create a string of underscores with the same length as widget.vocab
-    String underscoreString = "_" * vocabLength;
-
-    // Replace widget.vocab in the sentence with the underscore string
-    blankSentence = widget.sentence.replaceAll(widget.vocab, underscoreString);
-
-    displayedSentence = blankSentence;
-    options = [widget.vocab, widget.vocab2]..shuffle();
+    // debugPrint('initState: vocab = ${widget.vocab}, sentence = ${widget.sentence}');
+    _initVariables();
   }
 
-  void _checkAndSetState() {
-    if (displayedSentence.contains(widget.vocab2)) {
-      // A new "用一用" page
+  void _initVariables() {
+    vocab = widget.vocab;
+    vocab2 = widget.vocab2;
+    meaning = widget.meaning;
+    sentence = widget.sentence;
+    blankSentence = _createBlankSentence(sentence, vocab);
+    displayedSentence = blankSentence;
+    options = [vocab, vocab2]..shuffle();
+    message = '';
+  }
 
-      int vocabLength = widget.vocab.length;
-      String underscoreString = "_" * vocabLength;
-      blankSentence =
-          widget.sentence.replaceAll(widget.vocab, underscoreString);
-      options = [widget.vocab, widget.vocab2]..shuffle();
-      message = '';
-
-      setState(() {
-        displayedSentence = blankSentence;
-      });
-    }
+  String _createBlankSentence(String sentence, String vocab) {
+    int vocabLength = vocab.length;
+    String underscoreString = "_" * vocabLength;
+    return sentence.replaceAll(vocab, underscoreString);
   }
 
   Future<void> _speak(String text) async {
-    int result = await ftts.speak(text); // Implement the TTS functionality
+    int result = await ftts.speak(text);
     if (result == 1) {
-      debugPrint('WordVocabContent _speak succeeded!');
+      // debugPrint('WordVocabContent _speak succeeded!');
     } else {
       debugPrint('WordVocabContent _speak failed!');
     }
   }
 
   void _selectWord(String word) {
+    // debugPrint('_selectWord: word = $word, vocab = $vocab');
+    _speak(word);
     setState(() {
-      if (word == widget.vocab) {
+      if (word == vocab) {
         displayedSentence = widget.sentence;
         message = '答對了！';
       } else {
@@ -83,136 +79,206 @@ class WordVocabContentState extends State<WordVocabContent> {
     });
   }
 
+  void _onContinuePressed() {
+    _initVariables(); // Reset for a new page
+    setState(() {
+      message = '';
+    });
+  }
+
+  // 這個 function 會在每次 build() 時被呼叫，我花很多時間才找到這個方法
+  void _checkAndSetLiju() {
+    // debugPrint(
+    //     '_checkAndSetLiju: message = $message, $vocab, $meaning, $displayedSentence');
+    if (message == '') {
+      // 第一次進入“用一用”，不用做任何事
+      return;
+    }
+
+    if (meaning == widget.meaning) {
+      // 我原先用例句來判斷是否是新一頁，但是不知為何，例句不會更新，才改成用解釋來判斷
+      // 同一個“用一用”頁，使用者連續選擇字詞
+      setState(() {
+        options = [vocab, vocab2]..shuffle();
+        // message = ''; // 不能清空 message，否則會導致後面的判斷錯誤
+      });
+    } else {
+      // 新“用一用”頁，因為 initState 只做一次，因此需要在這裡 init Variables
+      _initVariables();
+      setState(() {
+        message = '';
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double fontSize = getFontSize(context, 16); // Base font size
     const Color explanationColor = Color.fromRGBO(228, 219, 124, 1);
     const Color whiteColor = Colors.white;
 
-    _checkAndSetState(); // Check if this is a new "用一用" page
+    _checkAndSetLiju(); // Ensure state is correct for each build
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Container(
-          alignment: Alignment.center,
-          child: Column(
-            children: [
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    widget.vocab,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: fontSize * 2.0, // was 48,
-                      color: explanationColor,
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.volume_up),
-                    iconSize:
-                        fontSize * 1.5, // Icon size smaller than the text size
-                    color: explanationColor,
-                    onPressed: () => _speak(widget.vocab),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-        Row(
-          // "解釋"
-          mainAxisAlignment: MainAxisAlignment.start,
+    List<Widget> children = [
+      // Vocabulary display with TTS button
+      Container(
+        alignment: Alignment.center,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              "解釋：",
+              widget.vocab,
+              textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: fontSize,
-                color: explanationColor, // Assuming explanationColor is defined
-                // fontWeight: FontWeight.bold,
-              ),
-            ),
-            IconButton(
-              icon: const Icon(Icons.volume_up),
-              iconSize: fontSize,
-              color: explanationColor, // And here for the icon
-              onPressed: () => _speak(widget.meaning),
-            ),
-          ],
-        ),
-        Text(
-          widget.meaning,
-          style: TextStyle(
-            fontSize: fontSize,
-            color: whiteColor,
-          ),
-        ),
-        SizedBox(height: fontSize * 0.2),
-        // "例句"
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Text(
-              "例句：",
-              style: TextStyle(
-                fontSize: fontSize,
+                fontSize: fontSize * 1.75,
                 color: explanationColor,
               ),
             ),
             IconButton(
               icon: const Icon(Icons.volume_up),
-              iconSize: fontSize,
+              iconSize: fontSize * 1.5,
               color: explanationColor,
-              onPressed: () => _speak(displayedSentence),
+              onPressed: () => _speak(widget.vocab),
             ),
           ],
         ),
+      ),
 
-        // Display the sentence with blank or filled
-        Text(
-          displayedSentence,
-          style: TextStyle(fontSize: fontSize, color: Colors.white),
-        ),
-        /*
-        Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Text(
-              displayedSentence,
-              style: TextStyle(fontSize: fontSize, color: Colors.white),
-            ),
-          ],
-        ),
-        */
-        // Display options (vocab and vocab2) as buttons
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: options.map((word) {
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ElevatedButton(
-                onPressed: () => _selectWord(word),
-                child: Text(word),
-              ),
-            );
-          }).toList(),
-        ),
-
-        // Display message based on selection
-        if (message.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              message,
-              style: TextStyle(
-                color: Colors.green,
-                fontSize: fontSize,
-              ),
+      // Meaning of the vocabulary
+      Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Text(
+            "解釋：",
+            style: TextStyle(
+              fontSize: fontSize,
+              color: explanationColor,
             ),
           ),
-      ],
+          IconButton(
+            icon: const Icon(Icons.volume_up),
+            iconSize: fontSize,
+            color: explanationColor,
+            onPressed: () => _speak(widget.meaning),
+          ),
+        ],
+      ),
+
+      Text(
+        widget.meaning,
+        style: TextStyle(
+          fontSize: fontSize,
+          color: whiteColor,
+        ),
+      ),
+      SizedBox(height: fontSize * 0.1),
+
+      // Example sentence with TTS button
+      Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Text(
+            "例句：",
+            style: TextStyle(
+              fontSize: fontSize,
+              color: explanationColor,
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.volume_up),
+            iconSize: fontSize,
+            color: explanationColor,
+            onPressed: () => _speak(widget.sentence),
+          ),
+        ],
+      ),
+
+      // Displayed sentence (with blanks or filled)
+      Text(
+        displayedSentence,
+        style: TextStyle(fontSize: fontSize, color: whiteColor),
+      ),
+
+      // Display options (vocab and vocab2) as buttons
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: options.map((word) {
+          return Container(
+              width: fontSize * 9.0, // for 3 1.5 fontSize characters
+              height: fontSize * 1.50, // word fontSize = 1.0
+              alignment: Alignment.center,
+              margin: const EdgeInsets.all(0.0),
+              decoration: const BoxDecoration(
+                borderRadius:
+                    BorderRadius.all(Radius.circular(1 / 1)), // 38 / 2
+                // color: Colors.grey,
+              ),
+              child: ElevatedButton(
+                onPressed: () => _selectWord(word),
+                child: Text(word,
+                    style: TextStyle(
+                      fontSize: fontSize * 1.0, // was 24/360
+                      // fontWeight: FontWeight.w900,
+                      color: Colors.black,
+                    )),
+              )); // Container
+        }).toList(),
+      ), // Row
+
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            '繼    ', // Invisible text to center "答對了！" and "再試試！"
+            style: TextStyle(
+              fontSize: fontSize, // Adjust font size accordingly
+              color: Colors.transparent, // Text color is transparent
+            ),
+          ),
+          // Display message based on selection
+          if (message.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 0.0),
+              child: Text(
+                message,
+                style: TextStyle(
+                  color: explanationColor,
+                  fontSize: fontSize * 1.0,
+                ),
+              ),
+            ),
+
+          // Continue button
+          if (message.isNotEmpty)
+            ElevatedButton(
+              onPressed: _onContinuePressed,
+              // 用下面 style 把 button 隱藏起來
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors
+                    .transparent, // Button background color is transparent
+                disabledForegroundColor: Colors.transparent.withOpacity(0.38),
+                disabledBackgroundColor: Colors.transparent.withOpacity(
+                    0.12), // Used for disabled state, also transparent
+                shadowColor: Colors.transparent, // No shadow
+                elevation: 0, // No elevation
+              ),
+
+              child: Text(
+                '續', // Invisible text
+                style: TextStyle(
+                  fontSize: fontSize, // Adjust font size accordingly
+                  color: Colors.transparent, // Text color is transparent
+                ),
+              ),
+            ),
+        ],
+      ),
+    ];
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: children,
     );
   }
 }

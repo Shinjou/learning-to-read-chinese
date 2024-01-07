@@ -67,7 +67,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
     currentTabIndex.value++;
     // bool wordIsLearned = widget.wordsStatus[widget.wordIndex].learned;
     if (!wordIsLearned) {
-      debugPrint('nextTab nextStepId: $nextStepId');
+      // debugPrint('nextTab nextStepId: $nextStepId');
       if (nextStepId == steps['goToSection2']) {
         setState(() {
           nextStepId += 1;
@@ -105,7 +105,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
     setState(() {
       wordObj = widget.wordsPhrase[widget.wordIndex];
     });
-    debugPrint('getWord wordObj: $wordObj'); // this code was not executed. Why?
+    // debugPrint('getWord wordObj: $wordObj'); // this code was not executed. Why?
     if (wordObj['vocab1'] != "") {
       vocabCnt += 1;
       var imgAsset = await myLoadAsset(
@@ -135,20 +135,20 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
     ftts.setSpeechRate(0.5);
     ftts.setVolume(1.0);
     ftts.setCompletionHandler(() async {
-      debugPrint('initState goToSection4 $nextStepId');
-      // bool wordIsLearned = widget.wordsStatus[widget.wordIndex].learned;
+      // debugPrint('initState nextStepId: $nextStepId');
+
       if (!wordIsLearned) {
         if (nextStepId == steps['goToSection2']) {
           setState(() {
             nextStepId += 1;
           });
         } else if (nextStepId == steps['goToSection4']) {
-          debugPrint('initState goToSection4 $vocabCnt');
+          // debugPrint('initState vocabCnt: $vocabCnt');
           if (vocabCnt == 1) {
             WordStatus newStatus = widget.wordsStatus[widget.wordIndex];
             setState(() {
               newStatus.learned = true; // I never saw this flag set. Why?
-              debugPrint('initState learned: $newStatus');
+              // debugPrint('initState learned: $newStatus');
             });
             setState(() {
               nextStepId = 100;
@@ -164,7 +164,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
           WordStatus newStatus = widget.wordsStatus[widget.wordIndex];
           setState(() {
             newStatus.learned = true; // I never saw this flag set. Why?
-            debugPrint('initState learned: $newStatus.learned');
+            // debugPrint('initState learned: $newStatus.learned');
           });
           setState(() {
             nextStepId = 100;
@@ -173,10 +173,11 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
           await WordStatusProvider.updateWordStatus(status: newStatus);
         }
       }
-      debugPrint("initState: Speech has completed");
+      // debugPrint("initState: Speech has completed");
     });
-    if (wordIsLearned)
+    if (wordIsLearned) {
       nextStepId = 100; // replaced widget.wordsStatus[widget.wordIndex].learned
+    }
     isBpmf = (initials.contains(widget.wordsStatus[widget.wordIndex].word) ||
         prenuclear.contains(widget.wordsStatus[widget.wordIndex].word) ||
         finals.contains(widget.wordsStatus[widget.wordIndex].word));
@@ -260,7 +261,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
     double availableWidth = deviceWidth - 20; // 10 padding on each side
     double availableHeight =
         deviceHeight - 20; // example padding top and bottom
-    double nonConsumedHeight = deviceHeight * 0.2; // was 0.15;
+    double nonConsumedHeight = deviceHeight * 0.15; // was 0.20;
     var gray85Color = '#D9D9D9'.toColor();
 
     String word = widget.wordsStatus[widget.wordIndex].word;
@@ -275,7 +276,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
     }
     List<Widget> useTabView = [
       TeachWordTabBarView(
-        // 用一用
+        // 用一用 - 例句1
         content: Stack(
           children: [
             Column(
@@ -310,15 +311,14 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                         steps['goToPhrase2'] ||
                                     wordIsLearned)
                                 ? () async {
-                                    setState(() {
-                                      vocabIndex = 1;
-                                    });
                                     if (nextStepId == steps['goToPhrase2']) {
                                       var result = await ftts.speak(
                                           "${wordObj['vocab2']}。${wordObj['sentence2']}");
-                                      debugPrint(
-                                          '用一用 vocab2: ${wordObj['vocab2']}');
+                                      // debugPrint('用一用 vocab2: ${wordObj['vocab2']}');
                                     }
+                                    setState(() {
+                                      vocabIndex = 1;
+                                    });
                                   }
                                 : null,
                           ),
@@ -379,7 +379,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
       ),
       (vocabCnt == 2)
           ? TeachWordTabBarView(
-              // 用一用
+              // 用一用 - 例句2
               content: Stack(
               children: [
                 Column(
@@ -427,26 +427,27 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                             vocab2: wordObj['vocab1'],
                                             // alternativePhrases: alternativePhrases, // Pass the fetched phrases here
                                           ),
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        (img2Exist && !isBpmf)
-                                            ? Image(
-                                                height:
-                                                    fontSize * 8.8, // was 150
-                                                image: AssetImage(
-                                                    'lib/assets/img/vocabulary/${wordObj['vocab2']}.png'),
-                                              )
-                                            : Container(
-                                                height: isBpmf
-                                                    ? 0
-                                                    : fontSize *
-                                                        2.0, // was 8.8. Need to change other 8.8 to 4.4?
-                                              ),
-                                      ], // children
+                                    Flexible(
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          (img2Exist && !isBpmf)
+                                              ? Image(
+                                                  height: deviceHeight *
+                                                      0.15, // was 150
+                                                  image: AssetImage(
+                                                      'lib/assets/img/vocabulary/${wordObj['vocab2']}.png'),
+                                                )
+                                              : SizedBox(
+                                                  height: isBpmf
+                                                      ? 0
+                                                      : deviceHeight * 0.15,
+                                                ),
+                                        ], // children
+                                      ),
                                     ),
                                   ],
                                 )))),
@@ -760,12 +761,12 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                     }
                                   : null,
                             ),
-                            SizedBox(height: fontSize * 0.3), //
+                            SizedBox(height: fontSize * 0.2), // was 0.3
                             SizedBox(
                               width: availableWidth *
                                   1.0, // or any other appropriate width
                               height: (availableHeight - nonConsumedHeight) *
-                                  0.5, // Allocate 50% of the available height, adjust as needed
+                                  0.5, // Allocate 50% of the available height
                               child: Container(
                                 decoration: !isBpmf
                                     ? const BoxDecoration(
@@ -956,12 +957,12 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
               useTabView[vocabIndex]
             ]),
         bottomNavigationBar: BottomAppBar(
-            height: 5.9 * fontSize, // was 100
+            height: 4.0 * fontSize, // was 100, 5.9
             elevation: 0,
             color: '#28231D'.toColor(),
             child: LeftRightSwitch(
                 iconsColor: '#F5F5DC'.toColor(),
-                iconsSize: fontSize * 2.8, // was 48,
+                iconsSize: fontSize * 2.0, // was 48, 2.5
                 rightBorder: false,
                 middleWidget: WordCard(
                     unitId: unitId,
@@ -969,7 +970,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                     wordsStatus: widget.wordsStatus,
                     wordsPhrase: widget.wordsPhrase,
                     wordIndex: widget.wordIndex,
-                    sizedBoxWidth: 5.5 * fontSize, // was 125
+                    sizedBoxWidth: 7.5 * fontSize, // was 125, 5.5
                     sizedBoxHeight: 4.0 * fontSize, // was 88
                     fontSize: fontSize * 2.0,
                     isBpmf: isBpmf,
