@@ -871,6 +871,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                   // IconButton for 筆順
                                   buildIconButtonWithLabel(
                                       context: context,
+                                      border: nextStepId == steps['seeAnimation'],
                                       iconData: [Icons.pause, Icons.play_arrow],
                                       label: '筆順',
                                       isSelected: controller.isAnimating,
@@ -898,6 +899,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                   // IconButton for 寫字
                                   buildIconButtonWithLabel(
                                       context: context,
+                                      border: (!controller.isQuizzing && (nextStepId == steps['practiceWithBorder1'] || nextStepId == steps['practiceWithBorder2'] || nextStepId == steps['practiceWithBorder3'] || nextStepId == steps['practiceWithoutBorder1'])),
                                       iconData: [Icons.edit_off, Icons.edit],
                                       label: '寫字',
                                       isSelected: controller.isQuizzing,
@@ -925,6 +927,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                   // IconButton for 邊框
                                   buildIconButtonWithLabel(
                                       context: context,
+                                      border: (nextStepId == steps['turnBorderOff']),
                                       iconData: [Icons.remove_red_eye, Icons.remove_red_eye_outlined],
                                       label: '邊框',
                                       isSelected: controller.showOutline,
@@ -1005,6 +1008,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
   // Helper method to create an icon button with a label
   Widget buildIconButtonWithLabel({
     required BuildContext context,
+    required bool border,
     required List<IconData> iconData,
     required String label,
     required bool isSelected,
@@ -1014,15 +1018,20 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        IconButton(
-          icon: Icon(
-            isSelected ? iconData[0] : iconData[1],
-            size: fontSize,
+        Container(
+          decoration: BoxDecoration(
+            border: border ? Border.all(color: '#FFFF93'.toColor(), width: 1.5) : null,
           ),
-          color: backgroundColor,
-          onPressed: onPressed != null
-              ? () => onPressed()
-              : null, // Use a closure to call the function
+          child: IconButton(
+            icon: Icon(
+              isSelected ? iconData[0] : iconData[1],
+              size: fontSize,
+            ),
+            color: backgroundColor,
+            onPressed: onPressed != null
+                ? () => onPressed()
+                : null, // Use a closure to call the function
+          ),
         ),
         Text(
           label,
