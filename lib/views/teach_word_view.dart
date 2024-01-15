@@ -82,6 +82,22 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
         // todo
         var result =
             await ftts.speak("${wordObj['vocab1']}。${wordObj['sentence1']}");
+        if (vocabCnt == 1) {
+          WordStatus newStatus = widget.wordsStatus[widget.wordIndex];
+          setState(() {
+            newStatus.learned = true; // I never saw this flag set. Why?
+            // debugPrint('initState learned: $newStatus');
+          });
+          setState(() {
+            nextStepId = 100;
+          });
+          ref.read(learnedWordCountProvider.notifier).state += 1;
+          await WordStatusProvider.updateWordStatus(status: newStatus);
+        } else {
+          setState(() {
+            nextStepId += 1;
+          });
+        }
       }
     }
   }
@@ -135,8 +151,8 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
     ftts.setSpeechRate(0.5);
     ftts.setVolume(1.0);
     ftts.setCompletionHandler(() async {
+      // 不知道為甚麼line 84 `await ftts.speak("${wordObj['vocab1']}。${wordObj['sentence1']}");` 完進不來（沒有換tab的話會進來）
       // debugPrint('initState nextStepId: $nextStepId');
-
       if (!wordIsLearned) {
         if (nextStepId == steps['goToSection2']) {
           setState(() {
@@ -210,7 +226,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                 setState(() {
                   practiceTimeLeft -= 1;
                   nextStepId += 1;
-                  widget.wordsStatus[widget.wordIndex].learned = true; // 強迫設這標籤
+                  // widget.wordsStatus[widget.wordIndex].learned = true; // 強迫設這標籤
                   debugPrint(
                       'initState 要進入用一用，set learned flag: ${widget.wordsStatus[widget.wordIndex].learned}');
                 });
@@ -315,6 +331,16 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                       var result = await ftts.speak(
                                           "${wordObj['vocab2']}。${wordObj['sentence2']}");
                                       // debugPrint('用一用 vocab2: ${wordObj['vocab2']}');
+                                      WordStatus newStatus = widget.wordsStatus[widget.wordIndex];
+                                      setState(() {
+                                        newStatus.learned = true; // I never saw this flag set. Why?
+                                        // debugPrint('initState learned: $newStatus.learned');
+                                      });
+                                      setState(() {
+                                        nextStepId = 100;
+                                      });
+                                      ref.read(learnedWordCountProvider.notifier).state += 1;
+                                      await WordStatusProvider.updateWordStatus(status: newStatus);
                                     }
                                     setState(() {
                                       vocabIndex = 1;
