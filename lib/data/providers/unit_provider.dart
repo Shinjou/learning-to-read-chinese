@@ -74,6 +74,7 @@ class UnitProvider {
   }
 
   static Future<int> getLearnedWordCount({required String inputAccount, required String inputPublisher, required int inputGrade, required String inputSemester}) async {
+    // debugPrint('getLearnedWordCount, $inputAccount, $inputPublisher, $inputGrade, $inputSemester');
     List<Unit> units = await getUnits(
       inputGrade: inputGrade, 
       inputPublisher: inputPublisher, 
@@ -94,7 +95,7 @@ class UnitProvider {
         debugPrint('Unit ${unit.unitId} hasn\'t been read before');
       }
     }
-    debugPrint('getLearnedWordCount $count');
+    // debugPrint('getLearnedWordCount $count');
     return count;
   }
     
@@ -105,6 +106,7 @@ class UnitProvider {
       where: "$databasePublisher = ? and $databaseGrade = ? and $databaseSemester = ?",
       whereArgs: [inputPublisher, inputGrade, inputSemester]
     );
+    // debugPrint('getUnits, $maps');
     return List.generate(maps.length, (i) {
       return Unit(
         id: maps[i][databaseId],

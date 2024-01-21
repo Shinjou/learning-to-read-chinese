@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/contants/arabic_numerals_to_chinese.dart';
+import 'package:ltrc/contants/semester_code.dart';
 import 'package:ltrc/contants/publisher_code.dart';
 import 'package:ltrc/data/models/user_model.dart';
 import 'package:ltrc/data/providers/unit_provider.dart';
@@ -32,6 +33,7 @@ class RegisterViewState extends ConsumerState<RegisterView> {
         getFontSize(context, 16); // 16 is the base font size for 360dp width
 
     final grade = ref.watch(gradeProvider);
+    final semesterCode = ref.watch(semesterCodeProvider);
     final publisherCode = ref.watch(publisherCodeProvider);
     final pwd = ref.watch(pwdProvider);
     final account = ref.watch(accountProvider);
@@ -44,7 +46,7 @@ class RegisterViewState extends ConsumerState<RegisterView> {
         child: Column(
           children: <Widget>[
             Container(
-                height: fontSize * 7.5,
+                height: fontSize * 10.0, // was 7.5 before 學期
                 width: deviceWidth,
                 decoration: BoxDecoration(
                   color: '#013E6D'.toColor(),
@@ -52,12 +54,13 @@ class RegisterViewState extends ConsumerState<RegisterView> {
                 alignment: Alignment.center,
                 child: Column(
                   children: <Widget>[
-                    SizedBox(height: deviceHeight * 0.03),
+                    SizedBox(height: fontSize * 1.0),
                     Text('年級',
                         style: TextStyle(
                           color: '#F5F5DC'.toColor(),
-                          fontSize: fontSize * 1.4,
+                          fontSize: fontSize * 1.2,
                         )),
+                    /*
                     Padding(
                         padding: EdgeInsets.symmetric(
                             horizontal: 0.0, vertical: deviceHeight * 0.02),
@@ -65,53 +68,89 @@ class RegisterViewState extends ConsumerState<RegisterView> {
                             height: 0.2 * fontSize,
                             width: min(deviceWidth * 84 / 360, 94),
                             color: '#F5F5DC'.toColor())),
+                    */
+                    Text('學期',
+                        style: TextStyle(
+                          color: '#F5F5DC'.toColor(),
+                          fontSize: fontSize * 1.2,
+                        )),
                     Text('課本版本',
                         style: TextStyle(
                           color: '#F5F5DC'.toColor(),
-                          fontSize: fontSize * 1.4,
+                          fontSize: fontSize * 1.2,
                         ))
                   ],
                 )),
-            SizedBox(height: deviceHeight * 0.03),
+            SizedBox(height: fontSize * 1.0),
             Icon(
               Icons.home_filled,
               color: '#F8A23A'.toColor(),
               size: deviceHeight * 0.083,
             ),
-            Padding(
-                padding: EdgeInsets.symmetric(
-                    horizontal: 0.0, vertical: deviceHeight * 0.02),
-                child: LeftRightSwitch(
-                  iconsColor: '#F5F5DC'.toColor(),
-                  iconsSize: deviceWidth * 0.15,
-                  rightBorder: false,
-                  onLeftClicked: () => {
-                    ref.read(gradeProvider.notifier).state =
-                        (ref.read(gradeProvider.notifier).state - 2) % 6 + 1
-                  },
-                  onRightClicked: () => {
-                    ref.read(gradeProvider.notifier).state =
-                        (ref.read(gradeProvider.notifier).state) % 6 + 1
-                  },
-                  middleWidget: Container(
-                      alignment: AlignmentDirectional.center,
-                      width: deviceWidth * 0.57,
-                      height: deviceHeight * 0.067,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadiusDirectional.circular(20),
-                          color: '#7DDEF8'.toColor()),
-                      child: Text('${numeralToChinese[grade]}年級',
-                          style: TextStyle(
-                            color: '#000000'.toColor(),
-                            fontSize:
-                                min(deviceWidth * 0.166, deviceHeight * 0.044),
-                          ))),
-                  isFirst: false,
-                  isLast: false,
-                )),
             LeftRightSwitch(
+              // 年級
               iconsColor: '#F5F5DC'.toColor(),
-              iconsSize: deviceWidth * 0.15,
+              iconsSize: fontSize * 1.5,
+              rightBorder: false,
+              onLeftClicked: () => {
+                ref.read(gradeProvider.notifier).state =
+                    (ref.read(gradeProvider.notifier).state - 2) % 6 + 1
+              },
+              onRightClicked: () => {
+                ref.read(gradeProvider.notifier).state =
+                    (ref.read(gradeProvider.notifier).state) % 6 + 1
+              },
+              middleWidget: Container(
+                  alignment: AlignmentDirectional.center,
+                  width: deviceWidth * 0.57,
+                  height: deviceHeight * 0.067,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadiusDirectional.circular(20),
+                      color: '#7DDEF8'.toColor()),
+                  child: Text('${numeralToChinese[grade]}年級',
+                      style: TextStyle(
+                        color: '#000000'.toColor(),
+                        fontSize:
+                            min(deviceWidth * 0.166, deviceHeight * 0.044),
+                      ))),
+              isFirst: false,
+              isLast: false,
+            ),
+            SizedBox(height: fontSize * 0.3),
+            LeftRightSwitch(
+              // 學期
+              iconsColor: '#F5F5DC'.toColor(),
+              iconsSize: fontSize * 1.5,
+              rightBorder: false,
+              onLeftClicked: () => {
+                ref.read(semesterCodeProvider.notifier).state =
+                    (ref.read(semesterCodeProvider.notifier).state - 1) % 2
+              },
+              onRightClicked: () => {
+                ref.read(semesterCodeProvider.notifier).state =
+                    (ref.read(semesterCodeProvider.notifier).state + 1) % 2
+              },
+              middleWidget: Container(
+                  alignment: AlignmentDirectional.center,
+                  width: deviceWidth * 0.57,
+                  height: deviceHeight * 0.067,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadiusDirectional.circular(20),
+                      color: '#7DDEF8'.toColor()),
+                  child: Text(semesterCodeTable[semesterCode]!,
+                      style: TextStyle(
+                        color: '#000000'.toColor(),
+                        fontSize:
+                            min(deviceWidth * 0.166, deviceHeight * 0.044),
+                      ))),
+              isFirst: false,
+              isLast: false,
+            ),
+            SizedBox(height: fontSize * 0.3),
+            LeftRightSwitch(
+              // 出版商
+              iconsColor: '#F5F5DC'.toColor(),
+              iconsSize: fontSize * 1.5,
               rightBorder: false,
               onLeftClicked: () => {
                 ref.read(publisherCodeProvider.notifier).state =
@@ -139,7 +178,7 @@ class RegisterViewState extends ConsumerState<RegisterView> {
             ),
             Padding(
               padding: EdgeInsets.fromLTRB(
-                  0, deviceHeight * 0.0687, 0, deviceHeight * 0.03),
+                  0, deviceHeight * 0.0687, 0, fontSize * 1.0),
               child: Container(
                   alignment: AlignmentDirectional.center,
                   width: deviceHeight * 0.095,
@@ -163,6 +202,7 @@ class RegisterViewState extends ConsumerState<RegisterView> {
                             safetyQuestionId2: obj['q2'],
                             safetyAnswer2: obj['a2'] as String,
                             grade: grade,
+                            semester: semesterCodeTable[semesterCode]!,
                             publisher: publisherCodeTable[publisherCode]!,
                           ),
                         );
@@ -174,7 +214,8 @@ class RegisterViewState extends ConsumerState<RegisterView> {
                           await UnitProvider.getTotalWordCount(
                         inputPublisher: publisherCodeTable[publisherCode]!,
                         inputGrade: grade,
-                        inputSemester: "上", // Need to enhance
+                        // inputSemester: "上", // Need to enhance
+                        inputSemester: semesterCodeTable[semesterCode]!,
                       );
 
                       ref.read(learnedWordCountProvider.notifier).state = 0;

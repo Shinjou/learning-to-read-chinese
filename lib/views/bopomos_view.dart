@@ -41,12 +41,11 @@ class BopomosView extends StatelessWidget {
               sliver: SliverGrid(
                 gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                   maxCrossAxisExtent: isTablet(context)
-                      ? fontSize * 3.0
-                      : fontSize * 6.0, // This is most important
+                      ? fontSize * 8.0
+                      : fontSize * 8.0, // This is most important
                   mainAxisSpacing: fontSize * 0.5, // Reduced spacing
                   crossAxisSpacing: fontSize * 0.5, // Reduced spacing
-                  childAspectRatio: 1 /
-                      1.5, // Adjusted for a tighter fit (you might need to experiment with this value)
+                  childAspectRatio: isTablet(context) ? 4 / 3 : 4 / 4,
                 ),
                 delegate: SliverChildBuilderDelegate(
                   (BuildContext context, int index) {
@@ -59,11 +58,11 @@ class BopomosView extends StatelessWidget {
                       wordsPhrase: wordsPhrase,
                       wordIndex: index,
                       sizedBoxWidth: fontSize *
-                          1.0, // 1.8 This may need to be adjusted if the cards are still too wide
+                          2.0, // 1.8 This may need to be adjusted if the cards are still too wide
                       sizedBoxHeight: fontSize *
-                          1.0, // 9.1 This may need to be adjusted if the cards are still too tall
+                          3.0, // 9.1 This may need to be adjusted if the cards are still too tall
                       fontSize: fontSize *
-                          2.0, // Ensure this is appropriate for the size of the cards
+                          2.5, // Ensure this is appropriate for the size of the cards
                       isVertical: true,
                     );
                   },

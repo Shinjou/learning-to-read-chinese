@@ -12,7 +12,7 @@ class UserProvider {
   }
 
   static String tableName = 'users';
-  
+
   // Define constants for database
   static const String databaseAccount = 'account';
   static const String databasePassword = 'password';
@@ -22,19 +22,87 @@ class UserProvider {
   static const String databaseSafetyQuestionId2 = 'safetyQuestionId2';
   static const String databaseSafetyAnswer2 = 'safetyAnswer2';
   static const String databaseGrade = 'grade';
+  static const String databaseSemester = 'semester';
   static const String databasePublisher = 'publisher';
 
+  static const int _dbVersion = 3;
+  static const String _dbName = 'users.sqlite';
 
-  static Future<Database> initDatabase() async =>
-    database ??= await openDatabase(
-      join(await getDatabasesPath(), 'users.sqlite'),
+  static Future<Database> initDatabase() async {
+    try {
+      String dbPath = join(await getDatabasesPath(), _dbName);
+      // print("Database path: $dbPath"); // Display the database path
+
+      // Check if the database exists
+      bool dbExists = await databaseExists(dbPath);
+
+      if (!dbExists) {
+        // If the database doesn't exist, create a new one
+        return await _createDatabase(dbPath);
+      } else {
+        // If the database exists, open and check its version
+        Database db = await openDatabase(dbPath);
+
+        if (await _getDatabaseVersion(db) != _dbVersion) {
+          // If the version is different, delete the current DB and create a new one
+          await deleteDatabase(dbPath);
+          return await _createDatabase(dbPath);
+        } else {
+          // If the version is the same, return the opened database
+          return db;
+        }
+      }
+    } catch (e) {
+      print('Error initializing the database: $e');
+      rethrow; // Re-throwing the error after logging it
+    }
+  }
+
+  static Future<Database> _createDatabase(String path) async {
+    try {
+      return await openDatabase(
+        path,
+        onCreate: (db, version) {
+          return db.execute(
+            "CREATE TABLE $tableName($databaseAccount TEXT PRIMARY KEY, $databasePassword TEXT, $databaseUserName TEXT, $databaseSafetyQuestionId1 INTEGER, $databaseSafetyAnswer1 TEXT, $databaseSafetyQuestionId2 INTEGER, $databaseSafetyAnswer2 TEXT, $databaseGrade INTEGER, $databaseSemester TEXT, $databasePublisher TEXT)",
+          );
+        },
+        version: _dbVersion,
+      );
+    } catch (e) {
+      print('Error creating the database: $e');
+      rethrow;
+    }
+  }
+
+  static Future<int> _getDatabaseVersion(Database db) async {
+    try {
+      var result = await db.rawQuery('PRAGMA user_version');
+      int version = result.isNotEmpty ? result[0]['user_version'] as int : 0;
+      return version;
+    } catch (e) {
+      print('Error fetching the database version: $e');
+      rethrow;
+    }
+  }
+
+  /*
+  static Future<Database> initDatabase() async {
+    String dbPath = join(await getDatabasesPath(), 'users.sqlite');
+    print(
+        "Database path: $dbPath"); // Print statement to display the database path
+
+    return database ??= await openDatabase(
+      dbPath,
       onCreate: (db, version) {
         return db.execute(
-          "CREATE TABLE $tableName($databaseAccount TEXT PRIMARY KEY, $databasePassword TEXT, $databaseUserName TEXT, $databaseSafetyQuestionId1 INTEGER, $databaseSafetyAnswer1 TEXT, $databaseSafetyQuestionId2 INTEGER, $databaseSafetyAnswer2 TEXT, $databaseGrade INTEGER, $databasePublisher TEXT)",
+          "CREATE TABLE $tableName($databaseAccount TEXT PRIMARY KEY, $databasePassword TEXT, $databaseUserName TEXT, $databaseSafetyQuestionId1 INTEGER, $databaseSafetyAnswer1 TEXT, $databaseSafetyQuestionId2 INTEGER, $databaseSafetyAnswer2 TEXT, $databaseGrade INTEGER, $databaseSemester TEXT, $databasePublisher TEXT)",
         );
       },
       version: 2,
     );
+  }
+  */
 
   static Future<void> addUser({required User user}) async {
     final Database db = await getDBConnect();
@@ -44,15 +112,26 @@ class UserProvider {
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
-    
+
   static Future<User> getUser({required String inputAccount}) async {
     final Database db = await getDBConnect();
     try {
       final List<Map<String, dynamic>> maps = await db.query(tableName,
-        columns: [databaseAccount, databasePassword, databaseUserName, databaseSafetyQuestionId1, databaseSafetyAnswer1, databaseSafetyQuestionId2, databaseSafetyAnswer2, databaseGrade, databasePublisher],
-        where: " $databaseAccount = ? ",
-        whereArgs: [inputAccount]
-      );
+          columns: [
+            databaseAccount,
+            databasePassword,
+            databaseUserName,
+            databaseSafetyQuestionId1,
+            databaseSafetyAnswer1,
+            databaseSafetyQuestionId2,
+            databaseSafetyAnswer2,
+            databaseGrade,
+            databaseSemester,
+            databasePublisher
+          ],
+          where: " $databaseAccount = ? ",
+          whereArgs: [inputAccount]
+          );
       return User(
         account: maps[0][databaseAccount],
         password: maps[0][databasePassword],
@@ -62,6 +141,7 @@ class UserProvider {
         safetyQuestionId2: maps[0][databaseSafetyQuestionId2],
         safetyAnswer2: maps[0][databaseSafetyAnswer2],
         grade: maps[0][databaseGrade],
+        semester: maps[0][databaseSemester],
         publisher: maps[0][databasePublisher],
       );
     } catch (e) {
@@ -82,25 +162,25 @@ class UserProvider {
   static Future<void> updateUser({required User user}) async {
     final Database db = await getDBConnect();
     await db.update(
-      tableName,
+      tableName, 
       user.toMap(),
-      where: " $databaseAccount = ? ",
+        where: " $databaseAccount = ? ", 
       whereArgs: [user.account]
-    );
+      );
   }
 
   static Future<void> deleteUser({required String inputAccount}) async {
     final Database db = await getDBConnect();
     await db.delete(tableName,
-      where: " $databaseAccount = ? ",
+      where: " $databaseAccount = ? ", 
       whereArgs: [inputAccount]
-    );
+      );
   }
 
   static Future<void> closeDb() async {
     database = null;
     await deleteDatabase(
       join(await getDatabasesPath(), 'users.sqlite')
-    );
+      );
   }
 }

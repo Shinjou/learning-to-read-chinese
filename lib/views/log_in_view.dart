@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ltrc/contants/semester_code.dart';
 import 'package:ltrc/contants/publisher_code.dart';
 import 'package:ltrc/data/models/user_model.dart';
 import 'package:ltrc/data/providers/unit_provider.dart';
@@ -206,6 +207,12 @@ class LogInViewState extends ConsumerState<LogInView> {
                                     ref.read(gradeProvider.notifier).state =
                                         user.grade;
                                     ref
+                                            .read(semesterCodeProvider.notifier)
+                                            .state =
+                                        semesterCodeTable.keys.firstWhere((e) =>
+                                            semesterCodeTable[e] ==
+                                            user.semester);
+                                    ref
                                             .read(publisherCodeProvider.notifier)
                                             .state =
                                         publisherCodeTable.keys.firstWhere(
@@ -218,7 +225,8 @@ class LogInViewState extends ConsumerState<LogInView> {
                                         await UnitProvider.getTotalWordCount(
                                       inputPublisher: user.publisher,
                                       inputGrade: user.grade,
-                                      inputSemester: "上",
+                                      // inputSemester: "上",
+                                      inputSemester: user.semester,
                                     );
                                     ref
                                             .read(learnedWordCountProvider.notifier)
@@ -227,7 +235,8 @@ class LogInViewState extends ConsumerState<LogInView> {
                                       inputAccount: accountController.text,
                                       inputPublisher: user.publisher,
                                       inputGrade: user.grade,
-                                      inputSemester: "上",
+                                      // inputSemester: "上",
+                                      inputSemester: user.semester,
                                     );
                                     if (!mounted) return;
                                     Navigator.of(context)

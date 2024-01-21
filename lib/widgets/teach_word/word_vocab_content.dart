@@ -86,7 +86,7 @@ class WordVocabContentState extends State<WordVocabContent> {
     });
   }
 
-  // 這個 function 會在每次 build() 時被呼叫，我花很多時間才找到這個方法
+  // 這個 function 會在每次 build() 時被呼叫，用來檢查是否更新解釋、例句、選項
   void _checkAndSetLiju() {
     // debugPrint(
     //     '_checkAndSetLiju: message = $message, $vocab, $meaning, $displayedSentence');
@@ -95,8 +95,8 @@ class WordVocabContentState extends State<WordVocabContent> {
       return;
     }
 
+    // 我原先用例句來判斷是否是新一頁，但是不知為何，例句不會更新，才改成用解釋來判斷
     if (meaning == widget.meaning) {
-      // 我原先用例句來判斷是否是新一頁，但是不知為何，例句不會更新，才改成用解釋來判斷
       // 同一個“用一用”頁，使用者連續選擇字詞
       setState(() {
         options = [vocab, vocab2]..shuffle();
@@ -217,7 +217,7 @@ class WordVocabContentState extends State<WordVocabContent> {
                 onPressed: () => _selectWord(word),
                 child: Text(word,
                     style: TextStyle(
-                      fontSize: fontSize * 1.0, // was 24/360
+                      fontSize: fontSize * 0.92, // 1.0 will overflow in some small devices
                       // fontWeight: FontWeight.w900,
                       color: Colors.black,
                     )),

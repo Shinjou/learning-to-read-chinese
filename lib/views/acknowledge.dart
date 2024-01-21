@@ -18,7 +18,7 @@ final List<Resource> resourceList = [
   Resource(resource: "筆順動畫", description: "來自文鼎科技開發股份有限公司提供之開源漢字、注音筆順素材與技術支持。"),
   Resource(resource: "諮詢顧問", description: "鄭漢文校長與陳素慧老師擔任諮詢顧問，分享現場教師觀點。"),
   Resource(
-      resource: "APP開發", description: "林羿成、蔡伊甯、王藝錡、李昊翰合力開發此軟體，版權歸誠致教育基金會所有。")
+      resource: "APP開發", description: "林羿成、蔡伊甯、李昊翰合力開發此軟體，版權歸誠致教育基金會所有。")
 ];
 
 class AcknowledgeView extends StatelessWidget {

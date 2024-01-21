@@ -92,10 +92,12 @@ class WordsView extends ConsumerWidget {
               padding: const EdgeInsets.all(20),
               sliver: SliverGrid(
                 gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: fontSize * 15.0, // 250.0,
+                  maxCrossAxisExtent: isTablet(context)
+                      ? fontSize * 8.0
+                      : fontSize * 8.0, // This is most important
                   mainAxisSpacing: fontSize * 0.5, // was 15,
                   crossAxisSpacing: fontSize * 0.5, // was 15,
-                  childAspectRatio: 3 / 4,
+                  childAspectRatio: isTablet(context) ? 4 / 3 : 4 / 4,
                 ),
                 delegate: SliverChildBuilderDelegate(
                   (BuildContext context, int index) {
@@ -106,9 +108,9 @@ class WordsView extends ConsumerWidget {
                         wordsStatus: extraWordsStatus,
                         wordsPhrase: extraWordsPhrase,
                         wordIndex: index,
-                        sizedBoxWidth: fontSize * 1.8,
-                        sizedBoxHeight: fontSize * 9.1,
-                        fontSize: fontSize * 2.0,
+                        sizedBoxWidth: fontSize * 2.0,
+                        sizedBoxHeight: fontSize * 3.0,
+                        fontSize: fontSize * 2.5,
                         isVertical: true,
                         disable: false);
                   },

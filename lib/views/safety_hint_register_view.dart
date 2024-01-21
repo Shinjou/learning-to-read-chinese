@@ -102,15 +102,15 @@ class _SafetyHintRegisterState extends State<SafetyHintRegisterView> {
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  SizedBox(height: deviceHeight * 0.04),
+                  // SizedBox(height: deviceHeight * 0.04),
 
                   Text('選取安全提示',
                       style: TextStyle(
-                        fontSize: fontSize * 1.5,
+                        fontSize: fontSize * 1.2,
                       )),
                   Text('問題&答案',
                       style: TextStyle(
-                        fontSize: fontSize * 1.5,
+                        fontSize: fontSize * 1.2,
                       )),
 
                   // SizedBox(height: deviceHeight * 0.04),
@@ -240,7 +240,7 @@ class _SafetyHintRegisterState extends State<SafetyHintRegisterView> {
                       maintainSize: true,
                       maintainState: true,
                       child: Container(
-                          height: fontSize,
+                          height: fontSize * 0.5,
                           width: fontSize * 17.8,
                           alignment: AlignmentDirectional.topStart,
                           child: Text(showErrorHint,
@@ -249,11 +249,11 @@ class _SafetyHintRegisterState extends State<SafetyHintRegisterView> {
                                 fontSize: fontSize * 0.8,
                               )))),
 
-                  SizedBox(height: fontSize),
+                  SizedBox(height: fontSize * 0.5),
 
                   Text('如果你忘記密碼，',
                       style: TextStyle(
-                        fontSize: fontSize * 0.6,
+                        fontSize: fontSize * 0.8,
                       )),
 
                   Text('這些問題可驗證你的身份，',
@@ -266,7 +266,7 @@ class _SafetyHintRegisterState extends State<SafetyHintRegisterView> {
                         fontSize: fontSize * 0.8,
                       )),
 
-                  SizedBox(height: deviceHeight * 0.03),
+                  SizedBox(height: fontSize * 0.5),
 
                   TextButton(
                       onPressed: () {
@@ -292,7 +292,7 @@ class _SafetyHintRegisterState extends State<SafetyHintRegisterView> {
                       },
                       child: Text('下一步',
                           style: TextStyle(
-                            fontSize: fontSize * 1.5,
+                            fontSize: fontSize * 1.2,
                             color: '#F5F5DC'.toColor(),
                           )))
                 ]),

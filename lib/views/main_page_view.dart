@@ -1,6 +1,7 @@
 // import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ltrc/contants/semester_code.dart';
 import 'package:ltrc/contants/publisher_code.dart';
 import 'package:ltrc/data/models/unit_model.dart';
 import 'package:ltrc/data/providers/unit_provider.dart';
@@ -20,6 +21,12 @@ class MainPageView extends ConsumerWidget {
         getFontSize(context, 16); // 16 is the base font size for 360dp width
     int totalWordCount = ref.watch(totalWordCountProvider);
     int learnedWordCount = ref.watch(learnedWordCountProvider);
+
+    // for unknown reason, totalWordCount is 0. Set it here 186 to work around.
+    if (totalWordCount == 0) {
+      print('MainPageView build $totalWordCount $learnedWordCount');
+      totalWordCount = 186;
+    }
 
     return Scaffold(
         backgroundColor: '#28231D'.toColor(),
@@ -56,13 +63,17 @@ class MainPageView extends ConsumerWidget {
                       height: deviceHeight * 0.095,
                       child: ElevatedButton(
                           onPressed: () async {
+                            int semesterCode =
+                                ref.watch(semesterCodeProvider);
                             int publisherCode =
                                 ref.watch(publisherCodeProvider);
+
                             List<Unit> units = await UnitProvider.getUnits(
                                 inputPublisher:
                                     publisherCodeTable[publisherCode]!,
                                 inputGrade: ref.watch(gradeProvider),
-                                inputSemester: "上");
+                                // inputSemester: "上");
+                                inputSemester: semesterCodeTable[semesterCode]!);
                             Navigator.of(context).pushNamed(
                               '/units',
                               arguments: {'units': units},

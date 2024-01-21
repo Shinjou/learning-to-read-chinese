@@ -8,9 +8,10 @@ class User {
     required this.safetyQuestionId2,
     required this.safetyAnswer2,
     required this.grade,
+    required this.semester,
     required this.publisher,
   });
-  
+
   final String account;
   String password;
   String username;
@@ -19,6 +20,7 @@ class User {
   final int safetyQuestionId2;
   final String safetyAnswer2;
   int grade;
+  String semester;
   String publisher;
 
   Map<String, dynamic> toMap() {
@@ -31,12 +33,13 @@ class User {
       'safetyQuestionId2': safetyQuestionId2,
       'safetyAnswer2': safetyAnswer2,
       'grade': grade,
+      'semester': semester,
       'publisher': publisher
     };
   }
 
   @override
   String toString() {
-    return "User{account: $account, password: $password, username: $username, safetyQuestionId1: $safetyQuestionId1, safetyAnswer1: $safetyAnswer1, safetyQuestionId2: $safetyQuestionId2, safetyAnswer2: $safetyAnswer2, grade: $grade, publisher: $publisher}";
+    return "User{account: $account, password: $password, username: $username, safetyQuestionId1: $safetyQuestionId1, safetyAnswer1: $safetyAnswer1, safetyQuestionId2: $safetyQuestionId2, safetyAnswer2: $safetyAnswer2, grade: $grade, semester: $semester, publisher: $publisher}";
   }
-} 
+}
