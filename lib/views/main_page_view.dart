@@ -57,7 +57,7 @@ class MainPageView extends ConsumerWidget {
                         ))),
                 Padding(
                     padding:
-                        EdgeInsetsDirectional.only(bottom: deviceHeight * 0.2),
+                        EdgeInsetsDirectional.only(bottom: deviceHeight * 0.15),
                     child: SizedBox(
                       width: deviceWidth * 0.76,
                       height: deviceHeight * 0.095,
