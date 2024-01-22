@@ -102,32 +102,57 @@ class UnitsViewState extends ConsumerState<UnitsView> {
                   String text = index == 0 ? "學注音" : "最愛❤️";
                   return InkWell(
                     onTap: () async {
-                      List<String> bopomos = List.from(initials)..addAll(prenuclear)..addAll(finals);
-                      await WordStatusProvider.addWordsStatus(
-                        statuses: bopomos.map((word) => 
-                          WordStatus(
-                            id: -1, 
-                            userAccount: ref.read(accountProvider.notifier).state , 
-                            word: word, 
-                            learned: false, 
-                            liked: false
-                          )
-                        ).toList()
-                      );
+                      if (index == 0 ) {  // 學注音
+                        List<String> bopomos = List.from(initials)..addAll(prenuclear)..addAll(finals);
+                        await WordStatusProvider.addWordsStatus(
+                          statuses: bopomos.map((word) => 
+                            WordStatus(
+                              id: -1, 
+                              userAccount: ref.read(accountProvider.notifier).state , 
+                              word: word, 
+                              learned: false, 
+                              liked: false
+                            )
+                          ).toList()
+                        );
 
-                      List<WordStatus> wordsStatus = await WordStatusProvider.getWordsStatus(
-                        account: ref.read(accountProvider.notifier).state,
-                        words: bopomos, 
-                      );
-                      List<Map> bpmfWordsPhrase = await getWordsPhrase(wordsStatus);
-                      if (!mounted) return;
-                      Navigator.of(context).pushNamed(
-                        '/bopomos', 
-                        arguments: {
-                          'wordStatus' : wordsStatus,
-                          'wordsPhrase' : bpmfWordsPhrase
-                        }
-                      );
+                        List<WordStatus> wordsStatus = await WordStatusProvider.getWordsStatus(
+                          account: ref.read(accountProvider.notifier).state,
+                          words: bopomos, 
+                        );
+                        List<Map> bpmfWordsPhrase = await getWordsPhrase(wordsStatus);
+                        if (!mounted) return;
+                        Navigator.of(context).pushNamed(
+                          '/bopomos', 
+                          arguments: {
+                            'wordStatus' : wordsStatus,
+                            'wordsPhrase' : bpmfWordsPhrase
+                          }
+                        );
+                      }
+                      else {
+                        List<WordStatus> likedWords = await WordStatusProvider.getLikedWordsStatus(
+                          account: ref.watch(accountProvider), 
+                        );
+                        List<Map> likedWordsPhrase = await getWordsPhrase(likedWords);
+                        Navigator.of(context).pushNamed(
+                          '/words', 
+                          arguments: {
+                            'unit' : Unit(
+                              id: -1, 
+                              publisher: '', 
+                              grade: 1, 
+                              semester: '', 
+                              unitId: -1, 
+                              unitTitle: "❤️最愛",
+                              newWords: [] ,
+                              extraWords:[]
+                            ),
+                            'newWordsStatus' : likedWords,
+                            'newWordsPhrase' : likedWordsPhrase
+                          }
+                        );
+                      }
                     },
                     child: Container(
                       alignment: Alignment.center,
