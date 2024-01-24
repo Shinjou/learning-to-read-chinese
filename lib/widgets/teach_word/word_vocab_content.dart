@@ -67,7 +67,7 @@ class WordVocabContentState extends State<WordVocabContent> {
   }
 
   void _selectWord(String word) {
-    debugPrint('_selectWord: word = $word, vocab = $vocab');
+    // debugPrint('_selectWord: word = $word, vocab = $vocab');
     _speak(word);
     setState(() {
       if (word == vocab) {
@@ -89,8 +89,8 @@ class WordVocabContentState extends State<WordVocabContent> {
 
   // 因為 initState 只做一次，這個 function 會在每次 build() 時被呼叫，用來檢查是否更新解釋、例句、選項
   void _checkAndSetLiju() {
-    debugPrint(
-        '_checkAndSetLiju: message = $message, $meaning, $vocab, $widget.meaning, $displayedSentence');
+    // debugPrint(
+    //     '_checkAndSetLiju: message = $message, $meaning, $vocab, $widget.meaning, $displayedSentence');
     if (message != '' && meaning == widget.meaning) {
       // 使用者重複在同一頁選擇字詞
       setState(() {
