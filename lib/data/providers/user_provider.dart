@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -31,13 +32,14 @@ class UserProvider {
   static Future<Database> initDatabase() async {
     try {
       String dbPath = join(await getDatabasesPath(), _dbName);
-      // print("Database path: $dbPath"); // Display the database path
+      debugPrint('init users.sqlite: $dbPath'); // Display the database path
 
       // Check if the database exists
       bool dbExists = await databaseExists(dbPath);
 
       if (!dbExists) {
         // If the database doesn't exist, create a new one
+        debugPrint('No users.sqlite, create a new one...');
         return await _createDatabase(dbPath);
       } else {
         // If the database exists, open and check its version
@@ -57,20 +59,40 @@ class UserProvider {
       rethrow; // Re-throwing the error after logging it
     }
   }
-
+  
   static Future<Database> _createDatabase(String path) async {
     try {
       return await openDatabase(
         path,
-        onCreate: (db, version) {
-          return db.execute(
+        onCreate: (db, version) async {
+          // Create the table
+          await db.execute(
             "CREATE TABLE $tableName($databaseAccount TEXT PRIMARY KEY, $databasePassword TEXT, $databaseUserName TEXT, $databaseSafetyQuestionId1 INTEGER, $databaseSafetyAnswer1 TEXT, $databaseSafetyQuestionId2 INTEGER, $databaseSafetyAnswer2 TEXT, $databaseGrade INTEGER, $databaseSemester TEXT, $databasePublisher TEXT)",
           );
+
+          // Add a default user of tester for Apple 
+          var defaultUser = User(
+                            account: 'tester',
+                            password: '1234',
+                            safetyQuestionId1: 1,
+                            safetyAnswer1: '1234',
+                            safetyQuestionId2: 2,
+                            safetyAnswer2: '1234',
+                            grade: 1,
+                            semester: '上',
+                            publisher: '康軒',
+                          );
+
+          addUser(user: defaultUser).then((_) {
+            debugPrint("User tester added successfully");
+          }).catchError((error) {
+            debugPrint("Failed to add user: $error");
+          });
         },
         version: _dbVersion,
       );
     } catch (e) {
-      print('Error creating the database: $e');
+      print('Error creating the users.sqlite: $e');
       rethrow;
     }
   }
@@ -85,24 +107,6 @@ class UserProvider {
       rethrow;
     }
   }
-
-  /*
-  static Future<Database> initDatabase() async {
-    String dbPath = join(await getDatabasesPath(), 'users.sqlite');
-    print(
-        "Database path: $dbPath"); // Print statement to display the database path
-
-    return database ??= await openDatabase(
-      dbPath,
-      onCreate: (db, version) {
-        return db.execute(
-          "CREATE TABLE $tableName($databaseAccount TEXT PRIMARY KEY, $databasePassword TEXT, $databaseUserName TEXT, $databaseSafetyQuestionId1 INTEGER, $databaseSafetyAnswer1 TEXT, $databaseSafetyQuestionId2 INTEGER, $databaseSafetyAnswer2 TEXT, $databaseGrade INTEGER, $databaseSemester TEXT, $databasePublisher TEXT)",
-        );
-      },
-      version: 2,
-    );
-  }
-  */
 
   static Future<void> addUser({required User user}) async {
     final Database db = await getDBConnect();
