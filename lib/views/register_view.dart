@@ -54,21 +54,12 @@ class RegisterViewState extends ConsumerState<RegisterView> {
                 alignment: Alignment.center,
                 child: Column(
                   children: <Widget>[
-                    SizedBox(height: fontSize * 1.0),
+                    SizedBox(height: fontSize * 1.5), // 避開 iPhone 11 Pro Max 的瀏海
                     Text('年級',
                         style: TextStyle(
                           color: '#F5F5DC'.toColor(),
                           fontSize: fontSize * 1.2,
                         )),
-                    /*
-                    Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 0.0, vertical: deviceHeight * 0.02),
-                        child: Container(
-                            height: 0.2 * fontSize,
-                            width: min(deviceWidth * 84 / 360, 94),
-                            color: '#F5F5DC'.toColor())),
-                    */
                     Text('學期',
                         style: TextStyle(
                           color: '#F5F5DC'.toColor(),
