@@ -26,7 +26,8 @@ class WordVocabContentState extends State<WordVocabContent> {
   late String vocab2;
   late String meaning;
   late String sentence;
-  late String displayedSentence;
+  // late String displayedSentence;
+  String displayedSentence = '';
   late List<String> options;
   String message = '';
   late String blankSentence;
@@ -35,7 +36,7 @@ class WordVocabContentState extends State<WordVocabContent> {
   @override
   void initState() {
     super.initState();
-    // debugPrint('initState: vocab = ${widget.vocab}, sentence = ${widget.sentence}');
+    debugPrint('initState: vocab = ${widget.vocab}, meaning = ${widget.meaning}');
     _initVariables();
   }
 
@@ -66,7 +67,7 @@ class WordVocabContentState extends State<WordVocabContent> {
   }
 
   void _selectWord(String word) {
-    // debugPrint('_selectWord: word = $word, vocab = $vocab');
+    debugPrint('_selectWord: word = $word, vocab = $vocab');
     _speak(word);
     setState(() {
       if (word == vocab) {
@@ -86,30 +87,25 @@ class WordVocabContentState extends State<WordVocabContent> {
     });
   }
 
-  // 這個 function 會在每次 build() 時被呼叫，用來檢查是否更新解釋、例句、選項
+  // 因為 initState 只做一次，這個 function 會在每次 build() 時被呼叫，用來檢查是否更新解釋、例句、選項
   void _checkAndSetLiju() {
-    // debugPrint(
-    //     '_checkAndSetLiju: message = $message, $vocab, $meaning, $displayedSentence');
-    if (message == '') {
-      // 第一次進入“用一用”，不用做任何事
-      return;
-    }
-
-    // 我原先用例句來判斷是否是新一頁，但是不知為何，例句不會更新，才改成用解釋來判斷
-    if (meaning == widget.meaning) {
-      // 同一個“用一用”頁，使用者連續選擇字詞
+    debugPrint(
+        '_checkAndSetLiju: message = $message, $meaning, $vocab, $widget.meaning, $displayedSentence');
+    if (message != '' && meaning == widget.meaning) {
+      // 使用者重複在同一頁選擇字詞
       setState(() {
         options = [vocab, vocab2]..shuffle();
         // message = ''; // 不能清空 message，否則會導致後面的判斷錯誤
       });
+
     } else {
       // 新“用一用”頁，因為 initState 只做一次，因此需要在這裡 init Variables
-      _initVariables();
       setState(() {
-        message = '';
+        _initVariables();
       });
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
