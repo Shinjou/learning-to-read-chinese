@@ -18,6 +18,7 @@ double getScreenScaleFactor(BuildContext context, double baseScreenWidth) {
 }
 
 double getFontSize(BuildContext context, double baseFontSize) {
+  baseFontSize = 15.0; // 強迫改成 15
   double screenScaleFactor = getScreenScaleFactor(context, 360);
   return baseFontSize * screenScaleFactor;
 }

@@ -82,6 +82,22 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
         // todo
         var result =
             await ftts.speak("${wordObj['vocab1']}。${wordObj['sentence1']}");
+        if (vocabCnt == 1) {
+          WordStatus newStatus = widget.wordsStatus[widget.wordIndex];
+          setState(() {
+            newStatus.learned = true; // I never saw this flag set. Why?
+            // debugPrint('initState learned: $newStatus');
+          });
+          setState(() {
+            nextStepId = 100;
+          });
+          ref.read(learnedWordCountProvider.notifier).state += 1;
+          await WordStatusProvider.updateWordStatus(status: newStatus);
+        } else {
+          setState(() {
+            nextStepId += 1;
+          });
+        }
       }
     }
   }
@@ -135,8 +151,8 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
     ftts.setSpeechRate(0.5);
     ftts.setVolume(1.0);
     ftts.setCompletionHandler(() async {
+      // 不知道為甚麼line 84 `await ftts.speak("${wordObj['vocab1']}。${wordObj['sentence1']}");` 完進不來（沒有換tab的話會進來）
       // debugPrint('initState nextStepId: $nextStepId');
-
       if (!wordIsLearned) {
         if (nextStepId == steps['goToSection2']) {
           setState(() {
@@ -210,7 +226,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                 setState(() {
                   practiceTimeLeft -= 1;
                   nextStepId += 1;
-                  widget.wordsStatus[widget.wordIndex].learned = true; // 強迫設這標籤
+                  // widget.wordsStatus[widget.wordIndex].learned = true; // 強迫設這標籤
                   debugPrint(
                       'initState 要進入用一用，set learned flag: ${widget.wordsStatus[widget.wordIndex].learned}');
                 });
@@ -315,6 +331,16 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                       var result = await ftts.speak(
                                           "${wordObj['vocab2']}。${wordObj['sentence2']}");
                                       // debugPrint('用一用 vocab2: ${wordObj['vocab2']}');
+                                      WordStatus newStatus = widget.wordsStatus[widget.wordIndex];
+                                      setState(() {
+                                        newStatus.learned = true; // I never saw this flag set. Why?
+                                        // debugPrint('initState learned: $newStatus.learned');
+                                      });
+                                      setState(() {
+                                        nextStepId = 100;
+                                      });
+                                      ref.read(learnedWordCountProvider.notifier).state += 1;
+                                      await WordStatusProvider.updateWordStatus(status: newStatus);
                                     }
                                     setState(() {
                                       vocabIndex = 1;
@@ -871,7 +897,8 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                   // IconButton for 筆順
                                   buildIconButtonWithLabel(
                                       context: context,
-                                      iconData: Icons.play_arrow,
+                                      border: nextStepId == steps['seeAnimation'],
+                                      iconData: [Icons.pause, Icons.play_arrow],
                                       label: '筆順',
                                       isSelected: controller.isAnimating,
                                       onPressed: !controller.isQuizzing
@@ -894,11 +921,12 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                             }
                                           : null,
                                       fontSize: fontSize),
-
+                                  // border
                                   // IconButton for 寫字
                                   buildIconButtonWithLabel(
                                       context: context,
-                                      iconData: Icons.edit,
+                                      border: (!controller.isQuizzing && (nextStepId == steps['practiceWithBorder1'] || nextStepId == steps['practiceWithBorder2'] || nextStepId == steps['practiceWithBorder3'] || nextStepId == steps['practiceWithoutBorder1'])),
+                                      iconData: [Icons.edit_off, Icons.edit],
                                       label: '寫字',
                                       isSelected: controller.isQuizzing,
                                       onPressed: (nextStepId ==
@@ -925,7 +953,8 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                   // IconButton for 邊框
                                   buildIconButtonWithLabel(
                                       context: context,
-                                      iconData: Icons.remove_red_eye_outlined,
+                                      border: (nextStepId == steps['turnBorderOff']),
+                                      iconData: [Icons.remove_red_eye, Icons.remove_red_eye_outlined],
                                       label: '邊框',
                                       isSelected: controller.showOutline,
                                       onPressed: (nextStepId ==
@@ -1005,7 +1034,8 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
   // Helper method to create an icon button with a label
   Widget buildIconButtonWithLabel({
     required BuildContext context,
-    required IconData iconData,
+    required bool border,
+    required List<IconData> iconData,
     required String label,
     required bool isSelected,
     required Function()? onPressed, // Change the type to Function()?
@@ -1014,15 +1044,20 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        IconButton(
-          icon: Icon(
-            isSelected ? Icons.pause : iconData,
-            size: fontSize,
+        Container(
+          decoration: BoxDecoration(
+            border: border ? Border.all(color: '#FFFF93'.toColor(), width: 1.5) : null,
           ),
-          color: backgroundColor,
-          onPressed: onPressed != null
-              ? () => onPressed()
-              : null, // Use a closure to call the function
+          child: IconButton(
+            icon: Icon(
+              isSelected ? iconData[0] : iconData[1],
+              size: fontSize,
+            ),
+            color: backgroundColor,
+            onPressed: onPressed != null
+                ? () => onPressed()
+                : null, // Use a closure to call the function
+          ),
         ),
         Text(
           label,
