@@ -1,8 +1,9 @@
 import 'dart:async';
-import 'dart:io';
+// import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+// import 'package:flutter/services.dart';
 import 'package:ltrc/data/models/word_status_model.dart';
+import 'package:ltrc/data/providers/all_provider.dart';
 import 'package:ltrc/data/providers/word_status_provider.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -12,20 +13,7 @@ import '../models/unit_model.dart';
 class UnitProvider {
   static Database? database;
   static Future<Database> getDBConnect() async {
-    String newPath = join(await getDatabasesPath(), 'all.sqlite');
-    final exist = await databaseExists(newPath);
-    if (!exist) {
-      try {
-          ByteData data = await rootBundle.load(join("assets/data_files", "all.sqlite"));
-          List<int> bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
-          await File(newPath).writeAsBytes(bytes, flush: true);
-      } 
-      catch (e) {
-        debugPrint('Failed to write bytes to the file at $newPath. Error: $e');
-        throw Exception('Failed to write bytes to the file. Error: $e');
-      }
-    }
-    database ??= await initDatabase();
+    database ??= await AllProvider.getDBConnect();
     return database!;
   }
 
@@ -42,11 +30,6 @@ class UnitProvider {
   static const String databaseExtraWords = 'extra_words';
   static const String databaseContent = 'unit_content';
 
-  static Future<Database> initDatabase() async =>
-    database ??= await openDatabase(
-      join(await getDatabasesPath(), 'all.sqlite'),
-      version: 2,
-    );
 
   static Future<void> addWordsInUnit(Unit unit) async {
     final Database db = await getDBConnect();
