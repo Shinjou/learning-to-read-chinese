@@ -136,7 +136,7 @@ class SettingViewState extends ConsumerState<SettingView> {
                     icon: Icon(
                       Icons.close,
                       color: '#F5F5DC'.toColor(),
-                      size: fontSize * 2.0,
+                      size: fontSize * 1.5,
                       shadows: const [
                         Shadow(
                             color: Colors.black,
@@ -149,34 +149,34 @@ class SettingViewState extends ConsumerState<SettingView> {
                     },
                   ))),
           Container(
-              padding: EdgeInsetsDirectional.fromSTEB(
-                  deviceWidth * 0.138, deviceHeight * 0.064, 0, 0),
+              padding: EdgeInsetsDirectional.fromSTEB(fontSize * 10, fontSize * 2.0, 0, 0),
+                  // deviceWidth * 0.138, deviceHeight * 0.064, 0, 0),
               child: Row(children: <Widget>[
                 Icon(
                   Icons.settings,
                   color: '#F5F5DC'.toColor(),
-                  size: fontSize * 2.0,
+                  size: fontSize * 1.3,
                 ),
                 Container(
                     padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 0, 0),
                     child: Text('設定',
                         style: TextStyle(
-                          fontSize: fontSize * 1.5,
+                          fontSize: fontSize * 1.3,
                         )))
               ])),
           Positioned(
-              top: deviceHeight * 0.156,
-              left: deviceWidth * 0.058,
+              top: fontSize * 3.5, // deviceHeight * 0.156,
+              left: fontSize * 1.0, // deviceWidth * 0.058,
               child: Container(
-                  height: deviceHeight * 0.8,
-                  width: deviceWidth * 0.882,
+                  height: deviceHeight * 0.82,
+                  width: deviceWidth * 0.92,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16),
                     color: '#F5F5DC'.toColor(),
                   ),
                   child: Column(children: [
                     Container(
-                      height: fontSize * 2.9,
+                      height: fontSize * 1.8,
                       width: deviceWidth * 0.85,
                       margin: EdgeInsetsDirectional.fromSTEB(
                           deviceWidth * 0.0513,
@@ -187,10 +187,10 @@ class SettingViewState extends ConsumerState<SettingView> {
                         Icon(
                           Icons.account_circle,
                           color: '#1C1B1F'.toColor(),
-                          size: fontSize * 2.4,
+                          size: fontSize * 2.0,
                         ),
                         Container(
-                          width: fontSize * 0.7,
+                          width: fontSize * 0.3,
                         ),
                         Flexible(
                           child: Text(userName,
@@ -203,7 +203,7 @@ class SettingViewState extends ConsumerState<SettingView> {
                                         : fontSize * 0.8,
                               )),
                         ),
-                        Container(width: fontSize * 0.7),
+                        Container(width: fontSize * 0.5),
                         InkWell(
                             onTap: () {
                               showDialog(
@@ -288,11 +288,11 @@ class SettingViewState extends ConsumerState<SettingView> {
                           children: [
                             Text('年級',
                                 style: TextStyle(
-                                    fontSize: fontSize * 1.3,
+                                    fontSize: fontSize * 1.2,
                                     color: Colors.black)),
                             DropdownMenu<int>(
                               controller: gradeController,
-                              width: 7.1 * fontSize,
+                              width: 6.0 * fontSize,
                               textStyle: TextStyle(
                                 color: Colors.black,
                                 fontSize: fontSize,
@@ -342,7 +342,7 @@ class SettingViewState extends ConsumerState<SettingView> {
                           children: [
                             Text('學期',
                                 style: TextStyle(
-                                    fontSize: fontSize * 1.3,
+                                    fontSize: fontSize * 1.2,
                                     color: Colors.black)),
                             DropdownMenu<int>(
                               controller: semesterController,
@@ -398,7 +398,7 @@ class SettingViewState extends ConsumerState<SettingView> {
                           children: [
                             Text('課本出版社',
                                 style: TextStyle(
-                                    fontSize: fontSize * 1.3,
+                                    fontSize: fontSize * 1.2,
                                     color: Colors.black)),
                             DropdownMenu<int>(
                               controller: publisherController,
@@ -454,7 +454,7 @@ class SettingViewState extends ConsumerState<SettingView> {
                               Text('撥放速度',
                                   style: TextStyle(
                                     color: colorBlack,
-                                    fontSize: fontSize * 1.3,
+                                    fontSize: fontSize * 1.2,
                                   )),
                               SizedBox(
                                   width: 8.2 * fontSize,
@@ -483,14 +483,14 @@ class SettingViewState extends ConsumerState<SettingView> {
                               Text('授權與致謝',
                                   style: TextStyle(
                                     color: Colors.black,
-                                    fontSize: fontSize * 1.3,
+                                    fontSize: fontSize * 1.2,
                                   )),
                               IconButton(
                                 onPressed: () => Navigator.of(context)
                                     .pushNamed('/acknowledge'),
                                 icon: const Icon(Icons.arrow_forward_ios),
                                 color: Colors.black,
-                                iconSize: fontSize * 1.3,
+                                iconSize: fontSize * 1.2,
                               )
                             ])),
                     SizedBox(
@@ -508,12 +508,12 @@ class SettingViewState extends ConsumerState<SettingView> {
                         ref.read(publisherCodeProvider.notifier).state = 0;
                       },
                       style: TextButton.styleFrom(
-                        fixedSize: Size.fromHeight(fontSize * 2.0),
+                        fixedSize: Size.fromHeight(fontSize * 1.5),
                       ),
                       child: Text('登出',
                           style: TextStyle(
                             color: Colors.black,
-                            fontSize: fontSize * 1.3,
+                            fontSize: fontSize * 1.2,
                           )),
                     ))
                   ]))),
