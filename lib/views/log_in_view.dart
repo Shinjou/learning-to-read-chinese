@@ -18,7 +18,7 @@ class LogInView extends ConsumerStatefulWidget {
 
 const String pwdConfirmErrorHint = "帳號/密碼錯誤";
 const String accountLengthErrorHint = "帳號長度不足 6 位英/數字";
-const String abnormalErrorHint = "不正常的錯誤發生了，請告知老師";
+const String abnormalErrorHint = "無法登入，請告知老師";
 
 class LogInViewState extends ConsumerState<LogInView> {
   TextEditingController accountController = TextEditingController();
@@ -40,6 +40,7 @@ class LogInViewState extends ConsumerState<LogInView> {
     double deviceWidth = MediaQuery.of(context).size.width;
     double fontSize =
         getFontSize(context, 16); // 16 is the base font size for 360dp width
+    debugPrint('Height: $deviceHeight, Width: $deviceWidth, fontSize: $fontSize');
 
     return GestureDetector(
         onTap: () {
@@ -57,7 +58,7 @@ class LogInViewState extends ConsumerState<LogInView> {
                   SizedBox(height: deviceHeight * 0.1),
                   Text('學國語',
                       style: TextStyle(
-                        fontSize: fontSize * 4.0,
+                        fontSize: fontSize * 3.0, // was 4.0
                       )),
                   SizedBox(height: fontSize * 2.0),
                   Container(
@@ -191,6 +192,7 @@ class LogInViewState extends ConsumerState<LogInView> {
                                 setState(() {
                                   showErrorHint = accountLengthErrorHint;
                                 });
+                              /*  
                               } else {
                                 try {
                                   User user = await UserProvider.getUser(
@@ -248,6 +250,61 @@ class LogInViewState extends ConsumerState<LogInView> {
                                   });
                                 }
                               }
+                              */
+                              } else {
+                                try {
+                                  User user = await UserProvider.getUser(inputAccount: accountController.text);
+                                  
+                                  // Print statement to confirm a user was found
+                                  debugPrint('User found: ${user.account}');
+
+                                  if (user.password != pwdController.text) {
+                                    // Print statement when the password does not match
+                                    debugPrint('Password does not match for user: ${user.account}');
+
+                                    setState(() {
+                                      showErrorHint = pwdConfirmErrorHint;
+                                    });
+                                  } else {
+                                    // Print statement when the password matches
+                                    debugPrint('Password matched for user: ${user.account}');
+
+                                    ref.read(accountProvider.notifier).state = accountController.text;
+                                    ref.read(userNameProvider.notifier).state = user.username;
+                                    ref.read(gradeProvider.notifier).state = user.grade;
+                                    ref.read(semesterCodeProvider.notifier).state = semesterCodeTable.keys.firstWhere(
+                                            (e) => semesterCodeTable[e] == user.semester);
+                                    ref.read(publisherCodeProvider.notifier).state = publisherCodeTable.keys.firstWhere(
+                                            (e) => publisherCodeTable[e] == user.publisher);
+
+                                    ref.read(totalWordCountProvider.notifier).state = await UnitProvider.getTotalWordCount(
+                                      inputPublisher: user.publisher,
+                                      inputGrade: user.grade,
+                                      // inputSemester: "上",
+                                      inputSemester: user.semester,
+                                    );
+
+                                    ref.read(learnedWordCountProvider.notifier).state = await UnitProvider.getLearnedWordCount(
+                                      inputAccount: accountController.text,
+                                      inputPublisher: user.publisher,
+                                      inputGrade: user.grade,
+                                      // inputSemester: "上",
+                                      inputSemester: user.semester,
+                                    );
+                                    
+                                    if (!mounted) return;
+                                    Navigator.of(context).pushNamed('/mainPage');
+                                  }
+                                } catch (e) {
+                                  // Print statement when the user is not found or another error occurs
+                                  debugPrint('Error fetching user: $e');
+
+                                  setState(() {
+                                    showErrorHint = abnormalErrorHint;
+                                  });
+                                }
+                              }
+                            
                             },
                             style: TextButton.styleFrom(
                               minimumSize: const Size(110, 30),
