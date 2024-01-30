@@ -18,7 +18,9 @@ final List<Resource> resourceList = [
   Resource(resource: "筆順動畫", description: "來自文鼎科技開發股份有限公司提供之開源漢字、注音筆順素材與技術支持。"),
   Resource(resource: "諮詢顧問", description: "鄭漢文校長與陳素慧老師擔任諮詢顧問，分享現場教師觀點。"),
   Resource(
-      resource: "APP開發", description: "林羿成、蔡伊甯、李昊翰合力開發此軟體，版權歸誠致教育基金會所有。")
+      resource: "APP開發", description: "林羿成、蔡伊甯、李昊翰、方新舟合力開發此軟體。"),
+  Resource(
+      resource: "版權所有©2024誠致教育基金會", description: '')    
 ];
 
 class AcknowledgeView extends StatelessWidget {
@@ -36,7 +38,7 @@ class AcknowledgeView extends StatelessWidget {
             icon: Icon(Icons.chevron_left, size: fontSize * 1.0),
             onPressed: () => Navigator.pop(context),
           ),
-          title: Text("致謝",
+          title: Text("授權與致謝",
               style: TextStyle(
                 fontSize: fontSize * 1.0,
               )),
@@ -49,10 +51,10 @@ class AcknowledgeView extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("圖片資源來源：",
-                          textAlign: TextAlign.left,
+                      Text("",           //"版權所有©2024誠致教育基金會" moved to the bottom
+                          textAlign: TextAlign.right,
                           style: TextStyle(
-                              fontSize: fontSize, fontWeight: FontWeight.bold)),
+                              fontSize: fontSize * 0.3, fontWeight: FontWeight.normal)),
                       ...resourceList.map((e) {
                         count++;
                         return Padding(
