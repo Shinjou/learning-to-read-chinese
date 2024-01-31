@@ -62,7 +62,7 @@ class BopomofoVocabContent extends StatelessWidget {
                 ],
               ),
               Image(
-                height: fontSize * 9.0, // was 140
+                height: fontSize * 8.5, // was 9.0
                 image: AssetImage('lib/assets/img/bopomo/$word.png'),
               ),
               SizedBox(
@@ -79,7 +79,7 @@ class BopomofoVocabContent extends StatelessWidget {
                           style: TextStyle(
                             height: fontSize * 0.0, // Adjust as needed
                             fontSize:
-                                fontSize * 2.0, // Adjust text size as needed
+                                fontSize * 1.3, // Adjust text size as needed
                             color: const Color.fromRGBO(245, 245, 220, 100),
                             fontFamily: 'BpmfOnly',
                           ),
@@ -88,7 +88,7 @@ class BopomofoVocabContent extends StatelessWidget {
                           text: vocab,
                           style: TextStyle(
                             height: fontSize * 0.0,
-                            fontSize: fontSize * 2.0,
+                            fontSize: fontSize * 1.3,
                             color: const Color.fromRGBO(228, 219, 124, 1),
                             fontFamily: 'BpmfOnly',
                           ),
@@ -97,7 +97,7 @@ class BopomofoVocabContent extends StatelessWidget {
                           text: subSentence.split(vocab)[1],
                           style: TextStyle(
                             height: fontSize * 0.0,
-                            fontSize: fontSize * 2.0,
+                            fontSize: fontSize * 1.3,
                             color: const Color.fromRGBO(245, 245, 220, 100),
                             fontFamily: 'BpmfOnly',
                           ),
@@ -106,7 +106,7 @@ class BopomofoVocabContent extends StatelessWidget {
                           alignment: PlaceholderAlignment.middle,
                           child: IconButton(
                             icon: const Icon(Icons.volume_up),
-                            iconSize: fontSize * 2.0,
+                            iconSize: fontSize * 1.3,
                             onPressed: () => _speak(subSentence),
                           ),
                         ),

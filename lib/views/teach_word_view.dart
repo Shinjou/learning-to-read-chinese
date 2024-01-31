@@ -367,16 +367,16 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              mainAxisSize: MainAxisSize.min,
                               children: [
                                 (img1Exist && !isBpmf)
                                     ? Image(
-                                        height: deviceHeight * 0.15,
+                                        height: fontSize * 3.0, // deviceHeight * 0.15, no difference wy?
                                         image: AssetImage(
                                             'lib/assets/img/vocabulary/${wordObj['vocab1']}.png'),
                                       )
                                     : SizedBox(
-                                        height: deviceHeight *
-                                            0.08), // Use SizedBox for consistency
+                                        height: fontSize * 0.5), // was deviceHeight * 0.08
                               ],
                             ),
                           ),
@@ -394,8 +394,8 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
               child: Text(
                 "1 / $vocabCnt",
                 style: TextStyle(
-                  fontSize: fontSize * 1.0,
-                  fontWeight: FontWeight.bold,
+                  fontSize: fontSize * 0.75,
+                  fontWeight: FontWeight.normal,
                   color: backgroundColor,
                 ),
               ),
@@ -403,6 +403,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
           ],
         ),
       ),
+      
       (vocabCnt == 2)
           ? TeachWordTabBarView(
               // 用一用 - 例句2
@@ -459,19 +460,15 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                             CrossAxisAlignment.end,
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceEvenly,
+                                        mainAxisSize: MainAxisSize.min,    
                                         children: [
                                           (img2Exist && !isBpmf)
                                               ? Image(
-                                                  height: deviceHeight *
-                                                      0.15, // was 150
+                                                  height: fontSize * 3.0,
                                                   image: AssetImage(
                                                       'lib/assets/img/vocabulary/${wordObj['vocab2']}.png'),
                                                 )
-                                              : SizedBox(
-                                                  height: isBpmf
-                                                      ? 0
-                                                      : deviceHeight * 0.15,
-                                                ),
+                                              : SizedBox(height: fontSize * 0.5,),
                                         ], // children
                                       ),
                                     ),
@@ -488,8 +485,8 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                   child: Text(
                     "2 / $vocabCnt",
                     style: TextStyle(
-                      fontSize: fontSize * 1.0,
-                      fontWeight: FontWeight.bold,
+                      fontSize: fontSize * 0.75,
+                      fontWeight: FontWeight.normal,
                       color: backgroundColor,
                     ),
                   ),

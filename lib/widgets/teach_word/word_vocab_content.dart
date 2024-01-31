@@ -126,13 +126,13 @@ class WordVocabContentState extends State<WordVocabContent> {
               widget.vocab,
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: fontSize * 1.75,
+                fontSize: fontSize * 1.3,
                 color: explanationColor,
               ),
             ),
             IconButton(
               icon: const Icon(Icons.volume_up),
-              iconSize: fontSize * 1.5,
+              iconSize: fontSize * 1.3,
               color: explanationColor,
               onPressed: () => _speak(widget.vocab),
             ),
