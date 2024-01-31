@@ -38,7 +38,7 @@ class BopomoContainer extends StatelessWidget {
             ? innerWidget
             : Text(
                 character!,
-                style: TextStyle(fontSize: fontSize * 1.5), // was 30
+                style: TextStyle(fontSize: fontSize * 1.2), // was 30
                 textAlign: TextAlign.center,
               ),
       ),
