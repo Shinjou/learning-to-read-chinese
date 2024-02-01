@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:ltrc/extensions.dart';
-import 'package:ltrc/views/view_utils.dart';
 
 class GradeAndProviderButton extends StatelessWidget {
   final double buttonWidth;
   final double buttonHeight;
   final String text;
   const GradeAndProviderButton(
-      {Key? key,
+      {super.key,
         required this.buttonWidth,
         required this.buttonHeight,
-        required this.text})
-      : super(key: key);
+        required this.text});
 
   @override
   Widget build(BuildContext context) {
-    double fontSize = getFontSize(context, 16); // 16 is the base font size for 360dp width
+
+    double fontSize = 12;
+    // if (buttonWidth * 4 > 400) fontSize = 11;
+    // else fontSize = 9;
 
     return Container(
       width: buttonWidth,

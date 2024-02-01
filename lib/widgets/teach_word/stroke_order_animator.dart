@@ -8,7 +8,7 @@ import 'stroke_order_animation_controller.dart';
 class StrokeOrderAnimator extends StatefulWidget {
   final StrokeOrderAnimationController _controller;
 
-  const StrokeOrderAnimator(this._controller, {Key? key}) : super(key: key);
+  const StrokeOrderAnimator(this._controller, {super.key});
 
   @override
   StrokeOrderAnimatorState createState() => StrokeOrderAnimatorState();
@@ -72,8 +72,8 @@ class StrokeOrderAnimatorState extends State<StrokeOrderAnimator> {
                 : widget._controller.strokeAnimationController;
 
             return SizedBox(
-              width: 1024,  // ressponsive?
-              height: 1024,  // ressponsive?
+              width: 1024,
+              height: 1024,
               child: CustomPaint(
                   painter: StrokePainter(widget._controller.strokes[index],
                       showStroke: widget._controller.showStroke &&
