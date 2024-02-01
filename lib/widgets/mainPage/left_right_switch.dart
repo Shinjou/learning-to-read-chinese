@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ltrc/extensions.dart';
+import 'package:ltrc/views/view_utils.dart';
 
 class LeftRightSwitch extends StatelessWidget {
   final Color iconsColor;
@@ -12,7 +13,7 @@ class LeftRightSwitch extends StatelessWidget {
   final VoidCallback? onRightClicked;
 
   const LeftRightSwitch({
-    super.key,
+    Key? key,
     required this.iconsColor,
     required this.iconsSize,
     required this.rightBorder,
@@ -21,10 +22,11 @@ class LeftRightSwitch extends StatelessWidget {
     required this.isLast,
     this.onLeftClicked,
     this.onRightClicked,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    double fontSize = getFontSize(context, 16);
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -38,7 +40,7 @@ class LeftRightSwitch extends StatelessWidget {
           ),
           iconSize: iconsSize,
           onPressed: onLeftClicked ?? ()=>{},
-        ) : Container(width: 40,),
+        ) : Container(width: fontSize * 1.0,), // was 40
         middleWidget,
         (!isLast) ? Container(
           decoration: BoxDecoration(
@@ -56,7 +58,7 @@ class LeftRightSwitch extends StatelessWidget {
             onPressed: onRightClicked ?? ()=>{},
           )
         )
-         : Container(width: 40,),
+         : Container(width: fontSize * 1.0,),
       ],
     );
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ltrc/extensions.dart';
+import 'package:ltrc/views/view_utils.dart';
 
 class ProgressBar extends StatelessWidget {
   const ProgressBar({super.key, required this.maxCount, required this.value});
@@ -10,17 +11,18 @@ class ProgressBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double deviceWidth = MediaQuery.of(context).size.width;
+    double fontSize = getFontSize(context, 16);
     return Column(
       children: [
         SizedBox(
           width: 0.87 * deviceWidth,
-          height: 58,
+          height: fontSize * 3, // was 58
           child: Stack(clipBehavior: Clip.none, children: <Widget>[
             Align(
               alignment: Alignment.center,
               child: Container(
                 width: 0.66 * deviceWidth,
-                height: 24,
+                height: fontSize * 1.5, // was 24
                 decoration: BoxDecoration(
                     border: Border.all(color: '#F5F5DC'.toColor(), width: 3),
                     borderRadius: BorderRadius.circular(10)),
@@ -50,16 +52,16 @@ class ProgressBar extends StatelessWidget {
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(value.toString(),
-                  style: const TextStyle(
-                    fontSize: 24,
+                  style: TextStyle(
+                    fontSize: fontSize,
                   )
                 )
               ),
               Expanded(child: Container()),
               Text(
                 maxCount.toString(),
-                style: const TextStyle(
-                  fontSize: 24,
+                style: TextStyle(
+                  fontSize: fontSize,
                 )
               )
             ]
