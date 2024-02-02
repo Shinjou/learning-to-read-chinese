@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ltrc/views/view_utils.dart';
 
 class Resource{
   final String resource;
@@ -43,47 +44,43 @@ class AcknowledgeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double fontSize =
+        getFontSize(context, 16); // 16 is the base font size for 360dp width
+
     int count = 0;
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(icon: const Icon(Icons.chevron_left), onPressed: () => Navigator.pop(context),),
-        title: const Text("致謝"),
-      ),
-      body: CustomScrollView(
-        slivers: [
-            SliverPadding(
-            padding: const EdgeInsets.fromLTRB(23, 14, 23, 20),
-            sliver: SliverToBoxAdapter( 
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "圖片資源來源：",
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold
-                    )
-                  ),
-                  ...resourceList.map((e){
-                    count ++;
-                    return Padding( 
-                      padding: const EdgeInsets.fromLTRB(0, 7, 0, 7),
-                      child:Text(
-                        "$count. ${e.resource}\n ${e.description}",
-                        style: const TextStyle(
-                          fontSize: 16
-                        )
-                      )
-                    );
-                  })
-                ]
-              ),
-            )
-          )
-        ]
-      )
-    );
+        appBar: AppBar(
+          leading: IconButton(
+            icon: Icon(Icons.chevron_left, size: fontSize * 1.0),
+            onPressed: () => Navigator.pop(context),
+          ),
+          title: Text("授權與致謝",
+              style: TextStyle(
+                fontSize: fontSize * 1.0,
+              )),
+        ),
+        body: CustomScrollView(slivers: [
+          SliverPadding(
+              padding: const EdgeInsets.fromLTRB(23, 14, 23, 20),
+              sliver: SliverToBoxAdapter(
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("",           //"版權所有©2024誠致教育基金會" moved to the bottom
+                          textAlign: TextAlign.right,
+                          style: TextStyle(
+                              fontSize: fontSize * 0.3, fontWeight: FontWeight.normal)),
+                      ...resourceList.map((e) {
+                        count++;
+                        return Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 7, 0, 7),
+                            child: Text(
+                                "$count. ${e.resource}\n ${e.description}",
+                                style: TextStyle(fontSize: fontSize)));
+                      }).toList()
+                    ]),
+              ))
+        ]));
   }
 }
