@@ -14,7 +14,7 @@ final List<Resource> resourceList = [
   ),
   Resource(
     resource: "注音字卡", 
-    description: "由郭俊成老師提供,來自fb粉絲專頁「麻辣飛天郭」,用於注音「看一看」、「用一用」及「拼拼看」。"
+    description: "由郭俊成老師提供，用於注音「看一看」、「用一用」及「拼拼看」。"
   ),
   Resource(
     resource: "字型演變",
@@ -31,6 +31,10 @@ final List<Resource> resourceList = [
   Resource(
     resource: "APP開發",
     description: "林羿成、蔡伊甯、李昊翰、方新舟合力開發此軟體。版權歸誠致教育基金會所有。"
+  ),
+  Resource(
+    resource: "版權所有©2024誠致教育基金會", 
+    description: ''
   )
 ];
 
