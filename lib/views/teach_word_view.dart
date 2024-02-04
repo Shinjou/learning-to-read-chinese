@@ -122,7 +122,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
     if (wordObj['vocab1'] != "") {
       vocabCnt += 1;
       var imgAsset = await myLoadAsset(
-          'lib/assets/img/vocabulary/${wordObj['vocab1']}.png');
+          'lib/assets/img/vocabulary/${wordObj['vocab1']}.webp'); // changed png to webp
       if (imgAsset == null) {
         img1Exist = false;
       } else {
@@ -132,7 +132,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
     if (wordObj['vocab2'] != "") {
       vocabCnt += 1;
       var imgAsset = await myLoadAsset(
-          'lib/assets/img/vocabulary/${wordObj['vocab2']}.png');
+          'lib/assets/img/vocabulary/${wordObj['vocab2']}.webp'); // changed png to webp
       if (imgAsset == null) {
         img2Exist = false;
       } else {
@@ -364,7 +364,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                     ? Image(
                                         height: fontSize * 3.0, // deviceHeight * 0.15, no difference wy?
                                         image: AssetImage(
-                                            'lib/assets/img/vocabulary/${wordObj['vocab1']}.png'),
+                                            'lib/assets/img/vocabulary/${wordObj['vocab1']}.webp'), // changed png to webp
                                       )
                                     : SizedBox(
                                         height: fontSize * 0.5), // was deviceHeight * 0.08
@@ -452,7 +452,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                               ? Image(
                                                   height: fontSize * 3.0,
                                                   image: AssetImage(
-                                                      'lib/assets/img/vocabulary/${wordObj['vocab2']}.png'),
+                                                      'lib/assets/img/vocabulary/${wordObj['vocab2']}.webp'), // changed png to webp
                                                 )
                                               : SizedBox(height: fontSize * 0.5,),
                                         ], // children
@@ -577,7 +577,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                               ? AssetImage(
                                                   'lib/assets/img/bopomo/$word.png')
                                               : AssetImage(
-                                                  'lib/assets/img/oldWords/$word.png'),
+                                                  'lib/assets/img/oldWords/$word.webp'), // change png to webp
                                         ),
                                       ),
                                     ),
