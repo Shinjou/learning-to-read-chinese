@@ -179,7 +179,7 @@ class RegisterViewState extends ConsumerState<RegisterView> {
                     shape: BoxShape.circle,
                   ),
                   child: IconButton(
-                    icon: Icon(Icons.chevron_right, size: fontSize * 2.0),
+                    icon: Icon(Icons.chevron_right, size: fontSize * 1.2),
                     color: '#1E1E1E'.toColor(),
                     iconSize: deviceHeight * 0.09,
                     onPressed: () async {

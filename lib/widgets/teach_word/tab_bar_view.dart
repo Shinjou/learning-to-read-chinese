@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/extensions.dart';
-
+import 'package:ltrc/views/view_utils.dart';
 
 class TeachWordTabBarView extends ConsumerWidget {
   final Widget content;
@@ -12,10 +12,16 @@ class TeachWordTabBarView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    double deviceHeight = MediaQuery.of(context).size.height;
+    double deviceWidth = MediaQuery.of(context).size.width;
+    double fontSize =
+        getFontSize(context, 16); // 16 is the base font size for 360dp width
+
     return Column(children: [
       SizedBox(
-        height: (MediaQuery.of(context).size.height - 110) * 0.8, // 0.76,
-        width: MediaQuery.of(context).size.width,
+        height: (deviceHeight - 110) *
+            0.80, // 100 did not work in iPhone 14 pro max
+        width: deviceWidth,
         child: Container(
           decoration: BoxDecoration(
             color: '#28231D'.toColor(),
@@ -24,8 +30,8 @@ class TeachWordTabBarView extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(
-                height: 10,
+              SizedBox(
+                height: fontSize * 0.2,
               ),
               Expanded(child: content),
             ],

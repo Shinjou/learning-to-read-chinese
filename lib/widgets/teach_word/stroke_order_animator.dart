@@ -72,8 +72,8 @@ class StrokeOrderAnimatorState extends State<StrokeOrderAnimator> {
                 : widget._controller.strokeAnimationController;
 
             return SizedBox(
-              width: 1024,
-              height: 1024,
+              width: 1024,  // ressponsive?
+              height: 1024,  // ressponsive?
               child: CustomPaint(
                   painter: StrokePainter(widget._controller.strokes[index],
                       showStroke: widget._controller.showStroke &&
