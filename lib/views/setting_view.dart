@@ -129,39 +129,7 @@ class SettingViewState extends ConsumerState<SettingView> {
                     bottomLeft: Radius.circular(20),
                     bottomRight: Radius.circular(20),
                   ))),
-          /*
-          SafeArea(
-              child: Container(
-                padding: const EdgeInsetsDirectional.symmetric(vertical: 5, horizontal: 10),
-                  alignment: AlignmentDirectional.topEnd,
-                  child: IconButton(
-                    icon: Icon(
-                      Icons.close,
-                      color: '#F5F5DC'.toColor(),
-                    size: fontSize * 1.5,
-                    shadows: const [Shadow(color: Colors.black, blurRadius: 10, offset: Offset(0, 4.5))],
-                    ),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  ))),
-          Container(
-              padding: EdgeInsetsDirectional.fromSTEB(fontSize * 10, fontSize * 2.0, 0, 0),
-                  // deviceWidth * 0.138, deviceHeight * 0.064, 0, 0),
-              child: Row(children: <Widget>[
-                Icon(
-                  Icons.settings,
-                  color: '#F5F5DC'.toColor(),
-                  size: fontSize * 1.3,
-                ),
-                Container(
-                    padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 0, 0),
-                    child: Text('設定',
-                        style: TextStyle(
-                          fontSize: fontSize * 1.3,
-                        )))
-              ])),
-          */
+
           SafeArea(
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
