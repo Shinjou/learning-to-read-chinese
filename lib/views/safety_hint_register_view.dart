@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ltrc/contants/register_question_label.dart';
 import 'package:ltrc/extensions.dart';
+import 'package:ltrc/views/view_utils.dart';
 
 class SafetyHintRegisterView extends StatefulWidget {
   const SafetyHintRegisterView({super.key});
@@ -60,7 +61,7 @@ class _SafetyHintRegisterState extends State<SafetyHintRegisterView> {
         );
       }
     }
-
+    double fontSize = getFontSize(context, 16); // 16 is the base font size for 360dp width
     double deviceHeight = MediaQuery.of(context).size.height;
 
     return GestureDetector(
@@ -73,7 +74,7 @@ class _SafetyHintRegisterState extends State<SafetyHintRegisterView> {
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(
-            icon: const Icon(Icons.chevron_left), 
+            icon: Icon(Icons.chevron_left, size: fontSize * 1.2), 
             onPressed: () => Navigator.pop(context),
           ),
         ),

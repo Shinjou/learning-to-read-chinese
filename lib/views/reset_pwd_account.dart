@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ltrc/data/models/user_model.dart';
 import 'package:ltrc/data/providers/user_provider.dart';
 import 'package:ltrc/extensions.dart';
+import 'package:ltrc/views/view_utils.dart';
 
 class ResetPwdAccountView extends StatefulWidget {
   const ResetPwdAccountView({super.key});
@@ -27,7 +28,7 @@ class _ResetPwdAccountViewState extends State<ResetPwdAccountView> {
 
   @override
   Widget build(BuildContext context) {
-
+    double fontSize = getFontSize(context, 16); // 16 is the base font size for 360dp width
     double deviceHeight = MediaQuery.of(context).size.height;
 
     return GestureDetector(
@@ -40,7 +41,7 @@ class _ResetPwdAccountViewState extends State<ResetPwdAccountView> {
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(
-            icon: const Icon(Icons.chevron_left), 
+            icon: Icon(Icons.chevron_left, size: fontSize * 1.2), 
             onPressed: () => Navigator.pop(context),
           ),
         ),

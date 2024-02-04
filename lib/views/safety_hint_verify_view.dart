@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ltrc/contants/register_question_label.dart';
 import 'package:ltrc/data/models/user_model.dart';
 import 'package:ltrc/extensions.dart';
+import 'package:ltrc/views/view_utils.dart';
 
 class SafetyHintVerifyView extends StatefulWidget {
   const SafetyHintVerifyView({super.key});
@@ -28,7 +29,7 @@ class _SafetyHintVerifyState extends State<SafetyHintVerifyView> {
 
   @override
   Widget build(BuildContext context) {
-
+    double fontSize = getFontSize(context, 16); // 16 is the base font size for 360dp width
     double deviceHeight = MediaQuery.of(context).size.height;
 
     dynamic obj = ModalRoute.of(context)!.settings.arguments;
@@ -49,7 +50,7 @@ class _SafetyHintVerifyState extends State<SafetyHintVerifyView> {
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(
-            icon: const Icon(Icons.chevron_left), 
+            icon: Icon(Icons.chevron_left, size: fontSize * 1.2), 
             onPressed: () => Navigator.pop(context),
           ),
         ),

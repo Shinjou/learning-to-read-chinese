@@ -89,7 +89,7 @@ class _BopomoQuizState extends State<BopomoQuizView> {
         appBar: AppBar(
           // 拼拼看
           leading: IconButton(
-            icon: Icon(Icons.chevron_left, size: fontSize * 1.0),
+            icon: Icon(Icons.chevron_left, size: fontSize * 1.2),
             onPressed: () => Navigator.pop(context),
           ),
           title: Text(

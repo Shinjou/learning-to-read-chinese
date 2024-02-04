@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:ltrc/extensions.dart';
+import 'package:ltrc/views/view_utils.dart';
 
 class BopomoQuizFinishView extends StatelessWidget {
   const BopomoQuizFinishView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    double fontSize = getFontSize(context, 16); // 16 is the base font size for 360dp width
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(icon: const Icon(Icons.chevron_left), onPressed: () => Navigator.pop(context),),
+        leading: IconButton(icon: Icon(Icons.chevron_left, size: fontSize * 1.2), onPressed: () => Navigator.pop(context),),
         title: const Text("拼拼看"),
         actions: [
           IconButton(

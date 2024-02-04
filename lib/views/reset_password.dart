@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ltrc/data/models/user_model.dart';
 import 'package:ltrc/data/providers/user_provider.dart';
 import 'package:ltrc/extensions.dart';
+import 'package:ltrc/views/view_utils.dart';
 
 class ResetPwdView extends StatefulWidget {
   const ResetPwdView({super.key});
@@ -32,7 +33,7 @@ class _ResetPwdViewState extends State<ResetPwdView> {
 
   @override
   Widget build(BuildContext context) {
-
+    double fontSize = getFontSize(context, 16); // 16 is the base font size for 360dp width
     double deviceHeight = MediaQuery.of(context).size.height;
 
     dynamic obj = ModalRoute.of(context)!.settings.arguments;
@@ -41,7 +42,7 @@ class _ResetPwdViewState extends State<ResetPwdView> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.chevron_left), 
+          icon: Icon(Icons.chevron_left, size: fontSize * 1.2), 
           onPressed: () => Navigator.pop(context),
         ),
       ),

@@ -54,7 +54,7 @@ class _RegisterAccountViewState extends State<RegisterAccountView> {
           appBar: AppBar(
             backgroundColor: '#1E1E1E'.toColor(),
             leading: IconButton(
-              icon: Icon(Icons.chevron_left, size: fontSize * 1.0),
+              icon: Icon(Icons.chevron_left, size: fontSize * 1.2),
               onPressed: () => Navigator.pop(context),
             ),
           ),
