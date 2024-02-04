@@ -129,6 +129,7 @@ class SettingViewState extends ConsumerState<SettingView> {
                     bottomLeft: Radius.circular(20),
                     bottomRight: Radius.circular(20),
                   ))),
+          /*
           SafeArea(
               child: Container(
                 padding: const EdgeInsetsDirectional.symmetric(vertical: 5, horizontal: 10),
@@ -160,6 +161,43 @@ class SettingViewState extends ConsumerState<SettingView> {
                           fontSize: fontSize * 1.3,
                         )))
               ])),
+          */
+          SafeArea(
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween, // Space items out
+                children: <Widget>[
+                  Row(children: <Widget>[
+                    Icon(
+                      Icons.settings,
+                      color: '#F5F5DC'.toColor(),
+                      size: fontSize * 1.3,
+                    ),
+                    Padding(
+                      padding: EdgeInsetsDirectional.fromSTEB(fontSize, 0, 0, 0),
+                      child: Text('設定',
+                          style: TextStyle(
+                            fontSize: fontSize * 1.3,
+                          )),
+                    ),
+                  ]),
+                  IconButton(
+                    icon: Icon(
+                      Icons.close,
+                      color: '#F5F5DC'.toColor(),
+                      size: fontSize * 1.5,
+                      shadows: const [Shadow(color: Colors.black, blurRadius: 10, offset: Offset(0, 4.5))],
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+
           Positioned(
               top: fontSize * 3.5, // deviceHeight * 0.156,
               left: fontSize * 1.0, // deviceWidth * 0.058,
