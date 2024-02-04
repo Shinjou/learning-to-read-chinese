@@ -81,7 +81,7 @@ class UnitsViewState extends ConsumerState<UnitsView> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.chevron_left, size: fontSize * 1.5), 
+          icon: Icon(Icons.chevron_left, size: fontSize * 1.2), 
           onPressed: () => Navigator.pop(context),
         ),
         title: Text("課程單元", style: TextStyle(fontSize: fontSize * 1.5)),

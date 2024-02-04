@@ -484,7 +484,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(
-            icon: Icon(Icons.chevron_left, size: fontSize),
+            icon: Icon(Icons.chevron_left, size: fontSize * 1.2),
             onPressed: () => Navigator.pop(context),
           ),
           title: (unitId == -1)
@@ -643,7 +643,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                         child: Text(word,
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
-                                            fontSize: fontSize * 10.0, // Adjust font size to be reasonable
+                                            fontSize: fontSize * 8.0, // Adjust font size to be reasonable
                                             color: backgroundColor,
                                             fontWeight: FontWeight.w100,
                                             fontFamily: isBpmf ? "BpmfOnly" : "Serif",
