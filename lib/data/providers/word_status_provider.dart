@@ -1,13 +1,14 @@
 import 'dart:async';
 import 'package:path/path.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:ltrc/data/providers/user_provider.dart';
 
 import '../models/word_status_model.dart';
 
 class WordStatusProvider {
   static Database? database;
   static Future<Database> getDBConnect() async {
-    database ??= await initDatabase();
+    database ??= await UserProvider.getDBConnect();
     return database!;
   }
 
@@ -21,17 +22,7 @@ class WordStatusProvider {
   static const String databaseLiked = 'liked';
 
 
-  static Future<Database> initDatabase() async =>
-    database ??= await openDatabase(
-      join(await getDatabasesPath(), 'wordStatus.sqlite'),
-      onCreate: (db, version) {
-        db.execute(
-          "CREATE TABLE $tableName($databaseId INTEGER PRIMARY KEY AUTOINCREMENT, $databaseUserAccount TEXT, $databaseWord TEXT, $databaseLearned INTEGER, $databaseLiked INTEGER, UNIQUE($databaseUserAccount, $databaseWord))",
-        );
-      },
-      version: 2,
-    );
-
+  
   static Future<void> addWordStatus({required WordStatus status}) async {
     final Database db = await getDBConnect();
     await db.insert(
