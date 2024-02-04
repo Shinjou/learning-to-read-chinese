@@ -14,7 +14,7 @@ class TeachWordTabBarView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Column(children: [
       SizedBox(
-        height: (MediaQuery.of(context).size.height - 110) * 0.76,
+        height: (MediaQuery.of(context).size.height - 110) * 0.8, // 0.76,
         width: MediaQuery.of(context).size.width,
         child: Container(
           decoration: BoxDecoration(
