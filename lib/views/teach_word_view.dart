@@ -575,9 +575,27 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                           width: max(17.6 * fontSize, 300.0), // was 300,
                                           image: isBpmf
                                               ? AssetImage(
-                                                  'lib/assets/img/bopomo/$word.png')
+                                                'lib/assets/img/bopomo/$word.png')
                                               : AssetImage(
                                                   'lib/assets/img/oldWords/$word.webp'), // change png to webp
+                                          errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                            // Log the error
+                                            debugPrint('Error loading image: $exception');
+
+                                            // Return the Text widget as a fallback
+                                            return Center(
+                                              child: Text(
+                                                word,
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  fontSize: fontSize * 8.0, // Adjust font size to be reasonable
+                                                  color: backgroundColor, // Ensure backgroundColor is defined or use a default color
+                                                  fontWeight: FontWeight.w100,
+                                                  fontFamily: isBpmf ? "BpmfOnly" : "Serif",
+                                                ),
+                                              ),
+                                            );
+                                          },
                                         ),
                                       ),
                                     ),
