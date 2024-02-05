@@ -69,8 +69,8 @@ class WordsView extends ConsumerWidget {
                       wordsPhrase: newWordsPhrase,
                       wordIndex: index,
                       sizedBoxWidth: fontSize * 2.0,
-                      sizedBoxHeight: fontSize * 3.0, // was 3.0
-                      fontSize: fontSize * 2.5,
+                      sizedBoxHeight: fontSize * 3.0,
+                      fontSize: fontSize * 2.0, // 2.5
                       isVertical: true,
                       disable: false,
                     );
