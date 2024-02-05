@@ -3,7 +3,7 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:ltrc/views/view_utils.dart';
 
 class WordVocabContent extends StatefulWidget {
-  final String vocab;
+  final String vocab; // correct answer
   final String meaning;
   final String sentence;
   final String vocab2; // wrong answer
@@ -200,20 +200,20 @@ class WordVocabContentState extends State<WordVocabContent> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: options.map((word) {
           return Container(
-              width: fontSize * 9.0, // for 3 1.5 fontSize characters
-              height: fontSize * 1.50, // word fontSize = 1.0
+              width: fontSize * 10.0, // for 4 1.5 fontSize characters
+              height: fontSize * 2.0, // word fontSize = 1.0
               alignment: Alignment.center,
               margin: const EdgeInsets.all(0.0),
               decoration: const BoxDecoration(
                 borderRadius:
-                    BorderRadius.all(Radius.circular(1 / 1)), // 38 / 2
+                    BorderRadius.all(Radius.circular(0)), // was 1/1
                 // color: Colors.grey,
               ),
               child: ElevatedButton(
                 onPressed: () => _selectWord(word),
                 child: Text(word,
                     style: TextStyle(
-                      fontSize: fontSize * 0.92, // 1.0 will overflow in some small devices
+                      fontSize: fontSize * 0.90, // 1.0 will overflow in some small devices
                       // fontWeight: FontWeight.w900,
                       color: Colors.black,
                     )),
