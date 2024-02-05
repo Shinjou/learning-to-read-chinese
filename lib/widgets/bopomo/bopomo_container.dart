@@ -26,7 +26,7 @@ class BopomoContainer extends StatelessWidget {
         alignment: Alignment.center,
         decoration: BoxDecoration(
             color: color,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(fontSize), // 12
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.5),
