@@ -132,7 +132,7 @@ class SettingViewState extends ConsumerState<SettingView> {
                   ))),
           
           Positioned(
-              top: fontSize * 5.0, // deviceHeight * 0.156,
+              top: fontSize * 3.0, // deviceHeight * 0.156,
               left: fontSize * 1.0, // deviceWidth * 0.058,
               child: Container(
                   height: deviceHeight * 0.80,
