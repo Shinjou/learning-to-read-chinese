@@ -24,7 +24,7 @@ class TeachWordCardTitle extends StatelessWidget {
         child: Text(
           sectionName,
           style: TextStyle(
-            fontSize: fontSize * 1.3, // was 24/360
+            fontSize: fontSize * 1.2, // was 24/360
             fontWeight: FontWeight.w900,
             color: Colors.black,
           ),

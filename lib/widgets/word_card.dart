@@ -71,7 +71,7 @@ class WordCardState extends State<WordCard> {
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
              Align(
-              alignment: Alignment.topRight,
+              alignment: widget.isVertical ? Alignment.topRight : Alignment.topLeft,
               child: Padding(
                 padding: EdgeInsets.fromLTRB(0, 0, widget.fontSize * 0.25, 0),
                 child: 

@@ -881,9 +881,9 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                     wordsStatus: widget.wordsStatus,
                     wordsPhrase: widget.wordsPhrase,
                     wordIndex: widget.wordIndex,
-                    sizedBoxWidth: 7.5 * fontSize, // was 125, 5.5
+                    sizedBoxWidth: 10 * fontSize, // was 7.5
                     sizedBoxHeight: 4.0 * fontSize, // was 88
-                    fontSize: fontSize * 2.0,
+                    fontSize: fontSize * 1.2,
                     isBpmf: isBpmf,
                     isVertical: false,
                     disable: true
