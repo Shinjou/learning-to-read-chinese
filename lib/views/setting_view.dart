@@ -120,8 +120,9 @@ class SettingViewState extends ConsumerState<SettingView> {
       body: SizedBox.expand(
         child: Stack(
           children: <Widget>[
+          
           Container(
-              height: deviceHeight * 0.3673,
+              height: deviceHeight * 0.9,
               width: deviceWidth,
               decoration: BoxDecoration(
                   color: '#013E6D'.toColor(),
@@ -129,54 +130,55 @@ class SettingViewState extends ConsumerState<SettingView> {
                     bottomLeft: Radius.circular(20),
                     bottomRight: Radius.circular(20),
                   ))),
-
-          SafeArea(
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween, // Space items out
-                children: <Widget>[
-                  Row(children: <Widget>[
-                    Icon(
-                      Icons.settings,
-                      color: '#F5F5DC'.toColor(),
-                      size: fontSize * 1.3,
-                    ),
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(fontSize, 0, 0, 0),
-                      child: Text('設定',
-                          style: TextStyle(
-                            fontSize: fontSize * 1.3,
-                          )),
-                    ),
-                  ]),
-                  IconButton(
-                    icon: Icon(
-                      Icons.close,
-                      color: '#F5F5DC'.toColor(),
-                      size: fontSize * 1.5,
-                      shadows: const [Shadow(color: Colors.black, blurRadius: 10, offset: Offset(0, 4.5))],
-                    ),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ),
-
+          
           Positioned(
-              top: fontSize * 3.5, // deviceHeight * 0.156,
+              top: fontSize * 5.0, // deviceHeight * 0.156,
               left: fontSize * 1.0, // deviceWidth * 0.058,
               child: Container(
-                  height: deviceHeight * 0.82,
+                  height: deviceHeight * 0.80,
                   width: deviceWidth * 0.92,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16),
                     color: '#F5F5DC'.toColor(),
                   ),
+
                   child: Column(children: [
+                    // "設定" and "X" button
+                    Container(
+                      padding: EdgeInsets.symmetric(vertical: fontSize * 0.5, horizontal: fontSize * 1.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween, // Space items out
+                        children: <Widget>[
+                          Row(children: <Widget>[
+                            Icon(
+                              Icons.settings,
+                              color: Colors.black,
+                              size: fontSize * 1.2,
+                            ),
+                            Padding(
+                              padding: EdgeInsetsDirectional.fromSTEB(fontSize, 0, 0, 0),
+                              child: Text('設定',
+                                  style: TextStyle(
+                                    fontSize: fontSize * 1.2,
+                                    color: Colors.black,
+                                  )),
+                            ),
+                          ]),
+                          IconButton(
+                            icon: Icon(
+                              Icons.close,
+                              color: Colors.black,
+                              size: fontSize * 1.4,
+                              shadows: const [Shadow(color: Colors.black, blurRadius: 10, offset: Offset(0, 4.5))],
+                            ),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ],
+                      ),
+                    ),            
+
                     Container(
                       height: fontSize * 1.8,
                       width: deviceWidth * 0.85,
@@ -282,7 +284,7 @@ class SettingViewState extends ConsumerState<SettingView> {
                     // const SettingDivider(),
                     Padding(
                       padding: EdgeInsetsDirectional.symmetric(
-                          horizontal: 12, vertical: deviceHeight * 0.01),
+                          horizontal: fontSize * 0.5, vertical: deviceHeight * 0.01),
                       child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           mainAxisSize: MainAxisSize.max,
@@ -290,7 +292,7 @@ class SettingViewState extends ConsumerState<SettingView> {
                           children: [
                             Text('年級',
                                 style: TextStyle(
-                                    fontSize: fontSize * 1.2,
+                                    fontSize: fontSize * 1.0,
                                     color: Colors.black)),
                             DropdownMenu<int>(
                               controller: gradeController,
@@ -336,7 +338,7 @@ class SettingViewState extends ConsumerState<SettingView> {
                     // const SettingDivider(),
                     Padding(
                       padding: EdgeInsetsDirectional.symmetric(
-                          horizontal: 12, vertical: deviceHeight * 0.01),
+                          horizontal: fontSize * 0.5, vertical: deviceHeight * 0.01),
                       child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           mainAxisSize: MainAxisSize.max,
@@ -344,7 +346,7 @@ class SettingViewState extends ConsumerState<SettingView> {
                           children: [
                             Text('學期',
                                 style: TextStyle(
-                                    fontSize: fontSize * 1.2,
+                                    fontSize: fontSize * 1.0,
                                     color: Colors.black)),
                             DropdownMenu<int>(
                               controller: semesterController,
@@ -392,7 +394,7 @@ class SettingViewState extends ConsumerState<SettingView> {
                     // const SettingDivider(),
                     Padding(
                       padding: EdgeInsetsDirectional.symmetric(
-                          horizontal: 12, vertical: deviceHeight * 0.01),
+                          horizontal: fontSize * 0.5, vertical: deviceHeight * 0.01),
                       child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           mainAxisSize: MainAxisSize.max,
@@ -400,11 +402,12 @@ class SettingViewState extends ConsumerState<SettingView> {
                           children: [
                             Text('課本出版社',
                                 style: TextStyle(
-                                    fontSize: fontSize * 1.2,
+                                    fontSize: fontSize * 1.0,
                                     color: Colors.black)),
                             DropdownMenu<int>(
                               controller: publisherController,
-                              width: 7.1 * fontSize,
+                              width: 8.2 * fontSize,
+                              // menuHeight: fontSize * 1.5,
                               textStyle: TextStyle(
                                 color: Colors.black,
                                 fontSize: fontSize,
@@ -448,7 +451,7 @@ class SettingViewState extends ConsumerState<SettingView> {
                     // const SettingDivider(),
                     Padding(
                         padding: EdgeInsetsDirectional.symmetric(
-                            horizontal: 12, vertical: deviceHeight * 0.01),
+                            horizontal: fontSize * 0.5, vertical: deviceHeight * 0.01),
                         child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             mainAxisSize: MainAxisSize.max,
@@ -456,7 +459,7 @@ class SettingViewState extends ConsumerState<SettingView> {
                               Text('撥放速度',
                                   style: TextStyle(
                                     color: colorBlack,
-                                    fontSize: fontSize * 1.2,
+                                    fontSize: fontSize * 1.0,
                                   )),
                               SizedBox(
                                   width: 8.2 * fontSize,
@@ -477,7 +480,7 @@ class SettingViewState extends ConsumerState<SettingView> {
                     // const SettingDivider(),
                     Padding(
                         padding: EdgeInsetsDirectional.symmetric(
-                            horizontal: 12, vertical: deviceHeight * 0.01),
+                            horizontal: fontSize * 0.5, vertical: deviceHeight * 0.01),
                         child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             mainAxisSize: MainAxisSize.max,
@@ -485,7 +488,7 @@ class SettingViewState extends ConsumerState<SettingView> {
                               Text('授權與致謝',
                                   style: TextStyle(
                                     color: Colors.black,
-                                    fontSize: fontSize * 1.2,
+                                    fontSize: fontSize * 1.0,
                                   )),
                               IconButton(
                                 onPressed: () => Navigator.of(context)
@@ -496,7 +499,7 @@ class SettingViewState extends ConsumerState<SettingView> {
                               )
                             ])),
                     SizedBox(
-                      height: fontSize * 1.0,
+                      height: fontSize * 0.5,
                       // width: deviceWidth * 0.882,
                     ),
                     Expanded(
