@@ -51,7 +51,7 @@ class AcknowledgeView extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           leading: IconButton(
-            icon: Icon(Icons.chevron_left, size: fontSize * 1.2),
+            icon: Icon(Icons.chevron_left, size: fontSize * 1.5),
             onPressed: () => Navigator.pop(context),
           ),
           title: Text("授權與致謝",

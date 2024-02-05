@@ -89,7 +89,7 @@ class _BopomoQuizState extends State<BopomoQuizView> {
         appBar: AppBar(
           // 拼拼看
           leading: IconButton(
-            icon: Icon(Icons.chevron_left, size: fontSize * 1.2),
+            icon: Icon(Icons.chevron_left, size: fontSize * 1.5),
             onPressed: () => Navigator.pop(context),
           ),
           title: Text(
@@ -101,7 +101,7 @@ class _BopomoQuizState extends State<BopomoQuizView> {
             IconButton(
               icon: Icon(
                 Icons.home,
-                size: fontSize * 1.0,
+                size: fontSize * 1.5,
               ),
               onPressed: () => Navigator.of(context).pushNamed('/mainPage'),
             )
@@ -386,7 +386,7 @@ class _BopomoQuizState extends State<BopomoQuizView> {
               padding: const EdgeInsets.fromLTRB(25, 5, 25, 5),
               sliver: SliverGrid(
                 gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: fontSize * 1.75, // was 40
+                  maxCrossAxisExtent: fontSize * 2.0,
                   mainAxisSpacing: fontSize * 0.75, // was 8.0,
                   crossAxisSpacing: fontSize * 0.75, // was 8.0
                   childAspectRatio: 1 / 1,
@@ -419,9 +419,9 @@ class _BopomoQuizState extends State<BopomoQuizView> {
               padding: const EdgeInsets.fromLTRB(25, 5, 25, 5),
               sliver: SliverGrid(
                 gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: fontSize * 1.75, // was 40
-                  mainAxisSpacing: fontSize * 0.75, // was 8.0,
-                  crossAxisSpacing: fontSize * 0.75, // was 8.0
+                  maxCrossAxisExtent: fontSize * 2.0,
+                  mainAxisSpacing: fontSize * 0.75,
+                  crossAxisSpacing: fontSize * 0.75,
                   childAspectRatio: 1 / 1,
                 ),
                 delegate: SliverChildBuilderDelegate(
@@ -451,7 +451,7 @@ class _BopomoQuizState extends State<BopomoQuizView> {
               padding: const EdgeInsets.fromLTRB(25, 5, 25, 5),
               sliver: SliverGrid(
                 gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: fontSize * 1.75, // was 40
+                  maxCrossAxisExtent: fontSize * 2.0,
                   mainAxisSpacing: fontSize * 0.75, // was 8.0,
                   crossAxisSpacing: fontSize * 0.75, // was 8.0
                   childAspectRatio: 1 / 1,

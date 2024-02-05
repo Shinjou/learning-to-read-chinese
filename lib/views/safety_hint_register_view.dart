@@ -92,7 +92,7 @@ class _SafetyHintRegisterState extends State<SafetyHintRegisterView> {
         child: Scaffold(
           appBar: AppBar(
             leading: IconButton(
-              icon: Icon(Icons.chevron_left, size: fontSize * 1.2),
+              icon: Icon(Icons.chevron_left, size: fontSize * 1.5),
               onPressed: () => Navigator.pop(context),
             ),
           ),

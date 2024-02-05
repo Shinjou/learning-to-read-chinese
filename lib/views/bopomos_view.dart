@@ -19,7 +19,7 @@ class BopomosView extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           leading: IconButton(
-            icon: Icon(Icons.chevron_left, size: fontSize * 1.2),
+            icon: Icon(Icons.chevron_left, size: fontSize * 1.5),
             onPressed: () => Navigator.pop(context),
           ),
           title: Text(
@@ -29,7 +29,7 @@ class BopomosView extends StatelessWidget {
           ),
           actions: [
             IconButton(
-              icon: Icon(Icons.home, size: fontSize * 1.0),
+              icon: Icon(Icons.home, size: fontSize * 1.5),
               onPressed: () => Navigator.of(context).pushNamed('/mainPage'),
             )
           ],

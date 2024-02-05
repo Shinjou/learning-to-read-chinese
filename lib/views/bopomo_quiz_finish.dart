@@ -12,7 +12,7 @@ class BopomoQuizFinishView extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           leading: IconButton(
-            icon: Icon(Icons.chevron_left, size: fontSize * 1.2),
+            icon: Icon(Icons.chevron_left, size: fontSize * 1.5),
             onPressed: () => Navigator.pop(context),
           ),
           title: Text(
@@ -23,7 +23,7 @@ class BopomoQuizFinishView extends StatelessWidget {
             IconButton(
               icon: Icon(
                 Icons.home,
-                size: fontSize * 1.0,
+                size: fontSize * 1.5,
               ),
               onPressed: () => Navigator.of(context).pushNamed('/mainPage'),
             )

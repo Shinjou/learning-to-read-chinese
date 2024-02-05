@@ -36,7 +36,7 @@ class MainPageView extends ConsumerWidget {
             IconButton(
               icon: Icon(
                 Icons.settings,
-                size: fontSize,
+                size: fontSize * 1.5,
               ),
               onPressed: () => Navigator.of(context).pushNamed('/setting'),
             )

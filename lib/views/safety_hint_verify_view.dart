@@ -50,7 +50,7 @@ class _SafetyHintVerifyState extends State<SafetyHintVerifyView> {
         child: Scaffold(
           appBar: AppBar(
             leading: IconButton(
-              icon: Icon(Icons.chevron_left, size: fontSize * 1.0),
+              icon: Icon(Icons.chevron_left, size: fontSize * 1.5),
               onPressed: () => Navigator.pop(context),
             ),
           ),

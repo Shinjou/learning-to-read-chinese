@@ -484,7 +484,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(
-            icon: Icon(Icons.chevron_left, size: fontSize * 1.2),
+            icon: Icon(Icons.chevron_left, size: fontSize * 1.5),
             onPressed: () => Navigator.pop(context),
           ),
           title: (unitId == -1)
@@ -494,7 +494,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
           actions: <Widget>[
             IconButton(
               onPressed: () => Navigator.of(context).pushNamed('/mainPage'),
-              icon: Icon(Icons.home_filled, size: fontSize),
+              icon: Icon(Icons.home_filled, size: fontSize * 1.5),
             ),
           ],
           bottom: 
@@ -936,7 +936,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
           child: IconButton(
             icon: Icon(
               isSelected ? iconData[0] : iconData[1],
-              size: fontSize,
+              size: fontSize * 1.0,
             ),
             color: backgroundColor,
             onPressed: onPressed != null

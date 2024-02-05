@@ -24,7 +24,7 @@ class WordsView extends ConsumerWidget {
     return Scaffold(
         appBar: AppBar(
           leading: IconButton(
-            icon: Icon(Icons.chevron_left, size: fontSize * 1.2),
+            icon: Icon(Icons.chevron_left, size: fontSize * 1.5),
             onPressed: () => Navigator.pop(context),
           ),
           title: (unit.id == -1)
@@ -39,7 +39,7 @@ class WordsView extends ConsumerWidget {
                   )),
           actions: [
             IconButton(
-              icon: Icon(Icons.home, size: fontSize * 1.0),
+              icon: Icon(Icons.home, size: fontSize * 1.5),
               onPressed: () => Navigator.of(context).pushNamed('/mainPage'),
             )
           ],
