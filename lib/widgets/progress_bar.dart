@@ -10,8 +10,9 @@ class ProgressBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double deviceWidth = MediaQuery.of(context).size.width;
-    double fontSize = getFontSize(context, 16); // Base font size
+    ScreenInfo screenInfo = getScreenInfo(context);
+    double fontSize = screenInfo.fontSize;    
+    double deviceWidth = screenInfo.screenWidth;
     double iconSize = fontSize * 2.0;
     return Column(
       children: [

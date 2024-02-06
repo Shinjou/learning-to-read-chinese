@@ -28,9 +28,9 @@ class _SafetyHintVerifyState extends State<SafetyHintVerifyView> {
 
   @override
   Widget build(BuildContext context) {
-    double deviceHeight = MediaQuery.of(context).size.height;
-    double fontSize =
-        getFontSize(context, 16); // 16 is the base font size for 360dp width
+    ScreenInfo screenInfo = getScreenInfo(context);
+    double fontSize = screenInfo.fontSize;    
+    double deviceHeight = screenInfo.screenHeight;
 
     dynamic obj = ModalRoute.of(context)!.settings.arguments;
     User user = obj['user'];

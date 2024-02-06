@@ -15,10 +15,10 @@ class MainPageView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    double deviceHeight = MediaQuery.of(context).size.height;
-    double deviceWidth = MediaQuery.of(context).size.width;
-    double fontSize =
-        getFontSize(context, 16); // 16 is the base font size for 360dp width
+    ScreenInfo screenInfo = getScreenInfo(context);
+    double fontSize = screenInfo.fontSize;    
+    double deviceHeight = screenInfo.screenHeight;
+    double deviceWidth = screenInfo.screenWidth;
     int totalWordCount = ref.watch(totalWordCountProvider);
     int learnedWordCount = ref.watch(learnedWordCountProvider);
 

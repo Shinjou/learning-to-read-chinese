@@ -36,10 +36,10 @@ class LogInViewState extends ConsumerState<LogInView> {
 
   @override
   Widget build(BuildContext context) {
-    double deviceHeight = MediaQuery.of(context).size.height;
-    double deviceWidth = MediaQuery.of(context).size.width;
-    double fontSize =
-        getFontSize(context, 16); // 16 is the base font size for 360dp width
+    ScreenInfo screenInfo = getScreenInfo(context);
+    double fontSize = screenInfo.fontSize;    
+    double deviceHeight = screenInfo.screenHeight;
+    double deviceWidth = screenInfo.screenWidth;
     debugPrint('Height: $deviceHeight, Width: $deviceWidth, fontSize: $fontSize');
 
     return GestureDetector(

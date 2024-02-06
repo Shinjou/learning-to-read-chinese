@@ -36,7 +36,8 @@ class UnitsViewState extends ConsumerState<UnitsView> {
 
   @override
   Widget build(BuildContext context) {
-    double fontSize = getFontSize(context, 16); // Adjust this function to be more responsive
+    ScreenInfo screenInfo = getScreenInfo(context);
+    double fontSize = screenInfo.fontSize;    
 
     dynamic obj = ModalRoute.of(context)!.settings.arguments;
     List<Unit> units = obj["units"]; // Assuming 'units' is a list of 'Unit'

@@ -11,8 +11,9 @@ class WordsView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    double fontSize =
-        getFontSize(context, 16); // 16 is the base font size for 360dp width
+    ScreenInfo screenInfo = getScreenInfo(context);
+    double fontSize = screenInfo.fontSize;
+    bool isTablet = screenInfo.screenWidth > 600;
 
     dynamic obj = ModalRoute.of(context)!.settings.arguments;
     Unit unit = obj["unit"];
@@ -50,12 +51,12 @@ class WordsView extends ConsumerWidget {
               padding: const EdgeInsets.all(20),
               sliver: SliverGrid(
                 gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: isTablet(context)
+                  maxCrossAxisExtent: isTablet
                       ? fontSize * 8.0
                       : fontSize * 8.0, // This is most important
                   mainAxisSpacing: fontSize * 0.5, // was 10,
                   crossAxisSpacing: fontSize * 0.5, // was 10,
-                  childAspectRatio: isTablet(context) ? 4 / 3 : 4 / 4,
+                  childAspectRatio: isTablet ? 4 / 3 : 4 / 4,
                 ),
                 delegate: SliverChildBuilderDelegate(
                   (BuildContext context, int index) {
@@ -92,12 +93,12 @@ class WordsView extends ConsumerWidget {
               padding: const EdgeInsets.all(20),
               sliver: SliverGrid(
                 gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: isTablet(context)
+                  maxCrossAxisExtent: isTablet
                       ? fontSize * 8.0
                       : fontSize * 8.0, // This is most important
                   mainAxisSpacing: fontSize * 0.5, // was 15,
                   crossAxisSpacing: fontSize * 0.5, // was 15,
-                  childAspectRatio: isTablet(context) ? 4 / 3 : 4 / 4,
+                  childAspectRatio: isTablet ? 4 / 3 : 4 / 4,
                 ),
                 delegate: SliverChildBuilderDelegate(
                   (BuildContext context, int index) {

@@ -9,8 +9,9 @@ class BopomosView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double fontSize =
-        getFontSize(context, 16); // 16 is the base font size for 360dp width
+    ScreenInfo screenInfo = getScreenInfo(context);
+    double fontSize = screenInfo.fontSize;
+    bool isTablet = screenInfo.screenWidth > 600;
 
     dynamic obj = ModalRoute.of(context)!.settings.arguments;
     List<WordStatus> wordsStatus = obj['wordStatus'];
@@ -40,12 +41,12 @@ class BopomosView extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(14, 8, 14, 16),
               sliver: SliverGrid(
                 gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: isTablet(context)
+                  maxCrossAxisExtent: isTablet
                       ? fontSize * 8.0
                       : fontSize * 8.0, // This is most important
                   mainAxisSpacing: fontSize * 0.5, // Reduced spacing
                   crossAxisSpacing: fontSize * 0.5, // Reduced spacing
-                  childAspectRatio: isTablet(context) ? 4 / 3 : 4 / 4,
+                  childAspectRatio: isTablet ? 4 / 3 : 4 / 4,
                 ),
                 delegate: SliverChildBuilderDelegate(
                   (BuildContext context, int index) {

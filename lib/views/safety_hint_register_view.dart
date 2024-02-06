@@ -33,9 +33,9 @@ class _SafetyHintRegisterState extends State<SafetyHintRegisterView> {
 
   @override
   Widget build(BuildContext context) {
-    double deviceHeight = MediaQuery.of(context).size.height;
-    double fontSize =
-        getFontSize(context, 16); // 16 is the base font size for 360dp width
+    ScreenInfo screenInfo = getScreenInfo(context);
+    double fontSize = screenInfo.fontSize;    
+    double deviceHeight = screenInfo.screenHeight;
 
     final List<DropdownMenuEntry<RegisterQuestionLabel>> q1Entries =
         <DropdownMenuEntry<RegisterQuestionLabel>>[];

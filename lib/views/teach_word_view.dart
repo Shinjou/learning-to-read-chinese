@@ -267,9 +267,10 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
   Widget build(BuildContext context) {
     // bool wordIsLearned = widget.wordsStatus[widget.wordIndex].learned;
 
-    double deviceHeight = MediaQuery.of(context).size.height;
-    double deviceWidth = MediaQuery.of(context).size.width;
-    double fontSize = getFontSize(context, 16); // 16 is the base font size for 360dp width
+    ScreenInfo screenInfo = getScreenInfo(context);
+    double fontSize = screenInfo.fontSize;    
+    double deviceHeight = screenInfo.screenHeight;
+    double deviceWidth = screenInfo.screenWidth;
     double availableWidth = deviceWidth - 20; // 10 padding on each side
     double availableHeight = deviceHeight - 20; // example padding top and bottom
     double nonConsumedHeight = deviceHeight * 0.15; // was 0.20;

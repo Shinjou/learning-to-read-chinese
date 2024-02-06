@@ -16,8 +16,9 @@ class BopomoContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double fontSize =
-        getFontSize(context, 16); // 16 is the base font size for 360dp width
+    ScreenInfo screenInfo = getScreenInfo(context);
+    double fontSize = screenInfo.fontSize;    
+
     return InkWell(
       onTap: onPressed,
       child: Container(

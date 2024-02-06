@@ -109,7 +109,9 @@ class WordVocabContentState extends State<WordVocabContent> {
 
   @override
   Widget build(BuildContext context) {
-    double fontSize = getFontSize(context, 16); // Base font size
+    ScreenInfo screenInfo = getScreenInfo(context);
+    double fontSize = screenInfo.fontSize;    
+
     const Color explanationColor = Color.fromRGBO(228, 219, 124, 1);
     const Color whiteColor = Colors.white;
 

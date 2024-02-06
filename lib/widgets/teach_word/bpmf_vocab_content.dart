@@ -26,8 +26,9 @@ class BopomofoVocabContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double fontSize =
-        getFontSize(context, 16); // 16 is the base font size for 360dp width
+    ScreenInfo screenInfo = getScreenInfo(context);
+    double fontSize = screenInfo.fontSize;    
+
     String subSentence = sentence;
     if (subSentence.length > 25) {
       subSentence = "${subSentence.substring(0, 25)}...。";
