@@ -518,7 +518,7 @@ class SettingViewState extends ConsumerState<SettingView> {
                       child: Text('登出',
                           style: TextStyle(
                             color: Colors.black,
-                            fontSize: fontSize * 1.2,
+                            fontSize: fontSize * 1.0,
                           )),
                     ))
                   ]))),
