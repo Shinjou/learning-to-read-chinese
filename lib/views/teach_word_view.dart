@@ -131,7 +131,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
         wordObj = widget.wordsPhrase[widget.wordIndex];
         wordExist = true;
       });
-      debugPrint('getWord wordObj: ${wordObj['vocab1']}');
+      debugPrint('getWord word: ${widget.wordsStatus[widget.wordIndex].word}');
 
       // Process vocab1
       if (wordObj['vocab1'] != "") {
