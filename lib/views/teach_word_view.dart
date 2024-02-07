@@ -52,6 +52,9 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
   int vocabCnt = 0;
   bool img1Exist = false;
   bool img2Exist = false;
+  bool wordExist = false;
+  bool svgFileExist = false; // 沒有用到
+  double fontSize = 0; // 移到這裡，因為其他地方也會用到
   int practiceTimeLeft = 4;
   int nextStepId = 0;
   bool isBpmf = false;
@@ -100,10 +103,17 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
   }
 
   Future<String> readJson() async {
-    final String response = 
-        await rootBundle.loadString('lib/assets/svg/${widget.wordsStatus[widget.wordIndex].word}.json');
-
-    return response.replaceAll("\"", "'");
+    try {
+      final String response =
+          await rootBundle.loadString('lib/assets/svg/${widget.wordsStatus[widget.wordIndex].word}.json');
+      svgFileExist = true; 
+      return response.replaceAll("\"", "'");
+    } catch (e) {
+      // Handle the error
+      debugPrint('Error readJson(): $e');
+      svgFileExist = false;
+      return ''; // Return an empty string or handle it in a way that makes sense for your app
+    }
   }
 
   Future myLoadAsset(String path) async {
@@ -115,29 +125,32 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
   }
 
   void getWord() async {
-    setState(() {
-      wordObj = widget.wordsPhrase[widget.wordIndex];
-    });
-    // debugPrint('getWord wordObj: $wordObj'); // this code was not executed. Why?
-    if (wordObj['vocab1'] != "") {
-      vocabCnt += 1;
-      var imgAsset = await myLoadAsset(
-          'lib/assets/img/vocabulary/${wordObj['vocab1']}.webp'); // changed png to webp
-      if (imgAsset == null) {
-        img1Exist = false;
-      } else {
-        img1Exist = true;
+    try {
+      // Set wordObj state
+      setState(() {
+        wordObj = widget.wordsPhrase[widget.wordIndex];
+        wordExist = true;
+      });
+      debugPrint('getWord wordObj: ${wordObj['vocab1']}');
+
+      // Process vocab1
+      if (wordObj['vocab1'] != "") {
+        vocabCnt += 1;
+        var imgAsset = await myLoadAsset('lib/assets/img/vocabulary/${wordObj['vocab1']}.webp');
+        img1Exist = imgAsset != null;
       }
-    }
-    if (wordObj['vocab2'] != "") {
-      vocabCnt += 1;
-      var imgAsset = await myLoadAsset(
-          'lib/assets/img/vocabulary/${wordObj['vocab2']}.webp'); // changed png to webp
-      if (imgAsset == null) {
-        img2Exist = false;
-      } else {
-        img2Exist = true;
+
+      // Process vocab2
+      if (wordObj['vocab2'] != "") {
+        vocabCnt += 1;
+        var imgAsset = await myLoadAsset('lib/assets/img/vocabulary/${wordObj['vocab2']}.webp');
+        img2Exist = imgAsset != null;
       }
+
+    } catch (error) {
+      // Log the error
+      debugPrint('An error in getWord ${wordObj['vocab1']} : $error');
+      wordExist = false;
     }
   }
 
@@ -199,47 +212,91 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
     isBpmf = (initials.contains(widget.wordsStatus[widget.wordIndex].word) || prenuclear.contains(widget.wordsStatus[widget.wordIndex].word) || finals.contains(widget.wordsStatus[widget.wordIndex].word));
     getWord();
     _tabController = TabController(length: 4, vsync: this, animationDuration: Duration.zero);
-    readJson().then((result) {
-      setState(() {
-        _strokeOrderAnimationControllers = StrokeOrderAnimationController(
-          result,
-          this,
-          onQuizCompleteCallback: (summary) {
-            if (nextStepId >= steps['practiceWithBorder1']! && nextStepId <= steps['turnBorderOff']!) {
-              setState(() {
-                practiceTimeLeft -= 1;
-                nextStepId += 1;
-              });
-              Fluttertoast.showToast(
-                msg: [
-                  nextStepId == steps['turnBorderOff'] ? "恭喜筆畫正確！讓我們 去掉邊框 再練習 $practiceTimeLeft 遍哦！" : "恭喜筆畫正確！讓我們再練習 $practiceTimeLeft 次哦！"
-                ].join(),
-                fontSize: 30,
-              );
-            } 
-            else {
-              if (nextStepId == steps['practiceWithoutBorder1']) {
+
+    if (wordExist) {
+      readJson().then((result) {
+        setState(() {
+          _strokeOrderAnimationControllers = StrokeOrderAnimationController(
+            result,
+            this,
+            onQuizCompleteCallback: (summary) {
+              if (nextStepId >= steps['practiceWithBorder1']! && nextStepId <= steps['turnBorderOff']!) {
                 setState(() {
                   practiceTimeLeft -= 1;
                   nextStepId += 1;
-                  // widget.wordsStatus[widget.wordIndex].learned = true; // 強迫設這標籤
-                  debugPrint(
-                      'initState 要進入用一用，set learned flag: ${widget.wordsStatus[widget.wordIndex].learned}');
                 });
-              }
-              Fluttertoast.showToast(
-                msg: [
-                  "恭喜筆畫正確！"
+                Fluttertoast.showToast(
+                  msg: [
+                    nextStepId == steps['turnBorderOff'] ? "恭喜筆畫正確！讓我們 去掉邊框 再練習 $practiceTimeLeft 遍哦！" : "恭喜筆畫正確！讓我們再練習 $practiceTimeLeft 次哦！"
                   ].join(),
-                fontSize: 30,
-              );
-            }
-          },
-        );
+                  fontSize: 30,
+                );
+              } 
+              else {
+                if (nextStepId == steps['practiceWithoutBorder1']) {
+                  setState(() {
+                    practiceTimeLeft -= 1;
+                    nextStepId += 1;
+                    // widget.wordsStatus[widget.wordIndex].learned = true; // 強迫設這標籤
+                    debugPrint(
+                        'initState 要進入用一用，set learned flag: ${widget.wordsStatus[widget.wordIndex].learned}');
+                  });
+                }
+                Fluttertoast.showToast(
+                  msg: [
+                    "恭喜筆畫正確！"
+                    ].join(),
+                  fontSize: 30,
+                );
+              }
+            },
+          );
+        });
+      }).catchError((error) {
+        showErrorDialog('${widget.wordsStatus[widget.wordIndex].word} 沒有筆順.', '系統錯誤，請截圖回報。謝謝！');
       });
-    }).catchError((error) {
-      debugPrint('Failed to initialize _strokeOrderAnimationControllers: $error');
-    });
+    } else {
+      showErrorDialog('${widget.wordsStatus[widget.wordIndex].word} 不在資料庫.', '系統錯誤，請截圖回報。謝謝！');
+    }
+  }
+
+  void showErrorDialog(String message, String title) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            title,
+            style: TextStyle(
+              color: Colors.black, // Set text color to black
+              fontSize: fontSize * 1.2, // Set font size
+            ),
+          ),
+          content: Text(
+            message,
+            style: TextStyle(
+              color: Colors.black, // Set text color to black
+              fontSize: fontSize * 1.2, // Set font size
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text(
+                '回首頁',
+                style: TextStyle(
+                  color: Colors.black, // Set text color to black
+                  fontSize: fontSize * 1.2, // Set font size
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).pushReplacementNamed('/mainPage'); // Navigate to Home screen
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -268,7 +325,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
     // bool wordIsLearned = widget.wordsStatus[widget.wordIndex].learned;
 
     ScreenInfo screenInfo = getScreenInfo(context);
-    double fontSize = screenInfo.fontSize;    
+    fontSize = screenInfo.fontSize;    
     double deviceHeight = screenInfo.screenHeight;
     double deviceWidth = screenInfo.screenWidth;
     double availableWidth = deviceWidth - 20; // 10 padding on each side
