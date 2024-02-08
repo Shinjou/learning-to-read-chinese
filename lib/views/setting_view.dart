@@ -247,6 +247,7 @@ class SettingViewState extends ConsumerState<SettingView> {
                                                     nameController.text;
                                                 await UserProvider.updateUser(
                                                     user: userToUpdate);
+                                                if (!mounted) return;    
                                                 Navigator.of(context).pop();
                                               },
                                               child: Text(
@@ -499,28 +500,85 @@ class SettingViewState extends ConsumerState<SettingView> {
                               )
                             ])),
                     SizedBox(
-                      height: fontSize * 0.5,
+                      height: fontSize * 0.2, // was 0.5
                       // width: deviceWidth * 0.882,
                     ),
-                    Expanded(
-                        child: TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pushNamed('/login');
-                        ref.read(accountProvider.notifier).state = "";
-                        ref.read(userNameProvider.notifier).state = "";
-                        ref.read(gradeProvider.notifier).state = 1;
-                        ref.read(semesterCodeProvider.notifier).state = 0;
-                        ref.read(publisherCodeProvider.notifier).state = 0;
-                      },
-                      style: TextButton.styleFrom(
-                        fixedSize: Size.fromHeight(fontSize * 1.5),
-                      ),
-                      child: Text('登出',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: fontSize * 1.0,
-                          )),
-                    ))
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Adjust spacing as needed
+                      children: [
+                        // Only add the "刪除帳號" button if account is not 'tester'
+                        if (account != 'tester')
+                          Expanded(
+                            child: TextButton(
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: const Text("刪除帳號"),
+                                      content: Text(
+                                        "您確定要刪除您的帳號嗎？",
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: fontSize * 1.0,
+                                        ),
+                                      ),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          child: const Text('取消'),
+                                          onPressed: () {
+                                            Navigator.of(context).pop(); // Dismiss the dialog
+                                          },
+                                        ),
+                                        TextButton(
+                                          child: const Text('確定'),
+                                          onPressed: () {
+                                            UserProvider.deleteUser(inputAccount: account);
+                                            if (!mounted) return;
+                                            Navigator.of(context).pushNamed('/login');
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                              style: TextButton.styleFrom(
+                                fixedSize: Size.fromHeight(fontSize * 1.5),
+                              ),
+                              child: Text(
+                                '刪除帳號',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: fontSize * 1.0,
+                                ),
+                              ),
+                            ),
+                          ),
+                        Expanded(
+                          child: TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pushNamed('/login');
+                              ref.read(accountProvider.notifier).state = "";
+                              ref.read(userNameProvider.notifier).state = "";
+                              ref.read(gradeProvider.notifier).state = 1;
+                              ref.read(semesterCodeProvider.notifier).state = 0;
+                              ref.read(publisherCodeProvider.notifier).state = 0;
+                            },
+                            style: TextButton.styleFrom(
+                              fixedSize: Size.fromHeight(fontSize * 1.5),
+                            ),
+                            child: Text('登出',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: fontSize * 1.0,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
                   ]))),
         ]),
       ),
