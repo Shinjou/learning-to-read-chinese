@@ -143,12 +143,20 @@ class UserProvider {
   }
 
   static Future<void> deleteUser({required String inputAccount}) async {
-    final Database db = await getDBConnect();
-    await db.delete(tableName,
-      where: " $databaseAccount = ? ", 
-      whereArgs: [inputAccount]
+    try {
+      final Database db = await getDBConnect();
+      await db.delete(tableName,
+        where: " $databaseAccount = ? ", 
+        whereArgs: [inputAccount]
       );
+      await db.rawDelete("DELETE FROM wordStatus WHERE userAccount = ?", [inputAccount]);
+    } catch (e) {
+      // Error reporting
+      debugPrint('Error deleting user $inputAccount: $e');
+      // Consider using more sophisticated error reporting if available in your app
+    }
   }
+
 
   static Future<void> closeDb() async {
     if (_database != null) {
