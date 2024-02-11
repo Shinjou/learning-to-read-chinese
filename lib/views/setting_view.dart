@@ -51,12 +51,13 @@ class SettingViewState extends ConsumerState<SettingView> {
     final List<DropdownMenuEntry<int>> semesterEntries = [];
     final List<DropdownMenuEntry<int>> publisherEntries = [];
 
-    final userName = ref.watch(userNameProvider);
+    // final userName = ref.watch(userNameProvider);
+    account = ref.watch(accountProvider);
     int selectedGrade = ref.watch(gradeProvider);
     int selectedSemester = ref.watch(semesterCodeProvider);
     int selectedPublisher = ref.watch(publisherCodeProvider);
 
-    nameController.text = userName;
+    // nameController.text = userName;
     gradeController.text = numeralToChinese[selectedGrade]!;
     semesterController.text = semesterCodeTable[selectedSemester]!;
     publisherController.text = publisherCodeTable[selectedPublisher]!;
@@ -197,17 +198,18 @@ class SettingViewState extends ConsumerState<SettingView> {
                           width: fontSize * 0.3,
                         ),
                         Flexible(
-                          child: Text(userName,
+                          child: Text(account,    // userName,
                               style: TextStyle(
                                 color: Colors.black,
-                                fontSize: (userName.length) < 5
+                                fontSize: (account.length) < 5 // (userName.length) < 5
                                     ? fontSize
-                                    : (userName.length) < 12
+                                    : (account.length) < 12 // (userName.length) < 12
                                         ? fontSize
                                         : fontSize * 0.8,
                               )),
                         ),
                         Container(width: fontSize * 0.5),
+                        /*
                         InkWell(
                             onTap: () {
                               showDialog(
@@ -277,6 +279,7 @@ class SettingViewState extends ConsumerState<SettingView> {
                                 )
                               ],
                             )),
+                        */
                         Container(
                           width: fontSize * 0.2,
                         )
@@ -518,7 +521,7 @@ class SettingViewState extends ConsumerState<SettingView> {
                                     return AlertDialog(
                                       title: const Text("刪除帳號"),
                                       content: Text(
-                                        "您確定要刪除您的帳號嗎？",
+                                        "您確定要刪除您的帳號 $account 嗎？",
                                         style: TextStyle(
                                           color: Colors.black,
                                           fontSize: fontSize * 1.0,
