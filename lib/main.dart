@@ -30,6 +30,7 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     int grade = ref.watch(gradeProvider); 
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: '學國語',
       theme: ThemeData(
         appBarTheme: AppBarTheme(
