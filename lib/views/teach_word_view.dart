@@ -6,6 +6,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_riverpod/flutter_riverpod.dart' hide ChangeNotifierProvider, Consumer;
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:ltrc/contants/bopomos.dart';
 import 'package:ltrc/data/models/word_status_model.dart';
 import 'package:ltrc/data/providers/word_status_provider.dart';
@@ -47,6 +48,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
   StrokeOrderAnimationController? _strokeOrderAnimationControllers;
   late TabController _tabController;
   FlutterTts ftts = FlutterTts();
+  final player = AudioPlayer(); 
   late Map wordsPhrase;
   late Map wordObj;
   int vocabCnt = 0;
@@ -612,7 +614,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                 isLast: false,
                                 onRightClicked: (nextStepId == steps['goToSection2']! || wordIsLearned) ? () async {
                                             nextTab();
-                                            var result = await ftts.speak(word);
+                                            var result = await player.play(AssetSource('bopomo/$word.mp3'));
                                             return _tabController.animateTo(_tabController.index + 1);
                                           } : null,
                               ),
@@ -738,7 +740,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                             iconSize: fontSize * 1.2,
                                             color: backgroundColor,
                                             onPressed: () async {
-                                              var result = await ftts.speak(word);
+                                              var result = await player.play(AssetSource('bopomo/$word.mp3'));
                                             },
                                             icon: Icon(Icons.volume_up,
                                                 size: fontSize * 1.5),
@@ -886,7 +888,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                           ? () async {
                                               if (!controller.isAnimating) {
                                                 controller.startAnimation();
-                                                var result = await ftts.speak(word);
+                                                var result = await player.play(AssetSource('bopomo/$word.mp3'));;
                                                 if (nextStepId == steps['seeAnimation']) {
                                                   setState(() {
                                                     nextStepId += 1;
@@ -909,7 +911,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                       isSelected: controller.isQuizzing,
                                       onPressed: (nextStepId == steps['practiceWithBorder1'] || nextStepId == steps['practiceWithBorder2'] || nextStepId == steps['practiceWithBorder3'] || nextStepId == steps['practiceWithoutBorder1'] || wordIsLearned) ? () async {
                                               controller.startQuiz();
-                                              var result = await ftts.speak(word);
+                                              var result = await player.play(AssetSource('bopomo/$word.mp3'));
                                             } : null,
                                       fontSize: fontSize),
 
