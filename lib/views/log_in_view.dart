@@ -40,7 +40,7 @@ class LogInViewState extends ConsumerState<LogInView> {
     double fontSize = screenInfo.fontSize;    
     double deviceHeight = screenInfo.screenHeight;
     double deviceWidth = screenInfo.screenWidth;
-    debugPrint('Height: $deviceHeight, Width: $deviceWidth, fontSize: $fontSize');
+    // debugPrint('Height: $deviceHeight, Width: $deviceWidth, fontSize: $fontSize');
 
     return GestureDetector(
         onTap: () {
