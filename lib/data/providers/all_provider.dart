@@ -10,7 +10,7 @@ class AllProvider {
   static bool dbExists = false;  
 
   static const String _dbName = 'all.sqlite';  
-  static const int _dbVersion = 2;  
+  static const int _dbVersion = 4;  // 2/25/2024
 
   static Future<Database> get database async {
     _database ??= await _initDatabase();
@@ -27,40 +27,39 @@ class AllProvider {
   static Future<Database> _initDatabase() async {
     try {
       String dbPath = join(await getDatabasesPath(), _dbName);
-      debugPrint('Opening all.sqlite at $dbPath');
+      debugPrint('Path to $_dbName: $dbPath');
 
       // Check if the database exists
       dbExists = await databaseExists(dbPath);
 
       if (!dbExists) {
-        // Copy from assets if the database doesn't exist
-        debugPrint('Copying $_dbName from assets/data_files/...');
-        ByteData data = await rootBundle.load(join('assets/data_files/', _dbName));
-        List<int> bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
-        await File(dbPath).writeAsBytes(bytes, flush: true);
+        await _copyDbFromAssets(dbPath);
+        dbExists = true;
+        _database = await openDatabase(dbPath);
       } else {
-        debugPrint('Opening existing all.sqlite ...');
+        _database = await openDatabase(dbPath);
+        int version = await _database!.getVersion();
+        if (version < _dbVersion) {
+          debugPrint('Upgrading $_dbName from version $version to $_dbVersion ...');
+          await closeDb();
+          await _copyDbFromAssets(dbPath);
+          _database = await openDatabase(dbPath);
+          debugPrint('Upgrade $_dbName successfully...');
+        }
       }
-
-      // Open the database
-      return await openDatabase(
-        dbPath,
-        version: _dbVersion,
-        onUpgrade: _onUpgrade,
-      );
+      return _database!;
     } catch (e) {
-      debugPrint('Error initializing all.sqlite: $e');
+      debugPrint('Error initializing $_dbName: $e');
       rethrow;
     }
   }
 
-  static Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    // Handle database upgrades
-    if (oldVersion < newVersion) {
-      // Example: if (oldVersion < 2) { await db.execute("ALTER TABLE ..."); }
-      // Add other migration logic as needed
-    }
-  }  
+  static Future<void> _copyDbFromAssets(String dbPath) async {
+    debugPrint('Copying $_dbName from assets/data_files/...');
+    ByteData data = await rootBundle.load(join('assets/data_files/', _dbName));
+    List<int> bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+    await File(dbPath).writeAsBytes(bytes, flush: true);
+  }
 
   static Future<void> closeDb() async {
     if (_database != null) {
