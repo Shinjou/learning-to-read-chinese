@@ -54,7 +54,7 @@ class UserProvider {
         List<int> bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
         await File(dbPath).writeAsBytes(bytes, flush: true);
       } else {
-        debugPrint('Opening existing database...');
+        debugPrint('Opening existing $_dbName...');
       }
 
       // Open the database
