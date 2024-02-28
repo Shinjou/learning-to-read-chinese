@@ -29,24 +29,27 @@ class AllProvider {
       String dbPath = join(await getDatabasesPath(), _dbName);
       debugPrint('Path to $_dbName: $dbPath');
 
-      // Check if the database exists
-      dbExists = await databaseExists(dbPath);
-
+      bool dbExists = await databaseExists(dbPath);
       if (!dbExists) {
         await _copyDbFromAssets(dbPath);
-        dbExists = true;
+        debugPrint('$_dbName copied from assets.');
+      } 
+
+      // Open the database
+      _database = await openDatabase(dbPath);
+
+      // Checking and potentially upgrading the database version
+      int currentVersion = await _database!.getVersion();
+
+      if (currentVersion < _dbVersion) {
+        debugPrint('Upgrading $_dbName from version $currentVersion to $_dbVersion ...');
+        // Copy the database from assets
+        await closeDb();
+        await _copyDbFromAssets(dbPath);
         _database = await openDatabase(dbPath);
-      } else {
-        _database = await openDatabase(dbPath);
-        int version = await _database!.getVersion();
-        if (version < _dbVersion) {
-          debugPrint('Upgrading $_dbName from version $version to $_dbVersion ...');
-          await closeDb();
-          await _copyDbFromAssets(dbPath);
-          _database = await openDatabase(dbPath);
-          debugPrint('Upgrade $_dbName successfully...');
-        }
+        debugPrint('Upgrade $_dbName successfully...');
       }
+      
       return _database!;
     } catch (e) {
       debugPrint('Error initializing $_dbName: $e');
@@ -55,10 +58,19 @@ class AllProvider {
   }
 
   static Future<void> _copyDbFromAssets(String dbPath) async {
-    debugPrint('Copying $_dbName from assets/data_files/...');
-    ByteData data = await rootBundle.load(join('assets/data_files/', _dbName));
-    List<int> bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
-    await File(dbPath).writeAsBytes(bytes, flush: true);
+    try {
+      debugPrint('Copying $_dbName from assets/data_files/...');
+      ByteData data = await rootBundle.load(join('assets/data_files/', _dbName));
+      List<int> bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+      await File(dbPath).writeAsBytes(bytes, flush: true);
+      debugPrint('Copy of $_dbName to $dbPath completed successfully.');
+    } catch (e) {
+      debugPrint('Failed to copy $_dbName from assets to $dbPath. Error: $e');
+      // Depending on your use case, you might want to rethrow the error,
+      // return a failure status, or attempt a recovery operation here.
+      // For example, to rethrow the error, uncomment the following line:
+      rethrow;
+    }
   }
 
   static Future<void> closeDb() async {
