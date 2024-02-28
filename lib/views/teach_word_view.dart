@@ -65,6 +65,8 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
   static const Color backgroundColor = Color.fromRGBO(245, 245, 220, 100);
   bool get wordIsLearned =>
       widget.wordsStatus[widget.wordIndex].learned; // 這才是正確的方法
+  bool _showErrorDialog = false;
+  bool _firstNullStroke = true;
 
   void nextTab() async {
     currentTabIndex.value++;
@@ -72,7 +74,11 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
       debugPrint('nextTab nextStepId: $nextStepId');
       if (nextStepId == steps['goToSection2']) {
         setState(() {
-          nextStepId += 1;
+          if (svgFileExist) {
+            nextStepId += 1;
+          } else {
+            nextStepId = steps['goToSection4']!; // Skip to 用一用 if no svg file. Did not work as expected.
+          }
         });
         // todo
       } 
@@ -114,7 +120,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
       // Handle the error
       debugPrint('Error readJson(): $e');
       svgFileExist = false;
-      return ''; // Return an empty string or handle it in a way that makes sense for your app
+      return ''; // Return an empty string or handle it in a way that makes sense for your app 
     }
   }
 
@@ -127,13 +133,30 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
   }
 
   void getWord() async {
+    int tempIndex = widget.wordIndex; // change widget.wordIndex to tempIndex in this function
+    bool phraseEmpty = widget.wordsPhrase.isEmpty;
+    // debugPrint('getWord ${widget.unitId}, ${widget.unitTitle}, ${widget.wordsStatus}, ${widget.wordsPhrase}, ${widget.wordIndex}');
+    if (phraseEmpty) {
+      debugPrint('getWord error: wordsPhrase is empty');
+      wordObj = {};
+      wordExist = false;
+      return;
+    } else {
+      // debugPrint('getWord index: $tempIndex, length: ${widget.wordsPhrase.length}');
+      if (!(tempIndex < widget.wordsPhrase.length)) {
+        debugPrint('Error: wordIndex is out of range');
+        wordObj = {};
+        wordExist = false;
+        return;
+      } 
+    }
+
+    wordObj = widget.wordsPhrase[tempIndex];
     try {
       // Set wordObj state
       setState(() {
-        wordObj = widget.wordsPhrase[widget.wordIndex];
         wordExist = true;
       });
-      debugPrint('getWord word: ${widget.wordsStatus[widget.wordIndex].word}');
 
       // Process vocab1
       if (wordObj['vocab1'] != "") {
@@ -162,107 +185,138 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
     ftts.setLanguage("zh-tw");
     ftts.setSpeechRate(0.5);
     ftts.setVolume(1.0);
+
+    // Initialize the TabController
+    _tabController = TabController(length: 4, vsync: this);
+
+    // Setup completion handler for TTS
     ftts.setCompletionHandler(() async {
-      // 不知道為甚麼line 84 `await ftts.speak("${wordObj['vocab1']}。${wordObj['sentence1']}");` 完進不來（沒有換tab的話會進來）
-      debugPrint('initState nextStepId: $nextStepId');
-      if(!wordIsLearned) {
+      debugPrint('TTS completion handler called. NextStepId: $nextStepId');
+
+      if (!mounted) return;
+
+      if (!wordIsLearned) {
+        WordStatus newStatus = widget.wordsStatus[widget.wordIndex];
+
         if (nextStepId == steps['goToSection2']) {
-          setState(() {
-            nextStepId += 1;
-          });
-        } 
-        else if (nextStepId == steps['goToSection4']) {
-          debugPrint('initState vocabCnt: $vocabCnt');
-          if (vocabCnt == 1) {
-            WordStatus newStatus = widget.wordsStatus[widget.wordIndex];
-            setState(() {
-              newStatus.learned = true; // I never saw this flag set. Why?
-              // debugPrint('initState learned: $newStatus');
-            });
-            setState(() {
-              nextStepId = 100;
-            });
-            ref.read(learnedWordCountProvider.notifier).state += 1 ;
-            await WordStatusProvider.updateWordStatus(
-              status: newStatus
-              );
-          } 
-          else {
-            setState(() {
-              nextStepId += 1;
-            });
-          }
-        } 
-        else if (nextStepId == steps['goToPhrase2']) {
-          WordStatus newStatus = widget.wordsStatus[widget.wordIndex];
-          setState(() {
-            newStatus.learned = true; // I never saw this flag set. Why?
-            // debugPrint('initState learned: $newStatus.learned');
-          });
-          setState(() {
-            nextStepId = 100;
-          });
-          ref.read(learnedWordCountProvider.notifier).state += 1 ;
-          await WordStatusProvider.updateWordStatus(
-            status: newStatus
-            );
+          incrementNextStep();
+        } else if (nextStepId == steps['goToSection4']) {
+          await handleGoToSection4(newStatus);
+        } else if (nextStepId == steps['goToPhrase2']) {
+          await updateWordStatus(newStatus, learned: true, nextStepId: 100);
         }
       }
-      debugPrint("initState: Speech has completed");
-    });
-    if (wordIsLearned) {nextStepId = 100;} // replaced widget.wordsStatus[widget.wordIndex].learned
-    isBpmf = (initials.contains(widget.wordsStatus[widget.wordIndex].word) || prenuclear.contains(widget.wordsStatus[widget.wordIndex].word) || finals.contains(widget.wordsStatus[widget.wordIndex].word));
-    getWord();
-    _tabController = TabController(length: 4, vsync: this, animationDuration: Duration.zero);
 
-    if (wordExist) {
-      readJson().then((result) {
-        setState(() {
-          _strokeOrderAnimationControllers = StrokeOrderAnimationController(
-            result,
-            this,
-            onQuizCompleteCallback: (summary) {
-              if (nextStepId >= steps['practiceWithBorder1']! && nextStepId <= steps['turnBorderOff']!) {
-                setState(() {
-                  practiceTimeLeft -= 1;
-                  nextStepId += 1;
-                });
-                Fluttertoast.showToast(
-                  msg: [
-                    nextStepId == steps['turnBorderOff'] ? "恭喜筆畫正確！讓我們 去掉邊框 再練習 $practiceTimeLeft 遍哦！" : "恭喜筆畫正確！讓我們再練習 $practiceTimeLeft 次哦！"
-                  ].join(),
-                  fontSize: 30,
-                );
-              } 
-              else {
-                if (nextStepId == steps['practiceWithoutBorder1']) {
-                  setState(() {
-                    practiceTimeLeft -= 1;
-                    nextStepId += 1;
-                    // widget.wordsStatus[widget.wordIndex].learned = true; // 強迫設這標籤
-                    debugPrint(
-                        'initState 要進入用一用，set learned flag: ${widget.wordsStatus[widget.wordIndex].learned}');
-                  });
-                }
-                Fluttertoast.showToast(
-                  msg: [
-                    "恭喜筆畫正確！"
-                    ].join(),
-                  fontSize: 30,
-                );
-              }
-            },
-          );
-        });
-      }).catchError((error) {
-        showErrorDialog('${widget.wordsStatus[widget.wordIndex].word} 沒有筆順.', '系統錯誤，請截圖回報。謝謝！');
+      debugPrint("Speech has completed");
+    });
+
+    // Check if the word is already learned
+    if (wordIsLearned) {
+      nextStepId = 100;
+    }
+
+    // Determine if the word is BPMF
+    isBpmf = initials.contains(widget.wordsStatus[widget.wordIndex].word) ||
+             prenuclear.contains(widget.wordsStatus[widget.wordIndex].word) ||
+             finals.contains(widget.wordsStatus[widget.wordIndex].word);
+
+    // Additional setup logic
+    getWord();
+    checkWordExistence(); // if a word exists, its strokeorder, svgFileExist, and wordExist will be set
+  }
+
+  void incrementNextStep() {
+    setState(() {
+      nextStepId += 1;
+    });
+  }
+
+  Future<void> handleGoToSection4(WordStatus newStatus) async {
+    debugPrint('Vocab count: $vocabCnt');
+    if (vocabCnt == 1) {
+      await updateWordStatus(newStatus, learned: true, nextStepId: 100);
+    } else {
+      incrementNextStep();
+    }
+  }
+
+  Future<void> updateWordStatus(WordStatus newStatus, {required bool learned, required int nextStepId}) async {
+    if (!mounted) return;
+
+    setState(() {
+      newStatus.learned = learned;
+      this.nextStepId = nextStepId;
+    });
+
+    ref.read(learnedWordCountProvider.notifier).state += 1;
+    await WordStatusProvider.updateWordStatus(status: newStatus);
+  }
+
+  void checkWordExistence() {
+    if (!wordExist) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showErrorDialog('「${widget.wordsStatus[widget.wordIndex].word}」不在資料庫.', '請截圖回報。謝謝！');
       });
     } else {
-      showErrorDialog('${widget.wordsStatus[widget.wordIndex].word} 不在資料庫.', '系統錯誤，請截圖回報。謝謝！');
+      // json 或許不存在 svgFileExist = false
+      readJsonAndProcess();
+    }
+  }
+
+  Future<void> readJsonAndProcess() async {
+    try {
+      final result = await readJson();
+      if (result.isNotEmpty) {
+        setState(() {
+          _strokeOrderAnimationControllers = StrokeOrderAnimationController(result, this, onQuizCompleteCallback: handleQuizCompletion);
+        });
+      } else {
+        debugPrint('readJsonAndProcess: ${widget.wordsStatus[widget.wordIndex].word} 沒有筆順');
+        _strokeOrderAnimationControllers = null;
+        setState(() => nextStepId = steps['goToSection2']!);
+      }
+    } catch (error) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showErrorDialog('「${widget.wordsStatus[widget.wordIndex].word}」沒有筆順.', '請截圖回報。謝謝！');
+      });
+    }
+  }
+
+  void handleQuizCompletion(QuizSummary summary) {
+    if (nextStepId >= steps['practiceWithBorder1']! && nextStepId <= steps['turnBorderOff']!) {
+      setState(() {
+        practiceTimeLeft -= 1;
+        nextStepId += 1;
+      });
+      Fluttertoast.showToast(
+        msg: [
+          nextStepId == steps['turnBorderOff'] ? "恭喜筆畫正確！讓我們 去掉邊框 再練習 $practiceTimeLeft 遍哦！" : "恭喜筆畫正確！讓我們再練習 $practiceTimeLeft 次哦！"
+        ].join(),
+        fontSize: 30,
+      );
+    } 
+    else {
+      if (nextStepId == steps['practiceWithoutBorder1']) {
+        setState(() {
+          practiceTimeLeft -= 1;
+          nextStepId += 1;
+          // widget.wordsStatus[widget.wordIndex].learned = true; // 強迫設這標籤
+          debugPrint(
+              'initState 要進入用一用，learned flag: ${widget.wordsStatus[widget.wordIndex].learned}');
+        });
+      }
+      Fluttertoast.showToast(
+        msg: [
+          "恭喜筆畫正確！"
+          ].join(),
+        fontSize: fontSize * 1.2,
+      );
     }
   }
 
   void showErrorDialog(String message, String title) {
+    if (!mounted) return;
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -339,12 +393,26 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
     int unitId = widget.unitId;
     String unitTitle = widget.unitTitle;
 
-    // Make sure to check if _strokeOrderAnimationControllers is initialized before using it
+    // 每一個字都會出現 _strokeOrderAnimationControllers is null。這是因為在initState()裡面，_strokeOrderAnimationControllers是null？
     if (_strokeOrderAnimationControllers == null) {
       debugPrint('_strokeOrderAnimationControllers is null');
-      // Handle the case where the controller is not yet initialized
-      return const CircularProgressIndicator(); // Or some other placeholder
+      if (_firstNullStroke) {
+        _firstNullStroke = false;
+        return Container();
+      }
+      nextStepId = steps['goToSection4']!;
+      _showErrorDialog = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_showErrorDialog) {
+          showErrorDialog('「${widget.wordsStatus[widget.wordIndex].word}」沒有筆順.', '請截圖回報。謝謝！');
+          _firstNullStroke = true; // Reset the flag
+          _showErrorDialog = false; // Reset the flag
+        }
+      });
+      // Return a fallback widget to avoid returning null
+      return Container(); // or any other placeholder widget
     }
+
     List<Widget> useTabView = [
       TeachWordTabBarView(
         // 用一用 - 例句1
@@ -614,7 +682,13 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                 isLast: false,
                                 onRightClicked: (nextStepId == steps['goToSection2']! || wordIsLearned) ? () async {
                                             nextTab();
-                                            var result = await player.play(AssetSource('bopomo/$word.mp3'));
+                                            // var result = await player.play(AssetSource('bopomo/$word.mp3'));
+                                            if (isBpmf) {
+                                              await player.play(AssetSource('bopomo/$word.mp3'));
+                                            } else {
+                                              var result = await ftts.speak(word);
+                                            }
+                                            debugPrint('看一看 $word');
                                             return _tabController.animateTo(_tabController.index + 1);
                                           } : null,
                               ),
@@ -740,7 +814,13 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                             iconSize: fontSize * 1.2,
                                             color: backgroundColor,
                                             onPressed: () async {
-                                              var result = await player.play(AssetSource('bopomo/$word.mp3'));
+                                            // var result = await player.play(AssetSource('bopomo/$word.mp3'));
+                                              if (isBpmf) {
+                                                await player.play(AssetSource('bopomo/$word.mp3'));
+                                              } else {
+                                                var result = await ftts.speak(word);
+                                              }
+                                              debugPrint('聽一聽 $word');
                                             },
                                             icon: Icon(Icons.volume_up,
                                                 size: fontSize * 1.5),
@@ -888,7 +968,13 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                           ? () async {
                                               if (!controller.isAnimating) {
                                                 controller.startAnimation();
-                                                var result = await player.play(AssetSource('bopomo/$word.mp3'));;
+                                                // var result = await player.play(AssetSource('bopomo/$word.mp3'));
+                                                if (isBpmf) {
+                                                  await player.play(AssetSource('bopomo/$word.mp3'));
+                                                } else {
+                                                  var result = await ftts.speak(word);
+                                                }
+                                                debugPrint('筆順 $word');
                                                 if (nextStepId == steps['seeAnimation']) {
                                                   setState(() {
                                                     nextStepId += 1;
@@ -911,7 +997,13 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                       isSelected: controller.isQuizzing,
                                       onPressed: (nextStepId == steps['practiceWithBorder1'] || nextStepId == steps['practiceWithBorder2'] || nextStepId == steps['practiceWithBorder3'] || nextStepId == steps['practiceWithoutBorder1'] || wordIsLearned) ? () async {
                                               controller.startQuiz();
-                                              var result = await player.play(AssetSource('bopomo/$word.mp3'));
+                                              // var result = await player.play(AssetSource('bopomo/$word.mp3'));
+                                              if (isBpmf) {
+                                                await player.play(AssetSource('bopomo/$word.mp3'));
+                                              } else {
+                                                var result = await ftts.speak(word);
+                                              }
+                                              debugPrint('寫字 $word');
                                             } : null,
                                       fontSize: fontSize),
 
