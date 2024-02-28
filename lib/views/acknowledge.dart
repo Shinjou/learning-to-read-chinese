@@ -29,6 +29,10 @@ final List<Resource> resourceList = [
     resource: "諮詢顧問",
     description: "鄭漢文校長與陳素慧老師擔任諮詢顧問，提供寶貴現場教學經驗。"
   ),
+    Resource(
+    resource: "注音符號錄音",
+    description: "胡銘志老師幫忙錄製注音符號發音。"
+  ),
   Resource(
     resource: "APP開發",
     description: "林羿成、蔡伊甯、李昊翰、方新舟合力開發此軟體。版權歸誠致教育基金會所有。"
