@@ -24,7 +24,7 @@ class MainPageView extends ConsumerWidget {
 
     // for unknown reason, totalWordCount is 0. Set it here 186 to work around.
     if (totalWordCount == 0) {
-      print('MainPageView build $totalWordCount $learnedWordCount');
+      debugPrint('MainPageView WordCount: total $totalWordCount, learned $learnedWordCount');
       totalWordCount = 186;
     }
 
