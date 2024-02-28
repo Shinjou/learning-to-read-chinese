@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/contants/bopomos.dart';
-import 'package:ltrc/data/models/phrase_model.dart';
-import 'package:ltrc/data/models/word_model.dart';
+// import 'package:ltrc/data/models/phrase_model.dart';
+// import 'package:ltrc/data/models/word_model.dart';
 import 'package:ltrc/data/models/word_status_model.dart';
-import 'package:ltrc/data/providers/phrase_provider.dart';
-import 'package:ltrc/data/providers/word_phrase_provider.dart';
-import 'package:ltrc/data/providers/word_provider.dart';
+// import 'package:ltrc/data/providers/phrase_provider.dart';
+import 'package:ltrc/data/models/word_phrase_sentence_model.dart';
+import 'package:ltrc/data/providers/word_phrase_sentence_provider.dart';
+// import 'package:ltrc/data/providers/word_provider.dart';
 import 'package:ltrc/data/providers/word_status_provider.dart';
 // import 'package:ltrc/extensions.dart';
 import 'package:ltrc/providers.dart';
@@ -42,43 +43,50 @@ class UnitsViewState extends ConsumerState<UnitsView> {
     dynamic obj = ModalRoute.of(context)!.settings.arguments;
     List<Unit> units = obj["units"]; // Assuming 'units' is a list of 'Unit'
 
-    Future<List<Map>> getWordsPhrase(List<WordStatus> wordsStatus) async {
+    Future<List<Map>> getWordsPhraseSentence(List<WordStatus> wordsStatus) async {
       List<Map> wordsPhrase = [];
-      for (var wordStatus in wordsStatus) {
-        Word word = await WordProvider.getWord(inputWord: wordStatus.word);
-        List<int> phraseId = await WordPhraseProvider.getPhrasesId(inputWordId: word.id);
-        if (phraseId.isEmpty) {
-          wordsPhrase.add(
-            {
-              "word": wordStatus.word,
-              "vocab1": "",
-              "meaning1": "",
-              "sentence1": "",
-              "vocab2": "",
-              "meaning2": "",
-              "sentence2": "",
-            }
-          );
+      WordPhraseSentence? wordPhraseSentence;
+
+      if (wordsStatus.isEmpty) return wordsPhrase;
+      try {
+        for (var wordStatus in wordsStatus) {
+          // Attempt to fetch the WordPhraseSentence for the provided wordStatus
+          // debugPrint('wordStatus.word: ${wordStatus.word}'); // debug
+          wordPhraseSentence = await WordPhraseSentenceProvider.getWordPhraseSentenceByWord(inputWord: wordStatus.word);
+          if (wordPhraseSentence.id == -1) {
+            wordsPhrase.add(
+              {
+                "word": "",
+                "vocab1": "",
+                "meaning1": "",
+                "sentence1": "",
+                "vocab2": "",
+                "meaning2": "",
+                "sentence2": "",
+              }
+            );
+          } else {
+            wordsPhrase.add(
+              {
+                "word": wordPhraseSentence.word,
+                "vocab1": wordPhraseSentence.phrase,
+                "meaning1": wordPhraseSentence.definition,
+                "sentence1": wordPhraseSentence.sentence,
+                "vocab2": wordPhraseSentence.phrase2,
+                "meaning2": wordPhraseSentence.definition2,
+                "sentence2": wordPhraseSentence.sentence2,
+              }
+            );
+          }
         }
-        else {
-          Phrase phrase1 = await PhraseProvider.getPhraseById(inputPhraseId: phraseId[0]);
-          Phrase phrase2 = phraseId.length > 1 ? await PhraseProvider.getPhraseById(inputPhraseId: phraseId[1]) : phrase1;
-          wordsPhrase.add(
-            {
-              "word": wordStatus.word,
-              "vocab1": phrase1.phrase,
-              "meaning1": phrase1.definition,
-              "sentence1": phrase1.sentence,
-              "vocab2": phraseId.length == 1 ? "" : phrase2.phrase,
-              "meaning2": phraseId.length == 1 ? "" : phrase2.definition,
-              "sentence2": phraseId.length == 1 ? "" : phrase2.sentence,
-            }
-          );
-        }
+        return wordsPhrase;
+      } catch (e) {
+        debugPrint('Error in getWordsPhraseSentence: $e');
+        wordsPhrase = [];
+        return wordsPhrase;
       }
-      return wordsPhrase;
-    }
-    
+    }    
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -121,7 +129,7 @@ class UnitsViewState extends ConsumerState<UnitsView> {
                           account: ref.read(accountProvider.notifier).state,
                           words: bopomos, 
                         );
-                        List<Map> bpmfWordsPhrase = await getWordsPhrase(wordsStatus);
+                        List<Map> bpmfWordsPhrase = await getWordsPhraseSentence(wordsStatus);
                         if (!mounted) return;
                         Navigator.of(context).pushNamed(
                           '/bopomos', 
@@ -135,7 +143,8 @@ class UnitsViewState extends ConsumerState<UnitsView> {
                         List<WordStatus> likedWords = await WordStatusProvider.getLikedWordsStatus(
                           account: ref.watch(accountProvider), 
                         );
-                        List<Map> likedWordsPhrase = await getWordsPhrase(likedWords);
+                        List<Map> likedWordsPhrase = await getWordsPhraseSentence(likedWords);
+                        if (!mounted) return;
                         Navigator.of(context).pushNamed(
                           '/words', 
                           arguments: {
@@ -216,8 +225,8 @@ class UnitsViewState extends ConsumerState<UnitsView> {
                         account: ref.read(accountProvider.notifier).state,
                         words: unit.extraWords, 
                       );
-                      List<Map> newWordsPhrase = await getWordsPhrase(newWordsStatus);
-                      List<Map> extraWordsPhrase = await getWordsPhrase(extraWordsStatus);
+                      List<Map> newWordsPhrase = await getWordsPhraseSentence(newWordsStatus);
+                      List<Map> extraWordsPhrase = await getWordsPhraseSentence(extraWordsStatus);
                       if (!mounted) return;
                       Navigator.of(context).pushNamed(
                         '/words', 
