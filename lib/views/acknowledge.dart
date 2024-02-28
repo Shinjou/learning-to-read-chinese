@@ -78,7 +78,8 @@ class AcknowledgeView extends StatelessWidget {
                             child: Text(
                                 "$count. ${e.resource}\n ${e.description}",
                                 style: TextStyle(fontSize: fontSize)));
-                      }).toList()
+                      // ignore: unnecessary_to_list_in_spreads
+                      }).toList(),
                     ]),
               ))
         ]));
