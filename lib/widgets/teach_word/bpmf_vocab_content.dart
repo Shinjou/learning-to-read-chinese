@@ -82,7 +82,7 @@ class BopomofoVocabContent extends StatelessWidget {
                             fontSize:
                                 fontSize * 1.3, // Adjust text size as needed
                             color: const Color.fromRGBO(245, 245, 220, 100),
-                            fontFamily: 'BpmfOnly',
+                            fontFamily: 'Serif', // 'BpmfOnly',
                           ),
                         ),
                         TextSpan(
@@ -91,7 +91,7 @@ class BopomofoVocabContent extends StatelessWidget {
                             height: fontSize * 0.0,
                             fontSize: fontSize * 1.3,
                             color: const Color.fromRGBO(228, 219, 124, 1),
-                            fontFamily: 'BpmfOnly',
+                            fontFamily: 'Serif', // 'BpmfOnly',
                           ),
                         ),
                         TextSpan(
@@ -100,7 +100,7 @@ class BopomofoVocabContent extends StatelessWidget {
                             height: fontSize * 0.0,
                             fontSize: fontSize * 1.3,
                             color: const Color.fromRGBO(245, 245, 220, 100),
-                            fontFamily: 'BpmfOnly',
+                            fontFamily: 'Serif', // 'BpmfOnly',
                           ),
                         ),
                         WidgetSpan(
