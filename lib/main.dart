@@ -40,7 +40,7 @@ class MyApp extends ConsumerWidget {
         ),
         scaffoldBackgroundColor: "#28231D".toColor(),
         useMaterial3: true,
-        fontFamily: grade < 3 ? 'Serif': 'Iceberg', 
+        fontFamily: grade < 5 ? 'Serif': 'Iansui', 
         textTheme: const TextTheme(
           bodyMedium: TextStyle(),
           bodyLarge: TextStyle(),

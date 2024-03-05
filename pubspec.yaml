@@ -60,13 +60,10 @@ flutter:
   fonts:
     - family: Iansui     
       fonts:
-        - asset: lib\assets\fonts\BpmfIansui-Regular.ttf
+        - asset: lib\assets\fonts\Iansui-Regular.ttf        
     - family: Serif   
       fonts:
         - asset: lib\assets\fonts\BpmfZihiSerif-Regular.ttf
-    - family: Iceberg
-      fonts:
-        - asset: lib\assets\fonts\Iceberg-Regular.ttf
     - family: BpmfOnly
       fonts:
         - asset: lib\assets\fonts\BpmfZihiOnly-R.ttf
