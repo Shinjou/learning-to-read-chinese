@@ -7,7 +7,7 @@ import 'package:ltrc/data/models/unit_model.dart';
 import 'package:ltrc/data/providers/unit_provider.dart';
 import 'package:ltrc/extensions.dart';
 import 'package:ltrc/providers.dart';
-import 'package:ltrc/widgets/progress_bar.dart';
+// import 'package:ltrc/widgets/progress_bar.dart';
 import 'package:ltrc/views/view_utils.dart';
 
 class MainPageView extends ConsumerWidget {
@@ -94,11 +94,13 @@ class MainPageView extends ConsumerWidget {
                                 color: '#F5F5DC'.toColor(),
                               ))),
                     )),
+                /* 數字不準確，暫時不顯示
                 Text('學過的生字卡',
                     style: TextStyle(
                       fontSize: fontSize * 1.3,
                     )),
                 ProgressBar(maxCount: totalWordCount, value: learnedWordCount),
+                */
               ]),
         ));
   }
