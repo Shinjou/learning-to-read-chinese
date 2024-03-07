@@ -10,7 +10,7 @@ class AllProvider {
   static bool dbExists = false;  
 
   static const String _dbName = 'all.sqlite';  
-  static const int _dbVersion = 4;  // 2/25/2024
+  static const int _dbVersion = 5;  // 3/3/2024
 
   static Future<Database> get database async {
     _database ??= await _initDatabase();
