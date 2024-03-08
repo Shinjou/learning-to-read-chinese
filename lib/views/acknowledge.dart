@@ -15,7 +15,7 @@ final List<Resource> resourceList = [
   ),
   Resource(
     resource: "注音字卡", 
-    description: "由郭俊成老師提供，用於注音「看一看」、「用一用」及「拼拼看」。"
+    description: "由郭俊成老師提供，用於注音符號的學習。"
   ),
   Resource(
     resource: "字型演變",
@@ -23,7 +23,7 @@ final List<Resource> resourceList = [
   ),
   Resource(
     resource: "筆順動畫",
-    description: "來自文鼎科技開發股份有限公司提供之開源漢字、注音筆順素材與技術支持。"
+    description: "來自文鼎科技開發股份有限公司授權之漢字及注音字型。更感謝他們的技術支持。"
   ),
   Resource(
     resource: "諮詢顧問",
