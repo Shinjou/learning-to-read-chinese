@@ -32,6 +32,7 @@ class AllProvider {
       bool dbExists = await databaseExists(dbPath);
       if (!dbExists) {
         await _copyDbFromAssets(dbPath);
+        dbExists = true;
         debugPrint('$_dbName copied from assets.');
       } 
 
@@ -43,11 +44,11 @@ class AllProvider {
 
       if (currentVersion < _dbVersion) {
         debugPrint('Upgrading $_dbName from version $currentVersion to $_dbVersion ...');
-        // Copy the database from assets
+        // all.sqlite 如果需要 upgrade，就copy整個 DB from assets
         await closeDb();
         await _copyDbFromAssets(dbPath);
         _database = await openDatabase(dbPath);
-        debugPrint('Upgrade $_dbName successfully...');
+        debugPrint('Upgrade $_dbName successfully to version $_dbVersion');
       }
       
       return _database!;
