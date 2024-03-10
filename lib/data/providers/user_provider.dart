@@ -27,7 +27,6 @@ class UserProvider {
   static const String _dbName = 'users.sqlite';
     static const int _dbVersion = 4; // 2/25/2024
   static const String _wordStatusTable = 'wordStatus';
-  // static const String _usersTable = 'users'; 等以後需要時，再加入
 
   static Future<Database> get database async {
     _database ??= await _initDatabase();
@@ -49,6 +48,7 @@ class UserProvider {
       bool dbExists = await databaseExists(dbPath);
       if (!dbExists) {
         await _copyDbFromAssets(dbPath);
+        dbExists = true;
         debugPrint('$_dbName copied from assets.');
       } 
 
@@ -60,11 +60,12 @@ class UserProvider {
 
       if (currentVersion < _dbVersion) {
         debugPrint('Upgrading $_dbName from version $currentVersion to $_dbVersion ...');
-        // Ver 4，新增“鸚”一字
+        // users.sqlite如果需要 upgrade，需要個別處理
+        // Ver 4，新增“鸚”一字。先刪掉舊的，再新增新的。
         await deleteWord(db: _database, userAccount: 'tester', word: '鸚');
         await addWord(db: _database, userAccount: 'tester', word: '鸚', learned: 1, liked: 1);
         await _database!.setVersion(_dbVersion);  
-        debugPrint('Upgrade $_dbName successfully...');
+        debugPrint('Upgrade $_dbName successfully to version $_dbVersion');
       } else {
         debugPrint('Database $_dbName opened successfully...');
       }
