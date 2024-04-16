@@ -72,8 +72,8 @@ class MainPageView extends ConsumerWidget {
                                 inputPublisher:
                                     publisherCodeTable[publisherCode]!,
                                 inputGrade: ref.watch(gradeProvider),
-                                // inputSemester: "上");
                                 inputSemester: semesterCodeTable[semesterCode]!);
+                            if (!context.mounted) return;    
                             Navigator.of(context).pushNamed(
                               '/units',
                               arguments: {'units': units},
@@ -93,7 +93,31 @@ class MainPageView extends ConsumerWidget {
                                 fontSize: fontSize * 1.5,
                                 color: '#F5F5DC'.toColor(),
                               ))),
-                    )),
+                    ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8.0),
+                  child: SizedBox(
+                    width: deviceWidth * 0.76,
+                    height: deviceHeight * 0.095,
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.of(context).pushNamed('/duoyinzi'),
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all('#013E6D'.toColor()),
+                        elevation: MaterialStateProperty.all(25),
+                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12))),
+                      ),
+                      child: Text('注音/多音字',
+                          style: TextStyle(
+                            fontSize: fontSize * 1.5,
+                            color: '#F5F5DC'.toColor(),
+                          )),
+                    ),
+                  ),
+                ),
+              
                 /* 數字不準確，暫時不顯示
                 Text('學過的生字卡',
                     style: TextStyle(
@@ -104,4 +128,5 @@ class MainPageView extends ConsumerWidget {
               ]),
         ));
   }
+
 }
