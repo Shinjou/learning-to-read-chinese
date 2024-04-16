@@ -233,7 +233,7 @@ class LogInViewState extends ConsumerState<LogInView> {
                                       inputSemester: user.semester,
                                     );
                                     
-                                    if (!mounted) return;
+                                    if (!context.mounted) return;
                                     Navigator.of(context).pushNamed('/mainPage');
                                   }
                                 } catch (e) {
