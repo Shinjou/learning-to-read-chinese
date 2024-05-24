@@ -32,12 +32,12 @@ class GradeAndProviderButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: () {},
         style: ButtonStyle(
-          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(7)
             ),
           ),
-          backgroundColor: MaterialStatePropertyAll('#D9D9D9'.toColor())
+          backgroundColor: WidgetStatePropertyAll('#D9D9D9'.toColor())
         ),
         child: Text(
           text,

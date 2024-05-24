@@ -48,7 +48,7 @@ class _SafetyHintRegisterState extends State<SafetyHintRegisterView> {
           label: question.question,
           value: question,
           style: ButtonStyle(
-            textStyle: MaterialStateProperty.all<TextStyle>(
+            textStyle: WidgetStateProperty.all<TextStyle>(
               TextStyle(
                 fontSize: fontSize * 0.6,
                 color: '#1C1B1F'.toColor(),
@@ -68,7 +68,7 @@ class _SafetyHintRegisterState extends State<SafetyHintRegisterView> {
             label: question.question,
             value: question,
             style: ButtonStyle(
-              textStyle: MaterialStateProperty.all<TextStyle>(
+              textStyle: WidgetStateProperty.all<TextStyle>(
                 TextStyle(
                   fontSize: fontSize * 0.6,
                   color: '#1C1B1F'.toColor(),

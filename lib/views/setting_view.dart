@@ -70,7 +70,7 @@ class SettingViewState extends ConsumerState<SettingView> {
         value: key,
         label: numeralToChinese[key]!,
         style: ButtonStyle(
-          textStyle: MaterialStateProperty.all<TextStyle>(
+          textStyle: WidgetStateProperty.all<TextStyle>(
             TextStyle(
               fontSize: fontSize * 0.6,
               color: '#1C1B1F'.toColor(),
@@ -85,7 +85,7 @@ class SettingViewState extends ConsumerState<SettingView> {
         value: key,
         label: semesterCodeTable[key]!,
         style: ButtonStyle(
-          textStyle: MaterialStateProperty.all<TextStyle>(
+          textStyle: WidgetStateProperty.all<TextStyle>(
             TextStyle(
               fontSize: fontSize * 0.6,
               color: '#1C1B1F'.toColor(),
@@ -101,7 +101,7 @@ class SettingViewState extends ConsumerState<SettingView> {
         value: key,
         label: publisherCodeTable[key]!,
         style: ButtonStyle(
-          textStyle: MaterialStateProperty.all<TextStyle>(
+          textStyle: WidgetStateProperty.all<TextStyle>(
             TextStyle(
               fontSize: fontSize * 0.6,
               color: '#1C1B1F'.toColor(),
