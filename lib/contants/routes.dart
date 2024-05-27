@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ltrc/views/acknowledge.dart';
+import 'package:ltrc/views/check_zhuyin_view.dart';
 import 'package:ltrc/views/bopomo_quiz.dart';
 import 'package:ltrc/views/bopomo_quiz_finish.dart';
 import 'package:ltrc/views/bopomos_view.dart';
@@ -36,6 +37,7 @@ class AppRoutes {
   static const String units = '/units';
   static const String words = '/words';
   static const String duoyinzi = '/duoyinzi';
+  static const String checkzhuyin = '/checkzhuyin';  // To test zhuyin
 
 
   static Map<String, WidgetBuilder> define() {
@@ -56,6 +58,7 @@ class AppRoutes {
       units: (context) => const UnitsView(),
       words: (context) => const WordsView(),
       duoyinzi: (context) => const DuoyinziView(),
+      checkzhuyin: (context) => const CheckZhuyinView(), // To test zhuyin
       // teachWord: (context) => const TeachWordView(),
     };
   }
