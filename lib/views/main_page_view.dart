@@ -56,8 +56,9 @@ class MainPageView extends ConsumerWidget {
                           fontSize: fontSize * 2.0,
                         ))),
                 Padding(
-                    padding:
-                        EdgeInsetsDirectional.only(bottom: deviceHeight * 0.15),
+                    // padding:
+                        // EdgeInsetsDirectional.only(bottom: deviceHeight * 0.15),
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: SizedBox(
                       width: deviceWidth * 0.76,
                       height: deviceHeight * 0.095,
@@ -81,9 +82,9 @@ class MainPageView extends ConsumerWidget {
                           },
                           style: ButtonStyle(
                             backgroundColor:
-                                MaterialStateProperty.all('#013E6D'.toColor()),
-                            elevation: MaterialStateProperty.all(25),
-                            shape: MaterialStateProperty.all<
+                                WidgetStateProperty.all('#013E6D'.toColor()),
+                            elevation: WidgetStateProperty.all(25),
+                            shape: WidgetStateProperty.all<
                                     RoundedRectangleBorder>(
                                 RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12))),
@@ -95,17 +96,49 @@ class MainPageView extends ConsumerWidget {
                               ))),
                     ),
                 ),
+
+                // The following button is for verifying all words with zhuyin
+                SizedBox(height: fontSize * 0.5),
                 Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.0),
+                  // padding: EdgeInsets.symmetric(vertical: 8.0),
+                  // padding:
+                  //     EdgeInsetsDirectional.only(bottom: deviceHeight * 0.15),  
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),                
+                  child: SizedBox(
+                    width: deviceWidth * 0.76,
+                    height: deviceHeight * 0.095,
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.of(context).pushNamed('/checkzhuyin'),
+                      style: ButtonStyle(
+                        backgroundColor: WidgetStateProperty.all('#013E6D'.toColor()),
+                        elevation: WidgetStateProperty.all(25),
+                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12))),
+                      ),
+                      child: Text('檢查字詞的注音',
+                          style: TextStyle(
+                            fontSize: fontSize * 1.5,
+                            color: '#F5F5DC'.toColor(),
+                          )),
+                    ),
+                  ),
+                ),
+                                            
+                SizedBox(height: fontSize * 0.5),
+                Padding(
+                  // padding: EdgeInsets.symmetric(vertical: 8.0),
+                  padding:
+                      EdgeInsetsDirectional.only(bottom: deviceHeight * 0.15),                  
                   child: SizedBox(
                     width: deviceWidth * 0.76,
                     height: deviceHeight * 0.095,
                     child: ElevatedButton(
                       onPressed: () => Navigator.of(context).pushNamed('/duoyinzi'),
                       style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all('#013E6D'.toColor()),
-                        elevation: MaterialStateProperty.all(25),
-                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        backgroundColor: WidgetStateProperty.all('#013E6D'.toColor()),
+                        elevation: WidgetStateProperty.all(25),
+                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12))),
                       ),
@@ -117,7 +150,7 @@ class MainPageView extends ConsumerWidget {
                     ),
                   ),
                 ),
-              
+
                 /* 數字不準確，暫時不顯示
                 Text('學過的生字卡',
                     style: TextStyle(
