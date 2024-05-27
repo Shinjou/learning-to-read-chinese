@@ -725,7 +725,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                                   fontSize: fontSize * 8.0, // Adjust font size to be reasonable
                                                   color: backgroundColor, // Ensure backgroundColor is defined or use a default color
                                                   fontWeight: FontWeight.w100,
-                                                  fontFamily: isBpmf ? "BpmfOnly" : "Serif",
+                                                  fontFamily: isBpmf ? "BpmfOnly" : "BpmfIansui",
                                                 ),
                                               ),
                                             );
@@ -798,7 +798,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                             fontSize: fontSize * 8.0, // Adjust font size to be reasonable
                                             color: backgroundColor,
                                             fontWeight: FontWeight.w100,
-                                            fontFamily: isBpmf ? "BpmfOnly" : "Serif",
+                                            fontFamily: isBpmf ? "BpmfOnly" : "BpmfIansui",
                                           ),
                                         ),
                                       ),
