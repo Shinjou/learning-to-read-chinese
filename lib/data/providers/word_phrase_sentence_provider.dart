@@ -36,13 +36,17 @@ class WordPhraseSentenceProvider {
   }
 
 
-  static Future<WordPhraseSentence> getWordPhraseSentenceById({required int inputWordPhraseSentenceId}) async {
+  static Future<WordPhraseSentence?> getWordPhraseSentenceById({required int inputWordPhraseSentenceId}) async {
     final Database db = await getDBConnect();
     final List<Map<String, dynamic>> maps = await db.query(tableName,
       columns: ["*"],
       where: "$databaseWordPhraseSentenceId=?",
       whereArgs: [inputWordPhraseSentenceId]
     );
+    if (maps.isEmpty) {
+      debugPrint("No word phrase sentence found for id: $inputWordPhraseSentenceId");
+      return null;
+    }
     return WordPhraseSentence(
       id: maps[0][databaseWordPhraseSentenceId],
       word: maps[0][databaseWord],
@@ -90,6 +94,25 @@ class WordPhraseSentenceProvider {
     }
   }
 
+  // For testing 多音字
+  Future<List<Map<String, dynamic>>> readEntries() async {
+    try {
+      final Database db = await getDBConnect();
+      List<Map<String, dynamic>> entries = await db.query('WordPhraseSentence', limit: 10);
+      await db.close();
+      return entries;
+    } catch (e) {
+      debugPrint("Error reading entries: $e");
+      return [];
+    }
+  }
+
+  static Future<int> getMaxId() async {
+    final Database db = await getDBConnect();
+    int maxId = Sqflite.firstIntValue(await db.rawQuery('SELECT MAX(id) FROM WordPhraseSentence')) ?? 0;
+    return maxId;
+  }  
+  // For testing 多音字 - end
 
   static Future<void> closeDb() async{
     database = null;
