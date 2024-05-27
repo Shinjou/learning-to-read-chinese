@@ -1,12 +1,19 @@
+// import 'dart:ffi';
+
+// import 'dart:convert';
+
 import 'package:flutter/material.dart';
+// import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:logger/logger.dart';
 import 'dart:io';
+
 import 'package:ltrc/providers.dart';
 import 'package:ltrc/data/providers/all_provider.dart';
 import 'package:ltrc/data/providers/user_provider.dart';
 import 'package:ltrc/views/log_in_view.dart';
+import 'package:ltrc/views/polyphonic_processor.dart';
 
 import 'package:ltrc/contants/routes.dart';
 import 'package:ltrc/extensions.dart';
@@ -17,7 +24,9 @@ Future main() async{
     setupLogger();
     await AllProvider.database; // Initialize all database    
     await UserProvider.database; // Initialize users database
-    runApp(const ProviderScope(child: MyApp()));
+    await PolyphonicProcessor.instance.loadPolyphonicData();
+
+    runApp(const ProviderScope(child: MyApp()));    
   } catch (e) {
     debugPrint('Failed to init the database: $e');
   }
@@ -25,6 +34,7 @@ Future main() async{
 
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -40,7 +50,7 @@ class MyApp extends ConsumerWidget {
         ),
         scaffoldBackgroundColor: "#28231D".toColor(),
         useMaterial3: true,
-        fontFamily: grade < 5 ? 'Serif': 'Iansui', 
+        fontFamily: grade < 5 ? 'BpmfIansui': 'Iansui', 
         textTheme: const TextTheme(
           bodyMedium: TextStyle(),
           bodyLarge: TextStyle(),
