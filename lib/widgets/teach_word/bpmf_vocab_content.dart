@@ -1,18 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
+import 'package:ltrc/views/view_utils.dart';
+import 'package:ltrc/widgets/teach_word/zhuyin_processing.dart';
 
 class BopomofoVocabContent extends StatelessWidget {
   final String word;
   final String vocab;
   final String sentence;
-  const BopomofoVocabContent({
+  final FlutterTts ftts = FlutterTts(); // Initialize the TTS engine
+
+  BopomofoVocabContent({
     super.key,
     required this.word,
     required this.vocab,
     required this.sentence,
   });
 
+  Future<void> _speak(String text) async {
+    int result = await ftts.speak(text); // Implement the TTS functionality
+    if (result == 1) {
+      // debugPrint('BopomofoVocabContent _speak succeeded!');
+    } else {
+      debugPrint('BopomofoVocabContent _speak failed!');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    ScreenInfo screenInfo = getScreenInfo(context);
+    double fontSize = screenInfo.fontSize;    
+
     String subSentence = sentence;
     if (subSentence.length > 25) {
       subSentence = "${subSentence.substring(0, 25)}...。";
@@ -22,50 +39,43 @@ class BopomofoVocabContent extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Container( 
+        Container(
           alignment: Alignment.center,
           child: Column(
             children: [
-              Text(vocab,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 48,
-                  color: Color.fromRGBO(245, 245, 220, 100),
-                  fontFamily: 'BpmfOnly',
-              )),
-              Image(
-                height: 140,
-                image: AssetImage(
-                  'lib/assets/img/bopomo/$word.png'),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text.rich(
-                  textAlign: TextAlign.left,
-                  TextSpan(
-                    text: subSentence.split(vocab)[0],
-                    style: const TextStyle(
-                      height: 1.1,
-                      fontSize: 36,
-                      color: Color.fromRGBO(245, 245, 220, 100),
-                      fontFamily: 'BpmfOnly',
-                    ),
-                    children: <InlineSpan>[
-                      TextSpan(
-                        text: vocab,
-                        style: const TextStyle(
-                          color: Color.fromRGBO(228, 219, 124, 1),
-                        ),
-                      ),
-                      TextSpan(
-                        text: subSentence.split(vocab)[1],
-                      ),
-                  ])),
+                  ZhuyinProcessing(
+                    text: vocab,
+                    fontSize: fontSize * 2.0, 
+                    color: const Color.fromRGBO(228, 219, 124, 1),
+                    highlightOn: true,
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.volume_up),
+                    iconSize: fontSize * 2.0,
+                    color: const Color.fromRGBO(228, 219, 124, 1),
+                    onPressed: () => _speak(vocab),
+                  ),
                 ],
+              ),
+              Image(
+                height: fontSize * 8.5,
+                image: AssetImage('lib/assets/img/bopomo/$word.png'),
+              ),
+              SizedBox(height: fontSize * 0.5),
+              ZhuyinProcessing(
+                text: subSentence,
+                fontSize: fontSize * 1.3, 
+                color: const Color.fromRGBO(245, 245, 220, 100),
+                highlightOn: true,
+              ),              
+              IconButton(
+                icon: const Icon(Icons.volume_up),
+                iconSize: fontSize * 1.3,
+                color: const Color.fromRGBO(245, 245, 220, 100),
+                onPressed: () => _speak(subSentence),
               ),
             ],
           ),
@@ -74,3 +84,4 @@ class BopomofoVocabContent extends StatelessWidget {
     );
   }
 }
+

@@ -71,9 +71,9 @@ class WordCardState extends State<WordCard> {
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
              Align(
-              alignment: Alignment.topRight,
+              alignment: widget.isVertical ? Alignment.topRight : Alignment.topLeft,
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+                padding: EdgeInsets.fromLTRB(0, 0, widget.fontSize * 0.25, 0),
                 child: 
                   Wrap(
                     direction: !widget.isVertical ? Axis.vertical : Axis.horizontal,
@@ -82,7 +82,7 @@ class WordCardState extends State<WordCard> {
                     children:[
                       IconButton(
                         icon: liked ? const Icon(Icons.favorite) : const Icon(Icons.favorite_border),
-                        iconSize: 16,
+                        iconSize: widget.fontSize * 0.5,
                         color: liked ? "#FF0303".toColor() : "#999999".toColor(),
                         onPressed: () async {
                           setState(() {
@@ -97,7 +97,7 @@ class WordCardState extends State<WordCard> {
                       ),
                       Icon(
                         widget.wordsStatus[widget.wordIndex].learned ? Icons.check_circle : Icons.circle_outlined,
-                        size: 16,
+                        size: widget.fontSize * 0.5,
                         color: widget.wordsStatus[widget.wordIndex].learned ? "#F8A339".toColor() : "#999999".toColor(),
                       ),
                     ]
@@ -117,4 +117,3 @@ class WordCardState extends State<WordCard> {
   }
 }
 
-  

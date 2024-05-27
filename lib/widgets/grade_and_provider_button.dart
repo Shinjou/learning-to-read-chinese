@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ltrc/extensions.dart';
+import 'package:ltrc/views/view_utils.dart';
 
 class GradeAndProviderButton extends StatelessWidget {
   final double buttonWidth;
@@ -13,10 +14,8 @@ class GradeAndProviderButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    double fontSize = 12;
-    // if (buttonWidth * 4 > 400) fontSize = 11;
-    // else fontSize = 9;
+    ScreenInfo screenInfo = getScreenInfo(context);
+    double fontSize = screenInfo.fontSize;    
 
     return Container(
       width: buttonWidth,
@@ -33,12 +32,12 @@ class GradeAndProviderButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: () {},
         style: ButtonStyle(
-          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(7)
             ),
           ),
-          backgroundColor: MaterialStatePropertyAll('#D9D9D9'.toColor())
+          backgroundColor: WidgetStatePropertyAll('#D9D9D9'.toColor())
         ),
         child: Text(
           text,

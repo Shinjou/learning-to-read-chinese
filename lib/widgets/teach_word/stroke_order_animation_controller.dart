@@ -127,7 +127,7 @@ class StrokeOrderAnimationController extends ChangeNotifier {
       }
     });
 
-    setStrokeOrder(_strokeOrder);
+    setStrokeOrder(_strokeOrder);  // this causes problem
     _setCurrentStroke(0);
     _summary = QuizSummary(_nStrokes);
 
@@ -365,55 +365,67 @@ class StrokeOrderAnimationController extends ChangeNotifier {
     List<List<Offset>> tmpMedians;
     List<int> tmpRadicalStrokeIndices = [];
 
-    try {
-      parsedJson = json.decode(strokeOrder.replaceAll("'", '"'));
-    } catch (e) {
-      throw const FormatException("Invalid JSON string for stroke order.");
-    }
+    if (strokeOrder.isNotEmpty) {
+      try {
+        parsedJson = json.decode(strokeOrder.replaceAll("'", '"'));
+      } catch (e) {
+        throw const FormatException("Invalid JSON string for stroke order.");
+      }
 
-    try {
-      tmpStrokes = List.generate(
-          parsedJson['strokes'].length,
-          (index) => parseSvgPath(parsedJson['strokes'][index]).transform(
-              // Transformation according to the makemeahanzi documentation
-              Matrix4(1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0, 0, 900, 0, 1)
-                  .storage));
-    } catch (e) {
-      throw const FormatException("Invalid strokes in stroke order JSON.");
-    }
+      try {
+        tmpStrokes = List.generate(
+            parsedJson['strokes'].length,
+            (index) => parseSvgPath(parsedJson['strokes'][index]).transform(
+                // Transformation according to the makemeahanzi documentation
+                Matrix4(1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0, 0, 900, 0, 1)
+                    .storage));
+      } catch (e) {
+        throw const FormatException("Invalid strokes in stroke order JSON.");
+      }
 
-    try {
-      tmpMedians = List.generate(parsedJson['medians'].length, (iStroke) {
-        return List.generate(parsedJson['medians'][iStroke].length, (iPoint) {
-          return Offset(
-              (parsedJson['medians'][iStroke][iPoint][0]).toDouble(),
-              (parsedJson['medians'][iStroke][iPoint][1] * -1 + 900)
-                  .toDouble());
+      try {
+        tmpMedians = List.generate(parsedJson['medians'].length, (iStroke) {
+          return List.generate(parsedJson['medians'][iStroke].length, (iPoint) {
+            return Offset(
+                (parsedJson['medians'][iStroke][iPoint][0]).toDouble(),
+                (parsedJson['medians'][iStroke][iPoint][1] * -1 + 900)
+                    .toDouble());
+          });
         });
-      });
-    } catch (e) {
-      throw const FormatException("Invalid medians in stroke order JSON.");
-    }
+      } catch (e) {
+        throw const FormatException("Invalid medians in stroke order JSON.");
+      }
 
-    if (tmpMedians.length != tmpStrokes.length) {
-      throw const FormatException("Number of strokes and medians not equal.");
-    }
+      if (tmpMedians.length != tmpStrokes.length) {
+        throw const FormatException("Number of strokes and medians not equal.");
+      }
 
-    try {
-      tmpRadicalStrokeIndices = List<int>.generate(
-          parsedJson['radStrokes'].length,
-          (index) => parsedJson['radStrokes'][index]);
-    } catch (e) {
-      debugPrint("Could not read radical stroke indices from JSON.");
-      tmpRadicalStrokeIndices = [];
-    }
+      // Check for the existence of 'radStrokes' in the parsed JSON
+      if (parsedJson.containsKey('radStrokes') && parsedJson['radStrokes'] != null) {
+        try {
+          tmpRadicalStrokeIndices = List<int>.generate(
+              parsedJson['radStrokes'].length,  // lengh is null
+              (index) => parsedJson['radStrokes'][index]);
+        } catch (e, s) {
+          // debugPrint("Could not read radical stroke indices from JSON.");  // why this error?
+          debugPrint('Error: $e');
+          debugPrint('StackTrace: $s');
+          tmpRadicalStrokeIndices = [];
+        }
+      } else {
+        debugPrint("No radical stroke indices found in JSON.");
+        tmpRadicalStrokeIndices = [];
+      }
 
-    if (tmpStrokes.isNotEmpty) {
-      _strokeOrder = strokeOrder;
-      _strokes = tmpStrokes;
-      _medians = tmpMedians;
-      _radicalStrokeIndices = tmpRadicalStrokeIndices;
-      _nStrokes = _strokes.length;
+      if (tmpStrokes.isNotEmpty) {
+        _strokeOrder = strokeOrder;
+        _strokes = tmpStrokes;
+        _medians = tmpMedians;
+        _radicalStrokeIndices = tmpRadicalStrokeIndices;
+        _nStrokes = _strokes.length;
+      }
+    } else {
+      throw const FormatException("Stroke order JSON is empty.");
     }
   }
 
