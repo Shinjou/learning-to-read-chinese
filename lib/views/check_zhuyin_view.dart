@@ -1,20 +1,17 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:flutter_tts/flutter_tts.dart';
-// import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/data/models/word_phrase_sentence_model.dart';
-// import 'package:ltrc/data/models/word_status_model.dart';
+
 import 'package:ltrc/data/providers/word_phrase_sentence_provider.dart';
 
 import 'package:screenshot/screenshot.dart';
 import 'package:path_provider/path_provider.dart';
-import 'dart:typed_data';  // Import this for Uint8List
 import 'package:intl/intl.dart';  // For date formatting
 
-// import 'package:ltrc/views/view_utils.dart';
 import 'package:ltrc/views/polyphonic_processor.dart';
 
 class CheckZhuyinView extends ConsumerStatefulWidget {
@@ -28,9 +25,6 @@ class CheckZhuyinView extends ConsumerStatefulWidget {
 class CheckZhuyinViewState extends ConsumerState<CheckZhuyinView> {
   Map<String, dynamic> polyphonicData = {};
   TextEditingController idController = TextEditingController();
-  // List<TextSpan> processedTextSpans = [];
-  // String processedUnicode = '';
-  late FlutterTts ftts;
   late double fontSize;
   List<TextSpan> concatenatedTextSpans = [];
   List<TextSpan> tempTextSpans = [];
@@ -51,38 +45,16 @@ class CheckZhuyinViewState extends ConsumerState<CheckZhuyinView> {
   }
 
   Future<void> initializeState() async {
-    // directory = (await getApplicationDocumentsDirectory()).path; // from path_provider package
-    directory = '/Users/shinjou/Desktop'; // For macOS, the path is '/Users/username/Desktop
-    // directory = '${(await getApplicationDocumentsDirectory()).parent.parent.parent.parent.path}/Desktop';    
+    if (kDebugMode) {
+      // Use Desktop directory in debug mode
+      directory = '/Users/shinjou/Desktop';
+    } else {
+      // Use ApplicationDocumentsDirectory in release mode
+      directory = (await getApplicationDocumentsDirectory()).path;
+    }    
     maxId = await WordPhraseSentenceProvider.getMaxId(); // Assuming this method fetches the maximum ID
     debugPrint('Max ID: $maxId');
-    ftts = FlutterTts();
-    initializeTts();    
     setState(() {});
-  }
-
-  void initializeTts() {
-    ftts.setStartHandler(() {
-      debugPrint("TTS Start");
-    });
-
-    ftts.setCompletionHandler(() {
-      debugPrint("TTS Complete");
-    });
-
-    ftts.setErrorHandler((msg) {
-      debugPrint("TTS Error: $msg");
-    });
-
-    // Set language, pitch, volume, and other parameters as needed
-    ftts.setLanguage("zh-tw");
-    ftts.setSpeechRate(0.5); 
-    ftts.setPitch(1.0);     
-  }
-
-  void _speakText() async {
-    debugPrint('Speaking: ${idController.text}');
-    await ftts.speak(idController.text);
   }
 
   @override
@@ -124,14 +96,14 @@ class CheckZhuyinViewState extends ConsumerState<CheckZhuyinView> {
       setState(() {
         // By copying to a new list, we're ensuring any state change is recognized by Flutter.
         concatenatedTextSpans = List.from(concatenatedTextSpans);
-        print("Data ready to display, setState to update UI now.");
+        debugPrint("Data ready to display, setState to update UI now.");
       });
     }
   }
 
   void clearFields() {
     // idController.clear();
-    print("Clearing fields");
+    debugPrint("Clearing fields");
     concatenatedTextSpans.clear();
     tempTextSpans.clear();
     concatenatedUnicode = '';
@@ -176,15 +148,15 @@ class CheckZhuyinViewState extends ConsumerState<CheckZhuyinView> {
   }
 
   Future<void> processTenEntries() async {
-    print('Processing entries from ID $currentId to ${currentId + entriesPerPage -1} or $maxId');
+    debugPrint('Processing entries from ID $currentId to ${currentId + entriesPerPage -1} or $maxId');
     List<TextSpan> newSpans = [];
     for (int id = currentId; id <= maxId && id < currentId + entriesPerPage; id++) {
       try {
         var spans = await processWordPhraseSentenceById(id);
         newSpans.addAll(spans);
-        print('Processing ID = $id, ${spans.length} spans; total ${newSpans.length} spans.');
+        debugPrint('Processing ID = $id, ${spans.length} spans; total ${newSpans.length} spans.');
       } catch (e) {
-        print('Failed to process entry with ID $id: $e');
+        debugPrint('Failed to process entry with ID $id: $e');
       }
     }
     if (mounted && newSpans.isNotEmpty) {
@@ -193,7 +165,7 @@ class CheckZhuyinViewState extends ConsumerState<CheckZhuyinView> {
       setState (() {
         concatenatedTextSpans.addAll(newSpans);
         concatenatedTextSpans = List.from(concatenatedTextSpans);
-        // print("processTenEntries: Data ready to display, update UI now. ${concatenatedTextSpans.length} $concatenatedTextSpans");        
+        // debugPrint("processTenEntries: Data ready to display, update UI now. ${concatenatedTextSpans.length} $concatenatedTextSpans");        
       });
     }
   }
@@ -204,7 +176,7 @@ class CheckZhuyinViewState extends ConsumerState<CheckZhuyinView> {
       WordPhraseSentence? entry = await WordPhraseSentenceProvider.getWordPhraseSentenceById(inputWordPhraseSentenceId: id);
       if (entry == null) {
         // Handle the case where the entry does not exist
-        print("No entry found for ID $id.");
+        debugPrint("No entry found for ID $id.");
         return tempTextSpans;
       }
       
@@ -235,7 +207,7 @@ class CheckZhuyinViewState extends ConsumerState<CheckZhuyinView> {
       concatenatedUnicode += "${processedSentence2.item2}\n";
       
     } catch (e) {
-      print('Error processing data: $e');
+      debugPrint('Error processing data: $e');
     }
     return tempTextSpans;
   }
@@ -267,7 +239,7 @@ class CheckZhuyinViewState extends ConsumerState<CheckZhuyinView> {
 
   @override
   Widget build(BuildContext context) {
-    print("Building CheckZhuyinView widget...");
+    debugPrint("Building CheckZhuyinView widget...");
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
