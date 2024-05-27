@@ -124,7 +124,7 @@ class _BopomoQuizState extends State<BopomoQuizView> {
                         text: '第${problemId + 1}題：請拼出「',
                         style: TextStyle(
                           fontSize: fontSize,
-                          fontFamily: 'Serif',
+                          fontFamily: 'BpmfIansui',
                           color: "#F5F5DC".toColor(),
                         ),
                         children: [
@@ -132,14 +132,14 @@ class _BopomoQuizState extends State<BopomoQuizView> {
                               text: bopomoSpellingWords[problemId],
                               style: TextStyle(
                                 fontSize: fontSize,
-                                fontFamily: 'Iceberg',
+                                fontFamily: 'Iansui',
                                 color: "#F5F5DC".toColor(),
                               )),
                           TextSpan(
                               text: '」的注音',
                               style: TextStyle(
                                 fontSize: fontSize,
-                                fontFamily: 'Serif',
+                                fontFamily: 'BpmfIansui',
                                 color: "#F5F5DC".toColor(),
                               )),
                         ]),
