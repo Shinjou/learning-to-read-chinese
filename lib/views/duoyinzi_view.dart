@@ -1,5 +1,5 @@
-import 'dart:async';
-import 'dart:io';
+// import 'dart:async';
+// import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_tts/flutter_tts.dart';
@@ -10,11 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/views/view_utils.dart';
 import 'package:ltrc/views/polyphonic_processor.dart';
 
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
-
-import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
+// import 'package:path_provider/path_provider.dart';
 
 class DuoyinziView extends ConsumerStatefulWidget {
   
@@ -94,53 +90,6 @@ class DuoyinziViewState extends ConsumerState<DuoyinziView> {
       textColor: Colors.white,
       fontSize: fontSize,
     );
-  }
-
-  Future<void> handlePrint() async {
-    final textToPrint = processedUnicode;
-    final pdf = pw.Document();
-
-    try {
-        debugPrint('Loading font data...');
-        final font = await rootBundle.load("lib/assets/fonts/BpmfIansui-Regular.ttf");
-        final ttf = pw.Font.ttf(font);  
-        debugPrint('Font loaded, generating PDF...');
-        pdf.addPage(
-          pw.Page(
-            pageFormat: PdfPageFormat.a4,
-            build: (pw.Context context) {
-              return pw.Center(
-                child: pw.Text(textToPrint, style: pw.TextStyle(font: ttf, fontSize: fontSize * 1.5)),
-              );
-            },
-          ),
-        );        
-    } catch (e) {
-        debugPrint("Error loading font or generating PDF: $e");
-    }
-
-    try {
-        final bytes = await pdf.save();
-        debugPrint('PDF generated successfully, saving and sharing...');
-
-        // Save the PDF file in the temporary directory
-        final dir = await getTemporaryDirectory();
-        final filePath = '${dir.path}/output.pdf';
-        final file = File(filePath);
-        await file.writeAsBytes(bytes);
-
-        // Share the PDF file
-        final xFile = XFile(filePath);
-        final result = await Share.shareXFiles([xFile], text: 'Here is your PDF.');
-
-        if (result.status == ShareResultStatus.success) {
-            debugPrint('Thank you for sharing!');
-        } else {
-            debugPrint('Failed to share the PDF: ${result.status}');            
-        }
-    } catch (e) {
-        debugPrint("Error saving or sharing the document: $e");
-    }
   }
 
   BoxDecoration commonBoxDecoration = BoxDecoration(
