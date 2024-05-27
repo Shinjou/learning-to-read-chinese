@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:ltrc/views/view_utils.dart';
+import 'package:ltrc/widgets/teach_word/zhuyin_processing.dart';
 
 class WordVocabContent extends StatefulWidget {
   final String vocab; // correct answer
@@ -162,12 +163,11 @@ class WordVocabContentState extends State<WordVocabContent> {
         ],
       ),
 
-      Text(
-        widget.meaning,
-        style: TextStyle(
-          fontSize: fontSize,
-          color: whiteColor,
-        ),
+      ZhuyinProcessing(
+        text: widget.meaning,
+        fontSize: fontSize,
+        color: whiteColor,
+        highlightOn: true,
       ),
       SizedBox(height: fontSize * 0.1),
 
@@ -192,11 +192,13 @@ class WordVocabContentState extends State<WordVocabContent> {
       ),
 
       // Displayed sentence (with blanks or filled)
-      Text(
-        displayedSentence,
-        style: TextStyle(fontSize: fontSize, color: whiteColor),
-      ),
 
+      ZhuyinProcessing(
+        text: displayedSentence,
+        fontSize: fontSize,
+        color: whiteColor,
+        highlightOn: true,
+      ),
       // Display options (vocab and vocab2) as buttons
       Row(
         mainAxisAlignment: MainAxisAlignment.center,
