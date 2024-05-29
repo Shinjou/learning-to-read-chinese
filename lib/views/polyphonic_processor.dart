@@ -135,104 +135,107 @@ class PolyphonicProcessor {
   }
 
   Future<Tuple2<List<TextSpan>, String>> process(String text, double fontSize, Color color, bool highlightOn) async {
-    List<TextSpan> spans = [];
-    String spansUnicode = '';
-    // Map<int, dynamic> textinfo = {};
-    List<String> characters = text.split('');
-    // This regular expression matches any Chinese character
-    RegExp chineseCharRegex = RegExp(r'[\u4e00-\u9fa5]');
-    var ssMapping = {
-      "ss01": "E01E1",
-      "ss02": "E01E2",
-      "ss03": "E01E3",
-      "ss04": "E01E4",
-      "ss05": "E01E5",
-    };
-    String newSs = "ss00"; // must be 4 characters
+      List<TextSpan> spans = [];
+      String spansUnicode = '';
+      List<String> characters = text.split('');
+      RegExp chineseCharRegex = RegExp(r'[\u4e00-\u9fa5]');
+      var ssMapping = {
+          "ss01": "E01E1",
+          "ss02": "E01E2",
+          "ss03": "E01E3",
+          "ss04": "E01E4",
+          "ss05": "E01E5",
+      };
 
-    for (int i = 0; i < characters.length; i++) {
-      String character = characters[i];
-      String hexUnicode = character.runes.first.toRadixString(16).toUpperCase();
+      int length = characters.length; // Cache the length for better performance
 
-      // Proceed only if the character is a valid Chinese character
-      if (!chineseCharRegex.hasMatch(character)) {
-        spans.add(TextSpan(text: character, style: TextStyle(fontSize: fontSize, color: color)));
-        spansUnicode += String.fromCharCode(int.parse(hexUnicode, radix: 16));
-        debugPrint('Not a Chinese character: $character');
-        continue;
-      }
+      for (int i = 0; i < length; i++) {
+          String character = characters[i];
+          String hexUnicode = character.runes.first.toRadixString(16).toUpperCase();
+          // debugPrint('Processing character: $character at index $i');
 
-
-      String nextChar = (i + 1 < characters.length) ? characters[i + 1] : '';
-      String prevChar = (i > 0) ? characters[i - 1] : '';
-      debugPrint("Processing character: $character at index $i, prevChar: $prevChar, nextChar: $nextChar");
-
-      if (character == '一' || character == '不') { // Special handle for 一 and 不
-        int prevTone = (i > 0) ? await getToneForChar(prevChar) : 0; // 0: error
-        int nextTone =
-            (i + 1 < characters.length) ? await getToneForChar(nextChar) : 0; // 0: error
-        newSs = getNewToneForYiBu(
-          prevChar: prevChar,
-          currentChar: character,
-          nextChar: nextChar,
-          prevTone: prevTone,
-          nextTone: nextTone,
-        );
-        if (newSs == "0000") {  // If default,
-          spans.add(TextSpan(text: character, style: getCharStyle(fontSize, color, highlightOn)));
-          spansUnicode += String.fromCharCode(int.parse(hexUnicode, radix: 16));
-          // debugPrint('YiBu default: $spans');
-        } else {  // not default. Use newSs
-          // debugPrint('YiBu not default. newSs = $newSs');
-          spans.add(TextSpan(text: character, style: getCharPolyStyle(fontSize, color, newSs, highlightOn)));
-          if (newSs != "0000") {
-            spansUnicode += String.fromCharCode(int.parse(hexUnicode, radix: 16));
-            spansUnicode += String.fromCharCode(int.parse(ssMapping[newSs]!.substring(0, 5), radix: 16));
-          } else {
-            spansUnicode += String.fromCharCode(int.parse(hexUnicode, radix: 16));
+          if (!chineseCharRegex.hasMatch(character)) {
+              debugPrint('Not a Chinese character: $character');
+              spans.add(TextSpan(text: character, style: TextStyle(fontSize: fontSize, color: color)));
+              spansUnicode += String.fromCharCode(int.parse(hexUnicode, radix: 16));
+              continue;
           }
-        }
-      } else {  // 非“一”或“不”的多音字處理
-        
-        var charData = _polyphonicData['data'][character];
-        // debugPrint('Processing character: $character at index $i, prevChar: $prevChar, nextChar: $nextChar');
-        // debugPrint('non-YiBu: charData: $charData');
-        if (charData != null) {
-            List<dynamic>? variations = charData['v'];
-            if (variations != null && variations.isNotEmpty) {
-                List<String> patterns = variations.map((v) => v.toString()).toList();  // Convert variations to a list of strings
-                int matchIndex = match(character, i, patterns, characters);
 
-                if (matchIndex != 0) {
-                    String newSs = 'ss0$matchIndex';
-                    // debugPrint('non-YiBu: matched. SS: $newSs');
-                    spans.add(TextSpan(text: character, style: getCharPolyStyle(fontSize, color, newSs, highlightOn)));
-                    spansUnicode += String.fromCharCode(int.parse(hexUnicode, radix: 16));
-                    spansUnicode += String.fromCharCode(int.parse(ssMapping[newSs]!.substring(0, 5), radix: 16));
-                } else {
-                    spans.add(TextSpan(text: character, style: getCharStyle(fontSize, color, highlightOn)));
-                    spansUnicode += String.fromCharCode(int.parse(hexUnicode, radix: 16));
-                    // debugPrint('non-YiBu: not matched or using default SS');
-                }
-            } else { // if variations == null or variations.isEmpty
-                spans.add(TextSpan(text: character, style: getCharStyle(fontSize, color, highlightOn)));
-                spansUnicode += String.fromCharCode(int.parse(hexUnicode, radix: 16));
-                // debugPrint('non-YiBu: variations are null. Use default SS');
-            }
-        } else { // if charData == null
-            spans.add(TextSpan(text: character, style: getCharStyle(fontSize, color, highlightOn)));
-            spansUnicode += String.fromCharCode(int.parse(hexUnicode, radix: 16));
-            // debugPrint('non-YiBu: charData is null. Use default SS');
-        }
+          String nextChar = (i + 1 < length) ? characters[i + 1] : '';
+          String prevChar = (i > 0) ? characters[i - 1] : '';
+          debugPrint("curChar: $character, prevChar: $prevChar, nextChar: $nextChar");
+
+          if (character == '一' || character == '不') { // Special handle for 一 and 不
+              int prevTone = (i > 0) ? await getToneForChar(prevChar) : 0; // 0: error
+              int nextTone = (i + 1 < length) ? await getToneForChar(nextChar) : 0; // 0: error
+              debugPrint("prevTone: $prevTone, nextTone: $nextTone");
+              String newSs = getNewToneForYiBu(
+                  prevChar: prevChar,
+                  currentChar: character,
+                  nextChar: nextChar,
+                  prevTone: prevTone,
+                  nextTone: nextTone,
+              );
+              debugPrint("newSs for 一 or 不: $newSs");
+              if (newSs == "0000") {  // If default,
+                  spans.add(TextSpan(text: character, style: getCharStyle(fontSize, color, highlightOn)));
+                  spansUnicode += String.fromCharCode(int.parse(hexUnicode, radix: 16));
+              } else {  // not default. Use newSs
+                  spans.add(TextSpan(text: character, style: getCharPolyStyle(fontSize, color, newSs, highlightOn)));
+                  spansUnicode += String.fromCharCode(int.parse(hexUnicode, radix: 16));
+                  spansUnicode += String.fromCharCode(int.parse(ssMapping[newSs]!.substring(0, 5), radix: 16));
+              }
+          } else {  // 非“一”或“不”的多音字處理
+              var charData = _polyphonicData['data'][character];
+              if (charData != null) {
+                  List<dynamic>? variations = charData['v'];
+                  if (variations != null && variations.isNotEmpty) {
+                      List<String> patterns = variations.map((v) => v.toString()).toList();
+                      var matchResult = match(character, i, patterns, characters);
+                      int matchIndex = matchResult.item1;
+                      bool skipNext = matchResult.item2;
+                      debugPrint("matchIndex: $matchIndex, skipNext: $skipNext");
+
+                      if (matchIndex != 0 || skipNext) {
+                          String newSs = (matchIndex != 0) ? 'ss0$matchIndex' : '';
+                          if (newSs.isNotEmpty) {
+                              spans.add(TextSpan(text: character, style: getCharPolyStyle(fontSize, color, newSs, highlightOn)));
+                              spansUnicode += String.fromCharCode(int.parse(hexUnicode, radix: 16));
+                              spansUnicode += String.fromCharCode(int.parse(ssMapping[newSs]!.substring(0, 5), radix: 16));
+                          } else {
+                              spans.add(TextSpan(text: character, style: getCharStyle(fontSize, color, highlightOn)));
+                              spansUnicode += String.fromCharCode(int.parse(hexUnicode, radix: 16));
+                          }
+
+                          if (skipNext && i + 1 < length) {
+                              String nextHexUnicode = nextChar.runes.first.toRadixString(16).toUpperCase();
+                              spans.add(TextSpan(text: nextChar, style: getCharStyle(fontSize, color, highlightOn))); // Add next character
+                              spansUnicode += String.fromCharCode(int.parse(nextHexUnicode, radix: 16));
+                              debugPrint("Skipping next character at index: ${i + 1}");
+                              i += 1; // Skip the next character since it's part of the phrase
+                              continue; // Skip to the next loop iteration to avoid processing the skipped character again
+                          }
+                      } else {
+                          spans.add(TextSpan(text: character, style: getCharStyle(fontSize, color, highlightOn)));
+                          spansUnicode += String.fromCharCode(int.parse(hexUnicode, radix: 16));
+                      }
+                  } else {
+                      spans.add(TextSpan(text: character, style: getCharStyle(fontSize, color, highlightOn)));
+                      spansUnicode += String.fromCharCode(int.parse(hexUnicode, radix: 16));
+                  }
+              } else {
+                  spans.add(TextSpan(text: character, style: getCharStyle(fontSize, color, highlightOn)));
+                  spansUnicode += String.fromCharCode(int.parse(hexUnicode, radix: 16));
+              }
+          }
       }
-    }
-    // debugPrint('final spans: $spans');
-    return Tuple2(spans, spansUnicode);
+      return Tuple2(spans, spansUnicode);
   }
 
-  int match(String c, int i, List<String> patterns, List<String> text) {
+
+  Tuple2<int, bool> match(String c, int i, List<String> patterns, List<String> text) {
       int defaultIndex = -1;  // To handle empty patterns as fallback
-      // debugPrint('Starting match function. Character: $c, Index: $i');
+      debugPrint('Starting match function. Character: $c, Index: $i');
 
       for (int j = 0; j < patterns.length; j++) {
           String combinedPattern = patterns[j];
@@ -255,7 +258,7 @@ class PolyphonicProcessor {
               String tmp = '';
               for (int z = i - pos; z < i - pos + pattern.length; z++) {
                   if (z >= text.length) {
-                      // debugPrint('Out of bounds when constructing substring for $pattern. Breaking out.');
+                      debugPrint('Out of bounds when constructing substring for $pattern. Breaking out.');
                       break;  // Ensure not to go out of text bounds
                   }
                   tmp += text[z];
@@ -263,15 +266,13 @@ class PolyphonicProcessor {
               // debugPrint('Constructed substring for sub-pattern: $tmp');
 
               if (tmp == pattern.replaceAll('*', c)) {
-                  // debugPrint('Sub-pattern matched: $pattern');
-                  return j;  // Return the index of the matching pattern
+                  debugPrint('Sub-pattern matched: $pattern');
+                  return Tuple2(j, pattern.contains('*'));  // Return the index of the matching pattern and skipNext flag
               }
           }
       }
-      // debugPrint('No pattern matched. Returning default index: ${defaultIndex != -1 ? defaultIndex : 0}');
-      return defaultIndex != -1 ? defaultIndex : 0;  // Return the index of an empty pattern or 0 if no match
+      debugPrint('No pattern matched. Returning default index: ${defaultIndex != -1 ? defaultIndex : 0}');
+      return Tuple2(defaultIndex != -1 ? defaultIndex : 0, false);  // Return the index of an empty pattern or 0 if no match
   }
 
-  
 }
-
