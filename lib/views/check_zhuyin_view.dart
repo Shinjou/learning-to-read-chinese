@@ -171,53 +171,72 @@ class CheckZhuyinViewState extends ConsumerState<CheckZhuyinView> {
   }
 
   Future<List<TextSpan>> processWordPhraseSentenceById(int id) async {
-    List<TextSpan> tempTextSpans = [];
-    try {
-      WordPhraseSentence? entry = await WordPhraseSentenceProvider.getWordPhraseSentenceById(inputWordPhraseSentenceId: id);
-      if (entry == null) {
-        // Handle the case where the entry does not exist
-        debugPrint("No entry found for ID $id.");
-        return tempTextSpans;
+      List<TextSpan> tempTextSpans = [];
+      try {
+          // debugPrint("Starting to process ID $id.");
+          WordPhraseSentence? entry = await WordPhraseSentenceProvider.getWordPhraseSentenceById(inputWordPhraseSentenceId: id);
+          if (entry == null) {
+              // Handle the case where the entry does not exist
+              // debugPrint("No entry found for ID $id.");
+              return tempTextSpans;
+          }
+          
+          // debugPrint("Processing word for ID $id: ${entry.word}");
+          var processedWord = await PolyphonicProcessor.instance.process(entry.word, fontSize * 0.9, Colors.black, true);
+          // debugPrint("Processed word for ID $id: ${processedWord.item2}");
+          
+          // debugPrint("Processing phrase for ID $id: ${entry.phrase}");
+          var processedPhrase = await PolyphonicProcessor.instance.process(entry.phrase, fontSize * 0.9, Colors.black, true);
+          // debugPrint("Processed phrase for ID $id: ${processedPhrase.item2}");
+          
+          // debugPrint("Processing sentence for ID $id: ${entry.sentence}");
+          var processedSentence = await PolyphonicProcessor.instance.process(entry.sentence, fontSize * 0.9, Colors.black, true);
+          // debugPrint("Processed sentence for ID $id: ${processedSentence.item2}");
+          
+          // debugPrint("Processing phrase2 for ID $id: ${entry.phrase2}");
+          var processedPhrase2 = await PolyphonicProcessor.instance.process(entry.phrase2, fontSize * 0.9, Colors.black, true);
+          // debugPrint("Processed phrase2 for ID $id: ${processedPhrase2.item2}");
+          
+          // debugPrint("Processing sentence2 for ID $id: ${entry.sentence2}");
+          var processedSentence2 = await PolyphonicProcessor.instance.process(entry.sentence2, fontSize * 0.9, Colors.black, true);
+          // debugPrint("Processed sentence2 for ID $id: ${processedSentence2.item2}");
+          
+          // Concatenating results for TextSpans
+          tempTextSpans.add(TextSpan(text: "$id: ", style: const TextStyle(color: Colors.black)));
+          tempTextSpans.addAll(processedWord.item1);
+          tempTextSpans.add(const TextSpan(text: " : "));
+          tempTextSpans.addAll(processedPhrase.item1);
+          tempTextSpans.add(const TextSpan(text: " "));
+          tempTextSpans.addAll(processedSentence.item1);
+          tempTextSpans.add(const TextSpan(text: " "));
+          tempTextSpans.addAll(processedPhrase2.item1);
+          tempTextSpans.add(const TextSpan(text: " "));
+          tempTextSpans.addAll(processedSentence2.item1);
+          tempTextSpans.add(const TextSpan(text: "\n"));
+          // debugPrint("Finished processing ID $id. Total spans: ${tempTextSpans.length}");
+
+          // Concatenating results for Unicode Strings
+          concatenatedUnicode += "$id: ${processedWord.item2} : ";
+          concatenatedUnicode += "${processedPhrase.item2} ";
+          concatenatedUnicode += "${processedSentence.item2} ";
+          concatenatedUnicode += "${processedPhrase2.item2} ";
+          concatenatedUnicode += "${processedSentence2.item2}\n";
+          // debugPrint("Finished processing ID $id. Unicode: $concatenatedUnicode");
+
+      } catch (e) {
+          debugPrint('Error processing data: $e');
       }
-      
-      var processedWord = await PolyphonicProcessor.instance.process(entry.word, fontSize * 0.9, Colors.black, true);
-      var processedPhrase = await PolyphonicProcessor.instance.process(entry.phrase, fontSize * 0.9, Colors.black, true);
-      var processedSentence = await PolyphonicProcessor.instance.process(entry.sentence, fontSize * 0.9, Colors.black, true);
-      var processedPhrase2 = await PolyphonicProcessor.instance.process(entry.phrase2, fontSize * 0.9, Colors.black, true);
-      var processedSentence2 = await PolyphonicProcessor.instance.process(entry.sentence2, fontSize * 0.9, Colors.black, true);
-      
-      // Concatenating results for TextSpans
-      tempTextSpans.add(TextSpan(text: "$id: ", style: const TextStyle(color: Colors.black)));
-      tempTextSpans.addAll(processedWord.item1);
-      tempTextSpans.add(const TextSpan(text: " : "));
-      tempTextSpans.addAll(processedPhrase.item1);
-      tempTextSpans.add(const TextSpan(text: " "));
-      tempTextSpans.addAll(processedSentence.item1);
-      tempTextSpans.add(const TextSpan(text: " "));
-      tempTextSpans.addAll(processedPhrase2.item1);
-      tempTextSpans.add(const TextSpan(text: " "));
-      tempTextSpans.addAll(processedSentence2.item1);
-      tempTextSpans.add(const TextSpan(text: "\n"));
-      
-      // Concatenating results for Unicode Strings
-      concatenatedUnicode += "$id: ${processedWord.item2} : ";
-      concatenatedUnicode += "${processedPhrase.item2} ";
-      concatenatedUnicode += "${processedSentence.item2} ";
-      concatenatedUnicode += "${processedPhrase2.item2} ";
-      concatenatedUnicode += "${processedSentence2.item2}\n";
-      
-    } catch (e) {
-      debugPrint('Error processing data: $e');
-    }
-    return tempTextSpans;
+      debugPrint("Finished processing ID $id. Total spans: ${tempTextSpans.length}");
+      return tempTextSpans;
   }
+
 
   Future<void> captureAndSave() async {
     try {
       String formattedDateTime = DateFormat('yyyy-MM-dd-HH-mm-ss').format(DateTime.now());
       String fileName = '字詞_$currentId-${currentId + entriesPerPage - 1}_$formattedDateTime.png';
       String fullPath = '$directory/$fileName';
-      debugPrint('Saving screenshot to $fullPath');
+      // debugPrint('Saving screenshot to $fullPath');
 
       Uint8List? image = await screenshotController.capture();
       if (image != null) {
@@ -239,7 +258,7 @@ class CheckZhuyinViewState extends ConsumerState<CheckZhuyinView> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint("Building CheckZhuyinView widget...");
+    // debugPrint("Building CheckZhuyinView widget...");
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
