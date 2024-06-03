@@ -77,6 +77,7 @@ class PolyphonicProcessor {
   四聲，用 “0” 代表 default
   二聲，用 “ss01” 代表 
   */
+  /*
   String getNewToneForYiBu({
     String? prevChar,
     required String currentChar,
@@ -133,6 +134,51 @@ class PolyphonicProcessor {
     debugPrint('Error: not 一 nor 不');
     return "0000"; 
   }
+  */
+  Tuple2<String, bool> getNewToneForYiBu({
+      String? prevChar,
+      required String currentChar,
+      String? nextChar,
+      int? prevTone,
+      int? nextTone,
+  }) {
+      debugPrint('getNewToneForYiBu: prevChar: $prevChar, currentChar: $currentChar, nextChar: $nextChar, prevTone: $prevTone, nextTone: $nextTone');
+
+      if (currentChar == '一') {
+          // Check nextChar conditions first
+          if (['是', '日', '月', '個', '个', '的', '或'].contains(nextChar) || 
+              ['十', '九', '八', '七', '六', '五', '四', '三', '二', '〇', '零'].contains(nextChar)) {
+              debugPrint('Skipping next character for 一 based on special nextChar');
+              return const Tuple2("0000", true); // Use the default, First tone
+          } else if (nextTone != null && (nextTone == 1 || nextTone == 2 || nextTone == 3)) {
+              return const Tuple2("ss02", true); // Change to fourth tone
+          } else if (nextTone != null && nextTone == 4) {
+              return const Tuple2("ss01", true); // Change to second tone
+          } else {
+              return const Tuple2("0000", false); // Default to first tone if no other conditions match
+          }
+      } else if (currentChar == '不') {
+        debugPrint('Processing 不. nextChar $nextChar, nextTone $nextTone, prevChar $prevChar, prevTone $prevTone');
+        if (nextChar == '禁') { // 不禁 special case
+          debugPrint('不禁，不 fourth tone，禁 first tone');
+          return const Tuple2("0000", false); // Remain fourth tone
+        }
+        if (nextTone != null &&
+            (nextTone == 1 || nextTone == 2 || nextTone == 3 || nextTone == 5)) {
+          debugPrint('Returning fourth tone for 不 based on nextTone');
+          return const Tuple2("0000", true); // Remain fourth tone
+        } else if (nextTone != null && nextTone == 4) {
+          debugPrint('Returning second tone for 不 based on nextTone');
+          return const Tuple2("ss01", true); // Change to second tone
+        } else {
+          debugPrint('Returning default fourth tone for 不');
+          return const Tuple2("0000", false); // Default to fourth tone if no other conditions match
+        }          
+      }
+      debugPrint('Error: not 一 nor 不');
+      return const Tuple2("0000", false); // Default case
+  }
+
 
   Future<Tuple2<List<TextSpan>, String>> process(String text, double fontSize, Color color, bool highlightOn) async {
       List<TextSpan> spans = [];
@@ -169,13 +215,14 @@ class PolyphonicProcessor {
               int prevTone = (i > 0) ? await getToneForChar(prevChar) : 0; // 0: error
               int nextTone = (i + 1 < length) ? await getToneForChar(nextChar) : 0; // 0: error
               debugPrint("prevTone: $prevTone, nextTone: $nextTone");
-              String newSs = getNewToneForYiBu(
+              var result = getNewToneForYiBu(
                   prevChar: prevChar,
                   currentChar: character,
                   nextChar: nextChar,
                   prevTone: prevTone,
                   nextTone: nextTone,
               );
+              /*
               debugPrint("newSs for 一 or 不: $newSs");
               if (newSs == "0000") {  // If default,
                   spans.add(TextSpan(text: character, style: getCharStyle(fontSize, color, highlightOn)));
@@ -185,6 +232,25 @@ class PolyphonicProcessor {
                   spansUnicode += String.fromCharCode(int.parse(hexUnicode, radix: 16));
                   spansUnicode += String.fromCharCode(int.parse(ssMapping[newSs]!.substring(0, 5), radix: 16));
               }
+              */
+
+              String newSs = result.item1;
+              bool skipNext = result.item2;
+              debugPrint("newSs for 一 or 不: $newSs, skipNext: $skipNext");
+              spans.add(TextSpan(text: character, style: newSs == "0000" ? getCharStyle(fontSize, color, highlightOn) : getCharPolyStyle(fontSize, color, newSs, highlightOn)));
+              spansUnicode += String.fromCharCode(int.parse(hexUnicode, radix: 16));
+              if (newSs != "0000") {
+                  spansUnicode += String.fromCharCode(int.parse(ssMapping[newSs]!.substring(0, 5), radix: 16));
+              }
+              if (skipNext && i + 1 < length) {
+                String nextHexUnicode = nextChar.runes.first.toRadixString(16).toUpperCase();
+                spans.add(TextSpan(text: nextChar, style: getCharStyle(fontSize, color, highlightOn))); // Add next character
+                spansUnicode += String.fromCharCode(int.parse(nextHexUnicode, radix: 16));
+                debugPrint("Skipping nextChar $nextChar at index: ${i + 1}");
+                i += 1; // Skip the next character since it's part of the phrase
+                continue; // Skip to the next loop iteration to avoid processing the skipped character again
+              }
+
           } else {  // 非“一”或“不”的多音字處理
               var charData = _polyphonicData['data'][character];
               if (charData != null) {
