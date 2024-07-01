@@ -10,7 +10,7 @@ class AllProvider {
   static bool dbExists = false;  
 
   static const String _dbName = 'all.sqlite';  
-  static const int _dbVersion = 5;  // 3/3/2024
+  static const int _dbVersion = 9;  // 6/30/2024
 
   static Future<Database> get database async {
     _database ??= await _initDatabase();
@@ -41,7 +41,7 @@ class AllProvider {
 
       // Checking and potentially upgrading the database version
       int currentVersion = await _database!.getVersion();
-
+      debugPrint('$_dbName: New version $_dbVersion, Current: $currentVersion');
       if (currentVersion < _dbVersion) {
         debugPrint('Upgrading $_dbName from version $currentVersion to $_dbVersion ...');
         // all.sqlite 如果需要 upgrade，就copy整個 DB from assets
