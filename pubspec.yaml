@@ -4,10 +4,10 @@ description: A new Flutter project.
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 1.2.0+5
+version: 1.5.0+5
 
 ios:
-  minimum_os_version: '12.0'
+  minimum_os_version: '14.0'
 
 environment:
   sdk: '>=3.0.5 <4.0.0'
@@ -23,11 +23,6 @@ dependencies:
     sdk: flutter
   flutter_riverpod: ^2.4.5
   flutter_tts: ^4.0.2
-  # flutter_sound: 9.2.13
-
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
   audioplayers: ^6.0.0
   cupertino_icons: ^1.0.2
   fluttertoast: ^8.2.2
