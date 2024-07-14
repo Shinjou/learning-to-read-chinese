@@ -31,7 +31,7 @@ class CheckZhuyinViewState extends ConsumerState<CheckZhuyinView> {
   String concatenatedUnicode = '';  
   int maxId = 3085; // For initial testing with 10 entries
   int currentId = 1;
-  final int entriesPerPage = 10;
+  final int entriesPerPage = 5;
   int totalProcessed = 0;
   int maxEntries = 1000; 
   // Create an instance of ScreenshotController
@@ -177,7 +177,7 @@ class CheckZhuyinViewState extends ConsumerState<CheckZhuyinView> {
           WordPhraseSentence? entry = await WordPhraseSentenceProvider.getWordPhraseSentenceById(inputWordPhraseSentenceId: id);
           if (entry == null) {
               // Handle the case where the entry does not exist
-              // debugPrint("No entry found for ID $id.");
+              debugPrint("No entry found for ID $id.");
               return tempTextSpans;
           }
           
@@ -188,7 +188,8 @@ class CheckZhuyinViewState extends ConsumerState<CheckZhuyinView> {
           // debugPrint("Processing phrase for ID $id: ${entry.phrase}");
           var processedPhrase = await PolyphonicProcessor.instance.process(entry.phrase, fontSize * 0.9, Colors.black, true);
           // debugPrint("Processed phrase for ID $id: ${processedPhrase.item2}");
-          
+          var processedPhraseDef = await PolyphonicProcessor.instance.process(entry.definition, fontSize * 0.9, Colors.black, true);
+
           // debugPrint("Processing sentence for ID $id: ${entry.sentence}");
           var processedSentence = await PolyphonicProcessor.instance.process(entry.sentence, fontSize * 0.9, Colors.black, true);
           // debugPrint("Processed sentence for ID $id: ${processedSentence.item2}");
@@ -196,7 +197,8 @@ class CheckZhuyinViewState extends ConsumerState<CheckZhuyinView> {
           // debugPrint("Processing phrase2 for ID $id: ${entry.phrase2}");
           var processedPhrase2 = await PolyphonicProcessor.instance.process(entry.phrase2, fontSize * 0.9, Colors.black, true);
           // debugPrint("Processed phrase2 for ID $id: ${processedPhrase2.item2}");
-          
+          var processedPhraseDef2 = await PolyphonicProcessor.instance.process(entry.definition2, fontSize * 0.9, Colors.black, true); 
+
           // debugPrint("Processing sentence2 for ID $id: ${entry.sentence2}");
           var processedSentence2 = await PolyphonicProcessor.instance.process(entry.sentence2, fontSize * 0.9, Colors.black, true);
           // debugPrint("Processed sentence2 for ID $id: ${processedSentence2.item2}");
@@ -204,13 +206,17 @@ class CheckZhuyinViewState extends ConsumerState<CheckZhuyinView> {
           // Concatenating results for TextSpans
           tempTextSpans.add(TextSpan(text: "$id: ", style: const TextStyle(color: Colors.black)));
           tempTextSpans.addAll(processedWord.item1);
-          tempTextSpans.add(const TextSpan(text: " : "));
+          tempTextSpans.add(const TextSpan(text: "\n"));
           tempTextSpans.addAll(processedPhrase.item1);
           tempTextSpans.add(const TextSpan(text: " "));
+          tempTextSpans.addAll(processedPhraseDef.item1);
+          tempTextSpans.add(const TextSpan(text: " "));          
           tempTextSpans.addAll(processedSentence.item1);
-          tempTextSpans.add(const TextSpan(text: " "));
+          tempTextSpans.add(const TextSpan(text: "\n"));
           tempTextSpans.addAll(processedPhrase2.item1);
           tempTextSpans.add(const TextSpan(text: " "));
+          tempTextSpans.addAll(processedPhraseDef2.item1);
+          tempTextSpans.add(const TextSpan(text: " "));                    
           tempTextSpans.addAll(processedSentence2.item1);
           tempTextSpans.add(const TextSpan(text: "\n"));
           // debugPrint("Finished processing ID $id. Total spans: ${tempTextSpans.length}");
@@ -218,8 +224,10 @@ class CheckZhuyinViewState extends ConsumerState<CheckZhuyinView> {
           // Concatenating results for Unicode Strings
           concatenatedUnicode += "$id: ${processedWord.item2} : ";
           concatenatedUnicode += "${processedPhrase.item2} ";
+          concatenatedUnicode += "${processedPhraseDef.item2} ";          
           concatenatedUnicode += "${processedSentence.item2} ";
           concatenatedUnicode += "${processedPhrase2.item2} ";
+          concatenatedUnicode += "${processedPhraseDef2.item2} ";              
           concatenatedUnicode += "${processedSentence2.item2}\n";
           // debugPrint("Finished processing ID $id. Unicode: $concatenatedUnicode");
 
