@@ -37,7 +37,7 @@ class WordVocabContentState extends State<WordVocabContent> {
   @override
   void initState() {
     super.initState();
-    debugPrint('initState: vocab = ${widget.vocab}, meaning = ${widget.meaning}');
+    debugPrint('word_vocab_content initState: vocab = ${widget.vocab}, sentence = ${widget.sentence}');
     _initVariables();
   }
 
