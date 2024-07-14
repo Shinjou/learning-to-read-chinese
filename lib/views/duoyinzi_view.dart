@@ -119,7 +119,7 @@ class DuoyinziViewState extends ConsumerState<DuoyinziView> {
           icon: Icon(Icons.chevron_left, size: fontSize * 1.5),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text("注音/多音字", style: commonTextStyle), 
+        title: Text("標示注音符號", style: commonTextStyle), 
         actions: [
           IconButton(
             icon: Icon(Icons.home, size: fontSize * 1.5),
@@ -143,7 +143,7 @@ class DuoyinziViewState extends ConsumerState<DuoyinziView> {
                   controller: _controller,
                   style: commonTextStyle,
                   decoration: InputDecoration(
-                    hintText: '請貼上要標註注音的文章，然後按「開始」',
+                    hintText: '請貼上要標示注音符號的文字，然後按「開始」。',
                     hintMaxLines: 3,
                     hintStyle: TextStyle(color: Colors.white70, fontSize: fontSize, fontFamily: 'BpmfIansui'),
                     border: OutlineInputBorder(
