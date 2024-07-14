@@ -142,7 +142,7 @@ class MainPageView extends ConsumerWidget {
                             RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12))),
                       ),
-                      child: Text('注音/多音字',
+                      child: Text('標示注音符號',
                           style: TextStyle(
                             fontSize: fontSize * 1.5,
                             color: '#F5F5DC'.toColor(),
