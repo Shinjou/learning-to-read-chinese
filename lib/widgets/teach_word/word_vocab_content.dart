@@ -54,7 +54,7 @@ class WordVocabContentState extends State<WordVocabContent> {
 
   String _createBlankSentence(String sentence, String vocab) {
     int vocabLength = vocab.length;
-    String underscoreString = "_" * vocabLength;
+    String underscoreString = "__" * vocabLength;
     return sentence.replaceAll(vocab, underscoreString);
   }
 
