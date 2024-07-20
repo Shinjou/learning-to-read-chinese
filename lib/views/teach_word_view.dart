@@ -107,27 +107,16 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
     nextStepId = min(steps['goToUse2']!, nextStepId); // Make sure it is not greater than goToUse2
     debugPrint('nextTab svgFileExist $svgFileExist, oldId: $oldNextStepId, nextId: $nextStepId');
 
-    if (nextStepId == steps['goToListen']) {  // 0
-      setState(() {});
-      debugPrint('nextTab 0 from goToListen 0 to $nextStepId');
-    } else if (nextStepId > steps['goToListen']! && nextStepId < steps['goToUse1']!) {  // Updated condition
-      setState(() {});
-      debugPrint('nextTab oldId is 1~7: $oldNextStepId, nextId: $nextStepId');
-    } else if (nextStepId == steps['goToUse1']) {  // 8
-      debugPrint('nextTab 8 from goToUse1 8 to $nextStepId, call handleGoToUseStep');
-      await handleGoToUseStep();
-    } else if (nextStepId == steps['goToUse2']) {  // 9
-      debugPrint('nextTab 9 from goToUse2 9 to $nextStepId, call handleGoToUseStep');
-      await handleGoToUseStep();
+    if (nextStepId <= steps['goToUse2']!) {
+      debugPrint('prevTab from oldId $oldNextStepId to nextId: $nextStepId');
     } else {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         showErrorDialog(
             '', '「${widget.wordsStatus[widget.wordIndex].word}」程序問題。請截圖回報。謝謝！');
       });
-    }
-    // }
+    }    
   }
-
+  
   void prevTab() async {
     // prevTab() is called in many places, one setState() is called
     // it will update the nextStepId, currentTabIndex, and call showNoSvgDialog() if no svg in 寫一寫    
@@ -138,7 +127,6 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
     if (currentTabValue > 0) { // to prevent negative value
       currentTabIndex.value -= 1;
     }
-
 
     if (svgFileExist) { // 有筆順
       if (wordIsLearned) { // 字已學
@@ -176,18 +164,8 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
     nextStepId = max(0, nextStepId); // Make sure it is not negative
     debugPrint('prevTab svgFileExist $svgFileExist, wordIsLearned: $wordIsLearned, oldId: $oldNextStepId, nextId: $nextStepId');
 
-    if (nextStepId == steps['goToUse2']) {  // 9
-      debugPrint('prevTab from goToUse2 9 to $nextStepId');
-      // nextStepId = steps['goToUse1']!;
-    } else if (nextStepId == steps['goToUse1']) { // 8
-      debugPrint('prevTab from goToUse1 8 to $nextStepId');
-      // nextStepId = steps['goToWrite']!;
-    } else if (nextStepId > steps['goToListen']! && nextStepId < steps['goToUse1']!) { // 1-7
-      debugPrint('prevTab from goToWrite 1~7 to $nextStepId');
-      // nextStepId = steps['goToListen']!;
-    } else if (nextStepId == steps['goToListen']) {  // 0
-      // nextStepId = steps['goToListen']!;
-      debugPrint('prevTab from goToListen 0 to $nextStepId');
+    if (nextStepId <= steps['goToUse2']!) {
+      debugPrint('prevTab from oldId $oldNextStepId to nextId: $nextStepId');
     } else {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         showErrorDialog(
@@ -330,7 +308,6 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
         'updateWordStatus. mounted: $mounted, learned: $learned, nextId: $nextStepId');
     if (!mounted) return;
     setState(() {
-      // setState 3 do we need this?
       newStatus.learned = learned;
       this.nextStepId = nextStepId;
     });
@@ -358,7 +335,6 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
           'readJsonAndProcess: ${widget.wordsStatus[widget.wordIndex].word} ${svgFileExist ? "有筆順" : "沒有筆順"}');
       if (result.isNotEmpty) {
         setState(() {
-          // setState 4 do we need this?
           _strokeOrderAnimationControllers = StrokeOrderAnimationController(
               result, this,
               onQuizCompleteCallback: handleQuizCompletion);
@@ -366,7 +342,6 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
         });
       } else {
         setState(() {
-          // setState 5 do we need this?
           _strokeOrderAnimationControllers = null;
           // svgFileExist is set in readJson(). Should not be set in other places.
         });
@@ -377,7 +352,6 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
             '「${widget.wordsStatus[widget.wordIndex].word}」沒有筆順1。請截圖回報。謝謝！');
       });
       setState(() {
-        // setState 6 do we need this?
         _strokeOrderAnimationControllers = null;
         // svgFileExist is set in readJson(). Should not be set here.
         debugPrint(
@@ -399,8 +373,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
 
     // If the word is in the noSvgList, use '學' as the word to avoid null checking
     if (noSvgList.contains(word)) {
-      word =
-          '學'; // Set the word to "學" to avoid null checking in the rest of code
+      word = '學'; // Set the word to "學" to avoid null checking in the rest of code
       svgFileExist = false;
     } else {
       svgFileExist = true;
@@ -424,7 +397,6 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
     if (nextStepId >= steps['practiceWithBorder1']! &&
         nextStepId <= steps['turnBorderOff']!) {
       setState(() {
-        // setState 7 do we need this?
         practiceTimeLeft -= 1;
         nextStepId += 1;
       });
@@ -439,7 +411,6 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
     } else {
       if (nextStepId == steps['practiceWithoutBorder1']) {
         setState(() {
-          // setState 8 do we need this?
           practiceTimeLeft -= 1;
           nextStepId += 1;
           widget.wordsStatus[widget.wordIndex].learned = true; // 設成“已學”
@@ -684,9 +655,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                           widget.wordsStatus[widget.wordIndex];
                                       debugPrint('用一用1，下一頁1 vocab2: ${wordObj['vocab2']}, newStatus: $newStatus}');    
                                       setState(() {
-                                        // setState 100 do we need this?
                                         newStatus.learned = true; // I never saw this flag set. Why?
-                                        // nextStepId = 100; temp disabled for testing sjf
                                       });
                                       ref
                                           .read(
@@ -696,7 +665,6 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                           status: newStatus);
                                     }
                                     setState(() {
-                                      // setState 11 do we need this?
                                       vocabIndex = 1;
                                     });
                                   }
@@ -1320,7 +1288,6 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                                 if (nextStepId ==
                                                     steps['seeAnimation']) {
                                                   setState(() {
-                                                    // setState 13 do we need this?
                                                     nextStepId += 1;
                                                   });
                                                 }
@@ -1396,7 +1363,6 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                               if (nextStepId ==
                                                   steps['turnBorderOff']) {
                                                 setState(() {
-                                                  // setState 14 do we need this?
                                                   nextStepId += 1;
                                                 });
                                               }
