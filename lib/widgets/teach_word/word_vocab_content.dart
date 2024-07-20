@@ -70,15 +70,15 @@ class WordVocabContentState extends State<WordVocabContent> {
   void _selectWord(String word) {
     // debugPrint('_selectWord: word = $word, vocab = $vocab');
     _speak(word);
-    setState(() {
-      if (word == vocab) {
-        displayedSentence = widget.sentence;
-        message = '答對了！';
-      } else {
-        displayedSentence = blankSentence;
-        message = '再試試！';
-      }
-    });
+    if (word == vocab) {
+      displayedSentence = widget.sentence;
+      message = '答對了！';
+    } else {
+      displayedSentence = blankSentence;
+      message = '再試試！';
+    }
+    _speak(message);    
+    setState(() {});
   }
 
   void _onContinuePressed() {
