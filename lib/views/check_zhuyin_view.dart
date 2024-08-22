@@ -131,6 +131,7 @@ class CheckZhuyinViewState extends ConsumerState<CheckZhuyinView> {
   }
 
   Future<void> processMaxEntries() async {
+    final stopwatchOriginal = Stopwatch()..start();
     while (currentId <= maxId && totalProcessed <= maxEntries) {
       await processTenEntries();
       await waitForCapture();
@@ -145,16 +146,18 @@ class CheckZhuyinViewState extends ConsumerState<CheckZhuyinView> {
         });
       }      
     }
+    stopwatchOriginal.stop();
+    debugPrint('Process time: ${stopwatchOriginal.elapsedMicroseconds} microseconds');       
   }
 
   Future<void> processTenEntries() async {
-    debugPrint('Processing entries from ID $currentId to ${currentId + entriesPerPage -1} or $maxId');
+    // debugPrint('Processing entries from ID $currentId to ${currentId + entriesPerPage -1}');
     List<TextSpan> newSpans = [];
     for (int id = currentId; id <= maxId && id < currentId + entriesPerPage; id++) {
       try {
         var spans = await processWordPhraseSentenceById(id);
         newSpans.addAll(spans);
-        debugPrint('Processing ID = $id, ${spans.length} spans; total ${newSpans.length} spans.');
+        // debugPrint('Processing ID = $id, ${spans.length} spans; total ${newSpans.length} spans.');
       } catch (e) {
         debugPrint('Failed to process entry with ID $id: $e');
       }
@@ -234,7 +237,7 @@ class CheckZhuyinViewState extends ConsumerState<CheckZhuyinView> {
       } catch (e) {
           debugPrint('Error processing data: $e');
       }
-      debugPrint("Finished processing ID $id. Total spans: ${tempTextSpans.length}");
+      // debugPrint("Finished processing ID $id. Total spans: ${tempTextSpans.length}");
       return tempTextSpans;
   }
 
