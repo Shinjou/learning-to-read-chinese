@@ -64,7 +64,10 @@ class DuoyinziViewState extends ConsumerState<DuoyinziView> {
   void handleStart() async {
     String text = _controller.text;
     debugPrint("Text entered: $text");
-    var result = await PolyphonicProcessor.instance.process(text, fontSize * 1.5, Colors.white, true);
+    // final stopwatchOriginal = Stopwatch()..start();
+    var result = await PolyphonicProcessor.instance.process(text, fontSize * 1.2, Colors.white, true);
+    // stopwatchOriginal.stop();
+    // debugPrint('Process time: ${stopwatchOriginal.elapsedMicroseconds} microseconds');    
     processedTextSpans = result.item1;
     processedUnicode = result.item2;    
     setState(() {}); // Trigger a rebuild to display the processed text
@@ -99,7 +102,7 @@ class DuoyinziViewState extends ConsumerState<DuoyinziView> {
   
   TextStyle get commonTextStyle => TextStyle(
     fontFamily: 'BpmfIansui',
-    fontSize: fontSize * 1.5,
+    fontSize: fontSize * 1.2,
   );
 
   void _speakText() async {
@@ -220,7 +223,7 @@ class DuoyinziViewState extends ConsumerState<DuoyinziView> {
                   ElevatedButton(
                     onPressed: handleCopy,
                     style: ElevatedButton.styleFrom(
-                      textStyle: commonTextStyle.copyWith(fontSize: fontSize * 1.5), // Adjust the fontSize here
+                      textStyle: commonTextStyle.copyWith(fontSize: fontSize * 1.2), // Adjust the fontSize here
                       padding: EdgeInsets.symmetric(horizontal: fontSize, vertical: fontSize * 0.5),
                     ),
                     child: Text('複製', style: commonTextStyle), // Removed 'const' to apply the dynamic style
