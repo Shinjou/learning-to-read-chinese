@@ -263,7 +263,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
     ftts.setCompletionHandler(() async {
       // debugPrint('\nTTS handler called. mounted: $mounted, nextId: $nextStepId, wordIsLearned: $wordIsLearned, svgFileExist: $svgFileExist');
 
-      if (!mounted) return;
+      if (!context.mounted) return;
 
       WordStatus newStatus = widget.wordsStatus[widget.wordIndex];
 
@@ -302,7 +302,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
   Future<void> updateWordStatus(WordStatus newStatus,
       {required bool learned, required int nextStepId}) async {
     // debugPrint('updateWordStatus. mounted: $mounted, learned: $learned, nextId: $nextStepId');
-    if (!mounted) return;
+    if (!context.mounted) return;
     setState(() {
       newStatus.learned = learned;
       this.nextStepId = nextStepId;
@@ -417,7 +417,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
   }
 
   void showErrorDialog(String message, String title) {
-    if (!mounted) return;
+    if (!context.mounted) return;
 
     showDialog(
       context: context,
@@ -461,7 +461,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
 
   // Show error dialog for 寫一寫 if there is no SVG file
   Future<void> showNoSvgDialog(String message, String title) async {
-    if (!mounted) return;
+    if (!context.mounted) return;
     String word = widget.wordsStatus[widget.wordIndex].word;
     
     showDialog(
