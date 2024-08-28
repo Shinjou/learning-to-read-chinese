@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/data/models/word_status_model.dart';
 import 'package:ltrc/extensions.dart';
+import 'package:ltrc/providers.dart';
+import 'package:ltrc/views/view_utils.dart';
 import '../widgets/word_card.dart';
-import '../views/view_utils.dart';
+// import '../
 
-class BopomosView extends StatelessWidget {
+class BopomosView extends ConsumerWidget {
   const BopomosView({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    ScreenInfo screenInfo = getScreenInfo(context);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final screenInfo = ref.watch(screenInfoProvider);
     double fontSize = screenInfo.fontSize;
     bool isTablet = screenInfo.screenWidth > 600;
 
@@ -31,7 +34,8 @@ class BopomosView extends StatelessWidget {
           actions: [
             IconButton(
               icon: Icon(Icons.home, size: fontSize * 1.5),
-              onPressed: () => Navigator.of(context).pushNamed('/mainPage'),
+              // onPressed: () => Navigator.of(context).pushNamed('/mainPage'),
+              onPressed: () => navigateWithProvider(context, '/mainPage', ref),
             )
           ],
         ),
@@ -77,7 +81,8 @@ class BopomosView extends StatelessWidget {
                   delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int idx) {
                   return InkWell(
-                    onTap: () => Navigator.of(context).pushNamed('/bopomoQuiz'),
+                    // onTap: () => Navigator.of(context).pushNamed('/bopomoQuiz'),
+                    onTap: () => navigateWithProvider(context, '/bopomoQuiz', ref),
                     child: Container(
                       width: fontSize * 17.5,
                       height: fontSize * 4.0,

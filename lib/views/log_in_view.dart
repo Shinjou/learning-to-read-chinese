@@ -9,6 +9,7 @@ import 'package:ltrc/extensions.dart';
 import 'package:ltrc/providers.dart';
 import 'package:ltrc/views/view_utils.dart';
 
+
 class LogInView extends ConsumerStatefulWidget {
   const LogInView({super.key});
 
@@ -36,7 +37,10 @@ class LogInViewState extends ConsumerState<LogInView> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenInfo screenInfo = getScreenInfo(context);
+    /*
+    final screenInfo = ref.watch(screenInfoProvider);
+    */
+    final screenInfo = ref.watch(screenInfoProvider);
     double fontSize = screenInfo.fontSize;    
     double deviceHeight = screenInfo.screenHeight;
     double deviceWidth = screenInfo.screenWidth;
@@ -150,8 +154,8 @@ class LogInViewState extends ConsumerState<LogInView> {
                       child: Align(
                         alignment: AlignmentDirectional.bottomEnd,
                         child: TextButton(
-                          onPressed: () => Navigator.of(context)
-                              .pushNamed('/resetPwdAccount'),
+                          // onPressed: () => Navigator.of(context).pushNamed('/resetPwdAccount'),
+                          onPressed: () => navigateWithProvider(context, '/resetPwdAccount', ref),
                           style: TextButton.styleFrom(
                             minimumSize: const Size(110, 16),
                           ),
@@ -175,7 +179,7 @@ class LogInViewState extends ConsumerState<LogInView> {
                           child: Text(showErrorHint,
                               style: TextStyle(
                                 color: '#FF0303'.toColor(),
-                                fontSize: 0.8 * fontSize,
+                                fontSize: 1.0 * fontSize,
                               )))),
                   SizedBox(height: deviceHeight * 0.038),
                   Center(
@@ -234,7 +238,9 @@ class LogInViewState extends ConsumerState<LogInView> {
                                     );
                                     
                                     if (!context.mounted) return;
-                                    Navigator.of(context).pushNamed('/mainPage');
+
+                                    // Navigator.of(context).pushNamed('/mainPage');
+                                    navigateWithProvider(context, '/mainPage', ref);
                                   }
                                 } catch (e) {
                                   // Print statement when the user is not found or another error occurs
@@ -260,8 +266,8 @@ class LogInViewState extends ConsumerState<LogInView> {
                               fontSize: fontSize * 1.4,
                             )),
                         TextButton(
-                            onPressed: () => Navigator.of(context)
-                                .pushNamed('/registerAccount'),
+                            // onPressed: () => Navigator.of(context).pushNamed('/registerAccount'),
+                            onPressed: () => navigateWithProvider(context, '/registerAccount', ref),
                             style: TextButton.styleFrom(
                               minimumSize: const Size(110, 30),
                             ),

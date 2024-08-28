@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/extensions.dart';
-import 'package:ltrc/views/view_utils.dart';
+import 'package:ltrc/providers.dart';
 
-class GradeAndProviderButton extends StatelessWidget {
+class GradeAndProviderButton extends ConsumerWidget {
   final double buttonWidth;
   final double buttonHeight;
   final String text;
@@ -13,8 +14,8 @@ class GradeAndProviderButton extends StatelessWidget {
         required this.text});
 
   @override
-  Widget build(BuildContext context) {
-    ScreenInfo screenInfo = getScreenInfo(context);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final screenInfo = ref.watch(screenInfoProvider);
     double fontSize = screenInfo.fontSize;    
 
     return Container(

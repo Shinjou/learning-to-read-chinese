@@ -2,19 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:ltrc/data/models/user_model.dart';
 import 'package:ltrc/data/providers/user_provider.dart';
 import 'package:ltrc/extensions.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ltrc/providers.dart';
 import 'package:ltrc/views/view_utils.dart';
 
-class ResetPwdView extends StatefulWidget {
+class ResetPwdView extends ConsumerStatefulWidget {
   const ResetPwdView({super.key});
 
   @override
-  State<ResetPwdView> createState() => _ResetPwdViewState();
+  ConsumerState<ResetPwdView> createState() => _ResetPwdViewState();
 }
 
 const String pwdLengthErrorHint = "密碼長度不足 4 位英/數字";
 const String pwdConfirmErrorHint = "確認密碼錯誤";
 
-class _ResetPwdViewState extends State<ResetPwdView> {
+class _ResetPwdViewState extends ConsumerState<ResetPwdView> {
   bool showPasswordHint = false;
   bool pwdVisible = false;
   bool confirmPwdVisible = false;
@@ -32,7 +34,7 @@ class _ResetPwdViewState extends State<ResetPwdView> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenInfo screenInfo = getScreenInfo(context);
+    final screenInfo = ref.watch(screenInfoProvider);
     double fontSize = screenInfo.fontSize;    
     double deviceHeight = screenInfo.screenHeight;
 
@@ -195,7 +197,8 @@ class _ResetPwdViewState extends State<ResetPwdView> {
                     } else {
                       user.password = pwdController.text;
                       UserProvider.updateUser(user: user);
-                      Navigator.of(context).pushNamed('/login');
+                      // Navigator.of(context).pushNamed('/login');
+                      navigateWithProvider(context, '/login', ref);
                     }
                   },
                   child: Text('完成',

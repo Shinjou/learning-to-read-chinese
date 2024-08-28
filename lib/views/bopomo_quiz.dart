@@ -9,17 +9,18 @@ import 'package:ltrc/data/models/word_model.dart';
 import 'package:ltrc/data/providers/word_provider.dart';
 import 'package:ltrc/extensions.dart';
 import 'package:ltrc/providers.dart';
-import '../widgets/bopomo/bopomo_container.dart';
 import 'package:ltrc/views/view_utils.dart';
+import '../widgets/bopomo/bopomo_container.dart';
 
-class BopomoQuizView extends StatefulWidget {
+
+class BopomoQuizView extends ConsumerStatefulWidget {
   const BopomoQuizView({super.key});
 
   @override
-  State<BopomoQuizView> createState() => _BopomoQuizState();
+  ConsumerState<BopomoQuizView> createState() => _BopomoQuizState();
 }
 
-class _BopomoQuizState extends State<BopomoQuizView> {
+class _BopomoQuizState extends ConsumerState<BopomoQuizView> {
   final vowels = List.from(prenuclear)..addAll(finals);
   int problemId = 0;
   FlutterTts ftts = FlutterTts();
@@ -82,7 +83,7 @@ class _BopomoQuizState extends State<BopomoQuizView> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenInfo screenInfo = getScreenInfo(context);
+    final screenInfo = ref.watch(screenInfoProvider);
     double fontSize = screenInfo.fontSize;
 
     return Scaffold(
@@ -103,7 +104,8 @@ class _BopomoQuizState extends State<BopomoQuizView> {
                 Icons.home,
                 size: fontSize * 1.5,
               ),
-              onPressed: () => Navigator.of(context).pushNamed('/mainPage'),
+              // onPressed: () => Navigator.of(context).pushNamed('/mainPage'),
+              onPressed: () => navigateWithProvider(context, '/mainPage', ref),
             )
           ],
         ),
@@ -364,8 +366,8 @@ class _BopomoQuizState extends State<BopomoQuizView> {
                                   });
                                 }
                               } else {
-                                Navigator.pushNamed(
-                                    context, '/bopomoQuizFinish');
+                                // Navigator.pushNamed(context, '/bopomoQuizFinish');
+                                navigateWithProvider(context, '/bopomoQuizFinish', ref);
                               }
                             },
                           ),

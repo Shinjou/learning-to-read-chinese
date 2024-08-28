@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/data/models/user_model.dart';
 import 'package:ltrc/data/providers/user_provider.dart';
 import 'package:ltrc/extensions.dart';
+import 'package:ltrc/providers.dart';
 import 'package:ltrc/views/view_utils.dart';
 
-class ResetPwdAccountView extends StatefulWidget {
+
+class ResetPwdAccountView extends ConsumerStatefulWidget {
   const ResetPwdAccountView({super.key});
 
   @override
-  State<ResetPwdAccountView> createState() => _ResetPwdAccountViewState();
+  ConsumerState<ResetPwdAccountView> createState() => _ResetPwdAccountViewState();
 }
 
 const String pwdLengthErrorHint = "帳號長度不足 6 位英/數字";
 const String noAccountErrorHint = "帳號輸入錯誤或不存在";
 
-class _ResetPwdAccountViewState extends State<ResetPwdAccountView> {
+class _ResetPwdAccountViewState extends ConsumerState<ResetPwdAccountView> {
   bool showAccountHint = false;
   String showErrorHint = "";
   TextEditingController accountController = TextEditingController();
@@ -27,7 +30,7 @@ class _ResetPwdAccountViewState extends State<ResetPwdAccountView> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenInfo screenInfo = getScreenInfo(context);
+    final screenInfo = ref.watch(screenInfoProvider);
     double fontSize = screenInfo.fontSize;    
     double deviceHeight = screenInfo.screenHeight;
 
@@ -141,8 +144,15 @@ class _ResetPwdAccountViewState extends State<ResetPwdAccountView> {
                         } else {
                           User user = await UserProvider.getUser(
                               inputAccount: accountController.text);
-                          Navigator.of(context).pushNamed('/safetyHintVerify',
-                              arguments: {'user': user});
+                          // Navigator.of(context).pushNamed('/safetyHintVerify',arguments: {'user': user});
+                          if (!context.mounted) return;
+                          navigateWithProvider(
+                            context, 
+                            '/safetyHintVerify', 
+                            ref, 
+                            arguments: {'user': user}
+                          );
+
                         }
                       } catch (e) {
                         setState(() {

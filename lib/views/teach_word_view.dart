@@ -13,6 +13,7 @@ import 'package:ltrc/data/models/word_status_model.dart';
 import 'package:ltrc/data/providers/word_status_provider.dart';
 import 'package:ltrc/extensions.dart';
 import 'package:ltrc/providers.dart';
+import 'package:ltrc/views/view_utils.dart';
 import 'package:ltrc/widgets/mainPage/left_right_switch.dart';
 import 'package:ltrc/widgets/teach_word/bpmf_vocab_content.dart';
 import 'package:ltrc/widgets/teach_word/card_title.dart';
@@ -22,7 +23,6 @@ import 'package:ltrc/widgets/teach_word/stroke_order_animation_controller.dart';
 import 'package:ltrc/widgets/teach_word/word_vocab_content.dart';
 import 'package:ltrc/widgets/word_card.dart';
 import 'package:provider/provider.dart';
-import 'package:ltrc/views/view_utils.dart';
 
 class TeachWordView extends ConsumerStatefulWidget {
   final int unitId;
@@ -558,7 +558,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
   Widget build(BuildContext context) {
     // bool wordIsLearned = widget.wordsStatus[widget.wordIndex].learned;
 
-    ScreenInfo screenInfo = getScreenInfo(context);
+    final screenInfo = ref.watch(screenInfoProvider);
     fontSize = screenInfo.fontSize;
     double deviceHeight = screenInfo.screenHeight;
     double deviceWidth = screenInfo.screenWidth;
@@ -828,7 +828,8 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                   style: TextStyle(fontSize: fontSize)),
           actions: <Widget>[
             IconButton(
-              onPressed: () => Navigator.of(context).pushNamed('/mainPage'),
+              // onPressed: () => Navigator.of(context).pushNamed('/mainPage'),
+              onPressed: () => navigateWithProvider(context, '/mainPage', ref),
               icon: Icon(Icons.home_filled, size: fontSize * 1.5),
             ),
           ],
@@ -1396,6 +1397,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                 isFirst: (widget.wordIndex == 0),
                 isLast: (widget.wordIndex == widget.wordsStatus.length - 1),
                 onLeftClicked: () {
+                  /*
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => TeachWordView(
                             unitId: widget.unitId,
@@ -1404,8 +1406,29 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                             wordsPhrase: widget.wordsPhrase,
                             wordIndex: widget.wordIndex - 1,
                           )));
+                  */
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) {
+                        final screenInfo = ref.read(screenInfoProvider);
+                        return ProviderScope(
+                          overrides: [
+                            screenInfoProvider.overrideWithValue(screenInfo),
+                          ],
+                          child: TeachWordView(
+                            unitId: widget.unitId,
+                            unitTitle: widget.unitTitle,
+                            wordsStatus: widget.wordsStatus,
+                            wordsPhrase: widget.wordsPhrase,
+                            wordIndex: widget.wordIndex,
+                          ),
+                        );
+                      },
+                    ),
+                  );                          
                 },
                 onRightClicked: () {
+                  /*
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => TeachWordView(
                             unitId: widget.unitId,
@@ -1414,6 +1437,26 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                             wordsPhrase: widget.wordsPhrase,
                             wordIndex: widget.wordIndex + 1,
                           )));
+                  */
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) {
+                        final screenInfo = ref.read(screenInfoProvider);
+                        return ProviderScope(
+                          overrides: [
+                            screenInfoProvider.overrideWithValue(screenInfo),
+                          ],
+                          child: TeachWordView(
+                            unitId: widget.unitId,
+                            unitTitle: widget.unitTitle,
+                            wordsStatus: widget.wordsStatus,
+                            wordsPhrase: widget.wordsPhrase,
+                            wordIndex: widget.wordIndex,
+                          ),
+                        );
+                      },
+                    ),
+                  );                          
                 })),
       ),
     );

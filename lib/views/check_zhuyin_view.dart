@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/data/models/word_phrase_sentence_model.dart';
 
 import 'package:ltrc/data/providers/word_phrase_sentence_provider.dart';
+import 'package:ltrc/views/view_utils.dart';
 
 import 'package:screenshot/screenshot.dart';
 import 'package:path_provider/path_provider.dart';
@@ -281,7 +282,8 @@ class CheckZhuyinViewState extends ConsumerState<CheckZhuyinView> {
         actions: [
           IconButton(
             icon: Icon(Icons.home, size: fontSize * 1.5),
-            onPressed: () => Navigator.of(context).pushNamed('/mainPage'),
+            // onPressed: () => Navigator.of(context).pushNamed('/mainPage'),
+            onPressed: () => navigateWithProvider(context, '/mainPage', ref),
           )
         ],
       ),      

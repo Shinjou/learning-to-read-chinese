@@ -6,9 +6,9 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'package:ltrc/views/view_utils.dart';
+import 'package:ltrc/providers.dart';
 import 'package:ltrc/views/polyphonic_processor.dart';
+import 'package:ltrc/views/view_utils.dart';
 
 // import 'package:path_provider/path_provider.dart';
 
@@ -112,7 +112,7 @@ class DuoyinziViewState extends ConsumerState<DuoyinziView> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenInfo screenInfo = getScreenInfo(context);
+    final screenInfo = ref.watch(screenInfoProvider);
     fontSize = screenInfo.fontSize;   
     // bool isTablet = screenInfo.screenWidth > 600;
 
@@ -126,7 +126,8 @@ class DuoyinziViewState extends ConsumerState<DuoyinziView> {
         actions: [
           IconButton(
             icon: Icon(Icons.home, size: fontSize * 1.5),
-            onPressed: () => Navigator.of(context).pushNamed('/mainPage'),
+            // onPressed: () => Navigator.of(context).pushNamed('/mainPage'),
+            onPressed: () => navigateWithProvider(context, '/mainPage', ref),
           )
         ],
       ),      

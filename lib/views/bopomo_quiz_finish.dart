@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/extensions.dart';
+import 'package:ltrc/providers.dart';
 import 'package:ltrc/views/view_utils.dart';
 
-class BopomoQuizFinishView extends StatelessWidget {
+
+class BopomoQuizFinishView extends ConsumerWidget {
   const BopomoQuizFinishView({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    ScreenInfo screenInfo = getScreenInfo(context);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final screenInfo = ref.watch(screenInfoProvider);
     double fontSize = screenInfo.fontSize;
 
     return Scaffold(
@@ -26,7 +29,8 @@ class BopomoQuizFinishView extends StatelessWidget {
                 Icons.home,
                 size: fontSize * 1.5,
               ),
-              onPressed: () => Navigator.of(context).pushNamed('/mainPage'),
+              // onPressed: () => Navigator.of(context).pushNamed('/mainPage'),
+              onPressed: () => navigateWithProvider(context, '/mainPage', ref)
             )
           ],
         ),
@@ -54,7 +58,8 @@ class BopomoQuizFinishView extends StatelessWidget {
                 ),
                 ElevatedButton(
                     onPressed: () =>
-                        Navigator.of(context).pushNamed("/bopomoQuiz"),
+                        // Navigator.of(context).pushNamed("/bopomoQuiz"),
+                        navigateWithProvider(context, '/bopomoQuiz', ref),
                     child: Text("重新測驗",
                         style: TextStyle(
                             color: Colors.black, fontSize: fontSize))),
@@ -63,7 +68,8 @@ class BopomoQuizFinishView extends StatelessWidget {
                 ),
                 ElevatedButton(
                     onPressed: () =>
-                        Navigator.of(context).pushNamed("/mainPage"),
+                        // Navigator.of(context).pushNamed("/mainPage"),
+                        navigateWithProvider(context, '/mainPage', ref),
                     child: Text("回首頁",
                         style:
                             TextStyle(color: Colors.black, fontSize: fontSize)))

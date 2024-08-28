@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/data/models/word_status_model.dart';
 import 'package:ltrc/data/providers/word_status_provider.dart';
 import 'package:ltrc/extensions.dart';
+import 'package:ltrc/providers.dart';
 import 'package:ltrc/views/teach_word_view.dart';
 
-class WordCard extends StatefulWidget {
+class WordCard extends ConsumerStatefulWidget {
   const WordCard({
     super.key,
     required this.unitId,
@@ -36,7 +38,7 @@ class WordCard extends StatefulWidget {
   WordCardState createState() => WordCardState();
 }
 
-class WordCardState extends State<WordCard> {
+class WordCardState extends ConsumerState<WordCard> {
   
   bool liked = false;
 
@@ -49,6 +51,7 @@ class WordCardState extends State<WordCard> {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: widget.disable ? () {} : () {
+        /*
         Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => TeachWordView(
             unitId: widget.unitId,
@@ -57,6 +60,27 @@ class WordCardState extends State<WordCard> {
             wordsPhrase: widget.wordsPhrase,
             wordIndex: widget.wordIndex,
         )));
+        */
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) {
+              final screenInfo = ref.read(screenInfoProvider);
+              return ProviderScope(
+                overrides: [
+                  screenInfoProvider.overrideWithValue(screenInfo),
+                ],
+                child: TeachWordView(
+                  unitId: widget.unitId,
+                  unitTitle: widget.unitTitle,
+                  wordsStatus: widget.wordsStatus,
+                  wordsPhrase: widget.wordsPhrase,
+                  wordIndex: widget.wordIndex,
+                ),
+              );
+            },
+          ),
+        );
+
       },
       child: Container(
         width: widget.sizedBoxWidth,

@@ -3,17 +3,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/contants/bopomos.dart';
 import 'package:ltrc/data/models/unit_model.dart';
 import 'package:ltrc/data/models/word_status_model.dart';
-import 'package:ltrc/widgets/word_card.dart';
+import 'package:ltrc/providers.dart';
 import 'package:ltrc/views/view_utils.dart';
+import 'package:ltrc/widgets/word_card.dart';
+
 
 class WordsView extends ConsumerWidget {
   const WordsView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ScreenInfo screenInfo = getScreenInfo(context);
+    final screenInfo = ref.watch(screenInfoProvider);
     double fontSize = screenInfo.fontSize;
     bool isTablet = screenInfo.screenWidth > 600;
+    if (isTablet) {fontSize = fontSize * 1.2;}
 
     dynamic obj = ModalRoute.of(context)!.settings.arguments;
     Unit unit = obj["unit"];
@@ -41,7 +44,8 @@ class WordsView extends ConsumerWidget {
           actions: [
             IconButton(
               icon: Icon(Icons.home, size: fontSize * 1.5),
-              onPressed: () => Navigator.of(context).pushNamed('/mainPage'),
+              // onPressed: () => Navigator.of(context).pushNamed('/mainPage'),
+              onPressed: () => navigateWithProvider(context, '/mainPage', ref),
             )
           ],
         ),

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ltrc/providers.dart';
 // import 'package:flutter_riverpod/flutter_riverpod.dart';
 // import 'package:ltrc/providers.dart';
 // import 'package:ltrc/views/polyphonic_processor.dart';
-import 'package:ltrc/views/view_utils.dart';
 import 'package:ltrc/widgets/teach_word/zhuyin_processing.dart';
 // import 'package:tuple/tuple.dart';
 
-class TeachWordCardTitle extends StatelessWidget {
+class TeachWordCardTitle extends ConsumerWidget {
   final Color iconsColor;
   final String sectionName;
   const TeachWordCardTitle({
@@ -16,8 +17,8 @@ class TeachWordCardTitle extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    ScreenInfo screenInfo = getScreenInfo(context);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final screenInfo = ref.watch(screenInfoProvider);
     double fontSize = screenInfo.fontSize;    
 
     return Container(

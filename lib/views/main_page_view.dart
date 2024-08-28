@@ -7,15 +7,17 @@ import 'package:ltrc/data/models/unit_model.dart';
 import 'package:ltrc/data/providers/unit_provider.dart';
 import 'package:ltrc/extensions.dart';
 import 'package:ltrc/providers.dart';
-// import 'package:ltrc/widgets/progress_bar.dart';
 import 'package:ltrc/views/view_utils.dart';
+// import 'package:ltrc/widgets/progress_bar.dart';
+
 
 class MainPageView extends ConsumerWidget {
   const MainPageView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ScreenInfo screenInfo = getScreenInfo(context);
+    
+    final screenInfo = ref.watch(screenInfoProvider);
     double fontSize = screenInfo.fontSize;    
     double deviceHeight = screenInfo.screenHeight;
     double deviceWidth = screenInfo.screenWidth;
@@ -38,7 +40,8 @@ class MainPageView extends ConsumerWidget {
                 Icons.settings,
                 size: fontSize * 1.5,
               ),
-              onPressed: () => Navigator.of(context).pushNamed('/setting'),
+              // onPressed: () => Navigator.of(context).pushNamed('/setting'),
+              onPressed: () => navigateWithProvider(context, '/setting', ref),
             )
           ],
         ),
@@ -58,9 +61,9 @@ class MainPageView extends ConsumerWidget {
                 Padding(
                     // padding:
                         // EdgeInsetsDirectional.only(bottom: deviceHeight * 0.15),
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    padding: const EdgeInsets.symmetric(vertical: 4.0),
                     child: SizedBox(
-                      width: deviceWidth * 0.76,
+                      width: deviceWidth * 0.8,
                       height: deviceHeight * 0.095,
                       child: ElevatedButton(
                           onPressed: () async {
@@ -75,9 +78,17 @@ class MainPageView extends ConsumerWidget {
                                 inputGrade: ref.watch(gradeProvider),
                                 inputSemester: semesterCodeTable[semesterCode]!);
                             if (!context.mounted) return;    
+                            /*
                             Navigator.of(context).pushNamed(
                               '/units',
                               arguments: {'units': units},
+                            );
+                            */
+                            navigateWithProvider(
+                                context, 
+                                '/units', 
+                                ref, 
+                                arguments: {'units': units}
                             );
                           },
                           style: ButtonStyle(
@@ -103,12 +114,13 @@ class MainPageView extends ConsumerWidget {
                   // padding: EdgeInsets.symmetric(vertical: 8.0),
                   // padding:
                   //     EdgeInsetsDirectional.only(bottom: deviceHeight * 0.15),  
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),                
+                  padding: const EdgeInsets.symmetric(vertical: 4.0),                
                   child: SizedBox(
-                    width: deviceWidth * 0.76,
+                    width: deviceWidth * 0.8,
                     height: deviceHeight * 0.095,
                     child: ElevatedButton(
-                      onPressed: () => Navigator.of(context).pushNamed('/checkzhuyin'),
+                      // onPressed: () => Navigator.of(context).pushNamed('/checkzhuyin'),
+                      onPressed: () => navigateWithProvider(context, '/checkzhuyin', ref),
                       style: ButtonStyle(
                         backgroundColor: WidgetStateProperty.all('#013E6D'.toColor()),
                         elevation: WidgetStateProperty.all(25),
@@ -128,13 +140,14 @@ class MainPageView extends ConsumerWidget {
                 SizedBox(height: fontSize * 0.5),
                 Padding(
                   // padding: EdgeInsets.symmetric(vertical: 8.0),
-                  padding:
-                      EdgeInsetsDirectional.only(bottom: deviceHeight * 0.15),                  
+                  // padding: EdgeInsetsDirectional.only(bottom: deviceHeight * 0.15),          
+                  padding: const EdgeInsets.symmetric(vertical: 4.0),             
                   child: SizedBox(
-                    width: deviceWidth * 0.76,
+                    width: deviceWidth * 0.8,
                     height: deviceHeight * 0.095,
                     child: ElevatedButton(
-                      onPressed: () => Navigator.of(context).pushNamed('/duoyinzi'),
+                      // onPressed: () => Navigator.of(context).pushNamed('/duoyinzi'),
+                      onPressed: () => navigateWithProvider(context, '/duoyinzi', ref),
                       style: ButtonStyle(
                         backgroundColor: WidgetStateProperty.all('#013E6D'.toColor()),
                         elevation: WidgetStateProperty.all(25),
@@ -160,6 +173,7 @@ class MainPageView extends ConsumerWidget {
                 */
               ]),
         ));
+  
   }
 
 }

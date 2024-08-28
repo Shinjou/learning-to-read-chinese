@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:ltrc/views/view_utils.dart';
+import 'package:ltrc/providers.dart';
 import 'package:ltrc/widgets/teach_word/zhuyin_processing.dart';
 
-class WordVocabContent extends StatefulWidget {
+class WordVocabContent extends ConsumerStatefulWidget {
   final String vocab; // correct answer
   final String meaning;
   final String sentence;
@@ -21,7 +22,7 @@ class WordVocabContent extends StatefulWidget {
   WordVocabContentState createState() => WordVocabContentState();
 }
 
-class WordVocabContentState extends State<WordVocabContent> {
+class WordVocabContentState extends ConsumerState<WordVocabContent> {
   final FlutterTts ftts = FlutterTts();
   late String vocab;
   late String vocab2;
@@ -110,7 +111,7 @@ class WordVocabContentState extends State<WordVocabContent> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenInfo screenInfo = getScreenInfo(context);
+    final screenInfo = ref.watch(screenInfoProvider);
     double fontSize = screenInfo.fontSize;    
 
     const Color explanationColor = Color.fromRGBO(228, 219, 124, 1);

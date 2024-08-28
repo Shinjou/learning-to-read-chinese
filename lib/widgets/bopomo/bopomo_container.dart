@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:ltrc/views/view_utils.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ltrc/providers.dart';
 
-class BopomoContainer extends StatelessWidget {
+
+class BopomoContainer extends ConsumerWidget {
   const BopomoContainer(
       {super.key,
       this.character,
@@ -15,8 +17,8 @@ class BopomoContainer extends StatelessWidget {
   final Widget? innerWidget;
 
   @override
-  Widget build(BuildContext context) {
-    ScreenInfo screenInfo = getScreenInfo(context);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final screenInfo = ref.watch(screenInfoProvider);
     double fontSize = screenInfo.fontSize;    
 
     return InkWell(

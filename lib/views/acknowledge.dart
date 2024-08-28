@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ltrc/views/view_utils.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ltrc/providers.dart';
 
 class Resource{
   final String resource;
@@ -43,12 +44,12 @@ final List<Resource> resourceList = [
   )
 ];
 
-class AcknowledgeView extends StatelessWidget {
+class AcknowledgeView extends ConsumerWidget {
   const AcknowledgeView({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    ScreenInfo screenInfo = getScreenInfo(context);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final screenInfo = ref.watch(screenInfoProvider);
     double fontSize = screenInfo.fontSize;
     
     int count = 0;
