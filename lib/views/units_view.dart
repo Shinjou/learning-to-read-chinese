@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/contants/bopomos.dart';
-// import 'package:ltrc/data/models/phrase_model.dart';
-// import 'package:ltrc/data/models/word_model.dart';
 import 'package:ltrc/data/models/word_status_model.dart';
-// import 'package:ltrc/data/providers/phrase_provider.dart';
 import 'package:ltrc/data/models/word_phrase_sentence_model.dart';
 import 'package:ltrc/data/providers/word_phrase_sentence_provider.dart';
-// import 'package:ltrc/data/providers/word_provider.dart';
 import 'package:ltrc/data/providers/word_status_provider.dart';
-// import 'package:ltrc/extensions.dart';
 import 'package:ltrc/providers.dart';
 import 'package:ltrc/views/view_utils.dart';
+
 
 import '../contants/arabic_numerals_to_chinese.dart';
 import '../data/models/unit_model.dart';
@@ -37,11 +33,24 @@ class UnitsViewState extends ConsumerState<UnitsView> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenInfo screenInfo = getScreenInfo(context);
+    final screenInfo = ref.watch(screenInfoProvider);
     double fontSize = screenInfo.fontSize;    
+    bool isTablet = screenInfo.screenWidth > 600;
+    if (isTablet) fontSize = fontSize * 1.5;
 
-    dynamic obj = ModalRoute.of(context)!.settings.arguments;
-    List<Unit> units = obj["units"]; // Assuming 'units' is a list of 'Unit'
+    // Extract the arguments safely
+    final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+    if (args == null || args['units'] == null) {
+      return Center(
+        child: Text(
+          'No units available',
+          style: TextStyle(fontSize: fontSize),
+        ),
+      );
+    }
+
+    // Now that we've checked, it's safe to cast    
+    List<Unit> units = args["units"]; // Assuming 'units' is a list of 'Unit'
 
     Future<List<Map>> getWordsPhraseSentence(List<WordStatus> wordsStatus) async {
       List<Map> wordsPhrase = [];
@@ -100,11 +109,13 @@ class UnitsViewState extends ConsumerState<UnitsView> {
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(23, 14, 23, 20),
             sliver: SliverGrid(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2, // for 2 columns, adjust according to your design
-                childAspectRatio: 6 / 2, // was 3 / 2
-                crossAxisSpacing: fontSize * 0.66, // was 10,
-                mainAxisSpacing: fontSize * 0.66 // was 10,
+              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: isTablet
+                      ? fontSize * 8.0
+                      : fontSize * 8.0, // This is most important
+                  mainAxisSpacing: fontSize * 0.5, // was 10,
+                  crossAxisSpacing: fontSize * 0.5, // was 10,
+                  childAspectRatio: isTablet ? 4 / 3 : 4 / 4,
               ),
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) {
@@ -130,7 +141,8 @@ class UnitsViewState extends ConsumerState<UnitsView> {
                           words: bopomos, 
                         );
                         List<Map> bpmfWordsPhrase = await getWordsPhraseSentence(wordsStatus);
-                        if (!mounted) return;
+                        if (!context.mounted) return;
+                        /*
                         Navigator.of(context).pushNamed(
                           '/bopomos', 
                           arguments: {
@@ -138,15 +150,47 @@ class UnitsViewState extends ConsumerState<UnitsView> {
                             'wordsPhrase' : bpmfWordsPhrase
                           }
                         );
+                        */
+                        navigateWithProvider(
+                          context, 
+                          '/bopomos', 
+                          ref, 
+                          arguments: {
+                            'wordStatus' : wordsStatus,
+                            'wordsPhrase' : bpmfWordsPhrase
+                          }
+                        );
+
                       }
                       else {
                         List<WordStatus> likedWords = await WordStatusProvider.getLikedWordsStatus(
                           account: ref.watch(accountProvider), 
                         );
                         List<Map> likedWordsPhrase = await getWordsPhraseSentence(likedWords);
-                        if (!mounted) return;
+                        if (!context.mounted) return;
+                        /*
                         Navigator.of(context).pushNamed(
                           '/words', 
+                          arguments: {
+                            'unit' : Unit(
+                              id: -1, 
+                              publisher: '', 
+                              grade: 1, 
+                              semester: '', 
+                              unitId: -1, 
+                              unitTitle: "❤️最愛",
+                              newWords: [] ,
+                              extraWords:[]
+                            ),
+                            'newWordsStatus' : likedWords,
+                            'newWordsPhrase' : likedWordsPhrase
+                          }
+                        );
+                        */
+                        navigateWithProvider(
+                          context, 
+                          '/words', 
+                          ref, 
                           arguments: {
                             'unit' : Unit(
                               id: -1, 
@@ -192,11 +236,13 @@ class UnitsViewState extends ConsumerState<UnitsView> {
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(23, 14, 23, 20),
             sliver: SliverGrid(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2, // for three columns, adjust according to your design
-                childAspectRatio: 6 / 3, // was 3 / 2
-                crossAxisSpacing: fontSize * 0.66, // was 10,
-                mainAxisSpacing: fontSize * 0.66, // was 10,
+              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: isTablet
+                      ? fontSize * 8.0
+                      : fontSize * 8.0, // This is most important
+                  mainAxisSpacing: fontSize * 0.5, // was 10,
+                  crossAxisSpacing: fontSize * 0.5, // was 10,
+                  childAspectRatio: isTablet ? 4 / 3 : 4 / 4,
               ),
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) {
@@ -227,7 +273,8 @@ class UnitsViewState extends ConsumerState<UnitsView> {
                       );
                       List<Map> newWordsPhrase = await getWordsPhraseSentence(newWordsStatus);
                       List<Map> extraWordsPhrase = await getWordsPhraseSentence(extraWordsStatus);
-                      if (!mounted) return;
+                      if (!context.mounted) return;
+                      /*
                       Navigator.of(context).pushNamed(
                         '/words', 
                         arguments: {
@@ -238,6 +285,21 @@ class UnitsViewState extends ConsumerState<UnitsView> {
                           'extraWordsPhrase' : extraWordsPhrase
                         }
                       );
+                      */
+                      navigateWithProvider(
+                        context,
+                        '/words', 
+                        ref,
+                        arguments: {
+                          'unit' : unit,
+                          'newWordsStatus' : newWordsStatus,
+                          'extraWordsStatus' : extraWordsStatus,
+                          'newWordsPhrase' : newWordsPhrase,
+                          'extraWordsPhrase' : extraWordsPhrase
+                        }
+                      );
+
+
                     },            
                     child: Container(
                       decoration: const BoxDecoration(
