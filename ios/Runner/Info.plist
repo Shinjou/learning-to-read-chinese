@@ -47,12 +47,12 @@
 
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
-			<!-- Supported orientations for iPhone -->
+			<!-- Supported orientations for iPhone: only portrait -->
 			<string>UIInterfaceOrientationPortrait</string>
 	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
-			<!-- Supported orientations for iPad -->
+			<!-- Supported orientations for iPad: all directions -->
 			<string>UIInterfaceOrientationPortrait</string>
 			<string>UIInterfaceOrientationPortraitUpsideDown</string>
 			<string>UIInterfaceOrientationLandscapeLeft</string>
