@@ -1,9 +1,5 @@
-// import 'dart:ffi';
-
-// import 'dart:convert';
-
+// main.dart
 import 'package:flutter/material.dart';
-// import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:logger/logger.dart';
@@ -17,16 +13,17 @@ import 'package:ltrc/views/polyphonic_processor.dart';
 
 import 'package:ltrc/contants/routes.dart';
 import 'package:ltrc/extensions.dart';
+import 'package:ltrc/views/view_utils.dart';
 
-Future main() async{
+Future main() async {
   try {
     WidgetsFlutterBinding.ensureInitialized();
     setupLogger();
-    await AllProvider.database; // Initialize all database    
-    await UserProvider.database; // Initialize users database
+    await AllProvider.database;
+    await UserProvider.database;
     await PolyphonicProcessor.instance.loadPolyphonicData();
 
-    runApp(const ProviderScope(child: MyApp()));    
+    runApp(const ProviderScope(child: MyApp()));
   } catch (e) {
     debugPrint('Failed to init the database: $e');
   }
@@ -35,10 +32,8 @@ Future main() async{
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    int grade = ref.watch(gradeProvider); 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: '學國語',
@@ -46,33 +41,61 @@ class MyApp extends ConsumerWidget {
         appBarTheme: AppBarTheme(
           iconTheme: IconThemeData(color: "#F5F5DC".toColor()),
           foregroundColor: "#F5F5DC".toColor(),
-          color: "#28231D".toColor()
+          color: "#28231D".toColor(),
         ),
         scaffoldBackgroundColor: "#28231D".toColor(),
         useMaterial3: true,
-        fontFamily: grade < 5 ? 'BpmfIansui': 'Iansui', 
+        fontFamily: ref.watch(gradeProvider) < 5 ? 'BpmfIansui' : 'Iansui',
         textTheme: const TextTheme(
           bodyMedium: TextStyle(),
           bodyLarge: TextStyle(),
         ).apply(
           bodyColor: "#F5F5DC".toColor(),
-        )
+        ),
       ),
       routes: AppRoutes.define(),
-      home: const HomePage(),
+      home: const HomePageInitializer(),
     );
   }
 }
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class HomePageInitializer extends StatelessWidget {
+  const HomePageInitializer({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const LogInView();
+    final screenInfo = getScreenInfo(context);
+    return ProviderScope(
+      overrides: [
+        screenInfoProvider.overrideWithValue(screenInfo),
+      ],
+      child: const HomePage(),
+    );
   }
 }
 
+class HomePage extends ConsumerWidget {
+  const HomePage({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final screenInfo = ref.watch(screenInfoProvider);
+
+    return OrientationBuilder(
+      builder: (context, orientation) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(
+              '學國語',
+              style: TextStyle(fontSize: screenInfo.fontSize),
+            ),
+          ),
+          body: const LogInView(),
+        );
+      },
+    );
+  }
+}
 
 class FileLogger extends LogOutput {
   final File file;
@@ -83,15 +106,12 @@ class FileLogger extends LogOutput {
   void output(OutputEvent event) {
     for (var line in event.lines) {
       file.writeAsString('$line\n', mode: FileMode.append, flush: true).catchError((e) {
-        // Handle the error, e.g., logging it to your console or an error reporting service
         debugPrint('Error writing to log file: $e');
-        // You might not need to return a File object here, just handle the error.
         return file;
       });
     }
   }
 }
-
 
 Future<File> _getLogFile() async {
   final directory = await getApplicationDocumentsDirectory();
@@ -104,6 +124,5 @@ void setupLogger() async {
     output: FileLogger(file),
   );
 
-  // Use logger as usual
   logger.d("This is a debug message");
 }
