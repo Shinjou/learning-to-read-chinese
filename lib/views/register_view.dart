@@ -9,8 +9,9 @@ import 'package:ltrc/data/providers/unit_provider.dart';
 import 'package:ltrc/data/providers/user_provider.dart';
 import 'package:ltrc/providers.dart';
 import 'package:ltrc/extensions.dart';
-import 'package:ltrc/widgets/mainPage/left_right_switch.dart';
 import 'package:ltrc/views/view_utils.dart';
+import 'package:ltrc/widgets/mainPage/left_right_switch.dart';
+
 
 class RegisterView extends ConsumerStatefulWidget {
   const RegisterView({super.key});
@@ -27,10 +28,11 @@ class RegisterViewState extends ConsumerState<RegisterView> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenInfo screenInfo = getScreenInfo(context);
+    final screenInfo = ref.watch(screenInfoProvider);
     double fontSize = screenInfo.fontSize;    
     double deviceHeight = screenInfo.screenHeight;
     double deviceWidth = screenInfo.screenWidth;
+    bool isTablet = screenInfo.screenWidth > 600;
 
     final grade = ref.watch(gradeProvider);
     final semesterCode = ref.watch(semesterCodeProvider);
@@ -43,35 +45,48 @@ class RegisterViewState extends ConsumerState<RegisterView> {
     return Scaffold(
       backgroundColor: '#1E1E1E'.toColor(),
       body: SizedBox.expand(
+        
         child: Column(
           children: <Widget>[
+            SizedBox(height: isTablet ? fontSize * 1.5 : fontSize * 3.0), // 避開 iPhone 11 Pro Max 的瀏海
+            /*
             Container(
-                height: fontSize * 10.0, // was 7.5 before 學期
-                width: deviceWidth,
-                decoration: BoxDecoration(
-                  color: '#013E6D'.toColor(),
+              height: fontSize * 6.0, // was 7.5 before 學期
+              width: deviceWidth * 0.7,
+              decoration: BoxDecoration(
+                color: '#013E6D'.toColor(),
+              ),
+              alignment: Alignment.center,
+              child: Column(
+                children: <Widget>[
+                  Text('請選擇：年級、學期、課本版本',
+                      style: TextStyle(
+                        color: '#F5F5DC'.toColor(),
+                        fontSize: fontSize * 1.2,
+                      )),
+                ],
+              )
+            ),
+            */
+            Container(
+              height: fontSize * 6.0, // Adjust as needed
+              width: deviceWidth * 0.7,
+              decoration: BoxDecoration(
+                color: '#013E6D'.toColor(),
+              ),
+              alignment: Alignment.center,  // Centers the content within the container
+              child: Center(  // Ensures the text is centered both vertically and horizontally
+                child: Text(
+                  '請選擇：年級、學期、課本版本',
+                  style: TextStyle(
+                    color: '#F5F5DC'.toColor(),
+                    fontSize: fontSize * 1.2,
+                  ),
+                  textAlign: TextAlign.center,  // Centers the text within its own bounds
                 ),
-                alignment: Alignment.center,
-                child: Column(
-                  children: <Widget>[
-                    SizedBox(height: fontSize * 1.5), // 避開 iPhone 11 Pro Max 的瀏海
-                    Text('年級',
-                        style: TextStyle(
-                          color: '#F5F5DC'.toColor(),
-                          fontSize: fontSize * 1.2,
-                        )),
-                    Text('學期',
-                        style: TextStyle(
-                          color: '#F5F5DC'.toColor(),
-                          fontSize: fontSize * 1.2,
-                        )),
-                    Text('課本版本',
-                        style: TextStyle(
-                          color: '#F5F5DC'.toColor(),
-                          fontSize: fontSize * 1.2,
-                        ))
-                  ],
-                )),
+              ),
+            ),
+
             SizedBox(height: fontSize * 1.0),
             Icon(
               Icons.home_filled,
@@ -210,8 +225,9 @@ class RegisterViewState extends ConsumerState<RegisterView> {
                       );
 
                       ref.read(learnedWordCountProvider.notifier).state = 0;
-                      if (!mounted) return;
-                      Navigator.of(context).pushNamed('/mainPage');
+                      if (!context.mounted) return;
+                      // Navigator.of(context).pushNamed('/mainPage');
+                      navigateWithProvider(context, '/mainPage', ref);
                     },
                   )),
             )
