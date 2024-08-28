@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/contants/register_question_label.dart';
 import 'package:ltrc/data/models/user_model.dart';
 import 'package:ltrc/extensions.dart';
+import 'package:ltrc/providers.dart';
 import 'package:ltrc/views/view_utils.dart';
 
-class SafetyHintVerifyView extends StatefulWidget {
+class SafetyHintVerifyView extends ConsumerStatefulWidget {
   const SafetyHintVerifyView({super.key});
 
   @override
-  State<SafetyHintVerifyView> createState() => _SafetyHintVerifyState();
+  ConsumerState<SafetyHintVerifyView> createState() => _SafetyHintVerifyState();
 }
 
 const String notAnsweredRrrorHint = "尚未回答完安全提示問題";
 const String inCorrectRrrorHint = "安全提示問題回答錯誤";
 
-class _SafetyHintVerifyState extends State<SafetyHintVerifyView> {
+class _SafetyHintVerifyState extends ConsumerState<SafetyHintVerifyView> {
   final TextEditingController a1Controller = TextEditingController();
   final TextEditingController a2Controller = TextEditingController();
 
@@ -28,7 +30,7 @@ class _SafetyHintVerifyState extends State<SafetyHintVerifyView> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenInfo screenInfo = getScreenInfo(context);
+    final screenInfo = ref.watch(screenInfoProvider);
     double fontSize = screenInfo.fontSize;    
     double deviceHeight = screenInfo.screenHeight;
 
@@ -174,8 +176,14 @@ class _SafetyHintVerifyState extends State<SafetyHintVerifyView> {
                             showErrorHint = inCorrectRrrorHint;
                           });
                         } else {
-                          Navigator.of(context).pushNamed('/setNewPwd',
-                              arguments: {'user': user});
+                          // Navigator.of(context).pushNamed('/setNewPwd', arguments: {'user': user});
+                          navigateWithProvider(
+                            context, 
+                            '/setNewPwd', 
+                            ref, 
+                            arguments: {'user': user}
+                          );
+                              
                         }
                       },
                       child: Text('下一步',

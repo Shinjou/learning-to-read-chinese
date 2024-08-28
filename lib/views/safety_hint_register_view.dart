@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/contants/register_question_label.dart';
 import 'package:ltrc/extensions.dart';
+import 'package:ltrc/providers.dart';
 import 'package:ltrc/views/view_utils.dart';
 
-class SafetyHintRegisterView extends StatefulWidget {
+class SafetyHintRegisterView extends ConsumerStatefulWidget {
   const SafetyHintRegisterView({super.key});
 
   @override
-  State<SafetyHintRegisterView> createState() => _SafetyHintRegisterState();
+  ConsumerState<SafetyHintRegisterView> createState() => _SafetyHintRegisterState();
 }
 
 const String notSelectQuestionRrrorHint = "尚未選擇安全提示問題";
 const String noAnswerRrrorHint = "尚未回答安全提示問題";
 
-class _SafetyHintRegisterState extends State<SafetyHintRegisterView> {
+class _SafetyHintRegisterState extends ConsumerState<SafetyHintRegisterView> {
   final TextEditingController q1Controller = TextEditingController();
   final TextEditingController a1Controller = TextEditingController();
   final TextEditingController q2Controller = TextEditingController();
@@ -33,7 +35,7 @@ class _SafetyHintRegisterState extends State<SafetyHintRegisterView> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenInfo screenInfo = getScreenInfo(context);
+    final screenInfo = ref.watch(screenInfoProvider);
     double fontSize = screenInfo.fontSize;    
     double deviceHeight = screenInfo.screenHeight;
 
@@ -281,8 +283,20 @@ class _SafetyHintRegisterState extends State<SafetyHintRegisterView> {
                             showErrorHint = noAnswerRrrorHint;
                           });
                         } else {
+                          /*
                           Navigator.of(context)
                               .pushNamed('/register', arguments: {
+                            'q1': selectedQuestion1?.value,
+                            'a1': a1Controller.text,
+                            'q2': selectedQuestion2?.value,
+                            'a2': a2Controller.text,
+                          });
+                          */
+                          navigateWithProvider(
+                            context, 
+                            '/register', 
+                            ref, 
+                            arguments: {
                             'q1': selectedQuestion1?.value,
                             'a1': a1Controller.text,
                             'q2': selectedQuestion2?.value,
