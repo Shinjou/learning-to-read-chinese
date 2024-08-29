@@ -123,6 +123,7 @@ class PolyphonicProcessor {
         '個': Tuple3("0000", false, false), // 個平常是四聲，一個的個要念輕聲，一念一聲，個這個字下一次處理
         '个': Tuple3("0000", false, false), // 個平常是四聲，一个的个要念輕聲，一念一聲，个這個字下一次處理
         '會': Tuple3("0000", false, false), // 會平常是四聲，一會的會要念“悔”三聲，一念一聲，會這個字下一次處理
+        '切': Tuple3("0000", false, false), // 切平常是一聲，一切的切念四聲，一念一聲，切這個字下一次處理
       };
 
       const Map<String, Tuple3<String, bool, bool>> specialBuCases = {
@@ -134,20 +135,19 @@ class PolyphonicProcessor {
       };
 
       if (currentChar == '一') {
-        // check if nextChar is in specialYiCases
-        if (specialYiCases.containsKey(nextChar)) {
-          debugPrint('一$nextChar，一 一聲，$nextChar 特殊聲調');
-          return specialYiCases[nextChar]!;
-        }        
-        // Check prevChar conditions first
+        // Check prevChar conditions, then nextChar special conditions, then general cases
         if ((!skipPrev) && (prevChar == null ||
-          ['第', '説', '说', '唯', '惟', '统', '統', '独', '獨', '劃', '划', '萬'].contains(prevChar) ||
+          ['第', '説', '说', '唯', '惟', '统', '統', '独', '獨', '劃', '划', '萬', '專'].contains(prevChar) ||
           ['十', '九', '八', '七', '六', '五', '四', '三', '二', '〇', '零'].contains(prevChar))) {
           // debugPrint('Returning first tone for 一 based on special prevChar');
           return const Tuple3("0000", false, true); // Use the default, First tone
+        } else if (specialYiCases.containsKey(nextChar)) {
+          // check if nextChar is in specialYiCases
+          debugPrint('一$nextChar，一 一聲，$nextChar 特殊聲調');
+          return specialYiCases[nextChar]!;
         } else if (nextChar == null || nextChar.isEmpty ||
-                ['是', '日', '月', '的', '或'].contains(nextChar) ||
-                ['十', '九', '八', '七', '六', '五', '四', '三', '二', '〇', '零'].contains(nextChar)) {
+            ['是', '日', '月', '的', '或', '物', '片', '系'].contains(nextChar) ||
+            ['十', '九', '八', '七', '六', '五', '四', '三', '二', '〇', '零', '千'].contains(nextChar)) {
           // debugPrint('Skipping $nextChar for 一 based on special nextChar');
           return const Tuple3("0000", true, true); // Use the default, First tone, and skip the next character
         } else if (nextTone != null && (nextTone == 1 || nextTone == 2 || nextTone == 3)) {
