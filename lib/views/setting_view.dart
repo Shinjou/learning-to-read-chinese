@@ -447,7 +447,7 @@ class SettingViewState extends ConsumerState<SettingView> {
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           // Only add the "刪除帳號" button if account is not 'tester'
-                          if (account != 'tester')
+                          if (account != 'tester' && account != 'testerbpmf')
                             Expanded(
                               child: TextButton(
                                 onPressed: () {
