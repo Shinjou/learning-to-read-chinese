@@ -25,7 +25,7 @@ class UserProvider {
   static const String databasePublisher = 'publisher';
 
   static const String _dbName = 'users.sqlite';
-    static const int _dbVersion = 4; // 2/25/2024
+    static const int _dbVersion = 5; // 8/29/2024
   static const String _wordStatusTable = 'wordStatus';
 
   static Future<Database> get database async {
@@ -49,7 +49,9 @@ class UserProvider {
       if (!dbExists) {
         await _copyDbFromAssets(dbPath);
         dbExists = true;
+        _database = await openDatabase(dbPath);
         debugPrint('$_dbName copied from assets.');
+        return _database!;
       } 
 
       // Open the database
@@ -57,15 +59,48 @@ class UserProvider {
 
       // Checking and potentially upgrading the database version
       int currentVersion = await _database!.getVersion();
-
       if (currentVersion < _dbVersion) {
         debugPrint('Upgrading $_dbName from version $currentVersion to $_dbVersion ...');
         // users.sqlite如果需要 upgrade，需要個別處理
         // Ver 4，新增“鸚”一字。先刪掉舊的，再新增新的。
-        await deleteWord(db: _database, userAccount: 'tester', word: '鸚');
-        await addWord(db: _database, userAccount: 'tester', word: '鸚', learned: 1, liked: 1);
-        await _database!.setVersion(_dbVersion);  
-        debugPrint('Upgrade $_dbName successfully to version $_dbVersion');
+        try {
+          await deleteWord(db: _database, userAccount: 'tester', word: '鸚');
+          await addWord(db: _database, userAccount: 'tester', word: '鸚', learned: 1, liked: 1);
+          /* 8/29/2024 can not add user testerbpmf
+          // The following code will cause a disk I/O error
+          await _addUser(db: _database, user: User(
+            account: 'testerbpmf',
+            password: '1234',
+            username: 'testerbpmf',
+            safetyQuestionId1: 1,
+            safetyAnswer1: '1234',
+            safetyQuestionId2: 2,
+            safetyAnswer2: '1234',
+            grade: 1,
+            semester: '上',
+            publisher: '康軒',
+          ));
+          // the following code will cause a loop of _initDatabase() and upgrade
+          await addUser(
+            user: User(
+              account: 'testerbpmf',
+              password: '1234',
+              username: 'testerbpmf',
+              safetyQuestionId1: 1,
+              safetyAnswer1: '1234',
+              safetyQuestionId2: 2,
+              safetyAnswer2: '1234',
+              grade: 1,
+              semester: '上',
+              publisher: '康軒',
+            ),
+          );       
+          */
+          await _database!.setVersion(_dbVersion);  
+          debugPrint('Upgrade $_dbName successfully to version $_dbVersion');
+        } catch (e) {
+          throw ("Error in upgrade users.sqlite: $e");
+        }
       } else {
         debugPrint('Database $_dbName opened successfully...');
       }
@@ -135,14 +170,37 @@ class UserProvider {
   }
 
   static Future<void> addUser({required User user}) async {
-    final Database db = await getDBConnect();
-    await db.insert(
-      tableName,
-      user.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+    try {
+      final Database db = await getDBConnect();
+      await db.insert(
+        tableName,
+        user.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+      debugPrint("User $user added successfully");
+    } catch (e) {
+      debugPrint('Error while adding a new user: $e');
+    }
   }
-
+  /*
+  static Future<void> _addUser({
+    required Database? db,
+    required User user,
+  }) async {
+    try {
+      // final Database db = await getDBConnect();
+      await db?.insert(
+        tableName,
+        user.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+      debugPrint("User $user added successfully");
+    } catch (e) {
+      debugPrint('Error while adding a new user: $e');
+    }
+  }
+  */
+  
   static Future<User> getUser({required String inputAccount}) async {
     final Database db = await getDBConnect();
     try {

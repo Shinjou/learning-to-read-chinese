@@ -24,6 +24,7 @@ class MainPageView extends ConsumerWidget {
     double deviceHeight = screenInfo.screenHeight;
     double deviceWidth = screenInfo.screenWidth;
     debugPrint('main_page_view: Height: $deviceHeight, Width: $deviceWidth, fontSize: $fontSize');
+    String account = ref.read(accountProvider);
     int totalWordCount = ref.watch(totalWordCountProvider);
     int learnedWordCount = ref.watch(learnedWordCountProvider);
 
@@ -48,135 +49,124 @@ class MainPageView extends ConsumerWidget {
             )
           ],
         ),
+
         body: SizedBox.expand(
           child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Container(
-                    height: fontSize * 3.2,
-                    alignment: Alignment.center,
-                    margin: EdgeInsetsDirectional.fromSTEB(
-                        0, deviceHeight * 0.0825, 0, deviceHeight * 0.193),
-                    child: Text('學國語',
-                        style: TextStyle(
-                          fontSize: fontSize * 2.0,
-                        ))),
-                Padding(
-                    // padding:
-                        // EdgeInsetsDirectional.only(bottom: deviceHeight * 0.15),
-                    padding: const EdgeInsets.symmetric(vertical: 4.0),
-                    child: SizedBox(
-                      width: deviceWidth * 0.8,
-                      height: deviceHeight * 0.095,
-                      child: ElevatedButton(
-                          onPressed: () async {
-                            int semesterCode =
-                                ref.watch(semesterCodeProvider);
-                            int publisherCode =
-                                ref.watch(publisherCodeProvider);
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Container(
+                height: fontSize * 3.2,
+                alignment: Alignment.center,
+                margin: EdgeInsetsDirectional.fromSTEB(
+                  0, deviceHeight * 0.0825, 0, deviceHeight * 0.193),
+                child: Text(
+                  '學國語',
+                  style: TextStyle(
+                    fontSize: fontSize * 2.0,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                child: SizedBox(
+                  width: deviceWidth * 0.8,
+                  height: deviceHeight * 0.095,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      int semesterCode = ref.watch(semesterCodeProvider);
+                      int publisherCode = ref.watch(publisherCodeProvider);
 
-                            List<Unit> units = await UnitProvider.getUnits(
-                                inputPublisher:
-                                    publisherCodeTable[publisherCode]!,
-                                inputGrade: ref.watch(gradeProvider),
-                                inputSemester: semesterCodeTable[semesterCode]!);
-                            if (!context.mounted) return;    
-                            /*
-                            Navigator.of(context).pushNamed(
-                              '/units',
-                              arguments: {'units': units},
-                            );
-                            */
-                            navigateWithProvider(
-                                context, 
-                                '/units', 
-                                ref, 
-                                arguments: {'units': units}
-                            );
-                          },
+                      List<Unit> units = await UnitProvider.getUnits(
+                        inputPublisher: publisherCodeTable[publisherCode]!,
+                        inputGrade: ref.watch(gradeProvider),
+                        inputSemester: semesterCodeTable[semesterCode]!);
+                      if (!context.mounted) return;    
+                      navigateWithProvider(
+                        context, 
+                        '/units', 
+                        ref, 
+                        arguments: {'units': units}
+                      );
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.all('#013E6D'.toColor()),
+                      elevation: WidgetStateProperty.all(25),
+                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12))),
+                    ),
+                    child: Text(
+                      '學生字',
+                      style: TextStyle(
+                        fontSize: fontSize * 1.5,
+                        color: '#F5F5DC'.toColor(),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
+              // Conditionally show the Zhuyin verification button
+              if (account == 'tester' || account == 'testerbpmf') 
+                Column(
+                  children: [
+                    SizedBox(height: fontSize * 0.5),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4.0),                
+                      child: SizedBox(
+                        width: deviceWidth * 0.8,
+                        height: deviceHeight * 0.095,
+                        child: ElevatedButton(
+                          onPressed: () => navigateWithProvider(context, '/checkzhuyin', ref),
                           style: ButtonStyle(
-                            backgroundColor:
-                                WidgetStateProperty.all('#013E6D'.toColor()),
+                            backgroundColor: WidgetStateProperty.all('#013E6D'.toColor()),
                             elevation: WidgetStateProperty.all(25),
-                            shape: WidgetStateProperty.all<
-                                    RoundedRectangleBorder>(
-                                RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12))),
+                            shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12))),
                           ),
-                          child: Text('學生字',
-                              style: TextStyle(
-                                fontSize: fontSize * 1.5,
-                                color: '#F5F5DC'.toColor(),
-                              ))),
-                    ),
-                ),
-
-                // The following button is for verifying all words with zhuyin
-                SizedBox(height: fontSize * 0.5),
-                Padding(
-                  // padding: EdgeInsets.symmetric(vertical: 8.0),
-                  // padding:
-                  //     EdgeInsetsDirectional.only(bottom: deviceHeight * 0.15),  
-                  padding: const EdgeInsets.symmetric(vertical: 4.0),                
-                  child: SizedBox(
-                    width: deviceWidth * 0.8,
-                    height: deviceHeight * 0.095,
-                    child: ElevatedButton(
-                      // onPressed: () => Navigator.of(context).pushNamed('/checkzhuyin'),
-                      onPressed: () => navigateWithProvider(context, '/checkzhuyin', ref),
-                      style: ButtonStyle(
-                        backgroundColor: WidgetStateProperty.all('#013E6D'.toColor()),
-                        elevation: WidgetStateProperty.all(25),
-                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                            RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12))),
+                          child: Text(
+                            '檢查字詞的注音',
+                            style: TextStyle(
+                              fontSize: fontSize * 1.5,
+                              color: '#F5F5DC'.toColor(),
+                            ),
+                          ),
+                        ),
                       ),
-                      child: Text('檢查字詞的注音',
-                          style: TextStyle(
-                            fontSize: fontSize * 1.5,
-                            color: '#F5F5DC'.toColor(),
-                          )),
+                    ),
+                  ],
+                ),
+                                                      
+              SizedBox(height: fontSize * 0.5),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                child: SizedBox(
+                  width: deviceWidth * 0.8,
+                  height: deviceHeight * 0.095,
+                  child: ElevatedButton(
+                    onPressed: () => navigateWithProvider(context, '/duoyinzi', ref),
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.all('#013E6D'.toColor()),
+                      elevation: WidgetStateProperty.all(25),
+                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12))),
+                    ),
+                    child: Text(
+                      '標示注音符號',
+                      style: TextStyle(
+                        fontSize: fontSize * 1.5,
+                        color: '#F5F5DC'.toColor(),
+                      ),
                     ),
                   ),
                 ),
-                                            
-                SizedBox(height: fontSize * 0.5),
-                Padding(
-                  // padding: EdgeInsets.symmetric(vertical: 8.0),
-                  // padding: EdgeInsetsDirectional.only(bottom: deviceHeight * 0.15),          
-                  padding: const EdgeInsets.symmetric(vertical: 4.0),             
-                  child: SizedBox(
-                    width: deviceWidth * 0.8,
-                    height: deviceHeight * 0.095,
-                    child: ElevatedButton(
-                      // onPressed: () => Navigator.of(context).pushNamed('/duoyinzi'),
-                      onPressed: () => navigateWithProvider(context, '/duoyinzi', ref),
-                      style: ButtonStyle(
-                        backgroundColor: WidgetStateProperty.all('#013E6D'.toColor()),
-                        elevation: WidgetStateProperty.all(25),
-                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                            RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12))),
-                      ),
-                      child: Text('標示注音符號',
-                          style: TextStyle(
-                            fontSize: fontSize * 1.5,
-                            color: '#F5F5DC'.toColor(),
-                          )),
-                    ),
-                  ),
-                ),
+              ),
 
-                /* 數字不準確，暫時不顯示
-                Text('學過的生字卡',
-                    style: TextStyle(
-                      fontSize: fontSize * 1.3,
-                    )),
-                ProgressBar(maxCount: totalWordCount, value: learnedWordCount),
-                */
-              ]),
+              // Additional UI elements...
+            ],
+          ),
         ));
-  
   }
-
 }
