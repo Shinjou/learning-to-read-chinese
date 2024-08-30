@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/extensions.dart';
-import 'package:ltrc/providers.dart';
+// import 'package:ltrc/providers.dart';
+import 'package:ltrc/views/view_utils.dart';
 
 
 class TeachWordTabBarView extends ConsumerWidget {
@@ -13,15 +14,17 @@ class TeachWordTabBarView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final screenInfo = ref.watch(screenInfoProvider);
+    // final screenInfo = ref.watch(screenInfoProvider);
+    final screenInfo = getScreenInfo(context);
     double fontSize = screenInfo.fontSize;    
     double deviceHeight = screenInfo.screenHeight;
     double deviceWidth = screenInfo.screenWidth;
+    debugPrint('TeachWordTabBarView: Height: $deviceHeight, Width: $deviceWidth, fontSize: $fontSize');
 
     return Column(children: [
       SizedBox(
-        height: (deviceHeight - 110) *
-            0.80, // 100 did not work in iPhone 14 pro max
+        
+        height: (deviceHeight - 110) * 0.80, // 100 did not work in iPhone 14 pro max
         width: deviceWidth,
         child: Container(
           decoration: BoxDecoration(

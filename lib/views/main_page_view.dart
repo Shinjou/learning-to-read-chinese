@@ -17,10 +17,13 @@ class MainPageView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     
-    final screenInfo = ref.watch(screenInfoProvider);
+    // final screenInfo = ref.watch(screenInfoProvider);
+    final screenInfo = getScreenInfo(context);
+    // final screenInfo = getScreenInfo(context);
     double fontSize = screenInfo.fontSize;    
     double deviceHeight = screenInfo.screenHeight;
     double deviceWidth = screenInfo.screenWidth;
+    debugPrint('main_page_view: Height: $deviceHeight, Width: $deviceWidth, fontSize: $fontSize');
     int totalWordCount = ref.watch(totalWordCountProvider);
     int learnedWordCount = ref.watch(learnedWordCountProvider);
 

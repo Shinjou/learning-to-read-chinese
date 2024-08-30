@@ -558,13 +558,15 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
   Widget build(BuildContext context) {
     // bool wordIsLearned = widget.wordsStatus[widget.wordIndex].learned;
 
-    final screenInfo = ref.watch(screenInfoProvider);
+    // final screenInfo = ref.watch(screenInfoProvider);
+    final screenInfo = getScreenInfo(context);
     fontSize = screenInfo.fontSize;
     double deviceHeight = screenInfo.screenHeight;
     double deviceWidth = screenInfo.screenWidth;
-    double availableWidth = deviceWidth - 20; // 10 padding on each side
-    double availableHeight =
-        deviceHeight - 20; // example padding top and bottom
+    debugPrint('teach_word_view height: $deviceHeight, width: $deviceWidth, fontSize: $fontSize');
+
+    double availableWidth = deviceWidth - 10; // 10 padding on each side
+    double availableHeight = deviceHeight - 10; // example padding top and bottom
     double nonConsumedHeight = deviceHeight * 0.15; // was 0.20;
     var gray85Color = '#D9D9D9'.toColor();
 
@@ -1413,7 +1415,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                         final screenInfo = ref.read(screenInfoProvider);
                         return ProviderScope(
                           overrides: [
-                            screenInfoProvider.overrideWithValue(screenInfo),
+                            screenInfoProvider.overrideWith((ref) => screenInfo),
                           ],
                           child: TeachWordView(
                             unitId: widget.unitId,
@@ -1444,7 +1446,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                         final screenInfo = ref.read(screenInfoProvider);
                         return ProviderScope(
                           overrides: [
-                            screenInfoProvider.overrideWithValue(screenInfo),
+                            screenInfoProvider.overrideWith((ref) => screenInfo),
                           ],
                           child: TeachWordView(
                             unitId: widget.unitId,

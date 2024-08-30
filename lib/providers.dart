@@ -14,7 +14,8 @@ final userNameProvider = StateProvider<String>((ref) => "");
 final totalWordCountProvider = StateProvider<int>((ref) => 186);
 final learnedWordCountProvider = StateProvider<int>((ref) => 0);
 
-final screenInfoProvider = Provider<ScreenInfo>((ref) {
+
+final screenInfoProvider = StateProvider<ScreenInfo>((ref) {
   // This provider must be overridden where BuildContext is available
   throw UnimplementedError('Override this provider in a Widget that has access to BuildContext.');
 });

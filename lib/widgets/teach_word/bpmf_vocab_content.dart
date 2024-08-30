@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:ltrc/providers.dart';
+// import 'package:ltrc/providers.dart';
+import 'package:ltrc/views/view_utils.dart';
 import 'package:ltrc/widgets/teach_word/zhuyin_processing.dart';
 
 class BopomofoVocabContent extends ConsumerWidget {
@@ -28,7 +29,8 @@ class BopomofoVocabContent extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final screenInfo = ref.watch(screenInfoProvider);
+    // final screenInfo = ref.watch(screenInfoProvider);
+    final screenInfo = getScreenInfo(context);
     double fontSize = screenInfo.fontSize;    
 
     String subSentence = sentence;

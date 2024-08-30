@@ -6,7 +6,7 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ltrc/providers.dart';
+// import 'package:ltrc/providers.dart';
 import 'package:ltrc/views/polyphonic_processor.dart';
 import 'package:ltrc/views/view_utils.dart';
 
@@ -112,7 +112,8 @@ class DuoyinziViewState extends ConsumerState<DuoyinziView> {
 
   @override
   Widget build(BuildContext context) {
-    final screenInfo = ref.watch(screenInfoProvider);
+    // final screenInfo = ref.watch(screenInfoProvider);
+    final screenInfo = getScreenInfo(context);
     fontSize = screenInfo.fontSize;   
     // bool isTablet = screenInfo.screenWidth > 600;
 

@@ -65,9 +65,10 @@ class HomePageInitializer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenInfo = getScreenInfo(context);
+    
     return ProviderScope(
       overrides: [
-        screenInfoProvider.overrideWithValue(screenInfo),
+        screenInfoProvider.overrideWith((ref) => screenInfo),
       ],
       child: const HomePage(),
     );
@@ -79,10 +80,21 @@ class HomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final screenInfo = ref.watch(screenInfoProvider);
-
     return OrientationBuilder(
       builder: (context, orientation) {
+        debugPrint("main: Orientation changed: ${MediaQuery.of(context).orientation == Orientation.portrait ? 'Portrait' : 'Landscape'}");
+        final screenInfo = getScreenInfo(context);
+
+        /* Can not update directly in the build method
+        ref.read(screenInfoProvider.notifier).state = screenInfo;
+        debugPrint("HomePage screenInfoProvider: ${screenInfo.screenHeight}, ${screenInfo.screenWidth}, ${screenInfo.fontSize}");
+        */
+        // Defer the state update until after the current frame is rendered
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ref.read(screenInfoProvider.notifier).state = screenInfo;
+          debugPrint("HomePage screenInfoProvider: ${screenInfo.screenHeight}, ${screenInfo.screenWidth}, ${screenInfo.fontSize}");
+        });
+
         return Scaffold(
           appBar: AppBar(
             title: Text(

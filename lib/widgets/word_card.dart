@@ -67,7 +67,7 @@ class WordCardState extends ConsumerState<WordCard> {
               final screenInfo = ref.read(screenInfoProvider);
               return ProviderScope(
                 overrides: [
-                  screenInfoProvider.overrideWithValue(screenInfo),
+                  screenInfoProvider.overrideWith((ref) => screenInfo),
                 ],
                 child: TeachWordView(
                   unitId: widget.unitId,

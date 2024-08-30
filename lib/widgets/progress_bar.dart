@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/extensions.dart';
-import 'package:ltrc/providers.dart';
+// import 'package:ltrc/providers.dart';
+import 'package:ltrc/views/view_utils.dart';
 
 class ProgressBar extends ConsumerWidget {
   const ProgressBar({super.key, required this.maxCount, required this.value});
@@ -11,7 +12,8 @@ class ProgressBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final screenInfo = ref.watch(screenInfoProvider);
+    // final screenInfo = ref.watch(screenInfoProvider);
+    final screenInfo = getScreenInfo(context);
     double fontSize = screenInfo.fontSize;    
     double deviceWidth = screenInfo.screenWidth;
     double iconSize = fontSize * 2.0;

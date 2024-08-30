@@ -50,7 +50,8 @@ class _RegisterAccountViewState extends ConsumerState<RegisterAccountView> {
 
   @override
   Widget build(BuildContext context) {
-    final screenInfo = ref.watch(screenInfoProvider);
+    // final screenInfo = ref.watch(screenInfoProvider);
+    final screenInfo = getScreenInfo(context);
     double fontSize = screenInfo.fontSize;    
     double deviceHeight = screenInfo.screenHeight;
     double deviceWidth = screenInfo.screenWidth;

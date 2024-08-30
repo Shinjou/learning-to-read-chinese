@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ltrc/providers.dart';
+// import 'package:ltrc/providers.dart';
+import 'package:ltrc/views/view_utils.dart';
 
 class Resource{
   final String resource;
@@ -49,8 +50,13 @@ class AcknowledgeView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final screenInfo = ref.watch(screenInfoProvider);
+    // final screenInfo = ref.watch(screenInfoProvider);
+    final screenInfo = getScreenInfo(context);
     double fontSize = screenInfo.fontSize;
+    bool isTablet = screenInfo.screenWidth > 600;
+    if (isTablet && MediaQuery.of(context).orientation == Orientation.landscape) {
+      fontSize *= 1.3;
+    }
     
     int count = 0;
     return Scaffold(

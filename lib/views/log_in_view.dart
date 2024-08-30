@@ -37,26 +37,31 @@ class LogInViewState extends ConsumerState<LogInView> {
 
   @override
   Widget build(BuildContext context) {
-    /*
-    final screenInfo = ref.watch(screenInfoProvider);
-    */
-    final screenInfo = ref.watch(screenInfoProvider);
-    double fontSize = screenInfo.fontSize;    
+    // final screenInfo = ref.watch(screenInfoProvider);
+    final screenInfo = getScreenInfo(context);
+    // final screenInfo = getScreenInfo(context);
+    double fontSize = screenInfo.fontSize;
     double deviceHeight = screenInfo.screenHeight;
     double deviceWidth = screenInfo.screenWidth;
-    // debugPrint('Height: $deviceHeight, Width: $deviceWidth, fontSize: $fontSize');
+    debugPrint('log_in_view: Height: $deviceHeight, Width: $deviceWidth, fontSize: $fontSize');
 
     return GestureDetector(
-        onTap: () {
-          FocusScopeNode currentFocus = FocusScope.of(context);
-          if (!currentFocus.hasPrimaryFocus) {
-            currentFocus.unfocus();
-          }
-        },
-        child: Scaffold(
-            resizeToAvoidBottomInset: false,
-            backgroundColor: '#1E1E1E'.toColor(),
-            body: Column(
+      onTap: () {
+        FocusScopeNode currentFocus = FocusScope.of(context);
+        if (!currentFocus.hasPrimaryFocus) {
+          currentFocus.unfocus();
+        }
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        backgroundColor: '#1E1E1E'.toColor(),
+        body: SingleChildScrollView(  // Allow scrolling in case of overflow
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: deviceHeight,
+            ),
+            child: IntrinsicHeight(  // Ensure the Column takes up minimum height of the screen
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   SizedBox(height: deviceHeight * 0.1),
@@ -75,8 +80,7 @@ class LogInViewState extends ConsumerState<LogInView> {
                               width: 0.3 * fontSize,
                               color: '#F5F5DC'.toColor())),
                       child: Padding(
-                        padding:
-                            const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
+                        padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
                         child: TextField(
                             controller: accountController,
                             style: TextStyle(
@@ -92,10 +96,8 @@ class LogInViewState extends ConsumerState<LogInView> {
                                 fontSize: fontSize * 1.2,
                                 color: '#1C1B1F'.toColor(),
                               ),
-                              floatingLabelBehavior:
-                                  FloatingLabelBehavior.always,
-                              floatingLabelAlignment:
-                                  FloatingLabelAlignment.center,
+                              floatingLabelBehavior: FloatingLabelBehavior.always,
+                              floatingLabelAlignment: FloatingLabelAlignment.center,
                               focusedBorder: InputBorder.none,
                               enabledBorder: InputBorder.none,
                             )),
@@ -111,8 +113,7 @@ class LogInViewState extends ConsumerState<LogInView> {
                               width: 0.3 * fontSize,
                               color: '#F5F5DC'.toColor())),
                       child: Padding(
-                        padding:
-                            const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
+                        padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
                         child: TextField(
                             controller: pwdController,
                             obscureText: pwdVisible,
@@ -129,16 +130,12 @@ class LogInViewState extends ConsumerState<LogInView> {
                                 fontSize: fontSize * 1.2,
                                 color: '#1C1B1F'.toColor(),
                               ),
-                              floatingLabelBehavior:
-                                  FloatingLabelBehavior.always,
-                              floatingLabelAlignment:
-                                  FloatingLabelAlignment.center,
+                              floatingLabelBehavior: FloatingLabelBehavior.always,
+                              floatingLabelAlignment: FloatingLabelAlignment.center,
                               focusedBorder: InputBorder.none,
                               enabledBorder: InputBorder.none,
                               suffixIcon: IconButton(
-                                icon: Icon(pwdVisible
-                                    ? Icons.visibility
-                                    : Icons.visibility_off),
+                                icon: Icon(pwdVisible ? Icons.visibility : Icons.visibility_off),
                                 iconSize: fontSize,
                                 onPressed: () {
                                   setState(() {
@@ -154,7 +151,6 @@ class LogInViewState extends ConsumerState<LogInView> {
                       child: Align(
                         alignment: AlignmentDirectional.bottomEnd,
                         child: TextButton(
-                          // onPressed: () => Navigator.of(context).pushNamed('/resetPwdAccount'),
                           onPressed: () => navigateWithProvider(context, '/resetPwdAccount', ref),
                           style: TextButton.styleFrom(
                             minimumSize: const Size(110, 16),
@@ -188,10 +184,8 @@ class LogInViewState extends ConsumerState<LogInView> {
                           children: <Widget>[
                         TextButton(
                             onPressed: () async {
-                              accountController.text = accountController.text
-                                  .trim(); // remove leading and trailing spaces
-                              pwdController.text = pwdController.text
-                                  .trim(); // remove leading and trailing spaces
+                              accountController.text = accountController.text.trim();
+                              pwdController.text = pwdController.text.trim();
                               if (accountController.text.length < 6) {
                                 setState(() {
                                   showErrorHint = accountLengthErrorHint;
@@ -199,19 +193,15 @@ class LogInViewState extends ConsumerState<LogInView> {
                               } else {
                                 try {
                                   User user = await UserProvider.getUser(inputAccount: accountController.text);
-                                  
-                                  // Print statement to confirm a user was found
+
                                   debugPrint('User found: ${user.account}');
 
                                   if (user.password != pwdController.text) {
-                                    // Print statement when the password does not match
                                     debugPrint('Password does not match for user: ${user.account}');
-
                                     setState(() {
                                       showErrorHint = pwdConfirmErrorHint;
                                     });
                                   } else {
-                                    // Print statement when the password matches
                                     debugPrint('Password matched for user: ${user.account}');
 
                                     ref.read(accountProvider.notifier).state = accountController.text;
@@ -225,7 +215,6 @@ class LogInViewState extends ConsumerState<LogInView> {
                                     ref.read(totalWordCountProvider.notifier).state = await UnitProvider.getTotalWordCount(
                                       inputPublisher: user.publisher,
                                       inputGrade: user.grade,
-                                      // inputSemester: "上",
                                       inputSemester: user.semester,
                                     );
 
@@ -233,25 +222,20 @@ class LogInViewState extends ConsumerState<LogInView> {
                                       inputAccount: accountController.text,
                                       inputPublisher: user.publisher,
                                       inputGrade: user.grade,
-                                      // inputSemester: "上",
                                       inputSemester: user.semester,
                                     );
-                                    
+
                                     if (!context.mounted) return;
 
-                                    // Navigator.of(context).pushNamed('/mainPage');
                                     navigateWithProvider(context, '/mainPage', ref);
                                   }
                                 } catch (e) {
-                                  // Print statement when the user is not found or another error occurs
                                   debugPrint('Error fetching user: $e');
-
                                   setState(() {
                                     showErrorHint = abnormalErrorHint;
                                   });
                                 }
                               }
-                            
                             },
                             style: TextButton.styleFrom(
                               minimumSize: const Size(110, 30),
@@ -266,7 +250,6 @@ class LogInViewState extends ConsumerState<LogInView> {
                               fontSize: fontSize * 1.4,
                             )),
                         TextButton(
-                            // onPressed: () => Navigator.of(context).pushNamed('/registerAccount'),
                             onPressed: () => navigateWithProvider(context, '/registerAccount', ref),
                             style: TextButton.styleFrom(
                               minimumSize: const Size(110, 30),
@@ -277,6 +260,14 @@ class LogInViewState extends ConsumerState<LogInView> {
                                   color: '#F5F5DC'.toColor(),
                                 )))
                       ])),
-                ])));
+                  const Spacer(),  // Spacer to push content up
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
+
 }

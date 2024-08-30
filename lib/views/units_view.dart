@@ -33,10 +33,11 @@ class UnitsViewState extends ConsumerState<UnitsView> {
 
   @override
   Widget build(BuildContext context) {
-    final screenInfo = ref.watch(screenInfoProvider);
+    // final screenInfo = ref.watch(screenInfoProvider);
+    final screenInfo = getScreenInfo(context);
     double fontSize = screenInfo.fontSize;    
     bool isTablet = screenInfo.screenWidth > 600;
-    if (isTablet) fontSize = fontSize * 1.5;
+    if (isTablet && MediaQuery.of(context).orientation == Orientation.landscape) fontSize *= 1.3;
 
     // Extract the arguments safely
     final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
