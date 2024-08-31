@@ -143,7 +143,7 @@ class PolyphonicProcessor {
           return const Tuple3("0000", false, true); // Use the default, First tone
         } else if (specialYiCases.containsKey(nextChar)) {
           // check if nextChar is in specialYiCases
-          debugPrint('一$nextChar，一 一聲，$nextChar 特殊聲調');
+          // debugPrint('一$nextChar，一 一聲，$nextChar 特殊聲調');
           return specialYiCases[nextChar]!;
         } else if (nextChar == null || nextChar.isEmpty ||
             ['是', '日', '月', '的', '或', '物', '片', '系'].contains(nextChar) ||
@@ -254,7 +254,7 @@ class PolyphonicProcessor {
         '方方': 'ss00', 
       };      
       // "多"會造成下面句子很難判斷，因此特別處理。”他任內完成了許多重要工作。“，”壓力很大，要從多重管道接觸客戶。“      
-      final List<String> commonPhrases = ['許多', '很多', '大多', '眾多', '太多', '極多', '何多', '沒多', '甚多', '更多', '幾多',/* Add more common phrases here if needed */];      
+      final List<String> duoCommonPhrases = ['許多', '很多', '大多', '眾多', '太多', '極多', '何多', '沒多', '甚多', '更多', '幾多',/* Add more common phrases here if needed */];      
 
       for (int i = 0; i < length; i++) {
           String character = characters[i];
@@ -266,7 +266,7 @@ class PolyphonicProcessor {
           // debugPrint("prevChar: $prevChar, curChar: $character, nextChar: $nextChar");          
           bool skipPrevTemp = skipPrev; // Save the current skipPrev value
           skipPrev = false; // Reset skipPrev for the next character          
-          debugPrint('Processing character: $character at index $i, skipPrev: $skipPrevTemp');
+          // debugPrint('Processing character: $character at index $i, skipPrev: $skipPrevTemp');
 
           if (!chineseCharRegex.hasMatch(character)) {
               // debugPrint('Not a Chinese character: $character');
@@ -277,39 +277,9 @@ class PolyphonicProcessor {
           }
 
           if (character == '一' || character == '不') { // Special handle for 一 and 不
-            /*
-            // Handle special case for "一“ and "不", before calling generic processing            
-            if (character == '一') {
-                if (nextChar == '部') {
-                    // Handle "一部" with default tone for both "一" and "部"
-                    spans.add(TextSpan(text: character, style: getCharStyle(fontSize, color, highlightOn))); // Default for "一"
-                    hexUnicode = character.runes.first.toRadixString(16).toUpperCase();
-                    spansUnicode += String.fromCharCode(int.parse(hexUnicode, radix: 16));
-
-                    spans.add(TextSpan(text: nextChar, style: getCharStyle(fontSize, color, highlightOn))); // Default for "部"
-                    hexUnicode = nextChar.runes.first.toRadixString(16).toUpperCase();
-                    spansUnicode += String.fromCharCode(int.parse(hexUnicode, radix: 16));
-
-                    if (next2Char == '分') {
-                        // Handle "一部分" with default tone for "分"
-                        String styleSet = 'ss01'; // 四聲 for "分"
-                        spans.add(TextSpan(text: next2Char, style: getCharPolyStyle(fontSize, color, styleSet, highlightOn)));
-                        hexUnicode = next2Char.runes.first.toRadixString(16).toUpperCase();
-                        spansUnicode += String.fromCharCode(int.parse(hexUnicode, radix: 16));
-                        spansUnicode += String.fromCharCode(int.parse(ssMapping[styleSet]!.substring(0, 5), radix: 16));
-
-                        i += 2; // Skip the next 2 characters
-                    } else {
-                        i += 1; // Skip the next character
-                    }
-                    continue;
-                }
-            }
-            */
             // Handle special cases for "一“ and "不" where the third character is a polyphonic character
-            //  
-            if (character == '一') {
-                if (nextChar == '部') {
+            if (character == '一') { // 一部、一部分、一會、一會兒
+                if (nextChar == '部') { 
                     // Handle "一部" with default tone for both "一" and "部"
                     spans.add(TextSpan(text: character, style: getCharStyle(fontSize, color, highlightOn))); // Default for "一"
                     hexUnicode = character.runes.first.toRadixString(16).toUpperCase();
@@ -359,7 +329,7 @@ class PolyphonicProcessor {
                 }
             }
 
-            if (character == '不') {
+            if (character == '不') { // 不得不、不一定
                 if (nextChar == '得' && next2Char == '不') {
                     // Handle "不得不" 都是用 default tone
                     for (String char in [character, nextChar, next2Char]) {
@@ -394,7 +364,7 @@ class PolyphonicProcessor {
 
             int prevTone = (i > 0) ? await getToneForChar(prevChar) : 0; // 0: error
             int nextTone = (i + 1 < length) ? await getToneForChar(nextChar) : 0; // 0: error
-            debugPrint("prevChar: $prevChar, prevTone: $prevTone; nextChar: $nextChar, nextTone: $nextTone");
+            // debugPrint("prevChar: $prevChar, prevTone: $prevTone; nextChar: $nextChar, nextTone: $nextTone");
             var result = getNewToneForYiBu(
                 prevChar: prevChar,
                 currentChar: character,
@@ -407,7 +377,7 @@ class PolyphonicProcessor {
             String newSs = result.item1;
             bool skipNext = result.item2;
             skipPrev = result.item3; // 一* 或 *一，或 不*, 在處理下一個字時，都不需要回頭看
-            debugPrint("newSs for $character: $newSs, skipNext: $skipNext, skipPrev: $skipPrev");
+            // debugPrint("newSs for $character: $newSs, skipNext: $skipNext, skipPrev: $skipPrev");
             spans.add(TextSpan(text: character, style: newSs == "0000" ? getCharStyle(fontSize, color, highlightOn) : getCharPolyStyle(fontSize, color, newSs, highlightOn)));
             spansUnicode += String.fromCharCode(int.parse(hexUnicode, radix: 16));
             if (newSs != "0000") {
@@ -418,7 +388,7 @@ class PolyphonicProcessor {
               String nextHexUnicode = nextChar.runes.first.toRadixString(16).toUpperCase();
               spans.add(TextSpan(text: nextChar, style: getCharStyle(fontSize, color, highlightOn))); // Add next character
               spansUnicode += String.fromCharCode(int.parse(nextHexUnicode, radix: 16));
-              debugPrint("Skipping nextChar $nextChar at index: ${i + 1}");
+              // debugPrint("Skipping nextChar $nextChar at index: ${i + 1}");
               i += 1; // Skip the next character since it's part of the phrase
               continue; // Skip to the next loop iteration to avoid processing the skipped character again
             }      
@@ -460,7 +430,7 @@ class PolyphonicProcessor {
                 }
 
                 String nextHexUnicode = nextChar.runes.first.toRadixString(16).toUpperCase();
-                debugPrint("$pair: applied style $styleSet");
+                // debugPrint("$pair: applied style $styleSet");
                 if (styleSet == 'ss00') {
                   // For 'ss00' style set, use the default getCharStyle
                   spans.add(TextSpan(text: nextChar, style: getCharStyle(fontSize, color, highlightOn)));
@@ -488,7 +458,7 @@ class PolyphonicProcessor {
                     spans.add(TextSpan(text: next2Char, style: getCharStyle(fontSize, color, highlightOn)));
                     nextHexUnicode = next2Char.runes.first.toRadixString(16).toUpperCase();
                     spansUnicode += String.fromCharCode(int.parse(nextHexUnicode, radix: 16));
-                    debugPrint('Fast processing $next2Char using default at index: ${i + 1}');
+                    // debugPrint('Fast processing $next2Char using default at index: ${i + 1}');
                     i += 1;
                     break;
 
@@ -513,13 +483,13 @@ class PolyphonicProcessor {
                       spansUnicode += String.fromCharCode(int.parse(nextHexUnicode, radix: 16));
                       spansUnicode += String.fromCharCode(int.parse(ssMapping[next3CharStyleSet]!.substring(0, 5), radix: 16));
                     }
-                    debugPrint('Fast processing $next2Char and $next3Char at index: ${i + 1} and ${i + 2}');
+                    // debugPrint('Fast processing $next2Char and $next3Char at index: ${i + 1} and ${i + 2}');
                     i += 2; // Skip the next character since it's part of the phrase
                     break;
 
                   default:
                     // Handle any unexpected values if necessary
-                    debugPrint('Unexpected setNextBpmf value: $setNextBpmf');
+                    // debugPrint('Unexpected setNextBpmf value: $setNextBpmf');
                     break;
                 }
                 continue; // Skip to the next loop iteration to avoid processing the skipped character again
@@ -532,7 +502,7 @@ class PolyphonicProcessor {
                   int matchIndex = matchResult.item1;
                   bool skipNext = matchResult.item2;
                   skipPrev = matchResult.item3;              
-                  debugPrint("matchIndex: $matchIndex, skipNext: $skipNext, skipPrev: $skipPrev");
+                  // debugPrint("matchIndex: $matchIndex, skipNext: $skipNext, skipPrev: $skipPrev");
 
                   if (matchIndex != 0 || skipNext) {
                     String newSs = (matchIndex != 0) ? 'ss0$matchIndex' : '';
@@ -549,7 +519,7 @@ class PolyphonicProcessor {
                       String nextHexUnicode = nextChar.runes.first.toRadixString(16).toUpperCase();
                       spans.add(TextSpan(text: nextChar, style: getCharStyle(fontSize, color, highlightOn))); // Add next character
                       spansUnicode += String.fromCharCode(int.parse(nextHexUnicode, radix: 16));
-                      debugPrint("Skipping $nextChar at index: ${i + 1}");
+                      // debugPrint("Skipping $nextChar at index: ${i + 1}");
                       i += 1; // Skip the next character since it's part of the phrase
                       continue; // Skip to the next loop iteration to avoid processing the skipped character again
                     }
@@ -566,9 +536,9 @@ class PolyphonicProcessor {
               spansUnicode += String.fromCharCode(int.parse(hexUnicode, radix: 16));
               // Check if the prevChar and character are in the common phrases list. If so, set skipPrev to true
               String phrase = prevChar + character;
-              if (commonPhrases.contains(phrase)) {
+              if (duoCommonPhrases.contains(phrase)) {
                 skipPrev = true; // This is a common phrase, so when processing the next character, we don't have to look back
-                debugPrint('Common phrase found: $phrase, setting skipPrev to true');
+                // debugPrint('Common phrase found: $phrase, setting skipPrev to true');
               } else {
                 skipPrev = false; // 目前的字沒有多音字，但是下一個字可能會有，因此要設 false。
               }
@@ -591,10 +561,10 @@ class PolyphonicProcessor {
     bool skipNext = false; // Flag to skip the next character processing
     final List<String> noSkipNextCharacters = ['骨頭', '參與', '參差', '檻車', '爪子', '度量',/* 這裡要列出兩個字都是多音字，而且第二個字的發音不是default */];
 
-    debugPrint('Starting match function. Character: $character, prevChar: $prevChar, nextChar: $nextChar, patterns: $patterns, skipPrev: $skipPrev');
+    // debugPrint('Starting match function. Character: $character, prevChar: $prevChar, nextChar: $nextChar, patterns: $patterns, skipPrev: $skipPrev');
 
     if (isStandalone) {
-      debugPrint('Character $character is standalone. Returning default index.');
+      // debugPrint('Character $character is standalone. Returning default index.');
       return const Tuple3(0, false, true); // Return default tone index with proper skip flags set
     }
 
@@ -629,10 +599,10 @@ class PolyphonicProcessor {
 
     if (character == '地') {
       if (phrasesEndsWithDi.contains(threeCharPhrase)) {
-        debugPrint('“$threeCharPhrase” pattern matched. 地的發音是"de5".');
+        // debugPrint('“$threeCharPhrase” pattern matched. 地的發音是"de5".');
         return const Tuple3(1, false, true); // de5
       } else {
-        debugPrint('“$threeCharPhrase” pattern NO matched. 地的發音是"di4".');
+        // debugPrint('“$threeCharPhrase” pattern NO matched. 地的發音是"di4".');
         return const Tuple3(0, false, true); // di4
       }
     }
@@ -643,7 +613,7 @@ class PolyphonicProcessor {
       if (index >= 0 && index + 2 < text.length) {
         String prefix = character + text[index + 1] + text[index + 2];
         if (prefix == "著作權") {
-          debugPrint('Special pattern "著作權" matched');
+          // debugPrint('Special pattern "著作權" matched');
           skipNext = false; // Set skipNext to false if a pattern is matched
           skipPrev = false; // Set skipPrev to true if a pattern is matched
           return Tuple3(patterns.indexOf(secondLine), skipNext, skipPrev);
@@ -653,44 +623,44 @@ class PolyphonicProcessor {
 
     // First pass: Checking all patterns for "any+*" or "any+*+any"
     if (isFirstChar || skipPrev) {
-      debugPrint('isFirstChar: $isFirstChar or skipPrev: $skipPrev is true. Skipping the first pass, i.e., any+$character');
+      // debugPrint('isFirstChar: $isFirstChar or skipPrev: $skipPrev is true. Skipping the first pass, i.e., any+$character');
     } else {
-      debugPrint('First pass for $character: Checking patterns for "any+* or "any+*+any"');
+      // debugPrint('First pass for $character: Checking patterns for "any+* or "any+*+any"');
       for (int j = 0; j < patterns.length; j++) {
         String combinedPattern = patterns[j];
         List<String> subPatterns = combinedPattern.split('/'); // Split into sub-patterns
-        debugPrint('First pass - combinedPattern $j: $combinedPattern, subPatterns: $subPatterns');
+        // debugPrint('First pass - combinedPattern $j: $combinedPattern, subPatterns: $subPatterns');
 
         for (String pattern in subPatterns) {
-          debugPrint('First pass - Checking ($prevChar+$character) in subPatterns: $pattern');
+          // debugPrint('First pass - Checking ($prevChar+$character) in subPatterns: $pattern');
           if (pattern.isEmpty) {
             defaultIndex = j; // Save the index of the empty pattern
-            debugPrint('Empty pattern, setting defaultIndex to $j');
+            // debugPrint('Empty pattern, setting defaultIndex to $j');
             continue; // Continue to check other patterns
           }
 
           if (pattern.startsWith('*')) {
-            debugPrint('Skipping sub-pattern as it starts with "*": $pattern');
+            // debugPrint('Skipping sub-pattern as it starts with "*": $pattern');
             continue; // Skip if not starting with '*'
           }
 
           int pos = pattern.indexOf('*');
           if (pos == -1) {
-            debugPrint('Skipping sub-pattern as no "*" found: $pattern');
+            // debugPrint('Skipping sub-pattern as no "*" found: $pattern');
             continue; // Skip if no '*' found
           }
 
           int start = index - pos;
           int end = index - pos + pattern.length;
           if (start < 0 || end > text.length) {
-            debugPrint('Skipping sub-pattern as out of bounds: $pattern, start: $start, end: $end, text length: ${text.length}');
+            // debugPrint('Skipping sub-pattern as out of bounds: $pattern, start: $start, end: $end, text length: ${text.length}');
             continue; // Skip if out of bounds
           }
 
           if (matchPattern(pattern, pos, start, end, text, character)) {
             skipNext = false; // Set skipNext to false if a pattern is matched
             skipPrev = true; // Set skipPrev to true if a pattern is matched
-            debugPrint('Sub-pattern matched (any+*) ($prevChar+$character): $pattern, $j, skipNext: $skipNext, skipPrev: $skipPrev');
+            // debugPrint('Sub-pattern matched (any+*) ($prevChar+$character): $pattern, $j, skipNext: $skipNext, skipPrev: $skipPrev');
             return Tuple3(j, skipNext, skipPrev); // Returning with skipNext=false, skipPrev=true
           }
         }
@@ -699,37 +669,37 @@ class PolyphonicProcessor {
 
     // Second pass: Checking patterns for "*+any"
     if (isLastChar) {
-      debugPrint('Last character. Skip the second pass for $character');
+      // debugPrint('Last character. Skip the second pass for $character');
     } else {
-      debugPrint('Second pass for $character: Checking patterns for "*+any"');
+      // debugPrint('Second pass for $character: Checking patterns for "*+any"');
       for (int j = 0; j < patterns.length; j++) {
         String combinedPattern = patterns[j];
         List<String> subPatterns = combinedPattern.split('/'); // Split into sub-patterns
-        debugPrint('Second pass - combinedPattern $j: $combinedPattern, subPatterns: $subPatterns');
+        // debugPrint('Second pass - combinedPattern $j: $combinedPattern, subPatterns: $subPatterns');
 
         for (String pattern in subPatterns) {
-          debugPrint('Second pass - Checking sub-pattern: $pattern');
+          // debugPrint('Second pass - Checking sub-pattern: $pattern');
           if (pattern.isEmpty) {
             defaultIndex = j; // Save the index of the empty pattern
-            debugPrint('Empty pattern, setting defaultIndex to $j');
+            // debugPrint('Empty pattern, setting defaultIndex to $j');
             continue; // Skip empty patterns
           }
 
           if (!pattern.startsWith('*')) {
-            debugPrint('Skipping sub-pattern as it does not start with $character: $pattern');
+            // debugPrint('Skipping sub-pattern as it does not start with $character: $pattern');
             continue; // Skip if not starting with '*'
           }
 
           int pos = pattern.indexOf('*');
           if (pos == -1) {
-            debugPrint('Skipping sub-pattern as no "*" found: $pattern');
+            // debugPrint('Skipping sub-pattern as no "*" found: $pattern');
             continue; // Skip if no '*' found
           }
 
           int start = index - pos;
           int end = index - pos + pattern.length;
           if (start < 0 || end > text.length) {
-            debugPrint('Skipping sub-pattern as out of bounds: $pattern, start: $start, end: $end, text length: ${text.length}');
+            // debugPrint('Skipping sub-pattern as out of bounds: $pattern, start: $start, end: $end, text length: ${text.length}');
             continue; // Skip if out of bounds
           }
 
@@ -746,7 +716,7 @@ class PolyphonicProcessor {
               skipPrev = true; // Set skipPrev to true if a pattern is matched
               skipNext = pattern.startsWith('*') && pos == 0;
             }
-            debugPrint('Sub-pattern matched (*+any) ($character$nextChar): $pattern, matchIndex: $j, skipNext: $skipNext, skipPrev: $skipPrev');
+            // debugPrint('Sub-pattern matched (*+any) ($character$nextChar): $pattern, matchIndex: $j, skipNext: $skipNext, skipPrev: $skipPrev');
             return Tuple3(j, skipNext, skipPrev); // Returning with skipNext and skipPrev=false
           }
         }
@@ -754,7 +724,7 @@ class PolyphonicProcessor {
     }
 
     skipPrev = false; // 目前的字沒有多音字，但是下一個字可能會有，因此要設 false。
-    debugPrint('No pattern matched for $character. Use default index: ${defaultIndex != -1 ? defaultIndex : 0}, skipNext: $skipNext, skipPrev: $skipPrev');
+    // debugPrint('No pattern matched for $character. Use default index: ${defaultIndex != -1 ? defaultIndex : 0}, skipNext: $skipNext, skipPrev: $skipPrev');
     return Tuple3(defaultIndex != -1 ? defaultIndex : 0, skipNext, skipPrev); // Returning the default index with skip flags as false
   }
 
