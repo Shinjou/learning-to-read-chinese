@@ -8,11 +8,15 @@ class ScreenInfo {
   final double screenHeight;
   final double screenWidth;
   final double fontSize;
+  final Orientation orientation;
+  final bool isTabletDevice;
 
   ScreenInfo({
     required this.screenHeight,
     required this.screenWidth,
     required this.fontSize,
+    required this.orientation,
+    required this.isTabletDevice,
   });
 }
 
@@ -22,7 +26,7 @@ ScreenInfo getScreenInfo(BuildContext context) {
   double screenHeight = mediaQueryData.size.height;
   double screenWidth = mediaQueryData.size.width;
   double shortestSide = mediaQueryData.size.shortestSide;
-  var orientation = mediaQueryData.orientation;
+  Orientation orientation = mediaQueryData.orientation;
   bool isTabletDevice = shortestSide > 600; // You can adjust this threshold
 
   // Set base values based on device type
@@ -54,12 +58,14 @@ ScreenInfo getScreenInfo(BuildContext context) {
   }
   */
   // Print debug information without caller
-  debugPrint("getScreenInfo: height=$screenHeight, width=$screenWidth, fontSize=$fontSize, isTablet=$isTabletDevice");
+  // debugPrint("getScreenInfo: height=$screenHeight, width=$screenWidth, fontSize=$fontSize, isTablet=$isTabletDevice");
 
   return ScreenInfo(
     screenHeight: screenHeight,
     screenWidth: screenWidth,
     fontSize: fontSize,
+    orientation: orientation,
+    isTabletDevice: isTabletDevice,
   );
 }
 
