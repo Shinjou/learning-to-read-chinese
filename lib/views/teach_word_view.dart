@@ -995,26 +995,33 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                     iconsColor: gray85Color),
                                 isFirst: false,
                                 isLast: false,
-                                onLeftClicked: (wordIsLearned)
+                                onLeftClicked: (nextStepId == steps['goToWrite'] || wordIsLearned) // 不了解為何會有這個條件？忽略它，作法一樣。
                                     ? () {
-                                        debugPrint('聽一聽，上一頁，nextId: $nextStepId，叫 prevTab()');              
+                                        debugPrint('聽一聽，上一頁，wordIsLearned: $wordIsLearned，nextId: $nextStepId，叫 prevTab()');              
                                         prevTab(); // prevTab() will update the nextStepId and currentTabIndex, and will speak for 用一用                                     
-                                        return _tabController.animateTo(
-                                            _tabController.index - 1);
+                                        return _tabController.animateTo(_tabController.index - 1);
                                       }
-                                    : null,
-                                onRightClicked:
-                                    (nextStepId == steps['goToWrite'] ||
-                                            wordIsLearned)
-                                        ? () {
-                                            int oldNextStepId = nextStepId;
-                                            nextStepId = steps['goToWrite']!; // Force to goToWrite
-                                            debugPrint('聽一聽，下一頁，oldId: $oldNextStepId, nextId: $nextStepId，叫 nextTab()');
-                                            nextTab();
-                                            return _tabController.animateTo(
-                                                _tabController.index + 1);
-                                          }
-                                        : null,
+                                    : () {
+                                        debugPrint('聽一聽，上一頁不可點擊，wordIsLearned: $wordIsLearned, nextId: $nextStepId，叫 prevTab()');
+                                        prevTab(); // prevTab() will update the nextStepId and currentTabIndex, and will speak for 用一用                                     
+                                        return _tabController.animateTo(_tabController.index - 1);                                        
+                                      },
+                                onRightClicked: (nextStepId == steps['goToWrite'] || wordIsLearned) // 不了解為何會有這個條件？忽略它，作法一樣。
+                                    ? () {
+                                        int oldNextStepId = nextStepId;
+                                        nextStepId = steps['goToWrite']!; // Force to goToWrite
+                                        debugPrint('聽一聽，下一頁，oldId: $oldNextStepId, nextId: $nextStepId，叫 nextTab()');
+                                        nextTab();
+                                        return _tabController.animateTo(_tabController.index + 1);
+                                      }
+                                    : () {
+                                        int oldNextStepId = nextStepId;
+                                        nextStepId = steps['goToWrite']!; // Force to goToWrite
+                                        debugPrint('聽一聽，下一頁不可點擊，oldId: $oldNextStepId，newId: $nextStepId, 叫 nextTab()');
+                                        nextTab();
+                                        return _tabController.animateTo(_tabController.index + 1);
+                                      },
+
                               ),
                               SizedBox(
                                   height: fontSize *
