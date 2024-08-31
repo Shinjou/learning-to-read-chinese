@@ -74,25 +74,25 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
     // it will update the nextStepId, currentTabIndex, and call showNoSvgDialog() if no svg in 寫一寫
     int currentTabValue = currentTabIndex.value;
     int oldNextStepId = nextStepId;
-    // debugPrint('nextTab currentTab $currentTabValue, nextId: $nextStepId, wordIsLearned: $wordIsLearned, svgFileExist: $svgFileExist');
+    debugPrint('nextTab currentTab $currentTabValue, nextId: $nextStepId, wordIsLearned: $wordIsLearned, svgFileExist: $svgFileExist');
     currentTabIndex.value += 1;
 
     if (svgFileExist) {
       if (wordIsLearned) { // 字已學
         if (oldNextStepId > 1 && oldNextStepId < 8) { // 1-7 different steps in 寫一寫         
           nextStepId = steps['goToUse1']!;
-          // debugPrint('nextTab 字已學，要從“寫一寫”中的任一步驟，跳到“用一用”，oldId: $oldNextStepId，nextId: $nextStepId');
+          debugPrint('nextTab 字已學，要從“寫一寫”中的任一步驟，跳到“用一用”，oldId: $oldNextStepId，nextId: $nextStepId');
         } else { // 0, 8, 9
           nextStepId += 1;
-          // debugPrint('nextTab 字已學，但是 oldId = 0,8,9. oldId: $oldNextStepId，nextId: $nextStepId');
+          debugPrint('nextTab 字已學，但是 oldId = 0,8,9. oldId: $oldNextStepId，nextId: $nextStepId');
         }
       } else { // 字未學，一步一步來  
         nextStepId += 1;
-        // debugPrint('nextTab 字未學，oldId: $oldNextStepId，nextId: $nextStepId');        
+        debugPrint('nextTab 字未學，oldId: $oldNextStepId，nextId: $nextStepId');        
       }
     } else { // no svg
       if (nextStepId > 0 && nextStepId < 8) {
-        // debugPrint('nextTab no svg1. 從 “聽一聽”到“寫一寫”. Show error message.');
+        debugPrint('nextTab no svg1. 從 “聽一聽”到“寫一寫”. Show error message.');
         WidgetsBinding.instance.addPostFrameCallback((_) async {
           // 選上一頁，nextStepId = goToListen; 選下一頁，nextStepId = goToUse1
           await showNoSvgDialog('','抱歉，「${widget.wordsStatus[widget.wordIndex].word}」還沒有筆順。請繼續。謝謝！');
@@ -100,14 +100,14 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
         setState(() {});
       } else {
         nextStepId += 1;
-        // debugPrint('nextTab no svg2. nextId = 0,8,9. oldId: $oldNextStepId, nextId: $nextStepId.');
+        debugPrint('nextTab no svg2. nextId = 0,8,9. oldId: $oldNextStepId, nextId: $nextStepId.');
       }
     }
     nextStepId = min(steps['goToUse2']!, nextStepId); // Make sure it is not greater than goToUse2
-    // debugPrint('nextTab svgFileExist $svgFileExist, oldId: $oldNextStepId, nextId: $nextStepId');
+    debugPrint('nextTab svgFileExist $svgFileExist, oldId: $oldNextStepId, nextId: $nextStepId');
 
     if (nextStepId <= steps['goToUse2']!) {
-      // debugPrint('prevTab from oldId $oldNextStepId to nextId: $nextStepId');
+      debugPrint('prevTab from oldId $oldNextStepId to nextId: $nextStepId');
     } else {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         showErrorDialog(
@@ -121,7 +121,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
     // it will update the nextStepId, currentTabIndex, and call showNoSvgDialog() if no svg in 寫一寫    
     int currentTabValue = currentTabIndex.value;
     int oldNextStepId = nextStepId;
-    // debugPrint('prevTab currentTab $currentTabValue, nextId: $nextStepId, wordIsLearned: $wordIsLearned, svgFileExist: $svgFileExist');
+    debugPrint('prevTab currentTab $currentTabValue, nextId: $nextStepId, wordIsLearned: $wordIsLearned, svgFileExist: $svgFileExist');
     if (currentTabValue > 0) { // to prevent negative value
       currentTabIndex.value -= 1;
     }
@@ -130,7 +130,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
       if (wordIsLearned) { // 字已學
         if (nextStepId > 0 && nextStepId < 8) { // 1-7 different steps in 寫一寫
           nextStepId = steps['goToListen']!;
-          // debugPrint('prevTab 字已學，要從“寫一寫”中的任一步驟，退回到“聽一聽” nextId: $nextStepId');
+          debugPrint('prevTab 字已學，要從“寫一寫”中的任一步驟，退回到“聽一聽” nextId: $nextStepId');
         } else { // 0, 8, 9
           nextStepId -= 1;
           if (nextStepId == steps['goToPracticeWithoutBorder1']) {
@@ -138,32 +138,32 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
           } else if (nextStepId < steps['goToListen']!) {
             nextStepId = steps['goToListen']!;
           }
-          // debugPrint('prevTab 字已學，nextStepId 從 0,8,9 變成 $nextStepId');
+          debugPrint('prevTab 字已學，nextStepId 從 0,8,9 變成 $nextStepId');
         }
       } else { // 字未學，一步一步來
         nextStepId -= 1;
-        // debugPrint('prevTab 字未學，oldId: $oldNextStepId，nextId: $nextStepId');        
+        debugPrint('prevTab 字未學，oldId: $oldNextStepId，nextId: $nextStepId');        
       }
     } else { // 沒有筆順
       if ((nextStepId == steps['goToUse1'])) {
         // 從 “用一用1”，退回去“寫一寫”
-        // debugPrint('prevTab no svg1. 從 “用一用1”退回到“寫一寫”. Show error message.');
+        debugPrint('prevTab no svg1. 從 “用一用1”退回到“寫一寫”. Show error message.');
         WidgetsBinding.instance.addPostFrameCallback((_) async {
           // 選上一頁，nextStepId = goToListen; 選下一頁，nextStepId = goToUse1
           await showNoSvgDialog('','抱歉，「${widget.wordsStatus[widget.wordIndex].word}」還沒有筆順。請繼續。謝謝！');
         });
-        // debugPrint('prevTab no svg2. 從 “用一用1”退回到“寫一寫”. nextId = $nextStepId.');        
+        debugPrint('prevTab no svg2. 從 “用一用1”退回到“寫一寫”. nextId = $nextStepId.');        
         setState(() {});
       } else {
         nextStepId -= 1;
-        // debugPrint('prevTab no svg3. oldId = $oldNextStepId, nextId = $nextStepId');
+        debugPrint('prevTab no svg3. oldId = $oldNextStepId, nextId = $nextStepId');
       }
     }
     nextStepId = max(0, nextStepId); // Make sure it is not negative
-    // debugPrint('prevTab svgFileExist $svgFileExist, wordIsLearned: $wordIsLearned, oldId: $oldNextStepId, nextId: $nextStepId');
+    debugPrint('prevTab svgFileExist $svgFileExist, wordIsLearned: $wordIsLearned, oldId: $oldNextStepId, nextId: $nextStepId');
 
     if (nextStepId <= steps['goToUse2']!) {
-      // debugPrint('prevTab from oldId $oldNextStepId to nextId: $nextStepId');
+      debugPrint('prevTab from oldId $oldNextStepId to nextId: $nextStepId');
     } else {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         showErrorDialog(
@@ -181,11 +181,11 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
   Future<void> handleGoToUseStep() async {
     var result =
         await ftts.speak("${wordObj['vocab1']}。${wordObj['sentence1']}");
-    // debugPrint('handleGoToUseStep vocabCnt: $vocabCnt, vocab1: ${wordObj['vocab1']}, sentence1: ${wordObj['sentence1']}, nextId: $nextStepId, wordIsLearned: $wordIsLearned, svgFileExist: $svgFileExist, result: $result');
+    debugPrint('handleGoToUseStep vocabCnt: $vocabCnt, vocab1: ${wordObj['vocab1']}, sentence1: ${wordObj['sentence1']}, nextId: $nextStepId, wordIsLearned: $wordIsLearned, svgFileExist: $svgFileExist, result: $result');
     if (vocabCnt == 1) {
       WordStatus newStatus = widget.wordsStatus[widget.wordIndex];
       ref.read(learnedWordCountProvider.notifier).state += 1;
-      // debugPrint('handleGoToUseStep vocabCnt = 1, newStatus: $newStatus, nextId: $nextStepId');
+      debugPrint('handleGoToUseStep vocabCnt = 1, newStatus: $newStatus, nextId: $nextStepId');
       await WordStatusProvider.updateWordStatus(status: newStatus);
       setState(() {
         newStatus.learned = true; // I never saw this flag set. Why?
@@ -195,7 +195,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
       setState(() {
         nextStepId += 1; // 
         nextStepId = min(steps['goToUse2']!, nextStepId); // Make sure it is not greater than goToUse2
-        // debugPrint('handleGoToUseStep vocabCnt = $vocabCnt, nextId: $nextStepId, wordIsLearned: $wordIsLearned');
+        debugPrint('handleGoToUseStep vocabCnt = $vocabCnt, nextId: $nextStepId, wordIsLearned: $wordIsLearned');
       });
     }
   }
@@ -213,16 +213,16 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
     int tempIndex = widget
         .wordIndex; // change widget.wordIndex to tempIndex in this function
     bool phraseEmpty = widget.wordsPhrase.isEmpty;
-    // debugPrint('getWord begin: phraseEmpty: $phraseEmpty, tempIndex: $tempIndex');
+    debugPrint('getWord begin: phraseEmpty: $phraseEmpty, tempIndex: $tempIndex');
     if (phraseEmpty) {
-      // debugPrint('getWord error: wordsPhrase is empty');
+      debugPrint('getWord error: wordsPhrase is empty');
       wordObj = {};
       wordExist = false;
       return;
     } else {
-      // debugPrint('getWord index: $tempIndex, length: ${widget.wordsPhrase.length}');
+      debugPrint('getWord index: $tempIndex, length: ${widget.wordsPhrase.length}');
       if (!(tempIndex < widget.wordsPhrase.length)) {
-        // debugPrint('getWord error: wordIndex is out of range');
+        debugPrint('getWord error: wordIndex is out of range');
         wordObj = {};
         wordExist = false;
         return;
@@ -241,17 +241,17 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
       }
 
       wordExist = true; // 字存在，但是 json 可能不存在 (svgFileExist = false)
-      // debugPrint('getWord end: wordExist: $wordExist, vocabCnt: $vocabCnt, ${wordObj['vocab1']}, ${wordObj['vocab2']}');
+      debugPrint('getWord end: wordExist: $wordExist, vocabCnt: $vocabCnt, ${wordObj['vocab1']}, ${wordObj['vocab2']}');
     } catch (error) {
       wordExist = false;
-      // debugPrint('getWord error: : $error。wordExist: $wordExist,${wordObj['vocab1']}');
+      debugPrint('getWord error: : $error。wordExist: $wordExist,${wordObj['vocab1']}');
     }
   }
 
   @override
   void initState() {
     super.initState();
-    // debugPrint('initState begin, wordExist: $wordExist, svgFileExist: $svgFileExist, nextId: $nextStepId, wordIsLearned: $wordIsLearned');    
+    debugPrint('initState begin, wordExist: $wordExist, svgFileExist: $svgFileExist, nextId: $nextStepId, wordIsLearned: $wordIsLearned');    
     ftts.setLanguage("zh-tw");
     ftts.setSpeechRate(0.5);
     ftts.setVolume(1.0);
@@ -261,23 +261,23 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
 
     // Setup completion handler for TTS
     ftts.setCompletionHandler(() async {
-      // debugPrint('\nTTS handler called. mounted: $mounted, nextId: $nextStepId, wordIsLearned: $wordIsLearned, svgFileExist: $svgFileExist');
+      debugPrint('\nTTS handler called. mounted: $mounted, nextId: $nextStepId, wordIsLearned: $wordIsLearned, svgFileExist: $svgFileExist');
 
       if (!context.mounted) return;
 
       WordStatus newStatus = widget.wordsStatus[widget.wordIndex];
 
-      if (nextStepId == steps['goToListen']) {
-        // debugPrint('TTS handler goToListen, call incrementNextStepId, newStatus: $newStatus, nextId: $nextStepId');
+      if (nextStepId == steps['goToListen']) { // 聽一聽, 0
+        debugPrint('TTS handler goToListen, call incrementNextStepId, newStatus: $newStatus, nextId: $nextStepId');
         incrementNextStepId();
-      } else if (nextStepId == steps['goToUse1']) {
-        // debugPrint('TTS handler goToUse1, call handleGoToUse1, newStatus: $newStatus, nextId: $nextStepId');
+      } else if (nextStepId == steps['goToUse1']) { // 用一用1, 8
+        debugPrint('TTS handler goToUse1, call handleGoToUse1, newStatus: $newStatus, nextId: $nextStepId');
         await handleGoToUse1(newStatus);
-      } else if (nextStepId == steps['goToUse2']) {
-        // debugPrint('TTS handler goToUse2, call updateWordStatus, newStatus: $newStatus, nextId: 0');
+      } else if (nextStepId == steps['goToUse2']) { // 用一用2, 9
+        debugPrint('TTS handler goToUse2, call updateWordStatus, newStatus: $newStatus, nextId: 0');
         await updateWordStatus(newStatus, learned: true, nextStepId: 0);
       }
-      // debugPrint("Speech has completed");
+      debugPrint("Speech has completed");
     });
 
     // Determine if the word is BPMF
@@ -287,11 +287,11 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
 
     getWord(); // wordObj, wordExist, img1Exist, img2Exist, vocabCnt will be set, NO setState() is called
     checkWordExistence(); // setState is called once in readJsonAndProcess()
-    // debugPrint('initState end, wordExist: $wordExist, svgFileExist: $svgFileExist, nextId: $nextStepId, wordIsLearned: $wordIsLearned');
+    debugPrint('initState end, wordExist: $wordExist, svgFileExist: $svgFileExist, nextId: $nextStepId, wordIsLearned: $wordIsLearned');
   }
 
   Future<void> handleGoToUse1(WordStatus newStatus) async {
-    // debugPrint('handleGoToUse1. vocab #: $vocabCnt, newStatus: $newStatus, nextId: $nextStepId, wordIsLearned: $wordIsLearned, svgFileExist: $svgFileExist');
+    debugPrint('handleGoToUse1. vocab #: $vocabCnt, newStatus: $newStatus, nextId: $nextStepId, wordIsLearned: $wordIsLearned, svgFileExist: $svgFileExist');
     if (vocabCnt == 1) {
       await updateWordStatus(newStatus, learned: true, nextStepId: 0);
     } else {
@@ -301,7 +301,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
 
   Future<void> updateWordStatus(WordStatus newStatus,
       {required bool learned, required int nextStepId}) async {
-    // debugPrint('updateWordStatus. mounted: $mounted, learned: $learned, nextId: $nextStepId');
+    debugPrint('updateWordStatus. mounted: $mounted, learned: $learned, nextId: $nextStepId');
     if (!context.mounted) return;
     setState(() {
       newStatus.learned = learned;
@@ -326,7 +326,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
     // setState() is called here
     try {
       final result = await readJson();
-      // debugPrint('readJsonAndProcess: ${widget.wordsStatus[widget.wordIndex].word} ${svgFileExist ? "有筆順" : "沒有筆順"}');
+      debugPrint('readJsonAndProcess: ${widget.wordsStatus[widget.wordIndex].word} ${svgFileExist ? "有筆順" : "沒有筆順"}');
       if (result.isNotEmpty) {
         setState(() {
           _strokeOrderAnimationControllers = StrokeOrderAnimationController(
@@ -347,7 +347,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
       setState(() {
         _strokeOrderAnimationControllers = null;
         // svgFileExist is set in readJson(). Should not be set here.
-        // debugPrint('readJsonAndProcess error: ${widget.wordsStatus[widget.wordIndex].word} 沒有筆順, svgFileExist: $svgFileExist'); // Came here. What's next?
+        debugPrint('readJsonAndProcess error: ${widget.wordsStatus[widget.wordIndex].word} 沒有筆順, svgFileExist: $svgFileExist'); // Came here. What's next?
       });
     }
   }
@@ -370,7 +370,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
     } else {
       svgFileExist = true;
     }
-    // debugPrint('readJson() word: $word, svgFileExist: $svgFileExist');
+    debugPrint('readJson() word: $word, svgFileExist: $svgFileExist');
 
     // Proceed with loading the SVG file
     try {
@@ -380,7 +380,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
     } catch (e) {
       // Handle error if the SVG file does not exist or cannot be loaded
       svgFileExist = false;
-      // debugPrint('readJson() error: $e, svgFileExist: $svgFileExist');
+      debugPrint('readJson() error: $e, svgFileExist: $svgFileExist');
       return ''; // Return an empty string
     }
   }
@@ -406,7 +406,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
           practiceTimeLeft -= 1;
           nextStepId += 1;
           widget.wordsStatus[widget.wordIndex].learned = true; // 設成“已學”
-          // debugPrint('handleQuizCompletion 要進入用一用1,learned flag: ${widget.wordsStatus[widget.wordIndex].learned}');
+          debugPrint('handleQuizCompletion 要進入用一用1,learned flag: ${widget.wordsStatus[widget.wordIndex].learned}');
         });
       }
       Fluttertoast.showToast(
@@ -498,13 +498,13 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                 int oldTabIndex = currentTabIndex.value;
                 nextStepId = steps['goToWrite']!; // Force to goToWrite
                 currentTabIndex.value = 2;       // Force to 2
-                // debugPrint('聽一聽 說：$word');  // 移到前面，因為 await 會有延遲
+                debugPrint('聽一聽 說：$word');  // 移到前面，因為 await 會有延遲
                 if (isBpmf) {
                   await player.play(AssetSource('bopomo/$word.mp3'));
                 } else {
                   var result = await ftts.speak(word);
                 }
-                // debugPrint('寫一寫，上一頁1，oldId: $oldNextStepId，nextId: $nextStepId，oldTabIndex: $oldTabIndex, newTabIndex: ${currentTabIndex.value},叫 prevTab()');            
+                debugPrint('寫一寫，上一頁1，oldId: $oldNextStepId，nextId: $nextStepId，oldTabIndex: $oldTabIndex, newTabIndex: ${currentTabIndex.value},叫 prevTab()');            
                 prevTab(); // it will update the nextStepId and currentTabIndex                
                 return _tabController.animateTo(_tabController.index - 1);
               },
@@ -521,7 +521,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                 Navigator.of(context).pop(); // Close the dialog
                 int oldNextStepId = nextStepId;
                 nextStepId = steps['goToUse1']!; // try to skip 寫一寫 sjf
-                // debugPrint('寫一寫，下一頁，oldId: $oldNextStepId,  nextId: $nextStepId，呼叫 handleGoToUseStep()');                   
+                debugPrint('寫一寫，下一頁，oldId: $oldNextStepId,  nextId: $nextStepId，呼叫 handleGoToUseStep()');                   
                 handleGoToUseStep();
                 currentTabIndex.value += 1;
                 return _tabController.animateTo(_tabController.index + 1);
@@ -573,12 +573,12 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
     String word = widget.wordsStatus[widget.wordIndex].word;
     int unitId = widget.unitId;
     String unitTitle = widget.unitTitle;
-    // debugPrint('\nbuild word: $word, nextId: $nextStepId, wordIsLearned: $wordIsLearned');
+    debugPrint('\nbuild word: $word, nextId: $nextStepId, wordIsLearned: $wordIsLearned');
 
     // 不知道為何每一個字都會出現 _strokeOrderAnimationControllers is null 一次。
     // 若出現第二次，則有問題。
     if (_strokeOrderAnimationControllers == null) {
-      // debugPrint('build _strokeOrder is null, _firstNullStroke: $_firstNullStroke, nextId: $nextStepId');
+      debugPrint('build _strokeOrder is null, _firstNullStroke: $_firstNullStroke, nextId: $nextStepId');
       if (_firstNullStroke) {
         _firstNullStroke = false;
         return Container();
@@ -596,7 +596,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
       }
     }
 
-    // debugPrint('build _strokeOrder is not null, word: $word, nextId: $nextStepId, wordIsLearned: $wordIsLearned, vocabCnt: $vocabCnt, vocabIndex: $vocabIndex');
+    debugPrint('build _strokeOrder is not null, word: $word, nextId: $nextStepId, wordIsLearned: $wordIsLearned, vocabCnt: $vocabCnt, vocabIndex: $vocabIndex');
     List<Widget> useTabView = [
       TeachWordTabBarView(
         // 用一用 - 例句1
@@ -629,7 +629,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                     int oldTabIndex = currentTabIndex.value;
                                     nextStepId = steps['goToUse1']!; // Force to goToUse1
                                     currentTabIndex.value = 3;       // Force to 3
-                                    // debugPrint('用一用1，上一頁1，oldId: $oldNextStepId，nextId: $nextStepId，oldTabIndex: $oldTabIndex, newTabIndex: ${currentTabIndex.value},叫 prevTab()');
+                                    debugPrint('用一用1，上一頁1，oldId: $oldNextStepId，nextId: $nextStepId，oldTabIndex: $oldTabIndex, newTabIndex: ${currentTabIndex.value},叫 prevTab()');
                                     prevTab(); // prevTab() will update the nextStepId and currentTabIndex, and will speak for 用一用
                                     return _tabController
                                         .animateTo(_tabController.index - 1);
@@ -646,7 +646,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                           "${wordObj['vocab2']}。${wordObj['sentence2']}");
                                       WordStatus newStatus =
                                           widget.wordsStatus[widget.wordIndex];
-                                      // debugPrint('用一用1，下一頁1 vocab2: ${wordObj['vocab2']}, newStatus: $newStatus}');    
+                                      debugPrint('用一用1，下一頁1 vocab2: ${wordObj['vocab2']}, newStatus: $newStatus}');    
                                       setState(() {
                                         newStatus.learned = true; // I never saw this flag set. Why?
                                       });
@@ -749,7 +749,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                       isLast: true,
                                       onLeftClicked: wordIsLearned
                                           ? () {
-                                              // debugPrint('用一用2，上一頁1，nextId: $nextStepId，叫 prevTab()');
+                                              debugPrint('用一用2，上一頁1，nextId: $nextStepId，叫 prevTab()');
                                               prevTab();  // prevTab() will update the nextStepId and currentTabIndex, and will speak for 用一用
                                               var result = ftts.speak("${wordObj['vocab1']}。${wordObj['sentence1']}");
                                               setState(() {
@@ -933,7 +933,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                               Object exception,
                                               StackTrace? stackTrace) {
                                             // Log the error
-                                            // debugPrint('Error loading image: $exception');
+                                            debugPrint('Error loading image: $exception');
 
                                             // Return the Text widget as a fallback
                                             return Center(
@@ -997,7 +997,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                 isLast: false,
                                 onLeftClicked: (wordIsLearned)
                                     ? () {
-                                        // debugPrint('聽一聽，上一頁，nextId: $nextStepId，叫 prevTab()');              
+                                        debugPrint('聽一聽，上一頁，nextId: $nextStepId，叫 prevTab()');              
                                         prevTab(); // prevTab() will update the nextStepId and currentTabIndex, and will speak for 用一用                                     
                                         return _tabController.animateTo(
                                             _tabController.index - 1);
@@ -1009,7 +1009,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                         ? () {
                                             int oldNextStepId = nextStepId;
                                             nextStepId = steps['goToWrite']!; // Force to goToWrite
-                                            // debugPrint('聽一聽，下一頁，oldId: $oldNextStepId, nextId: $nextStepId，叫 nextTab()');
+                                            debugPrint('聽一聽，下一頁，oldId: $oldNextStepId, nextId: $nextStepId，叫 nextTab()');
                                             nextTab();
                                             return _tabController.animateTo(
                                                 _tabController.index + 1);
@@ -1057,7 +1057,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                             iconSize: fontSize * 1.2,
                                             color: backgroundColor,
                                             onPressed: () async {
-                                              // debugPrint('聽一聽2 說：$word');  // 移到前面，因為 await 會有延遲
+                                              debugPrint('聽一聽2 說：$word');  // 移到前面，因為 await 會有延遲
                                               if (isBpmf) {
                                                 await player.play(AssetSource(
                                                     'bopomo/$word.mp3'));
@@ -1130,13 +1130,13 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                       int oldTabIndex = currentTabIndex.value;
                                       nextStepId = steps['goToWrite']!; // Force to goToWrite
                                       currentTabIndex.value = 2;       // Force to 2
-                                      // debugPrint('聽一聽 說：$word');  
+                                      debugPrint('聽一聽 說：$word');  
                                       if (isBpmf) {
                                         await player.play(AssetSource('bopomo/$word.mp3'));
                                       } else {
                                         var result = await ftts.speak(word);
                                       }
-                                      // debugPrint('寫一寫，上一頁2，oldId: $oldNextStepId，nextId: $nextStepId，oldTabIndex: $oldTabIndex, newTabIndex: ${currentTabIndex.value},叫 prevTab()');                                         
+                                      debugPrint('寫一寫，上一頁2，oldId: $oldNextStepId，nextId: $nextStepId，oldTabIndex: $oldTabIndex, newTabIndex: ${currentTabIndex.value},叫 prevTab()');                                         
                                       prevTab(); // prevTab() will update the nextStepId and currentTabIndex, and will speak for 用一用
                                       return _tabController
                                           .animateTo(_tabController.index - 1);
@@ -1277,7 +1277,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                                   var result =
                                                       await ftts.speak(word);
                                                 }
-                                                // debugPrint('筆順 $word');
+                                                debugPrint('筆順 $word');
                                                 if (nextStepId ==
                                                     steps['seeAnimation']) {
                                                   setState(() {
@@ -1286,7 +1286,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                                 }
                                               } else {
                                                 controller.stopAnimation();
-                                                // debugPrint("stop animation // nextStepId update time");
+                                                debugPrint("stop animation // nextStepId update time");
                                               }
                                             }
                                           : null,
@@ -1333,7 +1333,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                                 var result =
                                                     await ftts.speak(word);
                                               }
-                                              // debugPrint('寫字 $word');
+                                              debugPrint('寫字 $word');
                                             }
                                           : null,
                                       fontSize: fontSize),
