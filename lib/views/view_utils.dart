@@ -4,8 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/contants/routes.dart';
 import 'package:ltrc/providers.dart';
 
-
-
 class ScreenInfo {
   final double screenHeight;
   final double screenWidth;
@@ -36,16 +34,16 @@ ScreenInfo getScreenInfo(BuildContext context) {
     screenHeight = mediaQueryData.size.shortestSide;
     screenWidth = screenHeight * 3 / 4;
   }
-  double fontSize = baseFontSize * screenWidth / baseScreenWidth;
 
-  // Get caller information
+  double fontSize = (baseFontSize * screenWidth / baseScreenWidth).roundToDouble();  
+  /* Ignore the caller information because it's not reliable
   String callerInfo = "";
   try {
     final stackTrace = StackTrace.current;
     final frames = stackTrace.toString().split("\n");
     if (frames.length > 2) {
       // Extract the method name from the stack trace line
-      RegExp regExp = RegExp(r'#\d+\s+([a-zA-Z0-9_\.]+)');
+      RegExp regExp = RegExp(r'#\d+\s+([a-zA-Z0-9_]+)');
       var match = regExp.firstMatch(frames[2]);
       if (match != null) {
         callerInfo = match.group(1) ?? "Unknown";
@@ -54,9 +52,9 @@ ScreenInfo getScreenInfo(BuildContext context) {
   } catch (e) {
     callerInfo = "Caller unknown";
   }
-
-  // Print debug information with caller
-  debugPrint("getScreenInfo (called by $callerInfo): height=$screenHeight, width=$screenWidth, fontSize=$fontSize, isTablet=$isTabletDevice");
+  */
+  // Print debug information without caller
+  debugPrint("getScreenInfo: height=$screenHeight, width=$screenWidth, fontSize=$fontSize, isTablet=$isTabletDevice");
 
   return ScreenInfo(
     screenHeight: screenHeight,
@@ -64,6 +62,9 @@ ScreenInfo getScreenInfo(BuildContext context) {
     fontSize: fontSize,
   );
 }
+
+
+
 
 /* Usage of navigateWithProvider
 1. No arguments to pass: mainPage needs to be defined in AppRoutes
