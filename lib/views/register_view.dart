@@ -29,7 +29,7 @@ class RegisterViewState extends ConsumerState<RegisterView> {
   @override
   Widget build(BuildContext context) {
     // final screenInfo = ref.watch(screenInfoProvider);
-    final screenInfo = getScreenInfo(context);
+    final screenInfo = ref.watch(screenInfoProvider);
     double fontSize = screenInfo.fontSize;    
     double deviceHeight = screenInfo.screenHeight;
     double deviceWidth = screenInfo.screenWidth;

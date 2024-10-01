@@ -3,8 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/data/models/word_status_model.dart';
 import 'package:ltrc/data/providers/word_status_provider.dart';
 import 'package:ltrc/extensions.dart';
-import 'package:ltrc/providers.dart';
-import 'package:ltrc/views/teach_word_view.dart';
+// import 'package:ltrc/providers.dart';
+// import 'package:ltrc/views/teach_word_view.dart';
+import 'package:ltrc/views/view_utils.dart';  // Make sure this import is correct
 
 class WordCard extends ConsumerStatefulWidget {
   const WordCard({
@@ -47,41 +48,37 @@ class WordCardState extends ConsumerState<WordCard> {
     super.initState();
   }
 
+  void _toggleLiked() {
+    setState(() {
+      liked = !liked;
+    });
+    WordStatus newStatus = widget.wordsStatus[widget.wordIndex];
+    newStatus.liked = liked;
+    // Use WidgetsBinding to schedule the update after the current frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      WordStatusProvider.updateWordStatus(status: newStatus);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: widget.disable ? () {} : () {
-        /*
-        Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => TeachWordView(
-            unitId: widget.unitId,
-            unitTitle: widget.unitTitle,
-            wordsStatus: widget.wordsStatus,
-            wordsPhrase: widget.wordsPhrase,
-            wordIndex: widget.wordIndex,
-        )));
-        */
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) {
-              final screenInfo = ref.read(screenInfoProvider);
-              return ProviderScope(
-                overrides: [
-                  screenInfoProvider.overrideWith((ref) => screenInfo),
-                ],
-                child: TeachWordView(
-                  unitId: widget.unitId,
-                  unitTitle: widget.unitTitle,
-                  wordsStatus: widget.wordsStatus,
-                  wordsPhrase: widget.wordsPhrase,
-                  wordIndex: widget.wordIndex,
-                ),
-              );
-            },
-          ),
+      onTap: widget.disable ? null : () {
+        debugPrint('WordCard tapped. Attempting to navigate to teachWord page');
+        navigateWithProvider(
+          context,
+          '/teachWord',
+          ref,
+          arguments: {
+            'unitId': widget.unitId,
+            'unitTitle': widget.unitTitle,
+            'wordsStatus': widget.wordsStatus,
+            'wordsPhrase': widget.wordsPhrase,
+            'wordIndex': widget.wordIndex,
+          },
         );
-
-      },
+        debugPrint('Navigation to teachWord page initiated');
+      },      
       child: Container(
         width: widget.sizedBoxWidth,
         height: widget.sizedBoxHeight,
@@ -108,16 +105,7 @@ class WordCardState extends ConsumerState<WordCard> {
                         icon: liked ? const Icon(Icons.favorite) : const Icon(Icons.favorite_border),
                         iconSize: widget.fontSize * 0.5,
                         color: liked ? "#FF0303".toColor() : "#999999".toColor(),
-                        onPressed: () async {
-                          setState(() {
-                            liked = !liked;
-                          });
-                          WordStatus newStatus = widget.wordsStatus[widget.wordIndex];
-                          newStatus.liked = liked;
-                          await WordStatusProvider.updateWordStatus(
-                            status: newStatus
-                          );
-                        },
+                        onPressed: _toggleLiked,
                       ),
                       Icon(
                         widget.wordsStatus[widget.wordIndex].learned ? Icons.check_circle : Icons.circle_outlined,
@@ -140,4 +128,3 @@ class WordCardState extends ConsumerState<WordCard> {
         )));
   }
 }
-

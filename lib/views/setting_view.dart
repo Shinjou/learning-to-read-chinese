@@ -41,11 +41,11 @@ class SettingViewState extends ConsumerState<SettingView> {
   @override
   Widget build(BuildContext context) {
     // final screenInfo = ref.watch(screenInfoProvider);
-    final screenInfo = getScreenInfo(context);
+    final screenInfo = ref.watch(screenInfoProvider);
     double fontSize = screenInfo.fontSize;    
     double deviceHeight = screenInfo.screenHeight;
     double deviceWidth = screenInfo.screenWidth;
-    debugPrint('setting_view: Height: $deviceHeight, Width: $deviceWidth, fontSize: $fontSize');
+    debugPrint('setting_view: H: $deviceHeight, W: $deviceWidth, F: $fontSize');
 
     const Color colorBlack = Color.fromRGBO(0, 0, 0, 1);
 
@@ -172,9 +172,12 @@ class SettingViewState extends ConsumerState<SettingView> {
                                 Icons.close,
                                 color: Colors.black,
                                 size: fontSize * 1.4,
-                                shadows: const [Shadow(color: Colors.black, blurRadius: 10, offset: Offset(0, 4.5))],
+                                // shadows: const [Shadow(color: Colors.black, blurRadius: 10, offset: Offset(0, 4.5))],
                               ),
                               onPressed: () {
+                                if (!context.mounted) return;
+                                // navigateWithProvider(context, '/mainPage', ref); 
+                                debugPrint('從 設定 退出');
                                 Navigator.pop(context);
                               },
                             ),

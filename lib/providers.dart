@@ -1,3 +1,4 @@
+// import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/views/view_utils.dart';
 
@@ -13,9 +14,17 @@ final teachWordViewProvider = StateProvider<int>((ref) => 0);
 final userNameProvider = StateProvider<String>((ref) => "");
 final totalWordCountProvider = StateProvider<int>((ref) => 186);
 final learnedWordCountProvider = StateProvider<int>((ref) => 0);
-
-
-final screenInfoProvider = StateProvider<ScreenInfo>((ref) {
-  // This provider must be overridden where BuildContext is available
-  throw UnimplementedError('Override this provider in a Widget that has access to BuildContext.');
+/*
+final screenInfoProvider = StateNotifierProvider<ScreenInfoNotifier, ScreenInfo>((ref) {
+  return ScreenInfoNotifier(ScreenInfo(
+    screenHeight: 0,
+    screenWidth: 0,
+    fontSize: 0,
+    orientation: Orientation.portrait,
+    isTablet: false,
+  ));
+});
+*/
+final screenInfoProvider = StateNotifierProvider<ScreenInfoNotifier, ScreenInfo>((ref) {
+  return ScreenInfoNotifier();
 });

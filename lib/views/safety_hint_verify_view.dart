@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/contants/register_question_label.dart';
 import 'package:ltrc/data/models/user_model.dart';
 import 'package:ltrc/extensions.dart';
+import 'package:ltrc/providers.dart';
 // import 'package:ltrc/providers.dart';
 import 'package:ltrc/views/view_utils.dart';
 
@@ -31,7 +32,7 @@ class _SafetyHintVerifyState extends ConsumerState<SafetyHintVerifyView> {
   @override
   Widget build(BuildContext context) {
     // final screenInfo = ref.watch(screenInfoProvider);
-    final screenInfo = getScreenInfo(context);
+    final screenInfo = ref.watch(screenInfoProvider);
     double fontSize = screenInfo.fontSize;    
     double deviceHeight = screenInfo.screenHeight;
 

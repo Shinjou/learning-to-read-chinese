@@ -84,7 +84,7 @@ class _BopomoQuizState extends ConsumerState<BopomoQuizView> {
   @override
   Widget build(BuildContext context) {
     // final screenInfo = ref.watch(screenInfoProvider);
-    final screenInfo = getScreenInfo(context);
+    final screenInfo = ref.watch(screenInfoProvider);
     double fontSize = screenInfo.fontSize;
 
     return Scaffold(

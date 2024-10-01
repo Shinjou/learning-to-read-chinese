@@ -9,7 +9,6 @@ import 'package:ltrc/extensions.dart';
 import 'package:ltrc/providers.dart';
 import 'package:ltrc/views/view_utils.dart';
 
-
 class LogInView extends ConsumerStatefulWidget {
   const LogInView({super.key});
 
@@ -37,13 +36,11 @@ class LogInViewState extends ConsumerState<LogInView> {
 
   @override
   Widget build(BuildContext context) {
-    // final screenInfo = ref.watch(screenInfoProvider);
-    final screenInfo = getScreenInfo(context);
-    // final screenInfo = getScreenInfo(context);
+    final screenInfo = ref.watch(screenInfoProvider);
     double fontSize = screenInfo.fontSize;
     double deviceHeight = screenInfo.screenHeight;
     double deviceWidth = screenInfo.screenWidth;
-    debugPrint('log_in_view: Height: $deviceHeight, Width: $deviceWidth, fontSize: $fontSize');
+    debugPrint('log_in_view: H: $deviceHeight, W: $deviceWidth, F: $fontSize');
 
     return GestureDetector(
       onTap: () {

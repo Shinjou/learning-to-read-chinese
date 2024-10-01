@@ -1,4 +1,6 @@
-// main.dart
+
+// main.dart test version
+/*
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
@@ -13,9 +15,9 @@ import 'package:ltrc/views/polyphonic_processor.dart';
 
 import 'package:ltrc/contants/routes.dart';
 import 'package:ltrc/extensions.dart';
-import 'package:ltrc/views/view_utils.dart';
+// import 'package:ltrc/views/view_utils.dart';
 
-Future main() async {
+Future<void> main() async {
   try {
     WidgetsFlutterBinding.ensureInitialized();
     setupLogger();
@@ -34,43 +36,237 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final grade = ref.watch(gradeProvider);
+    
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: '學國語',
-      theme: ThemeData(
-        appBarTheme: AppBarTheme(
-          iconTheme: IconThemeData(color: "#F5F5DC".toColor()),
-          foregroundColor: "#F5F5DC".toColor(),
-          color: "#28231D".toColor(),
-        ),
-        scaffoldBackgroundColor: "#28231D".toColor(),
-        useMaterial3: true,
-        fontFamily: ref.watch(gradeProvider) < 5 ? 'BpmfIansui' : 'Iansui',
-        textTheme: const TextTheme(
-          bodyMedium: TextStyle(),
-          bodyLarge: TextStyle(),
-        ).apply(
-          bodyColor: "#F5F5DC".toColor(),
-        ),
-      ),
+      theme: _buildThemeData(grade),
       routes: AppRoutes.define(),
-      home: const HomePageInitializer(),
+      home: const ScreenInfoInitializer(child: HomePage()),
+      builder: (context, child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaler: const TextScaler.linear(1.0)),
+          child: child!,
+        );
+      },      
+    );
+  }
+
+  ThemeData _buildThemeData(int grade) {
+    return ThemeData(
+      appBarTheme: AppBarTheme(
+        iconTheme: IconThemeData(color: "#F5F5DC".toColor()),
+        foregroundColor: "#F5F5DC".toColor(),
+        color: "#28231D".toColor(),
+      ),
+      scaffoldBackgroundColor: "#28231D".toColor(),
+      useMaterial3: true,
+      fontFamily: grade < 5 ? 'BpmfIansui' : 'Iansui',
+      textTheme: const TextTheme(
+        bodyMedium: TextStyle(),
+        bodyLarge: TextStyle(),
+      ).apply(
+        bodyColor: "#F5F5DC".toColor(),
+      ),
     );
   }
 }
 
-class HomePageInitializer extends StatelessWidget {
-  const HomePageInitializer({super.key});
+class ScreenInfoInitializer extends ConsumerStatefulWidget {
+  final Widget child;
+
+  const ScreenInfoInitializer({super.key, required this.child});
+
+  @override
+  ScreenInfoInitializerState createState() => ScreenInfoInitializerState();
+}
+
+class ScreenInfoInitializerState extends ConsumerState<ScreenInfoInitializer> with WidgetsBindingObserver {
+  @override 
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _updateScreenInfo());
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeMetrics() {
+    _updateScreenInfo();
+  }
+  
+  void _updateScreenInfo() {
+    if (mounted) {
+      ref.read(screenInfoProvider.notifier).init(context);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final screenInfo = getScreenInfo(context);
-    
-    return ProviderScope(
-      overrides: [
-        screenInfoProvider.overrideWith((ref) => screenInfo),
-      ],
-      child: const HomePage(),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        WidgetsBinding.instance.addPostFrameCallback((_) => _updateScreenInfo());
+        return widget.child;    
+      },
+    );
+  }
+}
+
+class HomePage extends ConsumerWidget {
+  const HomePage({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {  
+    final screenInfo = ref.watch(screenInfoProvider);
+    debugPrint("HomePage build: H: ${screenInfo.screenHeight}, W: ${screenInfo.screenWidth}, F: ${screenInfo.fontSize}, ${screenInfo.orientation}, T: ${screenInfo.isTablet}");
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          '學國語',
+          style: TextStyle(fontSize: screenInfo.fontSize),
+        ),
+      ),
+      body: const LogInView(),
+    );
+  }
+}
+*/
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:logger/logger.dart';
+import 'dart:io';
+
+import 'package:ltrc/providers.dart';
+import 'package:ltrc/data/providers/all_provider.dart';
+import 'package:ltrc/data/providers/user_provider.dart';
+import 'package:ltrc/views/log_in_view.dart';
+import 'package:ltrc/views/polyphonic_processor.dart';
+import 'package:ltrc/contants/routes.dart';
+import 'package:ltrc/extensions.dart';
+
+Future<void> main() async {
+  try {
+    WidgetsFlutterBinding.ensureInitialized();
+    setupLogger();
+    await AllProvider.database;
+    await UserProvider.database;
+    await PolyphonicProcessor.instance.loadPolyphonicData();
+
+    runApp(const ProviderScope(child: MyApp()));
+  } catch (e) {
+    debugPrint('Failed to init the database: $e');
+  }
+}
+
+class MyApp extends ConsumerWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final grade = ref.watch(gradeProvider);
+
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: '學國語',
+      theme: _buildThemeData(grade),
+      routes: AppRoutes.define(),
+      home: const ScreenInfoInitializer(child: HomePage()),
+      builder: (context, child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaler: const TextScaler.linear(1.0)),
+          child: child!,
+        );
+      },
+    );
+  }
+
+  ThemeData _buildThemeData(int grade) {
+    return ThemeData(
+      appBarTheme: AppBarTheme(
+        iconTheme: IconThemeData(color: "#F5F5DC".toColor()),
+        foregroundColor: "#F5F5DC".toColor(),
+        color: "#28231D".toColor(),
+      ),
+      scaffoldBackgroundColor: "#28231D".toColor(),
+      useMaterial3: true,
+      fontFamily: grade < 5 ? 'BpmfIansui' : 'Iansui',
+      textTheme: const TextTheme(
+        bodyMedium: TextStyle(),
+        bodyLarge: TextStyle(),
+      ).apply(
+        bodyColor: "#F5F5DC".toColor(),
+      ),
+    );
+  }
+}
+
+class ScreenInfoInitializer extends ConsumerStatefulWidget {
+  final Widget child;
+  const ScreenInfoInitializer({super.key, required this.child});
+
+  @override
+  ScreenInfoInitializerState createState() => ScreenInfoInitializerState();
+}
+
+class ScreenInfoInitializerState extends ConsumerState<ScreenInfoInitializer> with WidgetsBindingObserver {
+  late Future<void> _initFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _initFuture = _initializeScreenInfo();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeMetrics() {
+    _updateScreenInfo();
+  }
+
+  Future<void> _initializeScreenInfo() async {
+    // Wait for the first frame to ensure we have valid metrics
+    await WidgetsBinding.instance.endOfFrame;
+    if (mounted) {
+      _updateScreenInfo();
+    }
+  }
+
+  void _updateScreenInfo() {
+    if (mounted) {
+      ref.read(screenInfoProvider.notifier).init(context);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<void>(
+      future: _initFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());  // Show a loading spinner until the screen info is ready
+        }
+
+        final screenInfo = ref.watch(screenInfoProvider);
+        if (screenInfo.screenHeight == 0 || screenInfo.screenWidth == 0) {
+          return const Center(child: CircularProgressIndicator());  // Show a spinner while screen info is zero
+        }
+
+        return widget.child;
+      },
     );
   }
 }
@@ -80,34 +276,25 @@ class HomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return OrientationBuilder(
-      builder: (context, orientation) {
-        debugPrint("main: Orientation changed: ${MediaQuery.of(context).orientation == Orientation.portrait ? 'Portrait' : 'Landscape'}");
-        final screenInfo = getScreenInfo(context);
+    final screenInfo = ref.watch(screenInfoProvider);
+    debugPrint("HomePage build: H: ${screenInfo.screenHeight}, W: ${screenInfo.screenWidth}, F: ${screenInfo.fontSize}, ${screenInfo.orientation}, T: ${screenInfo.isTablet}");
 
-        /* Can not update directly in the build method
-        ref.read(screenInfoProvider.notifier).state = screenInfo;
-        debugPrint("HomePage screenInfoProvider: ${screenInfo.screenHeight}, ${screenInfo.screenWidth}, ${screenInfo.fontSize}");
-        */
-        // Defer the state update until after the current frame is rendered
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          ref.read(screenInfoProvider.notifier).state = screenInfo;
-          debugPrint("HomePage screenInfoProvider: ${screenInfo.screenHeight}, ${screenInfo.screenWidth}, ${screenInfo.fontSize}");
-        });
+    if (screenInfo.screenHeight == 0 || screenInfo.screenWidth == 0) {
+      return const Center(child: CircularProgressIndicator());  // Show a spinner if screen info is still not ready
+    }
 
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(
-              '學國語',
-              style: TextStyle(fontSize: screenInfo.fontSize),
-            ),
-          ),
-          body: const LogInView(),
-        );
-      },
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          '學國語',
+          style: TextStyle(fontSize: screenInfo.fontSize),
+        ),
+      ),
+      body: const LogInView(),
     );
   }
 }
+
 
 class FileLogger extends LogOutput {
   final File file;

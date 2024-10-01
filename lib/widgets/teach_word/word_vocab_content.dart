@@ -1,8 +1,8 @@
+// word_vocab_content.dart is a stateful widget that displays the vocabulary, meaning, and example sentence.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-// import 'package:ltrc/providers.dart';
-import 'package:ltrc/views/view_utils.dart';
+import 'package:ltrc/providers.dart';
 import 'package:ltrc/widgets/teach_word/zhuyin_processing.dart';
 
 class WordVocabContent extends ConsumerStatefulWidget {
@@ -29,18 +29,28 @@ class WordVocabContentState extends ConsumerState<WordVocabContent> {
   late String vocab2;
   late String meaning;
   late String sentence;
-  // late String displayedSentence;
   String displayedSentence = '';
   late List<String> options;
   String message = '';
   late String blankSentence;
-  late String reconstructedSentence;
 
   @override
   void initState() {
     super.initState();
-    debugPrint('word_vocab_content initState: vocab = ${widget.vocab}, sentence = ${widget.sentence}');
+    debugPrint('word_vocab_content initState: vocab = ${widget.vocab}, sentence = ${widget.sentence}, stack: ${StackTrace.current}');
     _initVariables();
+  }
+
+  @override
+  void didUpdateWidget(covariant WordVocabContent oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Only reinitialize variables if vocab or sentence has changed
+    if (widget.vocab != oldWidget.vocab || widget.sentence != oldWidget.sentence) {
+      debugPrint('Updating variables because vocab or sentence has changed.');
+      _initVariables();
+    } else {
+      debugPrint('No change in vocab or sentence, skipping re-initialization.');
+    }
   }
 
   void _initVariables() {
@@ -52,6 +62,7 @@ class WordVocabContentState extends ConsumerState<WordVocabContent> {
     displayedSentence = blankSentence;
     options = [vocab, vocab2]..shuffle();
     message = '';
+    debugPrint('Initialized variables: vocab = $vocab, options = $options');
   }
 
   String _createBlankSentence(String sentence, String vocab) {
@@ -63,63 +74,48 @@ class WordVocabContentState extends ConsumerState<WordVocabContent> {
   Future<void> _speak(String text) async {
     int result = await ftts.speak(text);
     if (result == 1) {
-      // debugPrint('WordVocabContent _speak succeeded!');
+      debugPrint('WordVocabContent _speak succeeded! text: $text');
     } else {
-      debugPrint('WordVocabContent _speak failed!');
+      debugPrint('WordVocabContent _speak failed! text: $text');
     }
   }
 
   void _selectWord(String word) {
-    // debugPrint('_selectWord: word = $word, vocab = $vocab');
+    debugPrint('_selectWord: word = $word, vocab = $vocab, stack: ${StackTrace.current}');
     _speak(word);
     if (word == vocab) {
-      displayedSentence = widget.sentence;
-      message = '答對了！';
+      setState(() {
+        debugPrint('setState _selectWord: 答對了, stack: ${StackTrace.current}');
+        displayedSentence = widget.sentence;
+        message = '答對了！';
+      });
     } else {
-      displayedSentence = blankSentence;
-      message = '再試試！';
+      setState(() {
+        debugPrint('setState _selectWord: 再試試, stack: ${StackTrace.current}');
+        displayedSentence = blankSentence;
+        message = '再試試！';
+      });
     }
-    _speak(message);    
-    setState(() {});
+    _speak(message);
   }
 
   void _onContinuePressed() {
+    debugPrint('_onContinuePressed: init variables');
     _initVariables(); // Reset for a new page
     setState(() {
+      debugPrint('setState _onContinuePressed: resetting message');
       message = '';
     });
   }
 
-  // 因為 initState 只做一次，這個 function 會在每次 build() 時被呼叫，用來檢查是否更新解釋、例句、選項
-  void _checkAndSetLiju() {
-    // debugPrint(
-    //     '_checkAndSetLiju: message = $message, $meaning, $vocab, $widget.meaning, $displayedSentence');
-    if (message != '' && meaning == widget.meaning) {
-      // 使用者重複在同一頁選擇字詞
-      setState(() {
-        options = [vocab, vocab2]..shuffle();
-        // message = ''; // 不能清空 message，否則會導致後面的判斷錯誤
-      });
-
-    } else {
-      // 新“用一用”頁，因為 initState 只做一次，因此需要在這裡 init Variables
-      setState(() {
-        _initVariables();
-      });
-    }
-  }
-
-
   @override
   Widget build(BuildContext context) {
-    // final screenInfo = ref.watch(screenInfoProvider);
-    final screenInfo = getScreenInfo(context);
-    double fontSize = screenInfo.fontSize;    
+    debugPrint('Building WordVocabContent widget: stack: ${StackTrace.current}');
+    final screenInfo = ref.watch(screenInfoProvider);
+    double fontSize = screenInfo.fontSize;
 
     const Color explanationColor = Color.fromRGBO(228, 219, 124, 1);
     const Color whiteColor = Colors.white;
-
-    _checkAndSetLiju(); // Ensure state is correct for each build
 
     List<Widget> children = [
       // Vocabulary display with TTS button
@@ -195,38 +191,35 @@ class WordVocabContentState extends ConsumerState<WordVocabContent> {
       ),
 
       // Displayed sentence (with blanks or filled)
-
       ZhuyinProcessing(
         text: displayedSentence,
         fontSize: fontSize,
         color: whiteColor,
         highlightOn: true,
       ),
+
       // Display options (vocab and vocab2) as buttons
       Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: options.map((word) {
           return Container(
-              width: fontSize * 10.0, // for 4 1.5 fontSize characters
-              height: fontSize * 2.0, // word fontSize = 1.0
-              alignment: Alignment.center,
-              margin: const EdgeInsets.all(0.0),
-              decoration: const BoxDecoration(
-                borderRadius:
-                    BorderRadius.all(Radius.circular(0)), // was 1/1
-                // color: Colors.grey,
+            width: fontSize * 10.0, // for 4 1.5 fontSize characters
+            height: fontSize * 2.0, // word fontSize = 1.0
+            alignment: Alignment.center,
+            margin: const EdgeInsets.all(0.0),
+            child: ElevatedButton(
+              onPressed: () => _selectWord(word),
+              child: Text(
+                word,
+                style: TextStyle(
+                  fontSize: fontSize * 0.90, // 1.0 will overflow in some small devices
+                  color: Colors.black,
+                ),
               ),
-              child: ElevatedButton(
-                onPressed: () => _selectWord(word),
-                child: Text(word,
-                    style: TextStyle(
-                      fontSize: fontSize * 0.90, // 1.0 will overflow in some small devices
-                      // fontWeight: FontWeight.w900,
-                      color: Colors.black,
-                    )),
-              )); // Container
+            ),
+          );
         }).toList(),
-      ), // Row
+      ),
 
       Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -255,22 +248,19 @@ class WordVocabContentState extends ConsumerState<WordVocabContent> {
           if (message.isNotEmpty)
             ElevatedButton(
               onPressed: _onContinuePressed,
-              // 用下面 style 把 button 隱藏起來
+              // Hide button
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors
-                    .transparent, // Button background color is transparent
+                backgroundColor: Colors.transparent,
                 disabledForegroundColor: Colors.transparent.withOpacity(0.38),
-                disabledBackgroundColor: Colors.transparent.withOpacity(
-                    0.12), // Used for disabled state, also transparent
-                shadowColor: Colors.transparent, // No shadow
-                elevation: 0, // No elevation
+                disabledBackgroundColor: Colors.transparent.withOpacity(0.12),
+                shadowColor: Colors.transparent,
+                elevation: 0,
               ),
-
               child: Text(
-                '續', // Invisible text
+                '續',
                 style: TextStyle(
-                  fontSize: fontSize, // Adjust font size accordingly
-                  color: Colors.transparent, // Text color is transparent
+                  fontSize: fontSize,
+                  color: Colors.transparent,
                 ),
               ),
             ),

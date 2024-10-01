@@ -1,4 +1,3 @@
-// import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/contants/semester_code.dart';
@@ -17,13 +16,11 @@ class MainPageView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     
-    // final screenInfo = ref.watch(screenInfoProvider);
-    final screenInfo = getScreenInfo(context);
-    // final screenInfo = getScreenInfo(context);
+    final screenInfo = ref.watch(screenInfoProvider);
     double fontSize = screenInfo.fontSize;    
     double deviceHeight = screenInfo.screenHeight;
     double deviceWidth = screenInfo.screenWidth;
-    debugPrint('main_page_view: Height: $deviceHeight, Width: $deviceWidth, fontSize: $fontSize');
+    debugPrint('main_page_view: H: $deviceHeight, W: $deviceWidth, F: $fontSize');
     String account = ref.read(accountProvider);
     int totalWordCount = ref.watch(totalWordCountProvider);
     int learnedWordCount = ref.watch(learnedWordCountProvider);
@@ -35,138 +32,101 @@ class MainPageView extends ConsumerWidget {
     }
 
     return Scaffold(
-        backgroundColor: '#28231D'.toColor(),
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          actions: [
-            IconButton(
-              icon: Icon(
-                Icons.settings,
-                size: fontSize * 1.5,
-              ),
-              // onPressed: () => Navigator.of(context).pushNamed('/setting'),
-              onPressed: () => navigateWithProvider(context, '/setting', ref),
-            )
-          ],
-        ),
-
-        body: SizedBox.expand(
+      backgroundColor: '#28231D'.toColor(),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.settings,
+              size: fontSize * 1.5,
+            ),
+            // onPressed: () => Navigator.of(context).pushNamed('/setting'),
+            onPressed: () => navigateWithProvider(context, '/setting', ref),
+          )
+        ],
+      ),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 600), // Adjust this value as needed
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Container(
-                height: fontSize * 3.2,
-                alignment: Alignment.center,
-                margin: EdgeInsetsDirectional.fromSTEB(
-                  0, deviceHeight * 0.0825, 0, deviceHeight * 0.193),
-                child: Text(
-                  '學國語',
-                  style: TextStyle(
-                    fontSize: fontSize * 2.0,
-                  ),
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[        
+              Text(
+                '學國語',
+                style: TextStyle(
+                  fontSize: fontSize * 2.0,
+                  color: '#F5F5DC'.toColor(),
                 ),
+                textAlign: TextAlign.center,
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4.0),
-                child: SizedBox(
-                  width: deviceWidth * 0.8,
-                  height: deviceHeight * 0.095,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      int semesterCode = ref.watch(semesterCodeProvider);
-                      int publisherCode = ref.watch(publisherCodeProvider);
-
-                      List<Unit> units = await UnitProvider.getUnits(
-                        inputPublisher: publisherCodeTable[publisherCode]!,
-                        inputGrade: ref.watch(gradeProvider),
-                        inputSemester: semesterCodeTable[semesterCode]!);
-                      if (!context.mounted) return;    
-                      navigateWithProvider(
-                        context, 
-                        '/units', 
-                        ref, 
-                        arguments: {'units': units}
-                      );
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStateProperty.all('#013E6D'.toColor()),
-                      elevation: WidgetStateProperty.all(25),
-                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12))),
-                    ),
-                    child: Text(
-                      '學生字',
-                      style: TextStyle(
-                        fontSize: fontSize * 1.5,
-                        color: '#F5F5DC'.toColor(),
-                      ),
-                    ),
-                  ),
-                ),
+              SizedBox(height: deviceHeight * 0.05),
+              _buildButton(
+                context,
+                ref,
+                '學生字',
+                () async {
+                  int semesterCode = ref.watch(semesterCodeProvider);
+                  int publisherCode = ref.watch(publisherCodeProvider);
+                  List<Unit> units = await UnitProvider.getUnits(
+                    inputPublisher: publisherCodeTable[publisherCode]!,
+                    inputGrade: ref.watch(gradeProvider),
+                    inputSemester: semesterCodeTable[semesterCode]!);
+                  if (!context.mounted) return;    
+                  navigateWithProvider(
+                    context, 
+                    '/units', 
+                    ref, 
+                    arguments: {'units': units}
+                  );
+                },
+                fontSize,
               ),
-
-              // Conditionally show the Zhuyin verification button
+              SizedBox(height: deviceHeight * 0.02),
               if (account == 'tester' || account == 'testerbpmf') 
-                Column(
-                  children: [
-                    SizedBox(height: fontSize * 0.5),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4.0),                
-                      child: SizedBox(
-                        width: deviceWidth * 0.8,
-                        height: deviceHeight * 0.095,
-                        child: ElevatedButton(
-                          onPressed: () => navigateWithProvider(context, '/checkzhuyin', ref),
-                          style: ButtonStyle(
-                            backgroundColor: WidgetStateProperty.all('#013E6D'.toColor()),
-                            elevation: WidgetStateProperty.all(25),
-                            shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12))),
-                          ),
-                          child: Text(
-                            '檢查字詞的注音',
-                            style: TextStyle(
-                              fontSize: fontSize * 1.5,
-                              color: '#F5F5DC'.toColor(),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+                _buildButton(
+                  context,
+                  ref,
+                  '檢查字詞的注音',
+                  () => navigateWithProvider(context, '/checkzhuyin', ref),
+                  fontSize,
                 ),
-                                                      
-              SizedBox(height: fontSize * 0.5),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4.0),
-                child: SizedBox(
-                  width: deviceWidth * 0.8,
-                  height: deviceHeight * 0.095,
-                  child: ElevatedButton(
-                    onPressed: () => navigateWithProvider(context, '/duoyinzi', ref),
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStateProperty.all('#013E6D'.toColor()),
-                      elevation: WidgetStateProperty.all(25),
-                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12))),
-                    ),
-                    child: Text(
-                      '標示注音符號',
-                      style: TextStyle(
-                        fontSize: fontSize * 1.5,
-                        color: '#F5F5DC'.toColor(),
-                      ),
-                    ),
-                  ),
-                ),
+                SizedBox(height: deviceHeight * 0.02),
+              _buildButton(
+                context,
+                ref,
+                '標示注音符號',
+                () => navigateWithProvider(context, '/duoyinzi', ref),
+                fontSize,
               ),
-
-              // Additional UI elements...
+              // You can add more widgets here if needed
             ],
           ),
-        ));
+        ),
+      ),
+    );
   }
+
+  Widget _buildButton(BuildContext context, WidgetRef ref, String text, VoidCallback onPressed, double fontSize) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ButtonStyle(
+        backgroundColor: WidgetStateProperty.all('#013E6D'.toColor()),
+        elevation: WidgetStateProperty.all(25),
+        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12))),
+        padding: WidgetStateProperty.all(const EdgeInsets.symmetric(vertical: 16)),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: fontSize * 1.5,
+          color: '#F5F5DC'.toColor(),
+        ),
+        textAlign: TextAlign.center,
+      ),
+    );
+  }        
 }

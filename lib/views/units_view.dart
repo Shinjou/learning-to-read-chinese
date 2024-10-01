@@ -33,8 +33,8 @@ class UnitsViewState extends ConsumerState<UnitsView> {
 
   @override
   Widget build(BuildContext context) {
-    // final screenInfo = ref.watch(screenInfoProvider);
-    final screenInfo = getScreenInfo(context);
+
+    final screenInfo = ref.watch(screenInfoProvider);
     double fontSize = screenInfo.fontSize;    
     bool isTablet = screenInfo.screenWidth > 600;
     if (isTablet && MediaQuery.of(context).orientation == Orientation.landscape) fontSize *= 1.3;
@@ -169,25 +169,6 @@ class UnitsViewState extends ConsumerState<UnitsView> {
                         );
                         List<Map> likedWordsPhrase = await getWordsPhraseSentence(likedWords);
                         if (!context.mounted) return;
-                        /*
-                        Navigator.of(context).pushNamed(
-                          '/words', 
-                          arguments: {
-                            'unit' : Unit(
-                              id: -1, 
-                              publisher: '', 
-                              grade: 1, 
-                              semester: '', 
-                              unitId: -1, 
-                              unitTitle: "❤️最愛",
-                              newWords: [] ,
-                              extraWords:[]
-                            ),
-                            'newWordsStatus' : likedWords,
-                            'newWordsPhrase' : likedWordsPhrase
-                          }
-                        );
-                        */
                         navigateWithProvider(
                           context, 
                           '/words', 
@@ -275,18 +256,6 @@ class UnitsViewState extends ConsumerState<UnitsView> {
                       List<Map> newWordsPhrase = await getWordsPhraseSentence(newWordsStatus);
                       List<Map> extraWordsPhrase = await getWordsPhraseSentence(extraWordsStatus);
                       if (!context.mounted) return;
-                      /*
-                      Navigator.of(context).pushNamed(
-                        '/words', 
-                        arguments: {
-                          'unit' : unit,
-                          'newWordsStatus' : newWordsStatus,
-                          'extraWordsStatus' : extraWordsStatus,
-                          'newWordsPhrase' : newWordsPhrase,
-                          'extraWordsPhrase' : extraWordsPhrase
-                        }
-                      );
-                      */
                       navigateWithProvider(
                         context,
                         '/words', 

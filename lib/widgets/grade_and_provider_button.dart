@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/extensions.dart';
-import 'package:ltrc/views/view_utils.dart';
+import 'package:ltrc/providers.dart';
+// import 'package:ltrc/views/view_utils.dart';
 // import 'package:ltrc/providers.dart';
 
 class GradeAndProviderButton extends ConsumerWidget {
@@ -17,7 +18,7 @@ class GradeAndProviderButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // final screenInfo = ref.watch(screenInfoProvider);
-    final screenInfo = getScreenInfo(context);
+    final screenInfo = ref.watch(screenInfoProvider);
     double fontSize = screenInfo.fontSize;    
 
     return Container(

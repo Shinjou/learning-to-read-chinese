@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ltrc/data/models/word_status_model.dart';
 import 'package:ltrc/views/acknowledge.dart';
 import 'package:ltrc/views/check_zhuyin_view.dart';
 import 'package:ltrc/views/bopomo_quiz.dart';
@@ -14,6 +15,7 @@ import 'package:ltrc/views/reset_pwd_account.dart';
 import 'package:ltrc/views/safety_hint_register_view.dart';
 import 'package:ltrc/views/safety_hint_verify_view.dart';
 import 'package:ltrc/views/setting_view.dart';
+import 'package:ltrc/views/teach_word_view.dart';
 import 'package:ltrc/views/units_view.dart';
 import 'package:ltrc/views/words_view.dart';
 
@@ -59,7 +61,25 @@ class AppRoutes {
       words: (context) => const WordsView(),
       duoyinzi: (context) => const DuoyinziView(),
       checkzhuyin: (context) => const CheckZhuyinView(), // To test zhuyin
-      // teachWord: (context) => const TeachWordView(),
+      /*
+      teachWord: (context) => TeachWordView(
+        unitId: (ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>)['unitId'] as int,
+        unitTitle: (ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>)['unitTitle'] as String,
+        wordsStatus: (ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>)['wordsStatus'] as List<WordStatus>,
+        wordsPhrase: (ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>)['wordsPhrase'] as List<Map>,
+        wordIndex: (ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>)['wordIndex'] as int,
+      ),      
+      */
+      teachWord: (context) {
+        final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+        return TeachWordView(
+          unitId: args['unitId'] as int,
+          unitTitle: args['unitTitle'] as String,
+          wordsStatus: (args['wordsStatus'] as List).cast<WordStatus>(),
+          wordsPhrase: args['wordsPhrase'] as List<Map>,
+          wordIndex: args['wordIndex'] as int,
+        );
+      },      
     };
   }
 }
