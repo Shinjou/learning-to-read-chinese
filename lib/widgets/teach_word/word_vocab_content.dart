@@ -37,7 +37,8 @@ class WordVocabContentState extends ConsumerState<WordVocabContent> {
   @override
   void initState() {
     super.initState();
-    debugPrint('word_vocab_content initState: vocab = ${widget.vocab}, sentence = ${widget.sentence}, stack: ${StackTrace.current}');
+    // debugPrint('word_vocab_content initState: vocab = ${widget.vocab}, sentence = ${widget.sentence}, stack: ${StackTrace.current}');
+    debugPrint('word_vocab_content initState: vocab = ${widget.vocab}, sentence = ${widget.sentence}');
     _initVariables();
   }
 
@@ -81,17 +82,20 @@ class WordVocabContentState extends ConsumerState<WordVocabContent> {
   }
 
   void _selectWord(String word) {
-    debugPrint('_selectWord: word = $word, vocab = $vocab, stack: ${StackTrace.current}');
+    // debugPrint('_selectWord: word = $word, vocab = $vocab, stack: ${StackTrace.current}');
+    debugPrint('_selectWord: word = $word, vocab = $vocab');
     _speak(word);
     if (word == vocab) {
       setState(() {
-        debugPrint('setState _selectWord: 答對了, stack: ${StackTrace.current}');
+        // debugPrint('setState _selectWord: 答對了, stack: ${StackTrace.current}');
+        debugPrint('setState _selectWord: 答對了');
         displayedSentence = widget.sentence;
         message = '答對了！';
       });
     } else {
       setState(() {
-        debugPrint('setState _selectWord: 再試試, stack: ${StackTrace.current}');
+        // debugPrint('setState _selectWord: 再試試, stack: ${StackTrace.current}');
+        debugPrint('setState _selectWord: 再試試');
         displayedSentence = blankSentence;
         message = '再試試！';
       });
@@ -110,7 +114,8 @@ class WordVocabContentState extends ConsumerState<WordVocabContent> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('Building WordVocabContent widget: stack: ${StackTrace.current}');
+    // debugPrint('Building WordVocabContent widget: stack: ${StackTrace.current}');
+    debugPrint('Building WordVocabContent widget');
     final screenInfo = ref.watch(screenInfoProvider);
     double fontSize = screenInfo.fontSize;
 
@@ -248,7 +253,7 @@ class WordVocabContentState extends ConsumerState<WordVocabContent> {
           if (message.isNotEmpty)
             ElevatedButton(
               onPressed: _onContinuePressed,
-              // Hide button
+              // 用下面 style 把 button 隱藏起來
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.transparent,
                 disabledForegroundColor: Colors.transparent.withOpacity(0.38),
@@ -257,7 +262,7 @@ class WordVocabContentState extends ConsumerState<WordVocabContent> {
                 elevation: 0,
               ),
               child: Text(
-                '續',
+                '續',// Invisible text
                 style: TextStyle(
                   fontSize: fontSize,
                   color: Colors.transparent,
