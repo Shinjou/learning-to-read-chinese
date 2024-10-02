@@ -658,8 +658,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                 children: [
                   ConstrainedBox(
                     constraints: BoxConstraints(
-                      // maxWidth: availableWidth, 
-                      maxWidth: availableWidth * 0.9, // 
+                      maxWidth: availableWidth, 
                     ),
                     child: Column(
                       // mainAxisSize: MainAxisSize.min, // Prevents infinite height
