@@ -1,145 +1,9 @@
 
 // main.dart test version
-/*
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:logger/logger.dart';
-import 'dart:io';
-
-import 'package:ltrc/providers.dart';
-import 'package:ltrc/data/providers/all_provider.dart';
-import 'package:ltrc/data/providers/user_provider.dart';
-import 'package:ltrc/views/log_in_view.dart';
-import 'package:ltrc/views/polyphonic_processor.dart';
-
-import 'package:ltrc/contants/routes.dart';
-import 'package:ltrc/extensions.dart';
-// import 'package:ltrc/views/view_utils.dart';
-
-Future<void> main() async {
-  try {
-    WidgetsFlutterBinding.ensureInitialized();
-    setupLogger();
-    await AllProvider.database;
-    await UserProvider.database;
-    await PolyphonicProcessor.instance.loadPolyphonicData();
-
-    runApp(const ProviderScope(child: MyApp()));
-  } catch (e) {
-    debugPrint('Failed to init the database: $e');
-  }
-}
-
-class MyApp extends ConsumerWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final grade = ref.watch(gradeProvider);
-    
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: '學國語',
-      theme: _buildThemeData(grade),
-      routes: AppRoutes.define(),
-      home: const ScreenInfoInitializer(child: HomePage()),
-      builder: (context, child) {
-        return MediaQuery(
-          data: MediaQuery.of(context).copyWith(textScaler: const TextScaler.linear(1.0)),
-          child: child!,
-        );
-      },      
-    );
-  }
-
-  ThemeData _buildThemeData(int grade) {
-    return ThemeData(
-      appBarTheme: AppBarTheme(
-        iconTheme: IconThemeData(color: "#F5F5DC".toColor()),
-        foregroundColor: "#F5F5DC".toColor(),
-        color: "#28231D".toColor(),
-      ),
-      scaffoldBackgroundColor: "#28231D".toColor(),
-      useMaterial3: true,
-      fontFamily: grade < 5 ? 'BpmfIansui' : 'Iansui',
-      textTheme: const TextTheme(
-        bodyMedium: TextStyle(),
-        bodyLarge: TextStyle(),
-      ).apply(
-        bodyColor: "#F5F5DC".toColor(),
-      ),
-    );
-  }
-}
-
-class ScreenInfoInitializer extends ConsumerStatefulWidget {
-  final Widget child;
-
-  const ScreenInfoInitializer({super.key, required this.child});
-
-  @override
-  ScreenInfoInitializerState createState() => ScreenInfoInitializerState();
-}
-
-class ScreenInfoInitializerState extends ConsumerState<ScreenInfoInitializer> with WidgetsBindingObserver {
-  @override 
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addObserver(this);
-    WidgetsBinding.instance.addPostFrameCallback((_) => _updateScreenInfo());
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
-
-  @override
-  void didChangeMetrics() {
-    _updateScreenInfo();
-  }
-  
-  void _updateScreenInfo() {
-    if (mounted) {
-      ref.read(screenInfoProvider.notifier).init(context);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        WidgetsBinding.instance.addPostFrameCallback((_) => _updateScreenInfo());
-        return widget.child;    
-      },
-    );
-  }
-}
-
-class HomePage extends ConsumerWidget {
-  const HomePage({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {  
-    final screenInfo = ref.watch(screenInfoProvider);
-    debugPrint("HomePage build: H: ${screenInfo.screenHeight}, W: ${screenInfo.screenWidth}, F: ${screenInfo.fontSize}, ${screenInfo.orientation}, T: ${screenInfo.isTablet}");
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          '學國語',
-          style: TextStyle(fontSize: screenInfo.fontSize),
-        ),
-      ),
-      body: const LogInView(),
-    );
-  }
-}
-*/
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ltrc/views/view_utils.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:logger/logger.dart';
 import 'dart:io';
@@ -150,7 +14,7 @@ import 'package:ltrc/data/providers/user_provider.dart';
 import 'package:ltrc/views/log_in_view.dart';
 import 'package:ltrc/views/polyphonic_processor.dart';
 import 'package:ltrc/contants/routes.dart';
-import 'package:ltrc/extensions.dart';
+// import 'package:ltrc/extensions.dart';
 
 Future<void> main() async {
   try {
@@ -190,19 +54,19 @@ class MyApp extends ConsumerWidget {
 
   ThemeData _buildThemeData(int grade) {
     return ThemeData(
-      appBarTheme: AppBarTheme(
-        iconTheme: IconThemeData(color: "#F5F5DC".toColor()),
-        foregroundColor: "#F5F5DC".toColor(),
-        color: "#28231D".toColor(),
+      appBarTheme: const AppBarTheme(
+        iconTheme: IconThemeData(color: beige),
+        foregroundColor: beige,
+        color: darkBrown,
       ),
-      scaffoldBackgroundColor: "#28231D".toColor(),
+      scaffoldBackgroundColor: darkBrown,
       useMaterial3: true,
       fontFamily: grade < 5 ? 'BpmfIansui' : 'Iansui',
       textTheme: const TextTheme(
         bodyMedium: TextStyle(),
         bodyLarge: TextStyle(),
       ).apply(
-        bodyColor: "#F5F5DC".toColor(),
+        bodyColor: beige,
       ),
     );
   }

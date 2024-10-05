@@ -5,7 +5,7 @@ import 'package:ltrc/contants/publisher_code.dart';
 import 'package:ltrc/data/models/user_model.dart';
 import 'package:ltrc/data/providers/unit_provider.dart';
 import 'package:ltrc/data/providers/user_provider.dart';
-import 'package:ltrc/extensions.dart';
+// import 'package:ltrc/extensions.dart';
 import 'package:ltrc/providers.dart';
 import 'package:ltrc/views/view_utils.dart';
 
@@ -51,7 +51,7 @@ class LogInViewState extends ConsumerState<LogInView> {
       },
       child: Scaffold(
         resizeToAvoidBottomInset: false,
-        backgroundColor: '#1E1E1E'.toColor(),
+        backgroundColor: veryDarkGray,
         body: SingleChildScrollView(  // Allow scrolling in case of overflow
           child: ConstrainedBox(
             constraints: BoxConstraints(
@@ -71,27 +71,27 @@ class LogInViewState extends ConsumerState<LogInView> {
                       height: deviceHeight * 60 / 712,
                       width: deviceWidth * 5 / 6,
                       decoration: BoxDecoration(
-                          color: '#7DDEF8'.toColor(),
+                          color: lightSkyBlue,
                           borderRadius: BorderRadius.circular(5),
                           border: Border.all(
                               width: 0.3 * fontSize,
-                              color: '#F5F5DC'.toColor())),
+                              color: beige)),
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
                         child: TextField(
                             controller: accountController,
                             style: TextStyle(
-                                color: '#1C1B1F'.toColor(), fontSize: fontSize),
+                                color: veryDarkGrayishBlue, fontSize: fontSize),
                             decoration: InputDecoration(
                               prefixIcon: Icon(
                                 Icons.account_circle,
                                 size: fontSize * 1.8,
-                                color: '#1C1B1F'.toColor(),
+                                color: veryDarkGrayishBlue,
                               ),
                               hintText: '帳號名稱',
                               hintStyle: TextStyle(
                                 fontSize: fontSize * 1.2,
-                                color: '#1C1B1F'.toColor(),
+                                color: veryDarkGrayishBlue,
                               ),
                               floatingLabelBehavior: FloatingLabelBehavior.always,
                               floatingLabelAlignment: FloatingLabelAlignment.center,
@@ -104,28 +104,28 @@ class LogInViewState extends ConsumerState<LogInView> {
                       height: deviceHeight * 60 / 712,
                       width: deviceWidth * 5 / 6,
                       decoration: BoxDecoration(
-                          color: '#7DDEF8'.toColor(),
+                          color: lightSkyBlue,
                           borderRadius: BorderRadius.circular(5),
                           border: Border.all(
                               width: 0.3 * fontSize,
-                              color: '#F5F5DC'.toColor())),
+                              color: beige)),
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
                         child: TextField(
                             controller: pwdController,
                             obscureText: pwdVisible,
                             style: TextStyle(
-                                color: '#1C1B1F'.toColor(), fontSize: fontSize),
+                                color: veryDarkGrayishBlue, fontSize: fontSize),
                             decoration: InputDecoration(
                               prefixIcon: Icon(
                                 Icons.lock,
                                 size: fontSize * 1.8,
-                                color: '#1C1B1F'.toColor(),
+                                color: veryDarkGrayishBlue,
                               ),
                               hintText: '密碼',
                               hintStyle: TextStyle(
                                 fontSize: fontSize * 1.2,
-                                color: '#1C1B1F'.toColor(),
+                                color: veryDarkGrayishBlue,
                               ),
                               floatingLabelBehavior: FloatingLabelBehavior.always,
                               floatingLabelAlignment: FloatingLabelAlignment.center,
@@ -155,7 +155,7 @@ class LogInViewState extends ConsumerState<LogInView> {
                           child: Text('忘記密碼',
                               style: TextStyle(
                                 fontSize: fontSize * 0.8,
-                                color: '#F5F5DC'.toColor(),
+                                color: beige,
                               )),
                         ),
                       ),
@@ -171,7 +171,7 @@ class LogInViewState extends ConsumerState<LogInView> {
                           alignment: AlignmentDirectional.topStart,
                           child: Text(showErrorHint,
                               style: TextStyle(
-                                color: '#FF0303'.toColor(),
+                                color: brightRed,
                                 fontSize: 1.0 * fontSize,
                               )))),
                   SizedBox(height: deviceHeight * 0.038),
@@ -240,7 +240,7 @@ class LogInViewState extends ConsumerState<LogInView> {
                             child: Text('登入',
                                 style: TextStyle(
                                   fontSize: fontSize * 1.4,
-                                  color: '#F5F5DC'.toColor(),
+                                  color: beige,
                                 ))),
                         Text('/',
                             style: TextStyle(
@@ -254,7 +254,7 @@ class LogInViewState extends ConsumerState<LogInView> {
                             child: Text('註冊',
                                 style: TextStyle(
                                   fontSize: fontSize * 1.4,
-                                  color: '#F5F5DC'.toColor(),
+                                  color: beige,
                                 )))
                       ])),
                   const Spacer(),  // Spacer to push content up

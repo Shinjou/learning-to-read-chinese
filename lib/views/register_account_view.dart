@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/contants/register_question_label.dart';
 import 'package:ltrc/data/providers/user_provider.dart';
-import 'package:ltrc/extensions.dart';
+// import 'package:ltrc/extensions.dart';
 import 'package:ltrc/providers.dart';
 import 'package:ltrc/views/view_utils.dart';
 
@@ -66,13 +66,13 @@ class _RegisterAccountViewState extends ConsumerState<RegisterAccountView> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          backgroundColor: '#1E1E1E'.toColor(),
+          backgroundColor: veryDarkGray,
           leading: IconButton(
             icon: Icon(Icons.chevron_left, size: fontSize * 1.5),
             onPressed: () => Navigator.pop(context),
           ),
         ),
-        backgroundColor: '#1E1E1E'.toColor(),
+        backgroundColor: veryDarkGray,
         body: SizedBox.expand(
           child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -80,7 +80,7 @@ class _RegisterAccountViewState extends ConsumerState<RegisterAccountView> {
                 SizedBox(height: deviceHeight * 0.050),
                 Text('學國語',
                     style: TextStyle(
-                      color: '#F5F5DC'.toColor(),
+                      color: beige,
                       fontSize: deviceWidth * 46 / 360,
                     )),
                 SizedBox(height: deviceHeight * 0.050),
@@ -95,17 +95,17 @@ class _RegisterAccountViewState extends ConsumerState<RegisterAccountView> {
                         alignment: AlignmentDirectional.topStart,
                         child: Text('至少6個字母/數字',
                             style: TextStyle(
-                              color: '#F5F5DC'.toColor(),
+                              color: beige,
                               fontSize: fontSize * 0.8,
                             )))),
                 Container(
                   height: fontSize * 3.5,
                   width: deviceWidth * 5 / 6,
                   decoration: BoxDecoration(
-                      color: '#7DDEF8'.toColor(),
+                      color: lightSkyBlue,
                       borderRadius: BorderRadius.circular(5),
                       border: Border.all(
-                          width: 0.3 * fontSize, color: '#F5F5DC'.toColor())),
+                          width: 0.3 * fontSize, color: beige)),
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
                     child: Focus(
@@ -121,17 +121,17 @@ class _RegisterAccountViewState extends ConsumerState<RegisterAccountView> {
                       child: TextField(
                           controller: accountController,
                           style: TextStyle(
-                              color: '#1C1B1F'.toColor(), fontSize: fontSize),
+                              color: veryDarkGrayishBlue, fontSize: fontSize),
                           decoration: InputDecoration(
                             prefixIcon: Icon(
                               Icons.account_circle,
                               size: fontSize * 1.8,
-                              color: '#1C1B1F'.toColor(),
+                              color: veryDarkGrayishBlue,
                             ),
                             hintText: '帳號名稱',
                             hintStyle: TextStyle(
                                 fontSize: fontSize * 1.2,
-                                color: '#013E6D'.toColor()),
+                                color: deepBlue),
                             focusedBorder: InputBorder.none,
                             enabledBorder: InputBorder.none,
                           )),
@@ -150,18 +150,18 @@ class _RegisterAccountViewState extends ConsumerState<RegisterAccountView> {
                         alignment: AlignmentDirectional.topStart,
                         child: Text('至少4個數字',
                             style: TextStyle(
-                              color: '#F5F5DC'.toColor(),
+                              color: beige,
                               fontSize: fontSize * 0.8,
                             )))),
                 Container(
                     height: fontSize * 3.5,
                     width: deviceWidth * 5 / 6,
                     decoration: BoxDecoration(
-                        color: '#7DDEF8'.toColor(),
+                        color: lightSkyBlue,
                         borderRadius: BorderRadius.circular(5),
                         border: Border.all(
                             width: 0.3 * fontSize,
-                            color: '#F5F5DC'.toColor())),
+                            color: beige)),
                     child: Padding(
                       padding:
                           const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
@@ -179,18 +179,18 @@ class _RegisterAccountViewState extends ConsumerState<RegisterAccountView> {
                             controller: pwdController,
                             obscureText: pwdVisible,
                             style: TextStyle(
-                                color: '#1C1B1F'.toColor(),
+                                color: veryDarkGrayishBlue,
                                 fontSize: fontSize),
                             decoration: InputDecoration(
                               prefixIcon: Icon(
                                 Icons.lock,
                                 size: fontSize * 1.8,
-                                color: '#1C1B1F'.toColor(),
+                                color: veryDarkGrayishBlue,
                               ),
                               hintText: '密碼',
                               hintStyle: TextStyle(
                                   fontSize: fontSize * 1.2,
-                                  color: '#013E6D'.toColor()),
+                                  color: deepBlue),
                               focusedBorder: InputBorder.none,
                               enabledBorder: InputBorder.none,
                               suffixIcon: IconButton(
@@ -212,27 +212,27 @@ class _RegisterAccountViewState extends ConsumerState<RegisterAccountView> {
                   height: fontSize * 3.5,
                   width: deviceWidth * 5 / 6,
                   decoration: BoxDecoration(
-                      color: '#7DDEF8'.toColor(),
+                      color: lightSkyBlue,
                       borderRadius: BorderRadius.circular(5),
                       border: Border.all(
-                          width: 0.3 * fontSize, color: '#F5F5DC'.toColor())),
+                          width: 0.3 * fontSize, color: beige)),
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
                     child: TextField(
                         controller: confirmPwdController,
                         obscureText: confirmPwdVisible,
                         style: TextStyle(
-                            color: '#1C1B1F'.toColor(), fontSize: fontSize),
+                            color: veryDarkGrayishBlue, fontSize: fontSize),
                         decoration: InputDecoration(
                           prefixIcon: Icon(
                             Icons.lock,
                             size: fontSize * 1.8,
-                            color: '#1C1B1F'.toColor(),
+                            color: veryDarkGrayishBlue,
                           ),
                           hintText: '確認密碼',
                           hintStyle: TextStyle(
                               fontSize: fontSize * 1.2,
-                              color: '#013E6D'.toColor()),
+                              color: deepBlue),
                           enabledBorder: InputBorder.none,
                           focusedBorder: InputBorder.none,
                           suffixIcon: IconButton(
@@ -261,7 +261,7 @@ class _RegisterAccountViewState extends ConsumerState<RegisterAccountView> {
                         alignment: AlignmentDirectional.topStart,
                         child: Text(showErrorHint,
                             style: TextStyle(
-                              color: '#FF0303'.toColor(),
+                              color: brightRed,
                               fontSize: fontSize * 0.8,
                             )))),
                 Consumer(builder: (context, ref, child) {
@@ -311,7 +311,7 @@ class _RegisterAccountViewState extends ConsumerState<RegisterAccountView> {
                       child: Text('下一步',
                           style: TextStyle(
                             fontSize: fontSize * 1.4,
-                            color: '#F5F5DC'.toColor(),
+                            color: beige,
                           )));
                 })
               ]),

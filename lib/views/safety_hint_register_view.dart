@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/contants/register_question_label.dart';
-import 'package:ltrc/extensions.dart';
 import 'package:ltrc/providers.dart';
-// import 'package:ltrc/providers.dart';
 import 'package:ltrc/views/view_utils.dart';
 
 class SafetyHintRegisterView extends ConsumerStatefulWidget {
@@ -55,7 +53,7 @@ class _SafetyHintRegisterState extends ConsumerState<SafetyHintRegisterView> {
             textStyle: WidgetStateProperty.all<TextStyle>(
               TextStyle(
                 fontSize: fontSize * 0.6,
-                color: '#1C1B1F'.toColor(),
+                color: veryDarkGrayishBlue,
               ),
             ),
           ),
@@ -75,7 +73,7 @@ class _SafetyHintRegisterState extends ConsumerState<SafetyHintRegisterView> {
               textStyle: WidgetStateProperty.all<TextStyle>(
                 TextStyle(
                   fontSize: fontSize * 0.6,
-                  color: '#1C1B1F'.toColor(),
+                  color: veryDarkGrayishBlue,
                 ),
               ),
             ),
@@ -101,7 +99,7 @@ class _SafetyHintRegisterState extends ConsumerState<SafetyHintRegisterView> {
             ),
           ),
           resizeToAvoidBottomInset: false,
-          backgroundColor: '#1E1E1E'.toColor(),
+          backgroundColor: veryDarkGray,
           body: SizedBox.expand(
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -121,7 +119,7 @@ class _SafetyHintRegisterState extends ConsumerState<SafetyHintRegisterView> {
 
                   Container(
                     decoration: BoxDecoration(
-                      color: '#7DDEF8'.toColor(),
+                      color: lightSkyBlue,
                       borderRadius: BorderRadius.circular(5),
                     ),
                     child: DropdownMenu<RegisterQuestionLabel>(
@@ -135,7 +133,7 @@ class _SafetyHintRegisterState extends ConsumerState<SafetyHintRegisterView> {
                       width: 17.8 * fontSize,
                       textStyle: TextStyle(
                         fontSize: fontSize,
-                        color: '#1C1B1F'.toColor(),
+                        color: veryDarkGrayishBlue,
                       ),
                       dropdownMenuEntries: q1Entries,
                       onSelected: (RegisterQuestionLabel? questionLabel) {
@@ -152,10 +150,10 @@ class _SafetyHintRegisterState extends ConsumerState<SafetyHintRegisterView> {
                     width: 17.8 * fontSize,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                        color: '#D9D9D9'.toColor(),
+                        color: lightGray,
                         borderRadius: BorderRadius.circular(5),
                         border: Border.all(
-                            width: 0.1 * fontSize, color: '#F5F5DC'.toColor())),
+                            width: 0.1 * fontSize, color: beige)),
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
                       child: TextField(
@@ -163,13 +161,13 @@ class _SafetyHintRegisterState extends ConsumerState<SafetyHintRegisterView> {
                           style: TextStyle(
                               fontSize:
                                   fontSize, // Set your desired font size here
-                              color: '#1C1B1F'.toColor()),
+                              color: veryDarkGrayishBlue),
                           decoration: InputDecoration(
                             hintText: '回答 1',
                             hintStyle: TextStyle(
                                 fontSize:
                                     fontSize, // Also set font size for hint text if needed
-                                color: '#1C1B1F'.toColor()),
+                                color: veryDarkGrayishBlue),
                             enabledBorder: InputBorder.none,
                             focusedBorder: InputBorder.none,
                           )),
@@ -180,7 +178,7 @@ class _SafetyHintRegisterState extends ConsumerState<SafetyHintRegisterView> {
 
                   Container(
                     decoration: BoxDecoration(
-                      color: '#7DDEF8'.toColor(),
+                      color: lightSkyBlue,
                       borderRadius: BorderRadius.circular(5),
                     ),
                     child: DropdownMenu<RegisterQuestionLabel>(
@@ -188,14 +186,14 @@ class _SafetyHintRegisterState extends ConsumerState<SafetyHintRegisterView> {
                         "請選擇問題 2 ",
                         style: TextStyle(
                           fontSize: fontSize,
-                          color: '#1C1B1F'.toColor(),
+                          color: veryDarkGrayishBlue,
                         ),
                       ),
                       controller: q2Controller,
                       width: 17.8 * fontSize,
                       textStyle: TextStyle(
                         fontSize: fontSize,
-                        color: '#1C1B1F'.toColor(),
+                        color: veryDarkGrayishBlue,
                       ),
                       dropdownMenuEntries: q2Entries,
                       onSelected: (RegisterQuestionLabel? questionLabel) {
@@ -212,10 +210,10 @@ class _SafetyHintRegisterState extends ConsumerState<SafetyHintRegisterView> {
                     width: 17.8 * fontSize,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                        color: '#D9D9D9'.toColor(),
+                        color: lightGray,
                         borderRadius: BorderRadius.circular(5),
                         border: Border.all(
-                            width: 0.1 * fontSize, color: '#F5F5DC'.toColor())),
+                            width: 0.1 * fontSize, color: beige)),
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
                       child: TextField(
@@ -223,13 +221,13 @@ class _SafetyHintRegisterState extends ConsumerState<SafetyHintRegisterView> {
                           style: TextStyle(
                               fontSize:
                                   fontSize, // Set your desired font size here
-                              color: '#1C1B1F'.toColor()),
+                              color: veryDarkGrayishBlue),
                           decoration: InputDecoration(
                             hintText: '回答 2',
                             hintStyle: TextStyle(
                                 fontSize:
                                     fontSize, // Also set font size for hint text if needed
-                                color: '#1C1B1F'.toColor()),
+                                color: veryDarkGrayishBlue),
                             enabledBorder: InputBorder.none,
                             focusedBorder: InputBorder.none,
                           )),
@@ -249,7 +247,7 @@ class _SafetyHintRegisterState extends ConsumerState<SafetyHintRegisterView> {
                           alignment: AlignmentDirectional.topStart,
                           child: Text(showErrorHint,
                               style: TextStyle(
-                                color: '#FF0303'.toColor(),
+                                color: brightRed,
                                 fontSize: fontSize * 0.8,
                               )))),
 
@@ -309,7 +307,7 @@ class _SafetyHintRegisterState extends ConsumerState<SafetyHintRegisterView> {
                       child: Text('下一步',
                           style: TextStyle(
                             fontSize: fontSize * 1.2,
-                            color: '#F5F5DC'.toColor(),
+                            color: beige,
                           )))
                 ]),
           ),

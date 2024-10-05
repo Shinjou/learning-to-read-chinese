@@ -8,7 +8,6 @@ import 'package:ltrc/data/models/user_model.dart';
 import 'package:ltrc/data/providers/unit_provider.dart';
 import 'package:ltrc/data/providers/user_provider.dart';
 import 'package:ltrc/providers.dart';
-import 'package:ltrc/extensions.dart';
 import 'package:ltrc/views/view_utils.dart';
 import 'package:ltrc/widgets/mainPage/left_right_switch.dart';
 
@@ -44,43 +43,24 @@ class RegisterViewState extends ConsumerState<RegisterView> {
     dynamic obj = ModalRoute.of(context)!.settings.arguments;
 
     return Scaffold(
-      backgroundColor: '#1E1E1E'.toColor(),
+      backgroundColor: veryDarkGray,
       body: SizedBox.expand(
         
         child: Column(
           children: <Widget>[
             SizedBox(height: isTablet ? fontSize * 1.5 : fontSize * 3.0), // 避開 iPhone 11 Pro Max 的瀏海
-            /*
-            Container(
-              height: fontSize * 6.0, // was 7.5 before 學期
-              width: deviceWidth * 0.7,
-              decoration: BoxDecoration(
-                color: '#013E6D'.toColor(),
-              ),
-              alignment: Alignment.center,
-              child: Column(
-                children: <Widget>[
-                  Text('請選擇：年級、學期、課本版本',
-                      style: TextStyle(
-                        color: '#F5F5DC'.toColor(),
-                        fontSize: fontSize * 1.2,
-                      )),
-                ],
-              )
-            ),
-            */
             Container(
               height: fontSize * 6.0, // Adjust as needed
               width: deviceWidth * 0.7,
-              decoration: BoxDecoration(
-                color: '#013E6D'.toColor(),
+              decoration: const BoxDecoration(
+                color: deepBlue,
               ),
               alignment: Alignment.center,  // Centers the content within the container
               child: Center(  // Ensures the text is centered both vertically and horizontally
                 child: Text(
                   '請選擇：年級、學期、課本版本',
                   style: TextStyle(
-                    color: '#F5F5DC'.toColor(),
+                    color: beige,
                     fontSize: fontSize * 1.2,
                   ),
                   textAlign: TextAlign.center,  // Centers the text within its own bounds
@@ -91,12 +71,12 @@ class RegisterViewState extends ConsumerState<RegisterView> {
             SizedBox(height: fontSize * 1.0),
             Icon(
               Icons.home_filled,
-              color: '#F8A23A'.toColor(),
+              color: warmOrange,
               size: deviceHeight * 0.083,
             ),
             LeftRightSwitch(
               // 年級
-              iconsColor: '#F5F5DC'.toColor(),
+              iconsColor: beige,
               iconsSize: fontSize * 1.5,
               rightBorder: false,
               onLeftClicked: () => {
@@ -113,10 +93,10 @@ class RegisterViewState extends ConsumerState<RegisterView> {
                   height: deviceHeight * 0.067,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadiusDirectional.circular(20),
-                      color: '#7DDEF8'.toColor()),
+                      color: lightSkyBlue),
                   child: Text('${numeralToChinese[grade]}年級',
                       style: TextStyle(
-                        color: '#000000'.toColor(),
+                        color: black,
                         fontSize:
                             min(deviceWidth * 0.166, deviceHeight * 0.044),
                       ))),
@@ -126,7 +106,7 @@ class RegisterViewState extends ConsumerState<RegisterView> {
             SizedBox(height: fontSize * 0.3),
             LeftRightSwitch(
               // 學期
-              iconsColor: '#F5F5DC'.toColor(),
+              iconsColor: beige,
               iconsSize: fontSize * 1.5,
               rightBorder: false,
               onLeftClicked: () => {
@@ -143,10 +123,10 @@ class RegisterViewState extends ConsumerState<RegisterView> {
                   height: deviceHeight * 0.067,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadiusDirectional.circular(20),
-                      color: '#7DDEF8'.toColor()),
+                      color: lightSkyBlue),
                   child: Text(semesterCodeTable[semesterCode]!,
                       style: TextStyle(
-                        color: '#000000'.toColor(),
+                        color: black,
                         fontSize:
                             min(deviceWidth * 0.166, deviceHeight * 0.044),
                       ))),
@@ -156,7 +136,7 @@ class RegisterViewState extends ConsumerState<RegisterView> {
             SizedBox(height: fontSize * 0.3),
             LeftRightSwitch(
               // 出版商
-              iconsColor: '#F5F5DC'.toColor(),
+              iconsColor: beige,
               iconsSize: fontSize * 1.5,
               rightBorder: false,
               onLeftClicked: () => {
@@ -173,10 +153,10 @@ class RegisterViewState extends ConsumerState<RegisterView> {
                   height: deviceHeight * 0.067,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadiusDirectional.circular(20),
-                      color: '#7DDEF8'.toColor()),
+                      color: lightSkyBlue),
                   child: Text(publisherCodeTable[publisherCode]!,
                       style: TextStyle(
-                        color: '#000000'.toColor(),
+                        color: black,
                         fontSize:
                             min(deviceWidth * 0.166, deviceHeight * 0.044),
                       ))),
@@ -190,13 +170,13 @@ class RegisterViewState extends ConsumerState<RegisterView> {
                   alignment: AlignmentDirectional.center,
                   width: deviceHeight * 0.095,
                   height: deviceHeight * 0.095,
-                  decoration: BoxDecoration(
-                    color: '#F8A23A'.toColor(),
+                  decoration: const BoxDecoration(
+                    color: warmOrange,
                     shape: BoxShape.circle,
                   ),
                   child: IconButton(
                     icon: Icon(Icons.chevron_right, size: fontSize * 1.2),
-                    color: '#1E1E1E'.toColor(),
+                    color: veryDarkGray,
                     iconSize: deviceHeight * 0.09,
                     onPressed: () async {
                       try {

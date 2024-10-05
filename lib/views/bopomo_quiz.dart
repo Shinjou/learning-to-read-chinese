@@ -7,7 +7,7 @@ import 'package:ltrc/contants/bopomos.dart';
 import 'package:ltrc/data/models/bopomo_spelling_model.dart';
 import 'package:ltrc/data/models/word_model.dart';
 import 'package:ltrc/data/providers/word_provider.dart';
-import 'package:ltrc/extensions.dart';
+// import 'package:ltrc/extensions.dart';
 import 'package:ltrc/providers.dart';
 import 'package:ltrc/views/view_utils.dart';
 import '../widgets/bopomo/bopomo_container.dart';
@@ -24,7 +24,7 @@ class _BopomoQuizState extends ConsumerState<BopomoQuizView> {
   final vowels = List.from(prenuclear)..addAll(finals);
   int problemId = 0;
   FlutterTts ftts = FlutterTts();
-  Color answerBoxBorderColor = '#F5F5DC'.toColor();
+  Color answerBoxBorderColor = beige;
   BopomoSpelling caught = BopomoSpelling();
   BopomoSpelling answer = BopomoSpelling();
 
@@ -117,8 +117,8 @@ class _BopomoQuizState extends ConsumerState<BopomoQuizView> {
               child: Container(
                   height: fontSize * 1.7,
                   alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: '#013E6D'.toColor(),
+                  decoration: const BoxDecoration(
+                    color: deepBlue,
                   ),
                   child: RichText(
                     // 第${problemId+1}題\n請拼出「${bopomoSpellingWords[problemId]}」的注音
@@ -128,7 +128,7 @@ class _BopomoQuizState extends ConsumerState<BopomoQuizView> {
                         style: TextStyle(
                           fontSize: fontSize,
                           fontFamily: 'BpmfIansui',
-                          color: "#F5F5DC".toColor(),
+                          color: beige,
                         ),
                         children: [
                           TextSpan(
@@ -136,14 +136,14 @@ class _BopomoQuizState extends ConsumerState<BopomoQuizView> {
                               style: TextStyle(
                                 fontSize: fontSize,
                                 fontFamily: 'Iansui',
-                                color: "#F5F5DC".toColor(),
+                                color: beige,
                               )),
                           TextSpan(
                               text: '」的注音',
                               style: TextStyle(
                                 fontSize: fontSize,
                                 fontFamily: 'BpmfIansui',
-                                color: "#F5F5DC".toColor(),
+                                color: beige,
                               )),
                         ]),
                   )),
@@ -169,7 +169,7 @@ class _BopomoQuizState extends ConsumerState<BopomoQuizView> {
                             return IconButton(
                               icon: Icon(
                                 Icons.volume_up,
-                                color: "#F5F5DC".toColor(),
+                                color: beige,
                                 size: 1.2 * fontSize,
                               ),
                               onPressed: () {
@@ -186,13 +186,13 @@ class _BopomoQuizState extends ConsumerState<BopomoQuizView> {
                           Text(
                             '讀\n音',
                             style: TextStyle(
-                                color: "#F5F5DC".toColor(),
+                                color: beige,
                                 fontSize: fontSize * 0.75),
                           ),
                           IconButton(
                             icon: Icon(
                               Icons.lightbulb,
-                              color: "#F5F5DC".toColor(),
+                              color: beige,
                               size: 1.2 * fontSize,
                             ),
                             onPressed: () async {
@@ -220,7 +220,7 @@ class _BopomoQuizState extends ConsumerState<BopomoQuizView> {
                           Text(
                             '提\n示',
                             style: TextStyle(
-                                color: "#F5F5DC".toColor(),
+                                color: beige,
                                 fontSize: fontSize * 0.75),
                           ),
                         ],
@@ -231,7 +231,7 @@ class _BopomoQuizState extends ConsumerState<BopomoQuizView> {
                         height: 10.6 * fontSize,
                         child: Container(
                           decoration: BoxDecoration(
-                            color: '023E6E'.toColor(),
+                            color: darkCyan,
                             border: Border.all(
                               width: 0.1 * fontSize,
                               color: answerBoxBorderColor,
@@ -267,7 +267,7 @@ class _BopomoQuizState extends ConsumerState<BopomoQuizView> {
                                               ],
                                             )
                                           : null,
-                                      color: "#48742C".toColor(),
+                                      color: darkOliveGreen,
                                       onPressed: () => setState(() {
                                         caught.initial = '';
                                         if (caught.tone == 5) {
@@ -281,7 +281,7 @@ class _BopomoQuizState extends ConsumerState<BopomoQuizView> {
                                         caught.prenuclear,
                                         style: TextStyle(fontSize: fontSize),
                                       ),
-                                      color: "#D19131".toColor(),
+                                      color: goldenOrange,
                                       onPressed: () => setState(() {
                                         caught.prenuclear = '';
                                       }),
@@ -292,7 +292,7 @@ class _BopomoQuizState extends ConsumerState<BopomoQuizView> {
                                         caught.finals,
                                         style: TextStyle(fontSize: fontSize),
                                       ),
-                                      color: "#D19131".toColor(),
+                                      color: goldenOrange,
                                       onPressed: () => setState(() {
                                         caught.finals = '';
                                       }),
@@ -304,7 +304,7 @@ class _BopomoQuizState extends ConsumerState<BopomoQuizView> {
                                       (caught.tone == 5 || caught.tone == 1)
                                           ? ""
                                           : tones[caught.tone - 2],
-                                  color: "#B65454".toColor(),
+                                  color: indianRed,
                                   onPressed: () => setState(() {
                                     caught.tone = 1;
                                   }),
@@ -318,7 +318,7 @@ class _BopomoQuizState extends ConsumerState<BopomoQuizView> {
                           IconButton(
                             icon: Icon(
                               Icons.replay,
-                              color: "#F5F5DC".toColor(),
+                              color: beige,
                               size: 1.2 * fontSize,
                             ),
                             onPressed: () {
@@ -330,13 +330,13 @@ class _BopomoQuizState extends ConsumerState<BopomoQuizView> {
                           Text(
                             '清\n除',
                             style: TextStyle(
-                                color: "#F5F5DC".toColor(),
+                                color: beige,
                                 fontSize: fontSize * 0.75),
                           ),
                           IconButton(
                             icon: Icon(
                               Icons.done_outline,
-                              color: "#F5F5DC".toColor(),
+                              color: beige,
                               size: 1.2 * fontSize,
                             ),
                             onPressed: () async {
@@ -352,7 +352,7 @@ class _BopomoQuizState extends ConsumerState<BopomoQuizView> {
                                       caught = BopomoSpelling();
                                       answer = BopomoSpelling();
                                       answerBoxBorderColor =
-                                          '#F5F5DC'.toColor();
+                                          beige;
                                     });
                                   });
                                 } else {
@@ -362,7 +362,7 @@ class _BopomoQuizState extends ConsumerState<BopomoQuizView> {
                                   Timer(const Duration(seconds: 1), () {
                                     setState(() {
                                       answerBoxBorderColor =
-                                          '#F5F5DC'.toColor();
+                                          beige;
                                     });
                                   });
                                 }
@@ -375,7 +375,7 @@ class _BopomoQuizState extends ConsumerState<BopomoQuizView> {
                           Text(
                             '確\n認',
                             style: TextStyle(
-                                color: "#F5F5DC".toColor(),
+                                color: beige,
                                 fontSize: fontSize * 0.75),
                           ),
                         ],
@@ -400,14 +400,14 @@ class _BopomoQuizState extends ConsumerState<BopomoQuizView> {
                         ? BopomoContainer(
                             // The top right hand box
                             character: tones[index],
-                            color: "#404040".toColor(),
+                            color: dimGray,
                             onPressed: () => setState(() {
                               caught.tone = 1;
                             }),
                           )
                         : BopomoContainer(
                             character: tones[index],
-                            color: "#B65454".toColor(),
+                            color: indianRed,
                             onPressed: () => setState(() {
                               caught.tone = index + 2;
                             }),
@@ -432,14 +432,14 @@ class _BopomoQuizState extends ConsumerState<BopomoQuizView> {
                     return initials[index] == caught.initial
                         ? BopomoContainer(
                             character: initials[index],
-                            color: "#404040".toColor(),
+                            color: dimGray,
                             onPressed: () => setState(() {
                               caught.initial = '';
                             }),
                           )
                         : BopomoContainer(
                             character: initials[index],
-                            color: "#48742C".toColor(),
+                            color: darkOliveGreen,
                             onPressed: () => setState(() {
                               caught.initial = initials[index];
                             }),
@@ -465,14 +465,14 @@ class _BopomoQuizState extends ConsumerState<BopomoQuizView> {
                       return prenuclear[index] == caught.prenuclear
                           ? BopomoContainer(
                               character: prenuclear[index],
-                              color: "#404040".toColor(),
+                              color: dimGray,
                               onPressed: () => setState(() {
                                 caught.prenuclear = '';
                               }),
                             )
                           : BopomoContainer(
                               character: prenuclear[index],
-                              color: "#D19131".toColor(),
+                              color: goldenOrange,
                               onPressed: () => setState(() {
                                 caught.prenuclear = prenuclear[index];
                               }),
@@ -481,14 +481,14 @@ class _BopomoQuizState extends ConsumerState<BopomoQuizView> {
                       return finals[index - 3] == caught.finals
                           ? BopomoContainer(
                               character: finals[index - 3],
-                              color: "#404040".toColor(),
+                              color: dimGray,
                               onPressed: () => setState(() {
                                 caught.finals = '';
                               }),
                             )
                           : BopomoContainer(
                               character: finals[index - 3],
-                              color: "#D19131".toColor(),
+                              color: goldenOrange,
                               onPressed: () => setState(() {
                                 caught.finals = finals[index - 3];
                               }),

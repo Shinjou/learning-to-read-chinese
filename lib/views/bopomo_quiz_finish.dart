@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ltrc/extensions.dart';
+// import 'package:ltrc/extensions.dart';
 import 'package:ltrc/providers.dart';
 // import 'package:ltrc/providers.dart';
 import 'package:ltrc/views/view_utils.dart';
@@ -46,14 +46,14 @@ class BopomoQuizFinishView extends ConsumerWidget {
                     height: fontSize * 3.5,
                     width: fontSize * 14.0,
                     alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: '#013E6D'.toColor(),
+                    decoration: const BoxDecoration(
+                      color: deepBlue,
                     ),
                     child: Text('⭐恭喜⭐\n完成所有題目！',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: fontSize,
-                          color: "#F5F5DC".toColor(),
+                          color: beige,
                         ))),
                 SizedBox(
                   height: fontSize * 0.3,

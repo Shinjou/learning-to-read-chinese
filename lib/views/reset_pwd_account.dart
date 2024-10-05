@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/data/models/user_model.dart';
 import 'package:ltrc/data/providers/user_provider.dart';
-import 'package:ltrc/extensions.dart';
 import 'package:ltrc/providers.dart';
-// import 'package:ltrc/providers.dart';
 import 'package:ltrc/views/view_utils.dart';
 
 
@@ -51,7 +49,7 @@ class _ResetPwdAccountViewState extends ConsumerState<ResetPwdAccountView> {
           ),
         ),
         resizeToAvoidBottomInset: false,
-        backgroundColor: '#1E1E1E'.toColor(),
+        backgroundColor: veryDarkGray,
         body: SizedBox.expand(
           child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -84,10 +82,10 @@ class _ResetPwdAccountViewState extends ConsumerState<ResetPwdAccountView> {
                     height: fontSize * 3.5,
                     width: fontSize * 17.8,
                     decoration: BoxDecoration(
-                        color: '#7DDEF8'.toColor(),
+                        color: lightSkyBlue,
                         borderRadius: BorderRadius.circular(5),
                         border: Border.all(
-                            width: 0.3 * fontSize, color: '#F5F5DC'.toColor())),
+                            width: 0.3 * fontSize, color: beige)),
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
                       child: Focus(
@@ -103,19 +101,19 @@ class _ResetPwdAccountViewState extends ConsumerState<ResetPwdAccountView> {
                         child: TextField(
                             controller: accountController,
                             style: TextStyle(
-                              color: '#1C1B1F'.toColor(),
+                              color: veryDarkGrayishBlue,
                               fontSize: fontSize,
                             ),
                             decoration: InputDecoration(
                               prefixIcon: Icon(
                                 Icons.account_circle,
                                 size: fontSize * 1.8,
-                                color: '#1C1B1F'.toColor(),
+                                color: veryDarkGrayishBlue,
                               ),
                               hintText: '請輸入帳號',
                               hintStyle: TextStyle(
                                   fontSize: fontSize * 1.2,
-                                  color: '#013E6D'.toColor()),
+                                  color: deepBlue),
                               enabledBorder: InputBorder.none,
                               focusedBorder: InputBorder.none,
                             )),
@@ -132,7 +130,7 @@ class _ResetPwdAccountViewState extends ConsumerState<ResetPwdAccountView> {
                         alignment: AlignmentDirectional.topStart,
                         child: Text(showErrorHint,
                             style: TextStyle(
-                              color: '#FF0303'.toColor(),
+                              color: brightRed,
                               fontSize: fontSize * 0.8,
                             )))),
                 SizedBox(height: deviceHeight * 0.0627),
@@ -166,7 +164,7 @@ class _ResetPwdAccountViewState extends ConsumerState<ResetPwdAccountView> {
                     child: Text('下一步',
                         style: TextStyle(
                           fontSize: fontSize * 1.4,
-                          color: '#F5F5DC'.toColor(),
+                          color: beige,
                         )))
               ]),
         ),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/contants/register_question_label.dart';
 import 'package:ltrc/data/models/user_model.dart';
-import 'package:ltrc/extensions.dart';
+
 import 'package:ltrc/providers.dart';
 // import 'package:ltrc/providers.dart';
 import 'package:ltrc/views/view_utils.dart';
@@ -59,7 +59,7 @@ class _SafetyHintVerifyState extends ConsumerState<SafetyHintVerifyView> {
             ),
           ),
           resizeToAvoidBottomInset: false,
-          backgroundColor: '#1E1E1E'.toColor(),
+          backgroundColor: veryDarkGray,
           body: SizedBox.expand(
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -92,21 +92,21 @@ class _SafetyHintVerifyState extends ConsumerState<SafetyHintVerifyView> {
                     width: fontSize * 17.8,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                        color: '#D9D9D9'.toColor(),
+                        color: lightGray,
                         borderRadius: BorderRadius.circular(5),
                         border: Border.all(
-                            width: 0.1 * fontSize, color: '#F5F5DC'.toColor())),
+                            width: 0.1 * fontSize, color: beige)),
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
                       child: TextField(
                           controller: a1Controller,
-                          style: TextStyle(
-                            color: '#1C1B1F'.toColor(),
+                          style: const TextStyle(
+                            color: veryDarkGrayishBlue,
                           ),
                           decoration: InputDecoration(
                             hintText: '回答 1',
                             hintStyle: TextStyle(
-                                fontSize: fontSize, color: '#013E6D'.toColor()),
+                                fontSize: fontSize, color: deepBlue),
                             enabledBorder: InputBorder.none,
                             focusedBorder: InputBorder.none,
                           )),
@@ -129,21 +129,21 @@ class _SafetyHintVerifyState extends ConsumerState<SafetyHintVerifyView> {
                     height: fontSize * 3.2,
                     width: fontSize * 17.8,
                     decoration: BoxDecoration(
-                        color: '#D9D9D9'.toColor(),
+                        color: lightGray,
                         borderRadius: BorderRadius.circular(5),
                         border: Border.all(
-                            width: 0.1 * fontSize, color: '#F5F5DC'.toColor())),
+                            width: 0.1 * fontSize, color: beige)),
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
                       child: TextField(
                           controller: a2Controller,
-                          style: TextStyle(
-                            color: '#1C1B1F'.toColor(),
+                          style: const TextStyle(
+                            color: veryDarkGrayishBlue,
                           ),
                           decoration: InputDecoration(
                             hintText: '回答 2',
                             hintStyle: TextStyle(
-                                fontSize: fontSize, color: '#013E6D'.toColor()),
+                                fontSize: fontSize, color: deepBlue),
                             enabledBorder: InputBorder.none,
                             focusedBorder: InputBorder.none,
                           )),
@@ -161,7 +161,7 @@ class _SafetyHintVerifyState extends ConsumerState<SafetyHintVerifyView> {
                           alignment: AlignmentDirectional.topStart,
                           child: Text(showErrorHint,
                               style: TextStyle(
-                                color: '#FF0303'.toColor(),
+                                color: brightRed,
                                 fontSize: fontSize * 0.8,
                               )))),
                   SizedBox(height: deviceHeight * 0.03),
@@ -191,7 +191,8 @@ class _SafetyHintVerifyState extends ConsumerState<SafetyHintVerifyView> {
                       child: Text('下一步',
                           style: TextStyle(
                             fontSize: fontSize * 1.4,
-                            color: 'F5F5DC'.toColor(),
+                            color: beige
+,
                           )))
                 ]),
           ),

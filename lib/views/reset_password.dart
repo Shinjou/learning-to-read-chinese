@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ltrc/data/models/user_model.dart';
 import 'package:ltrc/data/providers/user_provider.dart';
-import 'package:ltrc/extensions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/providers.dart';
 // import 'package:ltrc/providers.dart';
@@ -51,7 +50,7 @@ class _ResetPwdViewState extends ConsumerState<ResetPwdView> {
         ),
       ),
       resizeToAvoidBottomInset: false,
-      backgroundColor: '#1E1E1E'.toColor(),
+      backgroundColor: veryDarkGray,
       body: SizedBox.expand(
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -79,10 +78,10 @@ class _ResetPwdViewState extends ConsumerState<ResetPwdView> {
                   height: fontSize * 3.5,
                   width: fontSize * 17.8,
                   decoration: BoxDecoration(
-                      color: '#7DDEF8'.toColor(),
+                      color: lightSkyBlue,
                       borderRadius: BorderRadius.circular(5),
                       border: Border.all(
-                          width: 0.3 * fontSize, color: '#F5F5DC'.toColor())),
+                          width: 0.3 * fontSize, color: beige)),
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
                     child: Focus(
@@ -106,12 +105,12 @@ class _ResetPwdViewState extends ConsumerState<ResetPwdView> {
                             prefixIcon: Icon(
                               Icons.lock,
                               size: fontSize * 1.8,
-                              color: '#1C1B1F'.toColor(),
+                              color: veryDarkGrayishBlue,
                             ),
                             hintText: '密碼',
                             hintStyle: TextStyle(
                                 fontSize: fontSize * 1.2,
-                                color: '#013E6D'.toColor()),
+                                color: deepBlue),
                             enabledBorder: InputBorder.none,
                             focusedBorder: InputBorder.none,
                             suffixIcon: IconButton(
@@ -133,10 +132,10 @@ class _ResetPwdViewState extends ConsumerState<ResetPwdView> {
                   height: fontSize * 3.5,
                   width: fontSize * 17.8,
                   decoration: BoxDecoration(
-                      color: '#7DDEF8'.toColor(),
+                      color: lightSkyBlue,
                       borderRadius: BorderRadius.circular(5),
                       border: Border.all(
-                          width: 0.3 * fontSize, color: '#F5F5DC'.toColor())),
+                          width: 0.3 * fontSize, color: beige)),
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
                     child: TextField(
@@ -150,12 +149,12 @@ class _ResetPwdViewState extends ConsumerState<ResetPwdView> {
                           prefixIcon: Icon(
                             Icons.lock,
                             size: fontSize * 1.8,
-                            color: '#1C1B1F'.toColor(),
+                            color: veryDarkGrayishBlue,
                           ),
                           hintText: '確認密碼',
                           hintStyle: TextStyle(
                               fontSize: fontSize * 1.2,
-                              color: '#013E6D'.toColor()),
+                              color: deepBlue),
                           enabledBorder: InputBorder.none,
                           focusedBorder: InputBorder.none,
                           suffixIcon: IconButton(
@@ -206,7 +205,7 @@ class _ResetPwdViewState extends ConsumerState<ResetPwdView> {
                   child: Text('完成',
                       style: TextStyle(
                         fontSize: fontSize * 1.4,
-                        color: '#F5F5DC'.toColor(),
+                        color: beige,
                       )))
             ]),
       ),

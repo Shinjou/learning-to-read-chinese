@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/data/models/word_status_model.dart';
 import 'package:ltrc/data/providers/word_status_provider.dart';
-import 'package:ltrc/extensions.dart';
-// import 'package:ltrc/providers.dart';
-// import 'package:ltrc/views/teach_word_view.dart';
 import 'package:ltrc/views/view_utils.dart';  // Make sure this import is correct
 
 class WordCard extends ConsumerStatefulWidget {
@@ -83,7 +80,7 @@ class WordCardState extends ConsumerState<WordCard> {
         width: widget.sizedBoxWidth,
         height: widget.sizedBoxHeight,
         decoration: BoxDecoration(
-          color: widget.wordsStatus[widget.wordIndex].learned ? "#F8F88E".toColor():"#F5F5DC".toColor(),
+          color: widget.wordsStatus[widget.wordIndex].learned ? paleYellow : beige,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Wrap(
@@ -104,13 +101,13 @@ class WordCardState extends ConsumerState<WordCard> {
                       IconButton(
                         icon: liked ? const Icon(Icons.favorite) : const Icon(Icons.favorite_border),
                         iconSize: widget.fontSize * 0.5,
-                        color: liked ? "#FF0303".toColor() : "#999999".toColor(),
+                        color: liked ? brightRed  : mediumGray,
                         onPressed: _toggleLiked,
                       ),
                       Icon(
                         widget.wordsStatus[widget.wordIndex].learned ? Icons.check_circle : Icons.circle_outlined,
                         size: widget.fontSize * 0.5,
-                        color: widget.wordsStatus[widget.wordIndex].learned ? "#F8A339".toColor() : "#999999".toColor(),
+                        color: widget.wordsStatus[widget.wordIndex].learned ? vibrantOrange : mediumGray,
                       ),
                     ]
                   ),

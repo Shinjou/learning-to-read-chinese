@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/data/models/word_status_model.dart';
-import 'package:ltrc/extensions.dart';
+// import 'package:ltrc/extensions.dart';
 import 'package:ltrc/providers.dart';
 // import 'package:ltrc/providers.dart';
 import 'package:ltrc/views/view_utils.dart';
@@ -89,16 +89,16 @@ class BopomosView extends ConsumerWidget {
                       width: fontSize * 17.5,
                       height: fontSize * 4.0,
                       alignment: Alignment.center,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         borderRadius:
-                            const BorderRadius.all(Radius.circular(14)),
-                        color: "#F5F5DC".toColor(),
+                            BorderRadius.all(Radius.circular(14)),
+                        color: beige,
                       ),
                       child: Text(
                         "拼拼看",
                         style: TextStyle(
                           fontSize: fontSize * 2.0,
-                          color: "#28231D".toColor(),
+                          color: darkBrown,
                         ),
                         textAlign: TextAlign.center,
                       ),

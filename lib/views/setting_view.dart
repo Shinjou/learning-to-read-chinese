@@ -6,7 +6,6 @@ import 'package:ltrc/contants/publisher_code.dart';
 import 'package:ltrc/data/models/user_model.dart';
 import 'package:ltrc/data/providers/unit_provider.dart';
 import 'package:ltrc/data/providers/user_provider.dart';
-import 'package:ltrc/extensions.dart';
 import 'package:ltrc/providers.dart';
 import 'package:ltrc/views/view_utils.dart';
 
@@ -75,7 +74,7 @@ class SettingViewState extends ConsumerState<SettingView> {
           textStyle: WidgetStateProperty.all<TextStyle>(
             TextStyle(
               fontSize: fontSize * 0.6,
-              color: '#1C1B1F'.toColor(),
+              color: veryDarkGrayishBlue,
             ),
           ),
         ),
@@ -90,7 +89,7 @@ class SettingViewState extends ConsumerState<SettingView> {
           textStyle: WidgetStateProperty.all<TextStyle>(
             TextStyle(
               fontSize: fontSize * 0.6,
-              color: '#1C1B1F'.toColor(),
+              color: veryDarkGrayishBlue,
             ),
           ),
         ),
@@ -106,7 +105,7 @@ class SettingViewState extends ConsumerState<SettingView> {
           textStyle: WidgetStateProperty.all<TextStyle>(
             TextStyle(
               fontSize: fontSize * 0.6,
-              color: '#1C1B1F'.toColor(),
+              color: veryDarkGrayishBlue,
             ),
           ),
         ),
@@ -119,7 +118,7 @@ class SettingViewState extends ConsumerState<SettingView> {
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: '#1E1E1E'.toColor(),
+      backgroundColor: veryDarkGray,
       body: Center(
         child: Stack(
           alignment: Alignment.center,
@@ -127,9 +126,9 @@ class SettingViewState extends ConsumerState<SettingView> {
             Container(
                 height: deviceHeight,
                 width: deviceWidth,
-                decoration: BoxDecoration(
-                    color: '#013E6D'.toColor(),
-                    borderRadius: const BorderRadius.only(
+                decoration: const BoxDecoration(
+                    color: deepBlue,
+                    borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(10),
                     bottomRight: Radius.circular(10),
                     ))),
@@ -142,7 +141,7 @@ class SettingViewState extends ConsumerState<SettingView> {
                     width: deviceWidth * 0.92,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(16),
-                      color: '#F5F5DC'.toColor(),
+                      color: beige,
                     ),
 
                     child: Column(children: [
@@ -201,7 +200,7 @@ class SettingViewState extends ConsumerState<SettingView> {
                             child: Row(children: [
                               Icon(
                                 Icons.account_circle,
-                                color: '#1C1B1F'.toColor(),
+                                color: veryDarkGrayishBlue,
                                 size: fontSize * 2.0,
                               ),
                               Container(

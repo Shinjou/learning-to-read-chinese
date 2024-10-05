@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ltrc/extensions.dart';
+import 'package:ltrc/views/view_utils.dart';
 
 class LeftRightSwitch extends StatelessWidget {
   final Color iconsColor;
@@ -42,7 +42,7 @@ class LeftRightSwitch extends StatelessWidget {
         middleWidget,
         (!isLast) ? Container(
           decoration: BoxDecoration(
-            border: rightBorder ? Border.all(color: '#FFFF93'.toColor(), width: 1.5) : null,
+            border: rightBorder ? Border.all(color: lightYellow, width: 1.5) : null,
           ),
           child: IconButton(
             icon: Icon(

@@ -4,7 +4,7 @@ import 'package:ltrc/contants/semester_code.dart';
 import 'package:ltrc/contants/publisher_code.dart';
 import 'package:ltrc/data/models/unit_model.dart';
 import 'package:ltrc/data/providers/unit_provider.dart';
-import 'package:ltrc/extensions.dart';
+// import 'package:ltrc/extensions.dart';
 import 'package:ltrc/providers.dart';
 import 'package:ltrc/views/view_utils.dart';
 // import 'package:ltrc/widgets/progress_bar.dart';
@@ -32,7 +32,7 @@ class MainPageView extends ConsumerWidget {
     }
 
     return Scaffold(
-      backgroundColor: '#28231D'.toColor(),
+      backgroundColor: darkBrown,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         actions: [
@@ -57,7 +57,7 @@ class MainPageView extends ConsumerWidget {
                 '學國語',
                 style: TextStyle(
                   fontSize: fontSize * 2.0,
-                  color: '#F5F5DC'.toColor(),
+                  color: beige,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -112,7 +112,7 @@ class MainPageView extends ConsumerWidget {
     return ElevatedButton(
       onPressed: onPressed,
       style: ButtonStyle(
-        backgroundColor: WidgetStateProperty.all('#013E6D'.toColor()),
+        backgroundColor: WidgetStateProperty.all(deepBlue),
         elevation: WidgetStateProperty.all(25),
         shape: WidgetStateProperty.all<RoundedRectangleBorder>(
           RoundedRectangleBorder(
@@ -123,7 +123,7 @@ class MainPageView extends ConsumerWidget {
         text,
         style: TextStyle(
           fontSize: fontSize * 1.5,
-          color: '#F5F5DC'.toColor(),
+          color: beige,
         ),
         textAlign: TextAlign.center,
       ),

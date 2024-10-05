@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ltrc/extensions.dart';
 import 'package:ltrc/providers.dart';
 // import 'package:ltrc/providers.dart';
-// import 'package:ltrc/views/view_utils.dart';
+import 'package:ltrc/views/view_utils.dart';
 
 class ProgressBar extends ConsumerWidget {
   const ProgressBar({super.key, required this.maxCount, required this.value});
@@ -30,13 +29,13 @@ class ProgressBar extends ConsumerWidget {
                 width: 0.66 * deviceWidth,
                 height: fontSize, // 24,
                 decoration: BoxDecoration(
-                    border: Border.all(color: '#F5F5DC'.toColor(), width: 3),
+                    border: Border.all(color: beige, width: 3),
                     borderRadius: BorderRadius.circular(10)),
                 child: LinearProgressIndicator(
-                  backgroundColor: '#D9D9D9'.toColor(),
+                  backgroundColor: lightGray,
                   value: value/maxCount,
                   valueColor:
-                      AlwaysStoppedAnimation<Color>('#F8A23A'.toColor()),
+                      const AlwaysStoppedAnimation<Color>(warmOrange),
                 ),
               ),
             ),
@@ -47,7 +46,7 @@ class ProgressBar extends ConsumerWidget {
               return Padding(
                   padding: EdgeInsets.only(left: leftPadding, top: topPadding),
                   child: Icon(Icons.star,
-                      size: iconSize, color: '#F5F5DC'.toColor()));
+                      size: iconSize, color: beige));
             })
           ]),
         ),
