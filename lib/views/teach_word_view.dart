@@ -2,6 +2,7 @@
 //（Needs to incorporate the changes or comments from teach_word_view_ok.dart）
 
 import 'dart:math';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_riverpod/flutter_riverpod.dart'
@@ -71,11 +72,19 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
   bool _showErrorDialog = false;
   bool _firstNullStroke = true;
 
+  // List<Offset?> _points = <Offset>[];  // Define the _points variable to track user's stroke points
+  // bool _isDrawingMode = false;
+  // DateTime? _lastPointerMoveLogTime;
+
   void nextTab() async {
     // nextTab() is called in many places, one setState() is called
     // it will update the nextStepId, currentTabIndex, and call showNoSvgDialog() if no SVG in 寫一寫    
-    // debugPrint('nextTab invoked at nextStepId: $nextStepId, currentTabIndex: ${currentTabIndex.value}, stack: ${StackTrace.current}');   
-    debugPrint('nextTab invoked at nextStepId: $nextStepId, currentTabIndex: ${currentTabIndex.value}');   
+    if (kDebugMode) {
+      final stackTrace = StackTrace.current.toString().split('\n');
+      final relevantStackTrace = '\n${stackTrace[0]}\n${stackTrace[1]}';
+      debugPrint('nextTab invoked at nextStepId: $nextStepId, currentTabIndex: ${currentTabIndex.value}, stack: $relevantStackTrace');
+    }
+
     // If we're already at the last step, stop advancing
     if (nextStepId >= steps['goToUse2']!) {
       debugPrint('nextTab: Reached the final step, stopping navigation.');
@@ -99,7 +108,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
         debugPrint('nextTab 字未學，savedId: $savedNextStepId，nextId: $nextStepId');
       }
     } else { // no SVG
-      if (nextStepId > 0 && nextStepId < 8) {
+      if (nextStepId > steps['goToListen']! && nextStepId < steps['goToUse1']!) {
         debugPrint('nextTab no SVG1. 從 “聽一聽”到“寫一寫”. Show error message.');
         WidgetsBinding.instance.addPostFrameCallback((_) async {
           // 選聽一聽，nextStepId = goToListen; 選用一用，nextStepId = goToUse1
@@ -111,20 +120,19 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
     nextStepId = min(steps['goToUse2']!, nextStepId); // Make sure it is not greater than goToUse2
     debugPrint('nextTab svgFileExist $svgFileExist, savedId: $savedNextStepId, nextId: $nextStepId');
 
-    // Make sure we don't exceed the allowed steps
-    nextStepId = min(steps['goToUse2']!, nextStepId);
-
     // Proceed to speak and navigate
     if (nextStepId == steps['goToListen']) {
       // 0
       incrementNextStepId();
     } else if (nextStepId == steps['goToWrite'] || nextStepId == (steps['goToWrite']! + 1)) { // 1 & 2 sjf 9/8/24
       // 1、2
+      // _isDrawingMode = true;
       incrementNextStepId();
       await ftts.speak(widget.wordsStatus[widget.wordIndex].word); // Keep speaking logic intact
     } else if (nextStepId == steps['goToUse1'] || nextStepId == steps['goToUse2']) {
       // 8、9
-      await handleGoToUseStep();  // Follow your speaking behavior here
+      // _isDrawingMode = false;
+      await handleGoToUse();  // Follow your speaking behavior here
     } else {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         showErrorDialog('', '「${widget.wordsStatus[widget.wordIndex].word}」程序問題。請截圖回報。謝謝！');
@@ -138,8 +146,11 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
   void prevTab() async {
     // prevTab() is called in many places, one setState() is called
     // it will update the nextStepId, currentTabIndex, and call showNoSvgDialog() if no SVG in 寫一寫    
-    // debugPrint('prevTab invoked at nextStepId: $nextStepId, currentTabIndex: ${currentTabIndex.value}, stack: ${StackTrace.current}');
-    debugPrint('prevTab invoked at nextStepId: $nextStepId, currentTabIndex: ${currentTabIndex.value}');
+    if (kDebugMode) {
+      final stackTrace = StackTrace.current.toString().split('\n');
+      final relevantStackTrace = '\n${stackTrace[0]}\n${stackTrace[1]}';
+      debugPrint('prevTab invoked at nextStepId: $nextStepId, currentTabIndex: ${currentTabIndex.value}, stack: $relevantStackTrace');
+    }    
 
     int currentTabValue = currentTabIndex.value;
     int savedNextStepId = nextStepId;
@@ -169,31 +180,36 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
         debugPrint('prevTab 字未學，savedId: $savedNextStepId，nextId: $nextStepId');
       }
     } else { // 沒有筆順
-      if (nextStepId == steps['goToUse1']) {
-        // 從 “用一用1”，退回去“寫一寫”
-        debugPrint('prevTab no svg1. 從 “用一用1”退回到“寫一寫”. Show error message.');
-        WidgetsBinding.instance.addPostFrameCallback((_) async {
-          // 選上一頁，nextStepId = goToListen; 選下一頁，nextStepId = goToUse1
-          await showNoSvgDialog('','抱歉，「${widget.wordsStatus[widget.wordIndex].word}」還沒有筆順。請繼續。謝謝！');
-        });
-        debugPrint('prevTab no svg2. 從 “用一用1”退回到“寫一寫”. nextId = $nextStepId.');   
-      } else {
-        nextStepId -= 1;
-        debugPrint('prevTab no svg3. savedId = $savedNextStepId, nextId = $nextStepId');
+      // Check if we're at 'goToUse2', step back to 'goToUse1'
+      if (nextStepId == steps['goToUse2']) {
+        nextStepId -= 1; // Decrease step to go back to 'goToUse1'
+        debugPrint('prevTab no svg0. 從 “用一用2”退回到“用一用1”. nextId = $nextStepId.');
+        return;
       }
-    }
 
-    nextStepId = max(0, nextStepId); // Make sure it is not negative
-    debugPrint('prevTab svgFileExist $svgFileExist, wordIsLearned: $wordIsLearned, savedId: $savedNextStepId, nextId: $nextStepId');
+      // Check if we're at 'goToUse1', step back to 'goToWrite' and show error dialog
+      if (nextStepId == steps['goToUse1']) {
+        debugPrint('prevTab no svg1. 從 “用一用1”退回到“寫一寫”. Show error message.');
+        
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
+          await showNoSvgDialog(
+            '', 
+            '抱歉，「${widget.wordsStatus[widget.wordIndex].word}」還沒有筆順。請繼續。謝謝！'
+          );
+        });
+        
+        // nextStepId = steps['goToWrite']!; // Set step back to 'goToWrite'
+        nextStepId = steps['practiceWithoutBorder1']!; // 跟正常流程一樣
+        debugPrint('prevTab no svg2. 從 “用一用1”退回到“寫一寫”. nextId = $nextStepId.');
+        return;
+      }
 
-    if (nextStepId > steps['goToUse2']!) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        showErrorDialog('', '「${widget.wordsStatus[widget.wordIndex].word}」程序問題2。請截圖回報。謝謝！');
-      });
+      // For other cases, decrement the step by 1
+      nextStepId -= 1;
+      nextStepId = max(0, nextStepId); // Make sure it is not negative
+      debugPrint('prevTab no svg3. savedId = $savedNextStepId, nextId = $nextStepId');
     }
-    // setState(() {});
   }
-
 
   void incrementNextStepId() {
     setState(() {
@@ -203,41 +219,49 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
     });
   }
 
-  Future<void> handleGoToUseStep() async {
-    // debugPrint('handleGoToUseStep invoked, nextStepId: $nextStepId, vocabCnt: $vocabCnt, stack: ${StackTrace.current}');
-    debugPrint('handleGoToUseStep invoked, nextStepId: $nextStepId, vocabCnt: $vocabCnt');
-    if (vocabCnt == 1) {
-      debugPrint('handleGoToUseStep vocabCnt: $vocabCnt, vocab1: ${wordObj['vocab1']}, sentence1: ${wordObj['sentence1']}, nextId: $nextStepId, wordIsLearned: $wordIsLearned, svgFileExist: $svgFileExist');
-      await ftts.speak("${wordObj['vocab1']}。${wordObj['sentence1']}");
-      WordStatus newStatus = widget.wordsStatus[widget.wordIndex];
-      ref.read(learnedWordCountProvider.notifier).state += 1;
-      await WordStatusProvider.updateWordStatus(status: newStatus);
-      setState(() {
-        newStatus.learned = true;
-        debugPrint('setState handleGoToUseStep: newStatus.learned = true');        
-      });
-    } else { // vocabCnt == 2
-      if (nextStepId == steps['goToUse1']) {
-        debugPrint('handleGoToUseStep vocabCnt: $vocabCnt, vocab1: ${wordObj['vocab1']}, sentence1: ${wordObj['sentence1']}, nextId: $nextStepId, wordIsLearned: $wordIsLearned, svgFileExist: $svgFileExist');
+  Future<void> handleGoToUse() async {
+    debugPrint('handleGoToUse invoked. vocabCnt: $vocabCnt, nextId: $nextStepId, wordIsLearned: $wordIsLearned, svgFileExist: $svgFileExist');
+
+    switch (vocabCnt) {
+      case 1:
+        debugPrint('handleGoToUse vocabCnt: $vocabCnt, vocab1: ${wordObj['vocab1']}, sentence1: ${wordObj['sentence1']}, nextId: $nextStepId, wordIsLearned: $wordIsLearned, svgFileExist: $svgFileExist');
         await ftts.speak("${wordObj['vocab1']}。${wordObj['sentence1']}");
         setState(() {
-          nextStepId += 1;
-          debugPrint('setState handleGoToUseStep: nextStepId: $nextStepId');
+          nextStepId = steps['goToUse2']!;
+          debugPrint('setState handleGoToUse: newStatus.learned = true');
         });
-      } else {
-        debugPrint('handleGoToUseStep vocabCnt: $vocabCnt, vocab2: ${wordObj['vocab2']}, sentence2: ${wordObj['sentence2']}, nextId: $nextStepId, wordIsLearned: $wordIsLearned, svgFileExist: $svgFileExist');
-        await ftts.speak("${wordObj['vocab2']}。${wordObj['sentence2']}");
-        setState(() {
-          nextStepId += 1;
-          nextStepId = min(steps['goToUse2']!, nextStepId); // Ensure not greater than goToUse2
-          debugPrint('setState handleGoToUseStep: nextStepId: $nextStepId');
-        });
-      }
+        break;
+
+      case 2:
+        switch (nextStepId) {
+          case int stepId when stepId == steps['goToUse1']:
+            debugPrint('handleGoToUse vocabCnt: $vocabCnt, vocab1: ${wordObj['vocab1']}, sentence1: ${wordObj['sentence1']}, nextId: $nextStepId, wordIsLearned: $wordIsLearned, svgFileExist: $svgFileExist');
+            await ftts.speak("${wordObj['vocab1']}。${wordObj['sentence1']}");
+            setState(() {
+              nextStepId += 1;
+              debugPrint('setState handleGoToUse: nextStepId: $nextStepId');
+            });
+            break;
+
+          case int stepId when stepId == steps['goToUse2']:
+            debugPrint('handleGoToUse vocabCnt: $vocabCnt, vocab2: ${wordObj['vocab2']}, sentence2: ${wordObj['sentence2']}, nextId: $nextStepId, wordIsLearned: $wordIsLearned, svgFileExist: $svgFileExist');
+            await ftts.speak("${wordObj['vocab2']}。${wordObj['sentence2']}");
+            setState(() {
+              debugPrint('setState handleGoToUse: nextStepId: $nextStepId');
+            });
+            break;
+
+          default:
+            debugPrint('Unexpected nextStepId for vocabCnt 2: $nextStepId');
+        }
+        break;
+
+      default:
+        debugPrint('handleGoToUse Error! vocabCnt: $vocabCnt, nextId: $nextStepId, wordIsLearned: $wordIsLearned, svgFileExist: $svgFileExist');
     }
 
-    debugPrint('handleGoToUseStep completed, nextStepId: $nextStepId');
-  }
-
+    debugPrint('handleGoToUse completed, nextStepId: $nextStepId');
+  }  
 
   Future myLoadAsset(String path) async {
     try {
@@ -314,11 +338,11 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
         debugPrint('TTS handler goToListen, call incrementNextStepId, newStatus: $newStatus, nextId: $nextStepId');
         incrementNextStepId();
       } else if (nextStepId == steps['goToUse1']) { // 用一用1, 8
-        debugPrint('TTS handler goToUse1, call handleGoToUse1, newStatus: $newStatus, nextId: $nextStepId');
-        await handleGoToUse1(newStatus);
+        debugPrint('TTS handler goToUse1, call handleGoToUse, newStatus: $newStatus, nextId: $nextStepId');
+        await handleGoToUse();
       } else if (nextStepId == steps['goToUse2']) { // 用一用2, 9
-        debugPrint('TTS handler goToUse2, call updateWordStatus, newStatus: $newStatus, nextId: 0');
-        await updateWordStatus(newStatus, learned: true, nextStepId: 0);
+        debugPrint('TTS handler goToUse2, call _updateWordStatus, newStatus: $newStatus, nextId: 0');
+        // await _updateWordStatus(newStatus, learned: true, nextStepId: nextStepId);
       }
       debugPrint("Speech has completed");
     });
@@ -333,29 +357,31 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
     debugPrint('initState end, wordExist: $wordExist, svgFileExist: $svgFileExist, nextId: $nextStepId, wordIsLearned: $wordIsLearned');
   }
 
-  Future<void> handleGoToUse1(WordStatus newStatus) async {
-    debugPrint('handleGoToUse1. vocab #: $vocabCnt, newStatus: $newStatus, nextId: $nextStepId, wordIsLearned: $wordIsLearned, svgFileExist: $svgFileExist');
-    if (vocabCnt == 1) {
-      await updateWordStatus(newStatus, learned: true, nextStepId: 0);
-    } else {
-      incrementNextStepId();
-    }
-  }
-
-  Future<void> updateWordStatus(WordStatus newStatus,
-      {required bool learned, required int nextStepId}) async {
-    debugPrint('updateWordStatus. mounted: $mounted, learned: $learned, nextId: $nextStepId');
+  Future<void> _updateWordStatus(WordStatus newStatus, {required bool learned}) async {
+    debugPrint('_updateWordStatus. mounted: ${context.mounted}, learned: $learned, nextStepId: $nextStepId');
     if (!context.mounted) return;
-    setState(() {
+
+    try {
       newStatus.learned = learned;
-      this.nextStepId = nextStepId;
-      debugPrint('setState updateWordStatus: newStatus.learned: $learned, nextId: $nextStepId');
-    });
-
-    ref.read(learnedWordCountProvider.notifier).state += 1;
-    await WordStatusProvider.updateWordStatus(status: newStatus);
-  }
-
+      
+      // Update the provider state
+      ref.read(learnedWordCountProvider.notifier).state += learned ? 1 : 0;
+      
+      // Perform the database update
+      await WordStatusProvider.updateWordStatus(status: newStatus);
+      
+      // Update the local state if needed
+      if (mounted) {  // Double-check mounted status after async operation
+        setState(() {
+          debugPrint('setState _updateWordStatus: newStatus.learned: $learned, nextStepId: $nextStepId');
+        });
+      }
+    } catch (e) {
+      debugPrint('Error in _updateWordStatus: $e');
+      // Handle error (e.g., show a snackbar to the user)
+    }
+  }  
+    
   void checkWordExistence() {
     if (!wordExist) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -376,7 +402,11 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
           _strokeOrderAnimationControllers = StrokeOrderAnimationController(
               result, this,
               onQuizCompleteCallback: handleQuizCompletion);
-          debugPrint('setState readJsonAndProcess: ${widget.wordsStatus[widget.wordIndex].word} 筆順檔下載成功');
+          if (svgFileExist) {
+            debugPrint('setState readJsonAndProcess: ${widget.wordsStatus[widget.wordIndex].word} 筆順檔下載成功');
+          } else {
+            debugPrint('setState readJsonAndProcess: 用“寫”替代，筆順檔下載成功');
+          }
         });
       } else {
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -459,7 +489,8 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
           practiceTimeLeft -= 1;
           nextStepId += 1;
           widget.wordsStatus[widget.wordIndex].learned = true; // 設成“已學”
-          debugPrint('setState handleQuizCompletion 要進入用一用1,practiceTimeLeft: $practiceTimeLeft, nextId: $nextStepId, learned: true');
+          _updateWordStatus(widget.wordsStatus[widget.wordIndex], learned: true);
+          debugPrint('setState handleQuizCompletion 要進入用一用1, practiceTimeLeft: $practiceTimeLeft, nextId: $nextStepId, learned: true');
         });
       }
       Fluttertoast.showToast(
@@ -549,8 +580,8 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                 Navigator.of(context).pop(); // Close the dialog
                 int savedNextStepId = nextStepId;
                 int oldTabIndex = currentTabIndex.value;
-                nextStepId = steps['goToListen']!; // 9/11/24 sjf
-                currentTabIndex.value = 1;      // 9/11/24 sjf
+                nextStepId = steps['goToWrite']!;
+                currentTabIndex.value = 2;                
                 debugPrint('聽一聽 說：$word');  // 移到前面，因為 await 會有延遲
                 if (isBpmf) {
                   await player.play(AssetSource('bopomo/$word.mp3'));
@@ -558,7 +589,9 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                   await ftts.speak(word);
                 }
                 debugPrint('寫一寫，上一頁1，savedId: $savedNextStepId，nextId: $nextStepId，oldTabIndex: $oldTabIndex, newTabIndex: ${currentTabIndex.value},叫 prevTab()');            
-                prevTab(); // it will update the nextStepId and currentTabIndex                
+                prevTab(); // it will update the nextStepId and currentTabIndex 
+                nextStepId = steps['goToWrite']!;      // sjf 10/8/24 hard code to go to 寫一寫
+                debugPrint('寫一寫，上一頁2，force nextId to $nextStepId'); // sjf 10/8/24        
                 return _tabController.animateTo(_tabController.index - 1);
               },
             ),
@@ -573,10 +606,12 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
               onPressed: () {
                 Navigator.of(context).pop(); // Close the dialog
                 int savedNextStepId = nextStepId;
+                widget.wordsStatus[widget.wordIndex].learned = true; // 設成“已學”，用一用才會順利
+                _updateWordStatus(widget.wordsStatus[widget.wordIndex], learned: true);
                 nextStepId = steps['goToUse1']!; // Force to goToUse1
                 // vocabCnt = 2;
-                debugPrint('寫一寫，下一頁，savedId: $savedNextStepId,  nextId: $nextStepId，呼叫 handleGoToUseStep()');                   
-                handleGoToUseStep();
+                debugPrint('寫一寫，下一頁，savedId: $savedNextStepId,  nextId: $nextStepId，呼叫 handleGoToUse()');                   
+                handleGoToUse();
                 currentTabIndex.value += 1;
                 return _tabController.animateTo(_tabController.index + 1);
               },
@@ -618,7 +653,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
     double availableWidth = deviceWidth - 10; // 10 padding on each side
     double availableHeight = deviceHeight - 10; // example padding top and bottom
     double nonConsumedHeight = deviceHeight * 0.15; // was 0.20;
-    var gray85Color = '#D9D9D9'.toColor();
+    var gray85Color = lightGray;
 
     String word = widget.wordsStatus[widget.wordIndex].word;
     int unitId = widget.unitId;
@@ -646,7 +681,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
       }
     }
 
-    debugPrint('build _strokeOrder is not null, word: $word, nextId: $nextStepId, wordIsLearned: $wordIsLearned, vocabCnt: $vocabCnt, vocabIndex: $vocabIndex');
+    debugPrint('build _strokeOrder is not null, word: $word, nextId: $nextStepId, wordIsLearned: $wordIsLearned, vocabCnt: $vocabCnt, vocabIndex: $vocabIndex, svgFileExist: $svgFileExist');
 
     List<Widget> useTabView = [
       TeachWordTabBarView( // 用一用 - 例句1
@@ -687,18 +722,11 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                           onRightClicked: (nextStepId == steps['goToUse2'] || wordIsLearned)
                               ? () async {
                                   if (nextStepId == steps['goToUse2']) {
-                                    await ftts.speak(
-                                        "${wordObj['vocab2']}。${wordObj['sentence2']}");
-                                    WordStatus newStatus =
-                                        widget.wordsStatus[widget.wordIndex];
-                                    debugPrint('用一用1，下一頁1 vocab2: ${wordObj['vocab2']}, newStatus: $newStatus}');
+                                    await ftts.speak("${wordObj['vocab2']}。${wordObj['sentence2']}");
+                                    debugPrint('用一用1，下一頁1 vocab2: ${wordObj['vocab2']}, ${wordObj['sentence2']}');
                                     setState(() {
-                                      newStatus.learned = true; // I never saw this flag set. Why?
                                       debugPrint('setState 用一用1，下一頁1， newStatus.learned: true');
-                                    });
-                                    ref.read(learnedWordCountProvider.notifier).state += 1;
-                                    await WordStatusProvider.updateWordStatus(
-                                        status: newStatus);
+                                    });                                    
                                   }
                                   setState(() {
                                     vocabIndex = 1;
@@ -834,607 +862,83 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
           : LayoutBuilder(builder: (context, constraints) { return Container(); })
     ];
     
-    /*
     return DefaultTabController(
       length: 4,
       child: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: Icon(Icons.chevron_left, size: fontSize * 1.5),
-            onPressed: () => Navigator.pop(context),
-          ),
-          title: (unitId == -1)
-              ? Text(unitTitle, style: TextStyle(fontSize: fontSize))
-              : Text(("${unitId.toString().padLeft(2, '0')} | $unitTitle"),
-                  style: TextStyle(fontSize: fontSize)),
-          actions: <Widget>[
-            IconButton(
-              onPressed: () => navigateWithProvider(context, '/mainPage', ref),
-              icon: Icon(Icons.home_filled, size: fontSize * 1.5),
-            ),
-          ],
-          bottom: TabBar(
-            tabs: [
-              Tab(icon: Icon(Icons.image, size: fontSize * 0.75)),
-              Tab(icon: Icon(Icons.hearing, size: fontSize * 0.75)),
-              Tab(icon: Icon(Icons.create, size: fontSize * 0.75)),
-              Tab(icon: Icon(Icons.school, size: fontSize * 0.75)),
-            ],
-            controller: _tabController,
-            onTap: (index) {
-              _tabController.index = currentTabIndex.value;
-            },
-            labelColor: '#28231D'.toColor(),
-            dividerColor: '#999999'.toColor(),
-            unselectedLabelColor: '#999999'.toColor(),
-            indicatorSize: TabBarIndicatorSize.tab,
-            indicator: BoxDecoration(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(10),
-                topRight: Radius.circular(10),
-              ),
-              color: '#999999'.toColor(),
-            ),
-          ),
-        ),
-        body: TabBarView(
-            physics: const NeverScrollableScrollPhysics(),
-            controller: _tabController,
-            children: [
-              TeachWordTabBarView( // 看一看 （不在 steps 裡）
-                content: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,  // Ensure the column shrinks to fit its content
-                    children: [
-                      Flexible(  
-                        fit: FlexFit.loose,
-                        child: Center(
-                          child: ConstrainedBox(
-                            constraints: BoxConstraints(
-                              maxWidth: availableWidth * 0.90,  // 90% of the available width
-                            ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,  // Shrink the column to fit its content
-                              children: <Widget>[
-                                LeftRightSwitch( // 看一看及左右按鈕
-                                  iconsColor: gray85Color,
-                                  iconsSize: max(fontSize * 2.0, 48.0),  // Ensure a minimum tap target size
-                                  rightBorder: nextStepId == steps['goToListen'],
-                                  middleWidget: TeachWordCardTitle(
-                                    sectionName: '看一看',
-                                    iconsColor: gray85Color,
-                                  ),
-                                  isFirst: true,
-                                  isLast: false,
-                                  onRightClicked: (nextStepId == steps['goToListen']! || wordIsLearned)
-                                    ? () async {
-                                        nextTab();
-                                        if (isBpmf) {
-                                          await player.play(AssetSource('bopomo/$word.mp3'));
-                                        } else {
-                                          await ftts.speak(word);
-                                        }
-                                        return _tabController.animateTo(_tabController.index + 1);
-                                      }
-                                    : null,
-                                ),
-                                SizedBox(height: fontSize * 0.3),  // Some small space between widgets
-                                Flexible(  // Replacing Expanded with Flexible to prevent overflow issues
-                                  fit: FlexFit.loose,
-                                  child: Stack(
-                                    alignment: Alignment.center,
-                                    children: [
-                                      LayoutBuilder(
-                                        builder: (context, constraints) {
-                                          return Container(
-                                            decoration: const BoxDecoration(
-                                              color: Color(0xFF28231D),
-                                            ),
-                                            child: Center(
-                                              child: Image(
-                                                width: max(17.6 * fontSize, 300.0),  // was 300
-                                                image: isBpmf
-                                                  ? AssetImage('lib/assets/img/bopomo/$word.png')
-                                                  : AssetImage('lib/assets/img/oldWords/$word.webp'),  // change png to webp
-                                                errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                                                  // Log the error
-                                                  debugPrint('Error loading image: $exception');
-
-                                                  // Return the Text widget as a fallback
-                                                  return Center(
-                                                    child: Text(
-                                                      word,
-                                                      textAlign: TextAlign.center,
-                                                      style: TextStyle(
-                                                        fontSize: fontSize * 8.0,  // Adjust font size
-                                                        color: backgroundColor,  // Ensure backgroundColor is defined or use a default color
-                                                        fontWeight: FontWeight.w100,
-                                                        fontFamily: isBpmf ? "BpmfOnly" : "BpmfIansui",
-                                                      ),
-                                                    ),
-                                                  );
-                                                },
-                                              ),
-                                            ),
-                                          );
-                                        }
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
+        appBar: PreferredSize(
+          preferredSize: Size(deviceWidth, kToolbarHeight * 2), // Double height to accommodate TabBar
+          child: Center(
+            child: SizedBox(
+              width: deviceWidth,
+              // color: Theme.of(context).appBarTheme.backgroundColor,
+              child: SafeArea(
+                child: Column(
+                  children: [
+                    // AppBar content
+                    SizedBox(
+                      height: kToolbarHeight,
+                      child: Row(
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.chevron_left, color: beige, size: fontSize * 1.5),
+                            onPressed: () => Navigator.pop(context),
                           ),
+                          Expanded(
+                            child: (unitId == -1)
+                                ? Text(unitTitle, 
+                                    style: TextStyle(fontSize: fontSize * 1.2),
+                                    textAlign: TextAlign.center)
+                                : Text("${unitId.toString().padLeft(2, '0')} | $unitTitle",
+                                    style: TextStyle(fontSize: fontSize * 1.2),
+                                    textAlign: TextAlign.center),
+                          ),
+                          IconButton(
+                            onPressed: () => navigateWithProvider(context, '/mainPage', ref),
+                            icon: Icon(Icons.home_filled, color: beige, size: fontSize * 1.5),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // TabBar
+                    SizedBox(
+                      height: kToolbarHeight,
+                      child: TabBar(
+                        tabs: [
+                          Tab(icon: Icon(Icons.image, size: fontSize * 0.75)),
+                          Tab(icon: Icon(Icons.hearing, size: fontSize * 0.75)),
+                          Tab(icon: Icon(Icons.create, size: fontSize * 0.75)),
+                          Tab(icon: Icon(Icons.school, size: fontSize * 0.75)),
+                        ],
+                        controller: _tabController,
+                        onTap: (index) {
+                          _tabController.index = currentTabIndex.value;
+                        },
+                        labelColor: darkBrown,
+                        dividerColor: mediumGray,
+                        unselectedLabelColor: mediumGray,
+                        indicatorSize: TabBarIndicatorSize.tab,
+                        indicatorPadding: const EdgeInsets.symmetric(horizontal: 2),
+                        indicator: const BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(10),
+                            topRight: Radius.circular(10),
+                          ),
+                          color: mediumGray,
                         ),
                       ),
-                    ],
-                  ),
-                ),
-              ),
-
-              TeachWordTabBarView( // 聽一聽
-                content: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min, // Prevents the Column from expanding infinitely
-                    children: [
-                      ConstrainedBox(
-                        constraints: BoxConstraints(
-                          maxHeight: availableHeight * 0.9, // Constrain the available height
-                          maxWidth: availableWidth * 0.9, // Constrain the available width
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min, // Prevents unbounded height issues
-                          children: <Widget>[
-                            LeftRightSwitch( // 聽一聽及左右按鈕
-                              iconsColor: gray85Color,
-                              iconsSize: max(fontSize * 2.0, 48.0), // Ensure a minimum tap target size
-                              rightBorder: nextStepId == steps['goToWrite'],
-                              middleWidget: TeachWordCardTitle(
-                                  sectionName: '聽一聽', iconsColor: gray85Color),
-                              isFirst: false,
-                              isLast: false,
-                              onLeftClicked: (nextStepId == steps['goToWrite'] || wordIsLearned)
-                                  ? () {
-                                      debugPrint(
-                                          '聽一聽，上一頁，wordIsLearned: $wordIsLearned，nextId: $nextStepId，叫 prevTab()');
-                                      prevTab();
-                                      return _tabController.animateTo(
-                                          _tabController.index - 1);
-                                    }
-                                  : null,
-                              onRightClicked: (nextStepId == steps['goToWrite'] || wordIsLearned)
-                                  ? () {
-                                      int savedNextStepId = nextStepId;
-                                      nextStepId = steps['goToWrite']!; // Force to goToWrite
-                                      debugPrint(
-                                          '聽一聽，下一頁，savedId: $savedNextStepId, nextId: $nextStepId，叫 nextTab()');
-                                      nextTab();
-                                      return _tabController.animateTo(
-                                          _tabController.index + 1);
-                                    }
-                                  : null,
-                            ),
-                            SizedBox(height: fontSize * 0.3),
-
-                            // Constrained box to ensure the available space is properly allocated
-                            SizedBox(
-                              height: (availableHeight * 0.4), // Adjust the height to the required size
-                              width: availableWidth * 0.9, // Adjust the width to the required size
-                              child: Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                  LayoutBuilder(builder: (context, constraints) {
-                                    return Container(
-                                      decoration: const BoxDecoration(
-                                        color: Color(0xFF28231D),
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          word,
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: fontSize * 8.0, // Adjust font size to be reasonable
-                                            color: backgroundColor,
-                                            fontWeight: FontWeight.w100,
-                                            fontFamily: isBpmf ? "BpmfOnly" : "BpmfIansui",
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  }),
-                                  Positioned(
-                                    bottom: 8.0,
-                                    right: 8.0,
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.end,
-                                      children: [
-                                        IconButton(
-                                          iconSize: fontSize * 1.2,
-                                          color: backgroundColor,
-                                          onPressed: () async {
-                                            debugPrint('聽一聽2 說：$word');
-                                            if (isBpmf) {
-                                              await player.play(
-                                                  AssetSource('bopomo/$word.mp3'));
-                                            } else {
-                                              await ftts.speak(word);
-                                            }
-                                          },
-                                          icon: Icon(Icons.volume_up,
-                                              size: fontSize * 1.5),
-                                        ),
-                                        Text(
-                                          '讀音',
-                                          textAlign: TextAlign.right,
-                                          style: TextStyle(
-                                            fontSize: fontSize * 0.75,
-                                            color: backgroundColor,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              TeachWordTabBarView( // 寫一寫
-                content: ChangeNotifierProvider<StrokeOrderAnimationController>.value(
-                  value: _strokeOrderAnimationControllers!,
-                  child: Consumer<StrokeOrderAnimationController>(
-                    builder: (context, controller, child) {
-                      double availableWidth = deviceWidth - 20; // 10 padding on each side
-                      double availableHeight = deviceHeight - 20; // Padding on top and bottom
-                      double nonConsumedHeight = deviceHeight * 0.2; // Adjust as needed
-
-                      return Center(
-                        child: ConstrainedBox(
-                          constraints: BoxConstraints(
-                            maxWidth: availableWidth * 0.90,
-                            maxHeight: availableHeight - nonConsumedHeight,
-                          ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min, // Ensure the column takes only the necessary space
-                            children: <Widget>[
-                              LeftRightSwitch(
-                                iconsColor: gray85Color,
-                                iconsSize: max(fontSize * 2.0, 48.0), // Ensure a minimum tap target size
-                                rightBorder: nextStepId == steps['goToUse1'],
-                                middleWidget: TeachWordCardTitle(
-                                  sectionName: '寫一寫',
-                                  iconsColor: gray85Color,
-                                ),
-                                isFirst: false,
-                                isLast: false,
-                                onLeftClicked: wordIsLearned
-                                    ? () async {
-                                        int savedNextStepId = nextStepId;
-                                        int oldTabIndex = currentTabIndex.value;
-                                        nextStepId = steps['goToWrite']!;
-                                        currentTabIndex.value = 2;
-                                        debugPrint('回去 聽一聽 說：$word');
-                                        if (isBpmf) {
-                                          await player.play(AssetSource('bopomo/$word.mp3'));
-                                        } else {
-                                          await ftts.speak(word);
-                                        }
-                                        debugPrint(
-                                            '寫一寫，上一頁2，savedId: $savedNextStepId，nextId: $nextStepId，oldTabIndex: $oldTabIndex, newTabIndex: ${currentTabIndex.value},叫 prevTab()');
-                                        prevTab();
-                                        return _tabController.animateTo(_tabController.index - 1);
-                                      }
-                                    : null,
-                                onRightClicked: (nextStepId == steps['goToUse1'] || wordIsLearned)
-                                    ? () {
-                                        nextTab();
-                                        return _tabController.animateTo(_tabController.index + 1);
-                                      }
-                                    : null,
-                              ),
-                              SizedBox(height: fontSize * 0.2),
-
-                              // Constrained Container for the animation and icons
-                              SizedBox(
-                                width: availableWidth,
-                                height: (availableHeight - nonConsumedHeight) * 0.5, // Allocate 50% of the available height
-                                child: LayoutBuilder(
-                                  builder: (context, constraints) {
-                                    return Container(
-                                      decoration: !isBpmf
-                                          ? const BoxDecoration(
-                                              image: DecorationImage(
-                                                image: AssetImage("lib/assets/img/box.png"),
-                                                fit: BoxFit.fitWidth,
-                                              ),
-                                            )
-                                          : BoxDecoration(color: '#28231D'.toColor()),
-                                      child: Stack(
-                                        alignment: Alignment.center,
-                                        children: [
-                                          Positioned(
-                                            left: 10,
-                                            top: 5,
-                                            child: Column(children: [
-                                              _buildPracticeTimeIcon(
-                                                  practiceTimeLeft >= 4 && !wordIsLearned,
-                                                  fontSize,
-                                                  '#999999',
-                                                  '#F8A339'),
-                                              _buildPracticeTimeIcon(
-                                                  practiceTimeLeft >= 3 && !wordIsLearned,
-                                                  fontSize,
-                                                  '#999999',
-                                                  '#F8A339'),
-                                              _buildPracticeTimeIcon(
-                                                  practiceTimeLeft >= 2 && !wordIsLearned,
-                                                  fontSize,
-                                                  '#999999',
-                                                  '#F8A339'),
-                                              SizedBox(height: fontSize * 0.9),
-                                              _buildPracticeTimeIcon(
-                                                  practiceTimeLeft >= 1 && !wordIsLearned,
-                                                  fontSize,
-                                                  '#999999',
-                                                  '#F8A3A9'),
-                                            ]),
-                                          ),
-                                          FittedBox(
-                                            child: StrokeOrderAnimator(
-                                              _strokeOrderAnimationControllers!,
-                                              key: UniqueKey(),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-
-                              // GridView for icons and labels (筆順、寫字、邊框)
-                              Flexible(
-                                fit: FlexFit.loose, // Allow this to take up the remaining space
-                                child: GridView.count(
-                                  crossAxisCount: 3,
-                                  childAspectRatio: 1.0,
-                                  mainAxisSpacing: 2,
-                                  crossAxisSpacing: 3,
-                                  shrinkWrap: true, // Use only the space needed by children
-                                  physics: const NeverScrollableScrollPhysics(), // Disable GridView's scrolling
-                                  children: <Widget>[
-                                    buildIconButtonWithLabel(
-                                      context: context,
-                                      border: nextStepId == steps['seeAnimation'],
-                                      iconData: [Icons.pause, Icons.play_arrow],
-                                      label: '筆順',
-                                      isSelected: controller.isAnimating,
-                                      onPressed: !controller.isQuizzing
-                                          ? () async {
-                                              if (!controller.isAnimating) {
-                                                controller.startAnimation();
-                                                if (isBpmf) {
-                                                  await player.play(AssetSource('bopomo/$word.mp3'));
-                                                } else {
-                                                  await ftts.speak(word);
-                                                }
-                                                debugPrint('筆順 $word');
-                                                if (nextStepId == steps['seeAnimation']) {
-                                                  setState(() {
-                                                    nextStepId += 1;
-                                                    debugPrint('setState 筆順 $word, nextStepId: $nextStepId');
-                                                  });
-                                                }
-                                              } else {
-                                                controller.stopAnimation();
-                                                debugPrint("stop animation // nextStepId update time");
-                                              }
-                                            }
-                                          : null,
-                                      fontSize: fontSize,
-                                    ),
-                                    buildIconButtonWithLabel(
-                                      context: context,
-                                      border: !controller.isQuizzing && (nextStepId == steps['practiceWithBorder1']),
-                                      iconData: [Icons.edit_off, Icons.edit],
-                                      label: '寫字',
-                                      isSelected: controller.isQuizzing,
-                                      onPressed: (nextStepId == steps['practiceWithBorder1'] || wordIsLearned)
-                                          ? () async {
-                                              controller.startQuiz();
-                                              if (isBpmf) {
-                                                await player.play(AssetSource('bopomo/$word.mp3'));
-                                              } else {
-                                                await ftts.speak(word);
-                                              }
-                                              debugPrint('寫字 $word');
-                                            }
-                                          : null,
-                                      fontSize: fontSize,
-                                    ),
-                                    buildIconButtonWithLabel(
-                                      context: context,
-                                      border: nextStepId == steps['turnBorderOff'],
-                                      iconData: [Icons.remove_red_eye, Icons.remove_red_eye_outlined],
-                                      label: '邊框',
-                                      isSelected: controller.showOutline,
-                                      onPressed: (nextStepId == steps['turnBorderOff'] || wordIsLearned)
-                                          ? () {
-                                              if (nextStepId == steps['turnBorderOff']) {
-                                                setState(() {
-                                                  nextStepId += 1;
-                                                  debugPrint('setState 邊框 $word, nextStepId: $nextStepId');
-                                                });
-                                              }
-                                              controller.setShowOutline(!controller.showOutline);
-                                            }
-                                          : null,
-                                      fontSize: fontSize,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-
-              useTabView[vocabIndex]
-            ]),
-        bottomNavigationBar: BottomAppBar(
-            height: 4.0 * fontSize, // was 100, 5.9
-            elevation: 0,
-            color: '#28231D'.toColor(),
-            child: LeftRightSwitch(
-                iconsColor: '#F5F5DC'.toColor(),
-                iconsSize: fontSize * 2.0, // was 48, 2.5
-                rightBorder: false,
-                middleWidget: WordCard(
-                    unitId: unitId,
-                    unitTitle: unitTitle,
-                    wordsStatus: widget.wordsStatus,
-                    wordsPhrase: widget.wordsPhrase,
-                    wordIndex: widget.wordIndex,
-                    sizedBoxWidth: 10 * fontSize, // was 7.5
-                    sizedBoxHeight: 4.0 * fontSize, // was 88
-                    fontSize: fontSize * 1.2,
-                    isBpmf: isBpmf,
-                    isVertical: false,
-                    disable: true),
-                isFirst: (widget.wordIndex == 0),
-                isLast: (widget.wordIndex == widget.wordsStatus.length - 1),
-                onLeftClicked: () {
-                  navigateWithProvider(
-                    context,
-                    '/teachWord',  // Adjust this route name as per your AppRoutes definition
-                    ref,
-                    arguments: {
-                      'unitId': widget.unitId,
-                      'unitTitle': widget.unitTitle,
-                      'wordsStatus': widget.wordsStatus,
-                      'wordsPhrase': widget.wordsPhrase,
-                      'wordIndex': widget.wordIndex - 1,
-                    },
-                  );                  
-                },
-                onRightClicked: () {
-                  navigateWithProvider(
-                    context,
-                    '/teachWord',  // Adjust this route name as per your AppRoutes definition
-                    ref,
-                    arguments: {
-                      'unitId': widget.unitId,
-                      'unitTitle': widget.unitTitle,
-                      'wordsStatus': widget.wordsStatus,
-                      'wordsPhrase': widget.wordsPhrase,
-                      'wordIndex': widget.wordIndex + 1,
-                    },
-                  );                  
-                })),
-      ),
-    );
-    */
-
-    return DefaultTabController(
-      length: 4,
-      child: Scaffold(
-        appBar: AppBar(
-          /*
-          titleSpacing: 0, // Remove extra spacing
-          toolbarHeight: fontSize * 1.5, // Adjust if necessary
-          title: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxWidth: deviceWidth * 0.90,  // Constrain to device width
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,  // Align items closer
-              children: [
-                IconButton(
-                  icon: Icon(Icons.chevron_left, size: fontSize * 3.0), // testing
-                  onPressed: () => Navigator.pop(context),
-                ),
-                Expanded(
-                  child: Center(  // Center the title
-                    child: (unitId == -1)
-                        ? Text(unitTitle, style: TextStyle(fontSize: fontSize * 1.2))
-                        : Text(
-                            "${unitId.toString().padLeft(2, '0')} | $unitTitle",
-                            style: TextStyle(fontSize: fontSize * 1.2),
-                          ),
-                  ),
-                ),
-                IconButton(
-                  onPressed: () => navigateWithProvider(context, '/mainPage', ref),
-                  icon: Icon(Icons.home_filled, size: fontSize * 1.5),
-                ),
-              ],
-            ),
-          ),
-          */
-          leading: IconButton(
-            icon: Icon(Icons.chevron_left, size: fontSize * 1.5),
-            onPressed: () => Navigator.pop(context),
-          ),
-          title: (unitId == -1)
-              ? Text(unitTitle, style: TextStyle(fontSize: fontSize * 1.2))
-              : Text(("${unitId.toString().padLeft(2, '0')} | $unitTitle"),
-                  style: TextStyle(fontSize: fontSize * 1.2)),
-          actions: <Widget>[
-            IconButton(
-              // onPressed: () => Navigator.of(context).pushNamed('/mainPage'),
-              onPressed: () => navigateWithProvider(context, '/mainPage', ref),
-              icon: Icon(Icons.home_filled, size: fontSize * 1.5),
-            ),
-          ],          
-          bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(kToolbarHeight), // TabBar height
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxWidth: availableWidth,  // Constrain to device width
-              ),
-              child: TabBar(
-                tabs: [
-                  Tab(icon: Icon(Icons.image, size: fontSize * 0.75)),
-                  Tab(icon: Icon(Icons.hearing, size: fontSize * 0.75)),
-                  Tab(icon: Icon(Icons.create, size: fontSize * 0.75)),
-                  Tab(icon: Icon(Icons.school, size: fontSize * 0.75)),
-                ],
-                controller: _tabController,
-                onTap: (index) {
-                  _tabController.index = currentTabIndex.value;
-                },
-                labelColor: '#28231D'.toColor(),
-                dividerColor: '#999999'.toColor(),
-                unselectedLabelColor: '#999999'.toColor(),
-                // indicatorSize: TabBarIndicatorSize.label,  // Cover only the label
-                indicatorSize: TabBarIndicatorSize.tab,  // Ensure indicator covers the tab
-                indicatorPadding: const EdgeInsets.symmetric(horizontal: 2),  // Keep padding small
-                indicator: BoxDecoration(
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(10),
-                    topRight: Radius.circular(10),
-                  ),
-                  color: '#999999'.toColor(),  // Visible color
+                    ),
+                  ],
                 ),
               ),
             ),
           ),
         ),
+
         body: TabBarView(
           physics: const NeverScrollableScrollPhysics(),
           controller: _tabController,
           children: [
-            TeachWordTabBarView(
+            TeachWordTabBarView( // 看一看
               content: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -1481,7 +985,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                       builder: (context, constraints) {
                                         return Container(
                                           decoration: const BoxDecoration(
-                                            color: Color(0xFF28231D),
+                                            color: darkBrown,
                                           ),
                                           child: Center(
                                             child: Image(
@@ -1521,7 +1025,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                 ),
               ),
             ),
-            TeachWordTabBarView(
+            TeachWordTabBarView( // 聽一聽
               content: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -1552,7 +1056,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                 : null,
                             onRightClicked: (nextStepId == steps['goToWrite'] || wordIsLearned)
                                 ? () {
-                                    nextTab();
+                                    nextTab(); // from 聽一聽 to 寫一寫
                                     return _tabController.animateTo(_tabController.index + 1);
                                   }
                                 : null,
@@ -1560,14 +1064,14 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                           SizedBox(height: fontSize * 0.3),
                           SizedBox(
                             height: (deviceHeight * 0.4),
-                            width: deviceWidth * 0.9,  // Limit width to 90% of deviceWidth
+                            width: deviceWidth * 1.0,  // Limit width to 90% of deviceWidth
                             child: Stack(
                               alignment: Alignment.center,
                               children: [
                                 LayoutBuilder(builder: (context, constraints) {
                                   return Container(
                                     decoration: const BoxDecoration(
-                                      color: Color(0xFF28231D),
+                                      color: darkBrown,
                                     ),
                                     child: Center(
                                       child: Text(
@@ -1593,14 +1097,13 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                 ),
               ),
             ),
-            TeachWordTabBarView(
+            
+            // 寫一寫 original
+            TeachWordTabBarView( // 寫一寫
               content: ChangeNotifierProvider<StrokeOrderAnimationController>.value(
                 value: _strokeOrderAnimationControllers!,
                 child: Consumer<StrokeOrderAnimationController>(
                   builder: (context, controller, child) {
-                    // double availableWidth = deviceWidth - 20;  // 10 padding on each side
-                    // double availableHeight = deviceHeight - 20;  // Padding on top and bottom
-                    // double nonConsumedHeight = deviceHeight * 0.2;  // Adjust as needed
 
                     return Center(
                       child: ConstrainedBox(
@@ -1662,7 +1165,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                               fit: BoxFit.fitWidth,
                                             ),
                                           )
-                                        : BoxDecoration(color: '#28231D'.toColor()),
+                                        : const BoxDecoration(color: darkBrown),
                                     child: Stack(
                                       alignment: Alignment.center,
                                       children: [
@@ -1719,11 +1222,11 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                 children: <Widget>[
                                   buildIconButtonWithLabel(
                                     context: context,
-                                    border: nextStepId == steps['seeAnimation'],
+                                    border: (nextStepId == steps['seeAnimation'] && !wordIsLearned),
                                     iconData: [Icons.pause, Icons.play_arrow],
                                     label: '筆順',
                                     isSelected: controller.isAnimating,
-                                    onPressed: !controller.isQuizzing
+                                    onPressed: ((!controller.isQuizzing && (nextStepId == steps['seeAnimation'])) || wordIsLearned)
                                         ? () async {
                                             if (!controller.isAnimating) {
                                               controller.startAnimation();
@@ -1749,11 +1252,13 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                   ),
                                   buildIconButtonWithLabel(
                                     context: context,
-                                    border: !controller.isQuizzing && (nextStepId == steps['practiceWithBorder1']),
+                                    border: ((nextStepId > steps['seeAnimation']! && nextStepId < steps['turnBorderOff']!) && 
+                                            !wordIsLearned && !controller.isQuizzing) || (nextStepId == steps['practiceWithoutBorder1']!),
+                                    // border: !controller.isQuizzing && (nextStepId == steps['practiceWithBorder1'] && !wordIsLearned),
                                     iconData: [Icons.edit_off, Icons.edit],
                                     label: '寫字',
                                     isSelected: controller.isQuizzing,
-                                    onPressed: (nextStepId == steps['practiceWithBorder1'] || wordIsLearned)
+                                    onPressed: ((nextStepId > steps['seeAnimation']! && nextStepId < steps['turnBorderOff']!) || wordIsLearned || (nextStepId == steps['practiceWithoutBorder1']!))
                                         ? () async {
                                             controller.startQuiz();
                                             if (isBpmf) {
@@ -1768,7 +1273,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                                   ),
                                   buildIconButtonWithLabel(
                                     context: context,
-                                    border: nextStepId == steps['turnBorderOff'],
+                                    border: (nextStepId == steps['turnBorderOff'] && !wordIsLearned),
                                     iconData: [Icons.remove_red_eye, Icons.remove_red_eye_outlined],
                                     label: '邊框',
                                     isSelected: controller.showOutline,
@@ -1796,19 +1301,20 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
                 ),
               ),
             ),
+
             useTabView[vocabIndex],
           ],
         ),
         bottomNavigationBar: BottomAppBar(
           height: 4.0 * fontSize,
           elevation: 0,
-          color: '#28231D'.toColor(),
+          color: darkBrown,
           child: ConstrainedBox(
             constraints: BoxConstraints(
               maxWidth: deviceWidth,  // Constrain the bottom app bar to the device width
             ),
             child: LeftRightSwitch(
-              iconsColor: '#F5F5DC'.toColor(),
+              iconsColor: beige,
               iconsSize: fontSize * 2.0,
               rightBorder: false,
               middleWidget: WordCard(
@@ -1858,6 +1364,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
           ),
         ),
       ),
+
     );
 
   }
@@ -1879,7 +1386,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
           return Container(
             decoration: BoxDecoration(
               border: border
-                  ? Border.all(color: '#FFFF93'.toColor(), width: 1.5)
+                  ? Border.all(color: lightYellow, width: 1.5)
                   : null,
             ),
             child: IconButton(
@@ -1913,5 +1420,29 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
       size: fontSize * 1.5,
     );
   }
+
+  // This method is responsible for rendering previously drawn correct strokes
+  List<CustomPaint> paintCorrectStrokes(List<List<Offset>> correctStrokePaths,
+      {Color brushColor = Colors.black, double brushWidth = 8}) {
+    final List<CustomPaint> brushStrokes = [];
+
+    for (var strokePath in correctStrokePaths) {
+      if (strokePath.isNotEmpty) {
+        brushStrokes.add(
+          CustomPaint(
+            painter: Brush(
+              strokePath,
+              brushColor: brushColor,
+              brushWidth: brushWidth,
+            ),
+          ),
+        );
+      }
+    }
+
+    return brushStrokes;
+  }
+
+
 
 }
