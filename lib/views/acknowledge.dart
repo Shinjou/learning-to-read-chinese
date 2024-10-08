@@ -16,24 +16,28 @@ final List<Resource> resourceList = [
     description: "由中研院語言學研究所李佳穎老師提供，用於所有功能。"
   ),
   Resource(
-    resource: "注音字卡", 
-    description: "由郭俊成老師提供，用於注音符號的學習。"
-  ),
-  Resource(
     resource: "字型演變",
     description: "來自中央研究院歷史語言學研究所與資訊科學研究所開發之「小學堂」字型演變資料庫。"
   ),
   Resource(
     resource: "筆順動畫",
     description: "來自文鼎科技開發股份有限公司授權之漢字及注音字型。更感謝他們的技術支持。"
+  ),  
+  Resource(
+    resource: "注音字卡", 
+    description: "由郭俊成老師提供，用於注音符號的學習。"
   ),
   Resource(
-    resource: "諮詢顧問",
-    description: "鄭漢文校長與陳素慧老師擔任諮詢顧問，提供寶貴現場教學經驗。"
-  ),
+    resource: "注音符號處理方法", 
+    description: "ButTaiwan, https://github.com/ButTaiwan/bpmfvs/blob/master/NOTICE.txt. jeffreyxuan, https://github.com/jeffreyxuan/toneoz-font-zhuyin-wenkai."
+  ),  
     Resource(
     resource: "注音符號錄音",
     description: "胡銘志老師幫忙錄製注音符號發音。"
+  ),  
+  Resource(
+    resource: "諮詢顧問",
+    description: "鄭漢文校長與陳素慧老師擔任諮詢顧問，提供寶貴現場教學經驗。"
   ),
   Resource(
     resource: "APP開發",
@@ -53,8 +57,7 @@ class AcknowledgeView extends ConsumerWidget {
     // final screenInfo = ref.watch(screenInfoProvider);
     final screenInfo = ref.watch(screenInfoProvider);
     double fontSize = screenInfo.fontSize;
-    bool isTablet = screenInfo.screenWidth > 600;
-    if (isTablet && MediaQuery.of(context).orientation == Orientation.landscape) {
+    if (screenInfo.isTablet && MediaQuery.of(context).orientation == Orientation.landscape) {
       fontSize *= 1.3;
     }
     
