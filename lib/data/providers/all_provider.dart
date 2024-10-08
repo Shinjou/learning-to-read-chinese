@@ -10,8 +10,9 @@ class AllProvider {
   static bool dbExists = false;  
 
   static const String _dbName = 'all.sqlite';  
-  static const int _dbVersion = 99;  // always upgrade to the latest version
+  static const int _dbNewVersion = 99;  // Always upgrade to the latest version
 
+  /// Gets the database instance, initializing if necessary.
   static Future<Database> get database async {
     _database ??= await _initDatabase();
     return _database!;
@@ -22,14 +23,15 @@ class AllProvider {
       _database ??= await _initDatabase();
     }
     return _database!;
-  }  
+  } 
 
+  /// Initializes the database if it doesn't exist or has the wrong version.
   static Future<Database> _initDatabase() async {
     try {
       String dbPath = join(await getDatabasesPath(), _dbName);
       debugPrint('Path to $_dbName: $dbPath');
 
-      bool dbExists = await databaseExists(dbPath);
+      dbExists = await databaseExists(dbPath);
       if (!dbExists) {
         await _copyDbFromAssets(dbPath);
         dbExists = true;
@@ -39,16 +41,16 @@ class AllProvider {
       // Open the database
       _database = await openDatabase(dbPath);
 
-      // Checking and potentially upgrading the database version
+      // Check and potentially upgrade the database version
       int currentVersion = await _database!.getVersion();
-      debugPrint('$_dbName: New version $_dbVersion, Current: $currentVersion');
-      if (currentVersion < _dbVersion) {
-        debugPrint('Upgrading $_dbName from version $currentVersion to $_dbVersion ...');
-        // all.sqlite 如果需要 upgrade，就copy整個 DB from assets
+      debugPrint('$_dbName: New version $_dbNewVersion, Current: $currentVersion');
+      if (currentVersion < _dbNewVersion) {
+        debugPrint('Upgrading $_dbName from version $currentVersion to $_dbNewVersion ...');
+        // If an upgrade is needed, copy the DB from assets
         await closeDb();
         await _copyDbFromAssets(dbPath);
         _database = await openDatabase(dbPath);
-        debugPrint('Upgrade $_dbName successfully to version $_dbVersion');
+        debugPrint('Upgrade $_dbName successfully to version $_dbNewVersion');
       }
       
       return _database!;
@@ -58,6 +60,7 @@ class AllProvider {
     }
   }
 
+  /// Copies the database from the assets folder into the device's app directory.
   static Future<void> _copyDbFromAssets(String dbPath) async {
     try {
       debugPrint('Copying $_dbName from assets/data_files/...');
@@ -67,18 +70,23 @@ class AllProvider {
       debugPrint('Copy of $_dbName to $dbPath completed successfully.');
     } catch (e) {
       debugPrint('Failed to copy $_dbName from assets to $dbPath. Error: $e');
-      // Depending on your use case, you might want to rethrow the error,
-      // return a failure status, or attempt a recovery operation here.
-      // For example, to rethrow the error, uncomment the following line:
       rethrow;
     }
   }
 
+  /// Closes the database if it's open.
   static Future<void> closeDb() async {
     if (_database != null) {
       await _database!.close();
       _database = null;
     }
   }
+
+  /// Retrieves the current version of the all.sqlite database.
+  static Future<int> getCurrentDatabaseVersion() async {
+    final db = await database;
+    return await db.getVersion(); // Returns the current version of the opened database
+  }
+  
 }
 
