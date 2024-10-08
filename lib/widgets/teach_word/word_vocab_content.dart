@@ -148,59 +148,70 @@ class WordVocabContentState extends ConsumerState<WordVocabContent> {
       ),
 
       // Meaning of the vocabulary
-      Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Text(
-            "解釋：",
-            style: TextStyle(
-              fontSize: fontSize,
-              color: explanationColor,
+      Padding(
+        padding: EdgeInsets.only(left: fontSize * 0.5),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text(
+                  "解釋：",
+                  style: TextStyle(
+                    fontSize: fontSize,
+                    color: explanationColor,
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.volume_up),
+                  iconSize: fontSize,
+                  color: explanationColor,
+                  onPressed: () => _speak(widget.meaning),
+                ),
+              ],
             ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.volume_up),
-            iconSize: fontSize,
-            color: explanationColor,
-            onPressed: () => _speak(widget.meaning),
-          ),
-        ],
-      ),
-
-      ZhuyinProcessing(
-        text: widget.meaning,
-        fontSize: fontSize,
-        color: whiteColor,
-        highlightOn: true,
+            ZhuyinProcessing(
+              text: widget.meaning,
+              fontSize: fontSize,
+              color: whiteColor,
+              highlightOn: true,
+            ),
+          ],
+        ),
       ),
       SizedBox(height: fontSize * 0.1),
 
       // Example sentence with TTS button
-      Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Text(
-            "例句：",
-            style: TextStyle(
-              fontSize: fontSize,
-              color: explanationColor,
+      Padding(
+        padding: EdgeInsets.only(left: fontSize * 0.5),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text(
+                  "例句：",
+                  style: TextStyle(
+                    fontSize: fontSize,
+                    color: explanationColor,
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.volume_up),
+                  iconSize: fontSize,
+                  color: explanationColor,
+                  onPressed: () => _speak(widget.sentence),
+                ),
+              ],
             ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.volume_up),
-            iconSize: fontSize,
-            color: explanationColor,
-            onPressed: () => _speak(widget.sentence),
-          ),
-        ],
-      ),
-
-      // Displayed sentence (with blanks or filled)
-      ZhuyinProcessing(
-        text: displayedSentence,
-        fontSize: fontSize,
-        color: whiteColor,
-        highlightOn: true,
+            ZhuyinProcessing(
+              text: displayedSentence,
+              fontSize: fontSize,
+              color: whiteColor,
+              highlightOn: true,
+            ),
+          ],
+        ),
       ),
 
       // Display options (vocab and vocab2) as buttons
