@@ -1,8 +1,8 @@
 // tab_bar_view.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ltrc/extensions.dart';
 import 'package:ltrc/providers.dart';
+import 'package:ltrc/views/view_utils.dart';
 
 class TeachWordTabBarView extends ConsumerWidget {
   final Widget content;
@@ -25,17 +25,18 @@ class TeachWordTabBarView extends ConsumerWidget {
           children: [
             Expanded(
               child: Container(
+                width: deviceWidth,
                 decoration: BoxDecoration(
-                  color: '#28231D'.toColor(),
-                  border: Border.all(color: '#999999'.toColor(), width: 6),
+                  color: darkBrown,
+                  border: Border.all(color: mediumGray, width: 6),
                 ),
                 child: Column(
                   children: [
                     SizedBox(height: fontSize * 0.2),
                     Expanded(
-                      child: SingleChildScrollView(
+                      // child: SingleChildScrollView( // sjf take out so that it won't scroll
                         child: content,
-                      ),
+                      // ),
                     ),
                   ],
                 ),
