@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/contants/bopomos.dart';
+import 'package:ltrc/contants/publisher_code.dart';
+import 'package:ltrc/contants/semester_code.dart';
 import 'package:ltrc/data/models/word_status_model.dart';
 import 'package:ltrc/data/models/word_phrase_sentence_model.dart';
 import 'package:ltrc/data/providers/word_phrase_sentence_provider.dart';
@@ -36,8 +38,19 @@ class UnitsViewState extends ConsumerState<UnitsView> {
 
     final screenInfo = ref.watch(screenInfoProvider);
     double fontSize = screenInfo.fontSize;    
-    bool isTablet = screenInfo.screenWidth > 600;
+    bool isTablet = screenInfo.isTablet;
     if (isTablet && MediaQuery.of(context).orientation == Orientation.landscape) fontSize *= 1.3;
+
+    final gradeCode = ref.watch(gradeProvider);
+    final semesterCode = ref.watch(semesterCodeProvider);
+    final publisherCode = ref.watch(publisherCodeProvider);
+
+    final gradeName = numeralToChinese[gradeCode] ?? 'Unknown Publisher';
+    final semesterName = semesterCodeTable[semesterCode] ?? 'Unknown Publisher';
+    final publisherName = publisherCodeTable[publisherCode] ?? 'Unknown Publisher';
+
+    String title = '$publisherName：$gradeName$semesterName';
+    debugPrint('UnitsView: title: $title, publisher $publisherName, grade $gradeName, semester $semesterName');
 
     // Extract the arguments safely
     final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
@@ -103,7 +116,7 @@ class UnitsViewState extends ConsumerState<UnitsView> {
           icon: Icon(Icons.chevron_left, size: fontSize * 1.5), 
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text("課程單元", style: TextStyle(fontSize: fontSize * 1.5)),
+        title: Text(title, style: TextStyle(fontSize: fontSize * 1.5)),
       ),
       body: CustomScrollView(
         slivers: [
@@ -112,11 +125,11 @@ class UnitsViewState extends ConsumerState<UnitsView> {
             sliver: SliverGrid(
               gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                   maxCrossAxisExtent: isTablet
-                      ? fontSize * 8.0
-                      : fontSize * 8.0, // This is most important
+                      ? fontSize * 8.0 
+                      : fontSize * 8.0, 
                   mainAxisSpacing: fontSize * 0.5, // was 10,
                   crossAxisSpacing: fontSize * 0.5, // was 10,
-                  childAspectRatio: isTablet ? 4 / 3 : 4 / 4,
+                  childAspectRatio: isTablet ? 4 / 2 : 4 / 2, // was 4 / 3 : 4 / 4,
               ),
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) {
@@ -220,11 +233,11 @@ class UnitsViewState extends ConsumerState<UnitsView> {
             sliver: SliverGrid(
               gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                   maxCrossAxisExtent: isTablet
-                      ? fontSize * 8.0
-                      : fontSize * 8.0, // This is most important
+                      ? fontSize * 12.0 // was 8.0
+                      : fontSize * 12.0, // This is most important
                   mainAxisSpacing: fontSize * 0.5, // was 10,
                   crossAxisSpacing: fontSize * 0.5, // was 10,
-                  childAspectRatio: isTablet ? 4 / 3 : 4 / 4,
+                  childAspectRatio: isTablet ? 5 / 2 : 5 / 2, // was 4 / 3 : 4 / 4,
               ),
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) {
