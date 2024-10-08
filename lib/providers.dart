@@ -14,17 +14,7 @@ final teachWordViewProvider = StateProvider<int>((ref) => 0);
 final userNameProvider = StateProvider<String>((ref) => "");
 final totalWordCountProvider = StateProvider<int>((ref) => 186);
 final learnedWordCountProvider = StateProvider<int>((ref) => 0);
-/*
-final screenInfoProvider = StateNotifierProvider<ScreenInfoNotifier, ScreenInfo>((ref) {
-  return ScreenInfoNotifier(ScreenInfo(
-    screenHeight: 0,
-    screenWidth: 0,
-    fontSize: 0,
-    orientation: Orientation.portrait,
-    isTablet: false,
-  ));
-});
-*/
+
 final screenInfoProvider = StateNotifierProvider<ScreenInfoNotifier, ScreenInfo>((ref) {
   return ScreenInfoNotifier();
 });
