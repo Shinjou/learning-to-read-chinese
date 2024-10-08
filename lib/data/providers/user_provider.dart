@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:sqflite/sqflite.dart';
 
+
 import '../models/user_model.dart';
 
 class UserProvider {
@@ -25,7 +26,7 @@ class UserProvider {
   static const String databasePublisher = 'publisher';
 
   static const String _dbName = 'users.sqlite';
-    static const int _dbVersion = 5; // 8/29/2024
+    static const int _dbNewVersion = 6; // 8/29/2024
   static const String _wordStatusTable = 'wordStatus';
 
   static Future<Database> get database async {
@@ -45,7 +46,7 @@ class UserProvider {
       String dbPath = join(await getDatabasesPath(), _dbName);
       debugPrint('Path to $_dbName: $dbPath');
 
-      bool dbExists = await databaseExists(dbPath);
+      dbExists = await databaseExists(dbPath);
       if (!dbExists) {
         await _copyDbFromAssets(dbPath);
         dbExists = true;
@@ -57,29 +58,17 @@ class UserProvider {
       // Open the database
       _database = await openDatabase(dbPath);
 
-      // Checking and potentially upgrading the database version
+      // Check and potentially upgrade the database version
       int currentVersion = await _database!.getVersion();
-      if (currentVersion < _dbVersion) {
-        debugPrint('Upgrading $_dbName from version $currentVersion to $_dbVersion ...');
+      if (currentVersion < _dbNewVersion) {
+        debugPrint('Upgrading $_dbName from version $currentVersion to $_dbNewVersion ...');
         // users.sqlite如果需要 upgrade，需要個別處理
         // Ver 4，新增“鸚”一字。先刪掉舊的，再新增新的。
         try {
           await deleteWord(db: _database, userAccount: 'tester', word: '鸚');
           await addWord(db: _database, userAccount: 'tester', word: '鸚', learned: 1, liked: 1);
-          /* 8/29/2024 can not add user testerbpmf
-          // The following code will cause a disk I/O error
-          await _addUser(db: _database, user: User(
-            account: 'testerbpmf',
-            password: '1234',
-            username: 'testerbpmf',
-            safetyQuestionId1: 1,
-            safetyAnswer1: '1234',
-            safetyQuestionId2: 2,
-            safetyAnswer2: '1234',
-            grade: 1,
-            semester: '上',
-            publisher: '康軒',
-          ));
+          /* 8/29/2024 can not add user testerbpmf */
+
           // the following code will cause a loop of _initDatabase() and upgrade
           await addUser(
             user: User(
@@ -95,11 +84,11 @@ class UserProvider {
               publisher: '康軒',
             ),
           );       
-          */
-          await _database!.setVersion(_dbVersion);  
-          debugPrint('Upgrade $_dbName successfully to version $_dbVersion');
+          
+          await _database!.setVersion(_dbNewVersion);  
+          debugPrint('Upgrade $_dbName successfully to version $_dbNewVersion');
         } catch (e) {
-          throw ("Error in upgrade users.sqlite: $e");
+          throw ("Error in upgrading users.sqlite: $e");
         }
       } else {
         debugPrint('Database $_dbName opened successfully...');
@@ -121,11 +110,14 @@ class UserProvider {
       debugPrint('Copy of $_dbName to $dbPath completed successfully.');
     } catch (e) {
       debugPrint('Failed to copy $_dbName from assets to $dbPath. Error: $e');
-      // Depending on your use case, you might want to rethrow the error,
-      // return a failure status, or attempt a recovery operation here.
-      // For example, to rethrow the error, uncomment the following line:
       rethrow;
     }
+  }
+
+  /// Retrieves the current version of the users.sqlite database.
+  static Future<int> getCurrentDatabaseVersion() async {
+    final db = await database;
+    return await db.getVersion(); // Returns the current version of the opened database
   }
 
   static Future<void> addWord({
@@ -137,7 +129,7 @@ class UserProvider {
   }) async {
     try {
       await db?.insert(
-        _wordStatusTable, // Assuming 'wordStatus' is the correct table name
+        _wordStatusTable,
         {
           'userAccount': userAccount,
           'word': word,
@@ -160,47 +152,47 @@ class UserProvider {
     try {
       await db?.delete(
         _wordStatusTable,
-        where: 'userAccount = ? AND word = ?', // Define the WHERE clause
-        whereArgs: [userAccount, word], // Provide the values for the WHERE clause
+        where: 'userAccount = ? AND word = ?',
+        whereArgs: [userAccount, word],
       );
       debugPrint("Word $word deleted successfully");
     } catch (e) {
-      debugPrint('An error occurred while deleting the word: $e'); // Corrected error message
+      debugPrint('An error occurred while deleting the word: $e');
     }
   }
 
   static Future<void> addUser({required User user}) async {
     try {
+      // Validate user input
+      validateUser(user);
+
+      /* Hash sensitive information
+      user.password = hashPassword(user.password);
+      user.safetyAnswer1 = hashPassword(user.safetyAnswer1);
+      user.safetyAnswer2 = hashPassword(user.safetyAnswer2);
+      */
+
       final Database db = await getDBConnect();
       await db.insert(
         tableName,
         user.toMap(),
-        conflictAlgorithm: ConflictAlgorithm.replace,
+        conflictAlgorithm: ConflictAlgorithm.abort,
       );
-      debugPrint("User $user added successfully");
+      debugPrint("User ${user.username} added successfully");
     } catch (e) {
       debugPrint('Error while adding a new user: $e');
+      throw Exception('Failed to add user');
     }
   }
-  /*
-  static Future<void> _addUser({
-    required Database? db,
-    required User user,
-  }) async {
-    try {
-      // final Database db = await getDBConnect();
-      await db?.insert(
-        tableName,
-        user.toMap(),
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
-      debugPrint("User $user added successfully");
-    } catch (e) {
-      debugPrint('Error while adding a new user: $e');
+
+
+  static void validateUser(User user) {
+    if (user.account.isEmpty || user.password.isEmpty) {
+      throw Exception('Account and password cannot be empty');
     }
-  }
-  */
-  
+    // Add more validation as needed
+  }  
+
   static Future<User> getUser({required String inputAccount}) async {
     final Database db = await getDBConnect();
     try {
