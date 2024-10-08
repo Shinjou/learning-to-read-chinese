@@ -15,6 +15,7 @@ import 'package:ltrc/views/reset_pwd_account.dart';
 import 'package:ltrc/views/safety_hint_register_view.dart';
 import 'package:ltrc/views/safety_hint_verify_view.dart';
 import 'package:ltrc/views/setting_view.dart';
+import 'package:ltrc/views/sw_version_view.dart';
 import 'package:ltrc/views/teach_word_view.dart';
 import 'package:ltrc/views/units_view.dart';
 import 'package:ltrc/views/words_view.dart';
@@ -35,6 +36,7 @@ class AppRoutes {
   static const String safetyHintVerify = '/safetyHintVerify';
   static const String setNewPwd = '/setNewPwd';
   static const String setting = '/setting';
+  static const String swversion = '/swversion';
   static const String teachWord = '/teachWord';
   static const String units = '/units';
   static const String words = '/words';
@@ -57,19 +59,11 @@ class AppRoutes {
       safetyHintVerify: (context) => const SafetyHintVerifyView(),
       setNewPwd: (context) => const ResetPwdView(),
       setting: (context) => const SettingView(),
+      swversion: (context) => const SwVersionView(),
       units: (context) => const UnitsView(),
       words: (context) => const WordsView(),
       duoyinzi: (context) => const DuoyinziView(),
       checkzhuyin: (context) => const CheckZhuyinView(), // To test zhuyin
-      /*
-      teachWord: (context) => TeachWordView(
-        unitId: (ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>)['unitId'] as int,
-        unitTitle: (ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>)['unitTitle'] as String,
-        wordsStatus: (ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>)['wordsStatus'] as List<WordStatus>,
-        wordsPhrase: (ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>)['wordsPhrase'] as List<Map>,
-        wordIndex: (ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>)['wordIndex'] as int,
-      ),      
-      */
       teachWord: (context) {
         final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
         return TeachWordView(
