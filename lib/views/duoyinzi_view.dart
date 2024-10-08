@@ -1,6 +1,7 @@
 // import 'dart:async';
 // import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -116,7 +117,12 @@ class DuoyinziViewState extends ConsumerState<DuoyinziView> {
     // final screenInfo = ref.watch(screenInfoProvider);
     final screenInfo = ref.watch(screenInfoProvider);
     fontSize = screenInfo.fontSize;   
-    // bool isTablet = screenInfo.screenWidth > 600;
+
+    if (kDebugMode) {
+      final stackTrace = StackTrace.current.toString().split('\n');
+      final relevantStackTrace = '\n${stackTrace[0]}\n${stackTrace[1]}';
+      debugPrint('DuoyinziView build: fontSize: $fontSize, stack: $relevantStackTrace');
+    }    
 
     return Scaffold(
       appBar: AppBar(
