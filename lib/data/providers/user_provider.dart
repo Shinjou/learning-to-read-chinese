@@ -26,7 +26,7 @@ class UserProvider {
   static const String databasePublisher = 'publisher';
 
   static const String _dbName = 'users.sqlite';
-    static const int _dbNewVersion = 6; // 8/29/2024
+    static const int _dbNewVersion = 10; // 10/14/2024
   static const String _wordStatusTable = 'wordStatus';
 
   static Future<Database> get database async {
@@ -67,28 +67,28 @@ class UserProvider {
         try {
           await deleteWord(db: _database, userAccount: 'tester', word: '鸚');
           await addWord(db: _database, userAccount: 'tester', word: '鸚', learned: 1, liked: 1);
-          /* 8/29/2024 can not add user testerbpmf */
 
-          // the following code will cause a loop of _initDatabase() and upgrade
-          await addUser(
-            user: User(
-              account: 'testerbpmf',
-              password: '1234',
-              username: 'testerbpmf',
-              safetyQuestionId1: 1,
-              safetyAnswer1: '1234',
-              safetyQuestionId2: 2,
-              safetyAnswer2: '1234',
-              grade: 1,
-              semester: '上',
-              publisher: '康軒',
-            ),
-          );       
-          
+          bool userBpmfExists = await checkIfAccountExists('testerbpmf');
+          if (!userBpmfExists) {
+            await addUser(
+              user: User(
+                account: 'testerbpmf',
+                password: '1234',
+                username: 'testerbpmf',
+                safetyQuestionId1: 1,
+                safetyAnswer1: '1234',
+                safetyQuestionId2: 2,
+                safetyAnswer2: '1234',
+                grade: 1,
+                semester: '上',
+                publisher: '康軒',
+              ),
+            );       
+          }         
           await _database!.setVersion(_dbNewVersion);  
-          debugPrint('Upgrade $_dbName successfully to version $_dbNewVersion');
+          debugPrint('Upgrade $_dbName successfully from $currentVersion to $_dbNewVersion');
         } catch (e) {
-          throw ("Error in upgrading users.sqlite: $e");
+          debugPrint ("Error in upgrading users.sqlite: $e");
         }
       } else {
         debugPrint('Database $_dbName opened successfully...');
@@ -263,6 +263,24 @@ class UserProvider {
       // Consider using more sophisticated error reporting if available in your app
     }
   }
+
+  static Future<bool> checkIfAccountExists(String accountName) async {
+    try {
+      // Attempt to get the user with the provided account name
+      User user = await getUser(inputAccount: accountName);
+      
+      // If the query returns a user, the account exists
+      if (user.account == accountName) {
+        return true;  // Account exists
+      }
+      return false;   // Account does not exist
+    } catch (e) {
+      // If an error occurs, it could mean that the account doesn't exist or there's another issue
+      debugPrint("[Provider] Error fetching user: $e");
+      return false; // Assume account does not exist in case of an error
+    }
+  }
+
 
   static Future<void> closeDb() async {
     if (_database != null) {
