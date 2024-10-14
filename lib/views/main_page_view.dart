@@ -83,7 +83,7 @@ class MainPageView extends ConsumerWidget {
                 fontSize,
               ),
               SizedBox(height: deviceHeight * 0.02),
-              if (account == 'tester' || account == 'testerbpmf') 
+              if (account == 'testerbpmf') ...[
                 _buildButton(
                   context,
                   ref,
@@ -92,13 +92,18 @@ class MainPageView extends ConsumerWidget {
                   fontSize,
                 ),
                 SizedBox(height: deviceHeight * 0.02),
-              _buildButton(
-                context,
-                ref,
-                '標示注音符號',
-                () => navigateWithProvider(context, '/duoyinzi', ref),
-                fontSize,
-              ),
+              ], 
+              if (account == 'tester' || account == 'testerbpmf') ...[
+                _buildButton(
+                  context,
+                  ref,
+                  '標示注音符號',
+                  () => navigateWithProvider(context, '/duoyinzi', ref),
+                  fontSize,
+                ),
+                SizedBox(height: deviceHeight * 0.02),
+              ],              
+
               // You can add more widgets here if needed
             ],
           ),
