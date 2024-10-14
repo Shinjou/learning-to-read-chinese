@@ -97,20 +97,44 @@ class PolyphonicProcessor {
     }
   }
 
-  /* 
-  “一”有三個音：一聲、二聲、四聲。在處理“一”時，若下一個字是
-  一聲，“一”為一聲，用 "0000" 代表 default
-  二聲，“一”為二聲，用 "ss01" 代表
-  四聲，“一”為四聲，用 "ss02" 代表
-  有些字，例如“個”，也是多音，需要特別處理“一個”。
+  /* 以下處理一、不的方法是基於 jeffreyxuan 的原始碼 https://github.com/jeffreyxuan/toneoz-font-zhuyin/blob/main/src/js/ybtone.js
+  同時也請參考教育部國語辭典說明：https://dict.concised.moe.edu.tw/page.jsp?ID=55，以下是摘錄：及例外說明。
+  A：“一”有三個音：一聲、二聲、四聲。default 是一聲，用"0000" 代表。二聲，用 "ss01" 代表，四聲，用 "ss02" 代表。
+  在以下三種情況，應將「一」讀作原調一聲：
+  1. 單唸 e.g. 一
+  2. 詞尾 e.g. 純一、萬一、星期一
+  3. 表示序數時 e.g. 一九九一、第一座
+  除以上特別情況，其餘有「一」字的詞語大都需要變調。
+  4. 如果「一」字在第一聲、第二聲或第三聲的字前，需將「一」字讀第四聲。 e.g. 一天(tiān)、一年(nián)、一起(xĭ)
+  5. 如果「一」字在第四聲的字前，需將「一」字讀第二聲。 e.g. 一定(dìng)、一片(piàn)、一樣(yàng)
+  6. 但是還是有很多例外狀況，例如“一個”、“一會”、“一切”，用 specialYiCases 處理。另外，有一部份直接寫進
+     code 裡面，例如：一對、一次、一家、某一領域、一層、一名等等。
 
-  “不”有四個音：四聲、二聲、fou、fu。在處理“不”時，若下一個字是
-  四聲，例如不要，用 “0000” 代表 二聲，default
-  二聲，例如不同，用 “ss01” 代表 四聲
-  有些字，例如“禁”，也是多音，需要特別處理“不禁”。
+  B：“不”在 IanSui 裡面有四個音：bu4、bu2、fou、fu。（但是教育部是：bu4、fou3、fou、fu。）
+  default 是四聲，用"0000" 代表。二聲，用 "ss01" 代表，fou，用 "ss02"，fu 用 “ss03” 代表。
+  在以下三種情況，應將「不」讀作原調四聲：
+  1. 單唸 e.g. 不
+  2. 詞尾 e.g. 從不、絕不
+  3. 在第一聲、第二聲、第三聲或第五聲的字前 e.g. 不該(gāi)、不來(lái)、不管(guăn)
+  除以上特別情況，其餘有「不」字的詞語大都需要變調。  
+  4. 如果「不」字在第四聲的字前，需將「不」字讀第二聲。 e.g. 不要(yào)、不用(yòng)、不對(dùi)
+  5. 如果「不」字在第二聲的字前，需將「不」字讀第四聲。 e.g. 不同(tóng)、不對(dùi)、不足(zú)
+  6. 但是還是有很多例外狀況，例如“不禁”、“不菲”、“不勝”、“不著”，用 specialBuCases 處理。另外，有一部份直接寫進
+     code 裡面，例如：不好、不一樣、不一定、不一會
+
+  處理“一”和“不”的多音字時，先處理詞尾（例如：統一、絕不），再處理特殊情況（例如：一個、不禁），最後處理一般情況。   
+
+  C：教育部國語辭典（https://dict.concised.moe.edu.tw/page.jsp?ID=55） 裡有提到兩個變調：輕聲變調 和 其他。
+  1. 輕聲變調：單字不具輕聲字音，複詞最末音節在口語中變讀為輕聲字音時，先標本調字音，再以（變）標示輕聲字音。它用
+     【葫蘆】為例：ㄏㄨˊ　ㄌㄨˊ（變）ㄏㄨˊ　˙ㄌㄨ。
+     問題是：IanSui 字體不支援輕聲字音˙ㄌㄨ，因此，這裡不處理輕聲字音。
+  2. 其他：部分詞語在口語中有明顯變調情形時，先標本調字音，再以（變）標示變調字音。例如：
+     【嗶嗶剝剝】：ㄅㄧˋ　ㄅㄧˋ　ㄅㄛ　ㄅㄛ（變）ㄅㄧ　ㄅㄧ　ㄅㄛ　ㄅㄛ
+     問題是：IanSui 字體不支援一聲字音ㄅㄧ，因此，這裡不處理一聲字音。
+  上面兩種情況的例子應該很多。若有人提出，再看如何處理，目前先不再花時間考慮。
   */
 
-  Tuple3<String, bool, bool> getNewToneForYiBu({
+  Tuple3<String, bool, bool> getNewToneForYiBu({ // String: newSs, bool: skipNext, bool: skipPrev
       String? prevChar,
       required String currentChar,
       String? nextChar,
@@ -118,12 +142,31 @@ class PolyphonicProcessor {
       int? nextTone,
       required bool skipPrev,
   }) {
+
+      final Set<String> prevCharSet1 = {
+        '第', '説', '说', '唯', '惟', '统', '統', '独', '獨', '劃', '划', '萬', '專', '某',
+        '十', '九', '八', '七', '六', '五', '四', '三', '二', '一', '〇', '零'
+      };
+
+      final Set<String> nextCharSet1 = {
+        // 前面兩列是Jeff原來的 code
+        '是', '日', '月', '的', '或', '物', '片', '系', 
+        // 下一個字是數詞
+        '十', '九', '八', '七', '六', '五', '四', '三', '二', '一', '〇', '零', '百', '千', '萬',        
+        // 下一個字二聲，但是「一」念一聲
+        '元', '則', '節', '台', '同', '名', '回', '堂', '層', '幅', '幢', '年', '息', '成', '排', '提', 
+        '搏', '擊', '擲', '旁', '時', '枚', '格', '條', '樓', '流', '環', '篇', '級', '群', '言', '連', 
+        '門', '間', 
+        // 我查教育部辭典查到，下面的詞尾，「一」念一聲
+        '天', '經', '方', '對', '次', '家', '鳴', '命', '份', '件', '尊', '聲', '歲', '副', '本', '批',
+      };    
       // debugPrint('getNewToneForYiBu: prevChar: $prevChar, currentChar: $currentChar, nextChar: $nextChar, prevTone: $prevTone, nextTone: $nextTone');
       const Map<String, Tuple3<String, bool, bool>> specialYiCases = {
         '個': Tuple3("0000", false, false), // 個平常是四聲，一個的個要念輕聲，一念一聲，個這個字下一次處理
         '个': Tuple3("0000", false, false), // 個平常是四聲，一个的个要念輕聲，一念一聲，个這個字下一次處理
         '會': Tuple3("0000", false, false), // 會平常是四聲，一會的會要念“悔”三聲，一念一聲，會這個字下一次處理
         '切': Tuple3("0000", false, false), // 切平常是一聲，一切的切念四聲，一念一聲，切這個字下一次處理
+        '不': Tuple3("0000", true, true),   // 不平常是四聲，“一不”念ㄧ ㄅㄨˋ，不需要再處理上一個及下一個字
       };
 
       const Map<String, Tuple3<String, bool, bool>> specialBuCases = {
@@ -132,30 +175,32 @@ class PolyphonicProcessor {
         '勝': Tuple3("0000", false, false), // 勝平常是四聲，不勝的勝要念一聲，不念四聲，勝這個字下一次處理
         '著': Tuple3("0000", false, false), // 著平常是一聲，不著的著要念二聲，不念四聲，著這個字下一次處理
         '了': Tuple3("0000", false, false), // 了平常是輕聲，在“吃不了"時，念三聲，不念四聲，了這個字下一次處理
+        '好': Tuple3("0000", false, false), // 在處理“不好好學習”時，第二個好跟後面的學會念成四聲hao4xue2，錯了。因此，要特別處理
+        '假': Tuple3("0000", false, false), // 假平常是四聲，不假的假要念三聲，不念四聲，假這個字下一次處理
+        '當': Tuple3("ss01", false, false), // 當平常是一聲，不當的當要念四聲，不念二聲，當這個字下一次處理
       };
 
       if (currentChar == '一') {
         // Check prevChar conditions, then nextChar special conditions, then general cases
-        if ((!skipPrev) && (prevChar == null ||
-          ['第', '説', '说', '唯', '惟', '统', '統', '独', '獨', '劃', '划', '萬', '專'].contains(prevChar) ||
-          ['十', '九', '八', '七', '六', '五', '四', '三', '二', '〇', '零'].contains(prevChar))) {
-          // debugPrint('Returning first tone for 一 based on special prevChar');
-          return const Tuple3("0000", false, true); // Use the default, First tone
+        if ((!skipPrev) && (prevChar == null || prevCharSet1.contains(prevChar))) {
+          // debugPrint('$prevChar一，"一"發一聲，下一個字“$nextChar”要再處理, skipPrev: true');
+          return const Tuple3("0000", false, true); // Use the default, First tone; skipNext false; skipPrev true
         } else if (specialYiCases.containsKey(nextChar)) {
-          // check if nextChar is in specialYiCases
-          // debugPrint('一$nextChar，一 一聲，$nextChar 特殊聲調');
-          return specialYiCases[nextChar]!;
-        } else if (nextChar == null || nextChar.isEmpty ||
-            ['是', '日', '月', '的', '或', '物', '片', '系'].contains(nextChar) ||
-            ['十', '九', '八', '七', '六', '五', '四', '三', '二', '〇', '零', '千'].contains(nextChar)) {
-          // debugPrint('Skipping $nextChar for 一 based on special nextChar');
-          return const Tuple3("0000", true, true); // Use the default, First tone, and skip the next character
+          // debugPrint('一$nextChar，"一"發一聲，下一個字“$nextChar”要再處理');
+          return specialYiCases[nextChar]!; // Use the default, First tone; skipNext false; skipPrev false
+        } else if (nextChar == null || nextChar.isEmpty || nextCharSet1.contains(nextChar)) {
+          // debugPrint('一$nextChar，"一"發一聲，$nextChar發預設值，不再處理上一個及下一個字');
+          return const Tuple3("0000", true, true); // Use the default, First tone, and skipNext true; skipPrev true
+        } else if (prevChar == nextChar || 
+            ['看', '聽', '寫', '用', '說', '動', '搖', '問'].contains(nextChar)) {
+          // debugPrint('$prevChar一$nextChar，"一"發一聲，$prevChar 跟 $nextChar 發本調，不再處理上一個及下一個字');
+          return const Tuple3("0000", true, true); // Use the default, First tone, and skipNext true; skipPrev true          
         } else if (nextTone != null && (nextTone == 1 || nextTone == 2 || nextTone == 3)) {
-          return const Tuple3("ss02", true, true); // Change to fourth tone
+          return const Tuple3("ss02", true, true); // Use the fourth tone, and skipNext true; skipPrev true
         } else if (nextTone != null && nextTone == 4) {
-          return const Tuple3("ss01", true, true); // Change to second tone
+          return const Tuple3("ss01", true, true); // Use the second tone, and skipNext true; skipPrev true
         } else {
-          return const Tuple3("0000", false, true); // Default to first tone if no other conditions match
+          return const Tuple3("0000", false, true); // Default to first tone if no other conditions match; skipNext false; skipPrev true
         }          
       } else if (currentChar == '不') {
         // debugPrint('Processing 不. nextChar $nextChar, nextTone $nextTone, prevChar $prevChar, prevTone $prevTone');
@@ -167,8 +212,8 @@ class PolyphonicProcessor {
 
         if (nextTone != null &&
             (nextTone == 1 || nextTone == 2 || nextTone == 3 || nextTone == 5)) {
-          // debugPrint('Returning 四聲 for 不 based on nextTone');
-          return const Tuple3("0000", true, true); // Remain 四聲
+          // debugPrint('“不$nextChar”, 不發四聲，nextSkip: false, prevSkip: true');
+          return const Tuple3("0000", false, true); // Remain 四聲
         } else if (nextTone != null && nextTone == 4) {
           // debugPrint('Returning second tone for 不 based on nextTone');
           return const Tuple3("ss01", true, true); // Change to second tone
@@ -209,14 +254,14 @@ class PolyphonicProcessor {
         '喔喔': 'ss00',
         '嗑嗑': 'ss01',
         '嚇嚇': 'ss01',
-        '好好': 'ss00',
+        '好好': 'ss00', // 不好好學習
         '從從': 'ss03',
         '怔怔': 'ss01',
         '悶悶': 'ss01',
         '擔擔': 'ss01',
         '數數': 'ss01',
         '施施': 'ss01',
-        '晃晃': 'ss01',
+        '晃晃': 'ss01', // '白晃晃','明晃晃','亮晃晃','精晃晃','油晃晃' 用三聲；晃晃悠悠、晃晃蕩蕩、搖搖晃晃用四聲，default
         '朴朴': 'ss02',
         '棲棲': 'ss01',
         '殷殷': 'ss01',
@@ -241,17 +286,18 @@ class PolyphonicProcessor {
         '虎虎': 'ss01',
         '處處': 'ss01',
         '蛇蛇': 'ss01',
-        '行行': 'ss00', // 行行重行行/行行好事，行行出狀元，行行如也，念法都不同
+        '行行': 'ss00', // 行行重行行/行行好事，行行出狀元，行行如也，念法都不同。再特別處理。
         '褶褶': 'ss01', // 褶褶有兩個念法：die2die2，zhe3zhe3，目前只處理die2die2
         '逮逮': 'ss00', 
         '那那': 'ss01',                
-        '重重': 'ss01', // 重重的，重重阻礙，念法不同
+        '重重': 'ss01', // 重重的，重重阻礙，念法不同。再特別處理。
         '銻銻': 'ss02',
         '鰓鰓': 'ss01',
         '個個': 'ss00', // 個個或一個個，都發四聲，因此需要提前處理。
         '个个': 'ss00',
         '大大': 'ss00',
         '方方': 'ss00', 
+        '喏喏': 'ss00',
       };      
       // "多"會造成下面句子很難判斷，因此特別處理。”他任內完成了許多重要工作。“，”壓力很大，要從多重管道接觸客戶。“      
       final List<String> duoCommonPhrases = ['許多', '很多', '大多', '眾多', '太多', '極多', '何多', '沒多', '甚多', '更多', '幾多',/* Add more common phrases here if needed */];      
@@ -427,6 +473,14 @@ class PolyphonicProcessor {
                 } else if (pair == '呱呱' && (nextPair == '墜地' || nextPair == '墮地' || nextPair == '而泣')) {  // 哇哇墜地，呱呱而泣ad個發四聲，
                   styleSet = 'ss01';
                   setNextBpmf = 2; // 加速處理'墜地'、'墮地'、'而泣'                  
+                } else if (pair == '晃晃') {
+                  if (['白','明','亮','精','油'].contains(prevChar)) {
+                    styleSet = 'ss01'; // 白晃晃、明晃晃、亮晃晃、精晃晃、油晃晃 都念三聲
+                  } else { // 晃晃悠悠、晃晃蕩蕩、搖搖晃晃 都念四聲，default
+                    styleSet = 'ss00'; //
+                  }
+                  setNextBpmf = 0;
+
                 }
 
                 String nextHexUnicode = nextChar.runes.first.toRadixString(16).toUpperCase();
@@ -454,7 +508,7 @@ class PolyphonicProcessor {
                     // Skip this iteration if setNextBpmf == 0
                     break;
 
-                  case 1:
+                  case 1: // next2Char 用 default
                     spans.add(TextSpan(text: next2Char, style: getCharStyle(fontSize, color, highlightOn)));
                     nextHexUnicode = next2Char.runes.first.toRadixString(16).toUpperCase();
                     spansUnicode += String.fromCharCode(int.parse(nextHexUnicode, radix: 16));
@@ -462,7 +516,8 @@ class PolyphonicProcessor {
                     i += 1;
                     break;
 
-                  case 2:
+                  case 2: // 依 next2CharStyleSet，next2Char 用 default, 或用 next2CharStyleSet
+                          // 依 next3CharStyleSet，next3Char 用 default, 或用 next3CharStyleSet
                     if (next2CharStyleSet == '') {
                       spans.add(TextSpan(text: next2Char, style: getCharStyle(fontSize, color, highlightOn)));
                       nextHexUnicode = next2Char.runes.first.toRadixString(16).toUpperCase();
@@ -559,7 +614,8 @@ class PolyphonicProcessor {
     bool isLastChar = (nextChar == '' || !isChineseCharacter(nextChar)) ? true : false;
     bool isStandalone = (text.length == 1) || (isFirstChar && isLastChar);
     bool skipNext = false; // Flag to skip the next character processing
-    final List<String> noSkipNextCharacters = ['骨頭', '參與', '參差', '檻車', '爪子', '度量',/* 這裡要列出兩個字都是多音字，而且第二個字的發音不是default */];
+    // 我原先想法是，若下一個字也是多音字，列一個表來檢查，以便加速處理。但是這個表的維護就成問題。所以放棄這個想法。
+    // final List<String> noSkipNextCharacters = ['骨頭', '參與', '參差', '檻車', '爪子', '度量', '委蛇', '暈倒'/* 這裡要列出兩個字都是多音字，而且第二個字的發音不是default */];
 
     // debugPrint('Starting match function. Character: $character, prevChar: $prevChar, nextChar: $nextChar, patterns: $patterns, skipPrev: $skipPrev');
 
@@ -623,7 +679,7 @@ class PolyphonicProcessor {
 
     // First pass: Checking all patterns for "any+*" or "any+*+any"
     if (isFirstChar || skipPrev) {
-      // debugPrint('isFirstChar: $isFirstChar or skipPrev: $skipPrev is true. Skipping the first pass, i.e., any+$character');
+      // debugPrint('isFirstChar: $isFirstChar or skipPrev: $skipPrev. Skipping the first pass, i.e., any+$character');
     } else {
       // debugPrint('First pass for $character: Checking patterns for "any+* or "any+*+any"');
       for (int j = 0; j < patterns.length; j++) {
@@ -704,7 +760,15 @@ class PolyphonicProcessor {
           }
 
           if (matchPattern(pattern, pos, start, end, text, character)) {
-            if (isPolyphonicChar(nextChar)) { // 如果目前的字和下一個字都是多音字，要進一步檢查下一個字是否用 default。因此兩個 flags 都要設 false。
+            if (isPolyphonicChar(nextChar)) { // 如果目前的字和下一個字都是多音字，設 skipNext 跟 skipPrev 為 false。
+              skipNext = false;
+              skipPrev = false;
+            } else { // 目前的字是多音字，下一個字不是，skipNext 要設 true。
+              skipNext = true;
+              skipPrev = pattern.startsWith('*') && pos == 0;
+            }
+            if (isPolyphonicChar(nextChar)) { // 下一個字也是多音字
+              /* 我原先想法是，若下一個字也是多音字，列一個表來檢查，以便加速處理。但是這個表的維護就成問題。所以放棄這個想法。
               if (noSkipNextCharacters.contains(character + nextChar)) {
                 skipNext = false;
                 skipPrev = false;
@@ -712,11 +776,14 @@ class PolyphonicProcessor {
                 skipPrev = true; // Set skipPrev to true if a pattern is matched
                 skipNext = pattern.startsWith('*') && pos == 0;
               }
+              */
+              skipNext = false;
+              skipPrev = false;              
             } else { // 目前的字是多音字，下一個字不是，要設 true。
               skipPrev = true; // Set skipPrev to true if a pattern is matched
               skipNext = pattern.startsWith('*') && pos == 0;
-            }
-            // debugPrint('Sub-pattern matched (*+any) ($character$nextChar): $pattern, matchIndex: $j, skipNext: $skipNext, skipPrev: $skipPrev');
+            }            
+            // debugPrint('Sub-pattern matched (*+any) ($character+$nextChar): $pattern, matchIndex: $j, skipNext: $skipNext, skipPrev: $skipPrev');
             return Tuple3(j, skipNext, skipPrev); // Returning with skipNext and skipPrev=false
           }
         }
