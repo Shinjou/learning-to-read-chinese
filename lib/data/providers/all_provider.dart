@@ -10,7 +10,7 @@ class AllProvider {
   static bool dbExists = false;  
 
   static const String _dbName = 'all.sqlite';  
-  static const int _dbNewVersion = 99;  // Always upgrade to the latest version
+  static const int _dbNewVersion = 10;  // Always upgrade to the latest version
 
   /// Gets the database instance, initializing if necessary.
   static Future<Database> get database async {
