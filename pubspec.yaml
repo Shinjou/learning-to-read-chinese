@@ -24,9 +24,9 @@ dependencies:
   flutter_riverpod: ^2.5.1
   provider: ^6.1.2
   flutter_tts: ^4.0.2
-  audioplayers: ^6.0.0
+  audioplayers: ^6.1.0
   cupertino_icons: ^1.0.2
-  fluttertoast: ^8.2.2
+  fluttertoast: ^8.2.8
   path: ^1.8.3
   shared_preferences: ^2.2.2
   svg_path_parser: ^1.1.1
@@ -40,6 +40,10 @@ dependencies:
   stack_trace:
   package_info_plus: ^8.0.2
 
+dependency_overrides:
+  crypto: null
+
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -49,7 +53,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^4.0.0
+  flutter_lints: ^5.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
