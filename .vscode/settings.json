@@ -1,5 +1,6 @@
 {
     "dart.lineLength": 200,
     "editor.tabSize": 2,
-    "dart.enableSdkFormatter": false
+    "dart.enableSdkFormatter": false,
+    "java.configuration.updateBuildConfiguration": "interactive"
 }
