@@ -1,0 +1,216 @@
+.
+ |-README.md
+ |-analysis_options.yaml
+ |-android
+ |-assets
+ | |-bopomo
+ | | |-ㄅ.mp3
+ | | |-ㄆ.mp3
+ | | |-ㄇ.mp3
+ | |-data_files
+ | | |-all.sqlite
+ | | |-missing_json_words.csv
+ | | |-poyin_db.json
+ | | |-users.sqlite
+ |-build
+ |-concatenate_dart_files.sh
+ |-devtools_options.yaml
+ |-ios
+ |-lib
+ | |-assets
+ | | |-fonts
+ | | | |-BpmfIansui-Regular.ttf
+ | | | |-BpmfZihiOnly-R.ttf
+ | | | |-Iansui-Regular.ttf
+ | | |-img
+ | | | |-bopomo
+ | | | | |-ㄅ.png
+ | | | | |-ㄆ.png
+ | | | | |-ㄇ.png
+ | | | | |-ㄈ.png
+ | | | |-bopomo_spelling
+ | | | | |-丟.png
+ | | | | |-人.png
+ | | | | |-他.png
+ | | | | |-你.png
+ | | | |-word
+ | | | | |-手機.png
+ | | |-svg
+ | | | |-⺀.json
+ | | | |-ㄅ.json
+ | | | |-ㄆ.json
+ | | | |-ㄇ.json
+ | | | |-ㄈ.json
+ | |-contants
+ | | |-arabic_numerals_to_chinese.dart
+ | | |-bopomo_spelling_problem.dart
+ | | |-bopomos.dart
+ | | |-publisher_code.dart
+ | | |-register_question_label.dart
+ | | |-routes.dart
+ | | |-semester_code.dart
+ | |-data
+ | | |-models
+ | | | |-bopomo_spelling_model.dart
+ | | | |-phrase_model.dart
+ | | | |-shape_symbol_model.dart
+ | | | |-sound_symbol_model.dart
+ | | | |-unit_model.dart
+ | | | |-user_model.dart
+ | | | |-word_model.dart
+ | | | |-word_phrase_sentence_model.dart
+ | | | |-word_status_model.dart
+ | | |-providers
+ | | | |-all_provider.dart
+ | | | |-unit_provider.dart
+ | | | |-user_provider.dart
+ | | | |-word_phrase_sentence_provider.dart
+ | | | |-word_provider.dart
+ | | | |-word_status_provider.dart
+ | |-extensions.dart
+ | |-main.dart
+ | |-providers.dart
+ | |-tools
+ | | |-move_and_rename_oldwords.py
+ | | |-to_sqlite.py
+ | | |-word_image_downloader.py
+ | | |-yi_verb_tone.ipynb
+ | |-views
+ | | |-acknowledge.dart
+ | | |-bopomo_quiz.dart
+ | | |-bopomo_quiz_finish.dart
+ | | |-bopomos_view.dart
+ | | |-check_zhuyin_view.dart
+ | | |-duoyinzi_view.dart
+ | | |-log_in_view.dart
+ | | |-main_page_view.dart
+ | | |-polyphonic_processor.dart
+ | | |-register_account_view.dart
+ | | |-register_view.dart
+ | | |-reset_password.dart
+ | | |-reset_pwd_account.dart
+ | | |-safety_hint_register_view.dart
+ | | |-safety_hint_verify_view.dart
+ | | |-setting_view.dart
+ | | |-sw_version_view.dart
+ | | |-t_teach_word.dart
+ | | |-teach_word_view.dart
+ | | |-units_view.dart
+ | | |-view_utils.dart
+ | | |-words_view.dart
+ | |-widgets
+ | | |-bopomo
+ | | | |-bopomo_container.dart
+ | | |-grade_and_provider_button.dart
+ | | |-mainPage
+ | | | |-left_right_switch.dart
+ | | |-progress_bar.dart
+ | | |-setting
+ | | | |-setting_divider.dart
+ | | |-teach_word
+ | | | |-bpmf_vocab_content.dart
+ | | | |-card_title.dart
+ | | | |-stroke_order_animation_controller.dart
+ | | | |-stroke_order_animator.dart
+ | | | |-tab_bar_view.dart
+ | | | |-word_vocab_content.dart
+ | | | |-zhuyin_processing.dart
+ | | |-teach_word_widget.dart
+ | | |-word_card.dart
+ |-linux
+ | |-CMakeLists.txt
+ | |-flutter
+ | | |-CMakeLists.txt
+ | | |-ephemeral
+ | | |-generated_plugin_registrant.cc
+ | | |-generated_plugin_registrant.h
+ | | |-generated_plugins.cmake
+ | |-main.cc
+ | |-my_application.cc
+ | |-my_application.h
+ |-macos
+ | |-Flutter
+ | | |-Flutter-Debug.xcconfig
+ | | |-Flutter-Release.xcconfig
+ | | |-GeneratedPluginRegistrant.swift
+ | | |-ephemeral
+ | | | |-Flutter-Generated.xcconfig
+ | | | |-flutter_export_environment.sh
+ | |-Podfile
+ | |-Runner
+ | |-Runner.xcodeproj
+ | | |-project.pbxproj
+ | | |-project.xcworkspace
+ | | | |-xcshareddata
+ | | | | |-IDEWorkspaceChecks.plist
+ | | | | |-swiftpm
+ | | | | | |-configuration
+ | | |-xcshareddata
+ | | | |-xcschemes
+ | | | | |-Runner.xcscheme
+ | |-Runner.xcworkspace
+ | | |-contents.xcworkspacedata
+ | | |-xcshareddata
+ | | | |-IDEWorkspaceChecks.plist
+ | | | |-swiftpm
+ | | | | |-configuration
+ | | |-AppDelegate.swift
+ | | |-Assets.xcassets
+ | | | |-AppIcon.appiconset
+ | | | | |-Contents.json
+ | | | | |-app_icon_1024.png
+ | | | | |-app_icon_128.png
+ | | | | |-app_icon_16.png
+ | | | | |-app_icon_256.png
+ | | | | |-app_icon_32.png
+ | | | | |-app_icon_512.png
+ | | | | |-app_icon_64.png
+ | | |-Base.lproj
+ | | | |-MainMenu.xib
+ | | |-Configs
+ | | | |-AppInfo.xcconfig
+ | | | |-Debug.xcconfig
+ | | | |-Release.xcconfig
+ | | | |-Warnings.xcconfig
+ | | |-DebugProfile.entitlements
+ | | |-Info.plist
+ | | |-MainFlutterWindow.swift
+ | | |-Release.entitlements
+ | |-RunnerTests
+ | | |-RunnerTests.swift
+ |-project_structure.txt
+ |-pubspec.lock
+ |-pubspec.yaml
+ |-test
+ | |-widget_test.dart
+ |-web
+ | |-favicon.png
+ | |-icons
+ | | |-Icon-192.png
+ | | |-Icon-512.png
+ | | |-Icon-maskable-192.png
+ | | |-Icon-maskable-512.png
+ | |-index.html
+ | |-manifest.json
+ |-windows
+ | |-CMakeLists.txt
+ | |-flutter
+ | | |-CMakeLists.txt
+ | | |-ephemeral
+ | | |-generated_plugin_registrant.cc
+ | | |-generated_plugin_registrant.h
+ | | |-generated_plugins.cmake
+ | |-runner
+ | | |-CMakeLists.txt
+ | | |-Runner.rc
+ | | |-flutter_window.cpp
+ | | |-flutter_window.h
+ | | |-main.cpp
+ | | |-resource.h
+ | | |-resources
+ | | | |-app_icon.ico
+ | | |-runner.exe.manifest
+ | | |-utils.cpp
+ | | |-utils.h
+ | | |-win32_window.cpp
+ | | |-win32_window.h
