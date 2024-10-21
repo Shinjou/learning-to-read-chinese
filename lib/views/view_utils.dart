@@ -7,27 +7,29 @@ import 'package:ltrc/contants/routes.dart';
 import 'package:ltrc/providers.dart';
 import 'package:stack_trace/stack_trace.dart';
 
-// Color constants
+// Color constants: from whit to black. Some can be merged.
+const Color whiteColor = Colors.white;
+const Color lightYellow = Color(0xFFFFFF93);
 const Color beige = Color(0xFFF5F5DC);
-const Color darkBrown = Color(0xFF28231D);
+const Color backgroundColor = Color.fromRGBO(245, 245, 220, 100);
+const Color lightGray = Color(0xFFD9D9D9);
 const Color paleYellow = Color(0xFFF8F88E);
+const Color lightSkyBlue = Color(0xFF7DDEF8);
+const Color explanationColor = Color.fromRGBO(228, 219, 124, 1);
+const Color vibrantOrange = Color(0xFFF8A339);
+const Color warmOrange = Color(0xFFF8A23A);
+const Color goldenOrange = Color(0xFFD19131);
 const Color brightRed = Color(0xFFFF0303);
 const Color mediumGray = Color(0xFF999999);
-const Color vibrantOrange = Color(0xFFF8A339);
+const Color indianRed = Color(0xFFB65454);
+const Color darkOliveGreen = Color(0xFF48742C);
 const Color deepBlue = Color(0xFF013E6D);
 const Color darkCyan = Color(0xFF023E6E);
-const Color darkOliveGreen = Color(0xFF48742C);
-const Color goldenOrange = Color(0xFFD19131);
-const Color indianRed = Color(0xFFB65454);
 const Color dimGray = Color(0xFF404040);
+const Color darkBrown = Color(0xFF28231D);
 const Color veryDarkGray = Color(0xFF1E1E1E);
-const Color lightSkyBlue = Color(0xFF7DDEF8);
 const Color veryDarkGrayishBlue = Color(0xFF1C1B1F);
-const Color warmOrange = Color(0xFFF8A23A);
 const Color black = Color(0xFF000000);
-const Color lightGray = Color(0xFFD9D9D9);
-const Color lightYellow = Color(0xFFFFFF93);
-
 
 class ScreenInfo {
   final double screenHeight;
