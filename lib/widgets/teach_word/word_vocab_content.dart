@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:ltrc/providers.dart';
+import 'package:ltrc/views/view_utils.dart';
 import 'package:ltrc/widgets/teach_word/zhuyin_processing.dart';
 
 class WordVocabContent extends ConsumerStatefulWidget {
@@ -114,13 +115,9 @@ class WordVocabContentState extends ConsumerState<WordVocabContent> {
 
   @override
   Widget build(BuildContext context) {
-    // debugPrint('Building WordVocabContent widget: stack: ${StackTrace.current}');
-    debugPrint('Building WordVocabContent widget');
     final screenInfo = ref.watch(screenInfoProvider);
     double fontSize = screenInfo.fontSize;
-
-    const Color explanationColor = Color.fromRGBO(228, 219, 124, 1);
-    const Color whiteColor = Colors.white;
+    debugPrint('Building WordVocabContent: fontSize = $fontSize, width = ${screenInfo.screenWidth}');
 
     List<Widget> children = [
       // Vocabulary display with TTS button
@@ -215,26 +212,34 @@ class WordVocabContentState extends ConsumerState<WordVocabContent> {
       ),
 
       // Display options (vocab and vocab2) as buttons
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: options.map((word) {
-          return Container(
-            width: fontSize * 10.0, // for 4 1.5 fontSize characters
-            height: fontSize * 2.0, // word fontSize = 1.0
-            alignment: Alignment.center,
-            margin: const EdgeInsets.all(0.0),
-            child: ElevatedButton(
-              onPressed: () => _selectWord(word),
-              child: Text(
-                word,
-                style: TextStyle(
-                  fontSize: fontSize * 0.90, // 1.0 will overflow in some small devices
-                  color: Colors.black,
+      Padding(
+        padding: EdgeInsets.symmetric(horizontal: fontSize * 0.5),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: options.map((word) {
+            return Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: fontSize * 0.25),
+                child: ElevatedButton(
+                  onPressed: () => _selectWord(word),
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(vertical: fontSize * 0.5),
+                  ),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      word,
+                      style: TextStyle(
+                        fontSize: fontSize * 0.90,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
                 ),
               ),
-            ),
-          );
-        }).toList(),
+            );
+          }).toList(),
+        ),
       ),
 
       Row(
