@@ -75,7 +75,7 @@ class UnitsViewState extends ConsumerState<UnitsView> {
         for (var wordStatus in wordsStatus) {
           // Attempt to fetch the WordPhraseSentence for the provided wordStatus
           // debugPrint('wordStatus.word: ${wordStatus.word}'); // debug
-          wordPhraseSentence = await WordPhraseSentenceProvider.getWordPhraseSentenceByWord(inputWord: wordStatus.word);
+          wordPhraseSentence = await WordPhraseSentenceProvider().getWordPhraseSentenceByWord(inputWord: wordStatus.word);
           if (wordPhraseSentence.id == -1) {
             wordsPhrase.add(
               {
@@ -138,7 +138,7 @@ class UnitsViewState extends ConsumerState<UnitsView> {
                     onTap: () async {
                       if (index == 0 ) {  // 學注音
                         List<String> bopomos = List.from(initials)..addAll(prenuclear)..addAll(finals);
-                        await WordStatusProvider.addWordsStatus(
+                        await WordStatusProvider().addWordsStatus(
                           statuses: bopomos.map((word) => 
                             WordStatus(
                               id: -1, 
@@ -150,7 +150,7 @@ class UnitsViewState extends ConsumerState<UnitsView> {
                           ).toList()
                         );
 
-                        List<WordStatus> wordsStatus = await WordStatusProvider.getWordsStatus(
+                        List<WordStatus> wordsStatus = await WordStatusProvider().getWordsStatus(
                           account: ref.read(accountProvider.notifier).state,
                           words: bopomos, 
                         );
@@ -177,7 +177,7 @@ class UnitsViewState extends ConsumerState<UnitsView> {
 
                       }
                       else {
-                        List<WordStatus> likedWords = await WordStatusProvider.getLikedWordsStatus(
+                        List<WordStatus> likedWords = await WordStatusProvider().getLikedWordsStatus(
                           account: ref.watch(accountProvider), 
                         );
                         List<Map> likedWordsPhrase = await getWordsPhraseSentence(likedWords);
@@ -245,7 +245,7 @@ class UnitsViewState extends ConsumerState<UnitsView> {
                   return InkWell(
                     onTap: () async {
                       Unit unit = units[index];
-                      await WordStatusProvider.addWordsStatus(
+                      await WordStatusProvider().addWordsStatus(
                         statuses: unit.newWords.map((word) => 
                           WordStatus(
                             id: -1, 
@@ -258,11 +258,11 @@ class UnitsViewState extends ConsumerState<UnitsView> {
                       );
                       unit.newWords.removeWhere((item) => unit.extraWords.contains(item));
                       
-                      List<WordStatus> newWordsStatus = await WordStatusProvider.getWordsStatus(
+                      List<WordStatus> newWordsStatus = await WordStatusProvider().getWordsStatus(
                         account: ref.read(accountProvider.notifier).state,
                         words: unit.newWords, 
                       );
-                      List<WordStatus> extraWordsStatus = await WordStatusProvider.getWordsStatus(
+                      List<WordStatus> extraWordsStatus = await WordStatusProvider().getWordsStatus(
                         account: ref.read(accountProvider.notifier).state,
                         words: unit.extraWords, 
                       );

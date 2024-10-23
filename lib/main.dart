@@ -13,23 +13,7 @@ import 'package:ltrc/data/providers/user_provider.dart';
 import 'package:ltrc/views/log_in_view.dart';
 import 'package:ltrc/views/polyphonic_processor.dart';
 import 'package:ltrc/contants/routes.dart';
-// import 'package:ltrc/extensions.dart';
 
-/*
-Future<void> main() async {
-  try {
-    WidgetsFlutterBinding.ensureInitialized();
-    setupLogger();
-    await AllProvider().database;
-    await UserProvider().database;
-    await PolyphonicProcessor.instance.loadPolyphonicData();
-
-    runApp(const ProviderScope(child: MyApp()));
-  } catch (e) {
-    debugPrint('Failed to init the database: $e');
-  }
-}
-*/
 
 Future<void> main() async {
   try {
@@ -51,7 +35,6 @@ Future<void> main() async {
     debugPrint('Failed to init the database: $e');
   }
 }
-
 
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
