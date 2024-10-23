@@ -46,14 +46,20 @@ class WordStatusProvider {
   /// Adds multiple word statuses to the database
   Future<void> addWordsStatus({required List<WordStatus> statuses}) async {
     final Database db = await database;
+
+    // Batch insertion
+    Batch batch = db.batch();
     for (var status in statuses) {
-      await db.insert(
+      batch.insert(
         tableName,
         status.toMap(),
         conflictAlgorithm: ConflictAlgorithm.ignore,
       );
     }
-  }
+
+    // Commit the batch with no result
+    await batch.commit(noResult: true);
+  }  
   
   /// Fetches the word status for a given word and account
   Future<WordStatus> getWordStatus({required String word, required String account}) async {

@@ -47,6 +47,23 @@ class WordProvider {
     );
   }
 
+  Future<void> addWords({required List<Word> words}) async {
+    final Database db = await database;
+
+    // Batch insertion
+    Batch batch = db.batch();
+    for (var word in words) {
+      batch.insert(
+        tableName,
+        word.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.ignore,
+      );
+    }
+
+    // Commit the batch with no result
+    await batch.commit(noResult: true);
+  }  
+
   /// Fetches a word by its name
   Future<Word> getWord({required String inputWord}) async {
     final Database db = await database;
