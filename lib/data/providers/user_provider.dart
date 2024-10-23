@@ -87,8 +87,8 @@ class UserProvider {
   Future<void> _performUpgrade(Database db, int currentVersion) async {
     try {
       debugPrint('Upgrading $_dbName from version $currentVersion to $_dbNewVersion...');
-      await deleteWord(db: db, userAccount: 'tester', word: '鸚');
-      await addWord(db: db, userAccount: 'tester', word: '鸚', learned: 1, liked: 1);
+      await deleteUserWord(db: db, userAccount: 'tester', word: '鸚');
+      await addUserWord(db: db, userAccount: 'tester', word: '鸚', learned: 1, liked: 1);
       
       bool userBpmfExists = await checkIfAccountExists('testerbpmf');
       if (!userBpmfExists) {
@@ -132,7 +132,7 @@ class UserProvider {
     return await db.getVersion(); // Returns the current version of the opened database
   }
 
-  Future<void> addWord({
+  Future<void> addUserWord({
     required Database? db,
     required String userAccount,
     required String word,
@@ -156,7 +156,7 @@ class UserProvider {
     }
   }
 
-  Future<void> deleteWord({
+  Future<void> deleteUserWord({
     required Database? db,
     required String userAccount,
     required String word,
