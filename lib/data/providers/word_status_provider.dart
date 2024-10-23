@@ -1,30 +1,41 @@
 import 'dart:async';
-import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:ltrc/data/providers/user_provider.dart';
-
 import '../models/word_status_model.dart';
 
 class WordStatusProvider {
-  static Database? database;
-  static Future<Database> getDBConnect() async {
-    database ??= await UserProvider.getDBConnect();
-    return database!;
+  Database? _database;
+
+  // Singleton pattern for WordStatusProvider
+  static final WordStatusProvider _instance = WordStatusProvider._internal();
+
+  factory WordStatusProvider() {
+    return _instance;
   }
 
-  static String tableName = 'wordStatus';
+  WordStatusProvider._internal();
+
+  static const String tableName = 'wordStatus';
   
-  // Define constants for database
+  // Define constants for the database columns
   static const String databaseId = 'id';
   static const String databaseUserAccount = 'userAccount';
   static const String databaseWord = 'word';
   static const String databaseLearned = 'learned';
   static const String databaseLiked = 'liked';
 
+  /// Fetch the singleton instance of the database from UserProvider, checking if it is closed
+  Future<Database> get database async {
+    if (UserProvider.isDbClosed) {
+      throw Exception('Database is closed and cannot be accessed.');
+    }
+    _database ??= await UserProvider().database;
+    return _database!;
+  }
 
-  
-  static Future<void> addWordStatus({required WordStatus status}) async {
-    final Database db = await getDBConnect();
+  /// Adds a word status to the database
+  Future<void> addWordStatus({required WordStatus status}) async {
+    final Database db = await database;
     await db.insert(
       tableName,
       status.toMap(),
@@ -32,9 +43,10 @@ class WordStatusProvider {
     );
   }
 
-  static Future<void> addWordsStatus({required List<WordStatus> statuses}) async {
-    final Database db = await getDBConnect();
-    for ( var status in statuses ){
+  /// Adds multiple word statuses to the database
+  Future<void> addWordsStatus({required List<WordStatus> statuses}) async {
+    final Database db = await database;
+    for (var status in statuses) {
       await db.insert(
         tableName,
         status.toMap(),
@@ -42,69 +54,89 @@ class WordStatusProvider {
       );
     }
   }
-    
-  static Future<WordStatus> getWordStatus({required String word, required String account}) async {
-    final Database db = await getDBConnect();
-    final List<Map<String, dynamic>> maps = await db.query(tableName,
+  
+  /// Fetches the word status for a given word and account
+  Future<WordStatus> getWordStatus({required String word, required String account}) async {
+    final Database db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      tableName,
       columns: [databaseId, databaseUserAccount, databaseWord, databaseLearned, databaseLiked],
       where: "$databaseUserAccount = ? and $databaseWord = ?",
       whereArgs: [account, word]
     );
-    return WordStatus(
-      id: maps[0][databaseId],
-      userAccount: maps[0][databaseUserAccount],
-      word: maps[0][databaseWord],
-      learned: (maps[0][databaseLearned] == 1) ? true : false,
-      liked: (maps[0][databaseLiked] == 1) ? true : false
-    );
+    
+    if (maps.isNotEmpty) {
+      return WordStatus(
+        id: maps[0][databaseId],
+        userAccount: maps[0][databaseUserAccount],
+        word: maps[0][databaseWord],
+        learned: (maps[0][databaseLearned] == 1),
+        liked: (maps[0][databaseLiked] == 1)
+      );
+    } else {
+      throw Exception('No word status found for $word and account $account');
+    }
   }
 
-  static Future<List<WordStatus>> getWordsStatus({required List<String> words, required String account}) async {
-    final Database db = await getDBConnect();
+  /// Fetches word statuses for a list of words and an account
+  Future<List<WordStatus>> getWordsStatus({required List<String> words, required String account}) async {
+    final Database db = await database;
     List<WordStatus> statuses = [];
-    for (var word in words){
-      List<Map<String, dynamic>> maps = await db.query(tableName,
+
+    for (var word in words) {
+      List<Map<String, dynamic>> maps = await db.query(
+        tableName,
         columns: [databaseId, databaseUserAccount, databaseWord, databaseLearned, databaseLiked],
         where: "$databaseUserAccount = ? and $databaseWord = ?",
         whereArgs: [account, word]
       );
-      statuses.add(
-        WordStatus(
-          id: maps[0][databaseId],
-          userAccount: maps[0][databaseUserAccount],
-          word: maps[0][databaseWord],
-          learned: (maps[0][databaseLearned] == 1) ? true : false,
-          liked: (maps[0][databaseLiked] == 1) ? true : false
-        )
-      );
+
+      if (maps.isNotEmpty) {
+        statuses.add(
+          WordStatus(
+            id: maps[0][databaseId],
+            userAccount: maps[0][databaseUserAccount],
+            word: maps[0][databaseWord],
+            learned: (maps[0][databaseLearned] == 1),
+            liked: (maps[0][databaseLiked] == 1)
+          )
+        );
+      }
     }
+
     return statuses;
   }
 
-  static Future<List<WordStatus>> getLikedWordsStatus({required String account}) async {
-    final Database db = await getDBConnect();
+  /// Fetches liked word statuses for a specific account
+  Future<List<WordStatus>> getLikedWordsStatus({required String account}) async {
+    final Database db = await database;
     List<WordStatus> statuses = [];
-    List<Map<String, dynamic>> maps = await db.query(tableName,
+
+    List<Map<String, dynamic>> maps = await db.query(
+      tableName,
       columns: ['*'],
       where: "$databaseUserAccount = ? and $databaseLiked = ?",
       whereArgs: [account, 1]
     );
-    for (var entry in maps){
+
+    for (var entry in maps) {
       statuses.add(
         WordStatus(
           id: entry[databaseId],
           userAccount: entry[databaseUserAccount],
           word: entry[databaseWord],
-          learned: (entry[databaseLearned] == 1) ? true : false,
-          liked: (entry[databaseLiked] == 1) ? true : false
+          learned: (entry[databaseLearned] == 1),
+          liked: (entry[databaseLiked] == 1)
         )
       );
     }
+
     return statuses;
   }
 
-  static Future<void> updateWordStatus({required WordStatus status}) async {
-    final Database db = await getDBConnect();
+  /// Updates a word status in the database
+  Future<void> updateWordStatus({required WordStatus status}) async {
+    final Database db = await database;
     await db.update(
       tableName,
       status.toMapWithId(),
@@ -113,7 +145,9 @@ class WordStatusProvider {
     );
   }
 
-  static Future<void> closeDb() async {
-    await deleteDatabase(join(await getDatabasesPath(), 'wordStatus.sqlite'));
+  /// Closes the database connection and disposes the provider
+  Future<void> dispose() async {
+    await UserProvider().closeDb();
+    _database = null;
   }
 }

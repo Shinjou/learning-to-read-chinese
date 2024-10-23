@@ -3,19 +3,23 @@ import 'package:flutter/material.dart';
 import 'package:ltrc/data/models/word_status_model.dart';
 import 'package:ltrc/data/providers/all_provider.dart';
 import 'package:ltrc/data/providers/word_status_provider.dart';
-import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../models/unit_model.dart';
 
 class UnitProvider {
-  static Database? database;
-  static Future<Database> getDBConnect() async {
-    database ??= await AllProvider.getDBConnect();
-    return database!;
+  Database? _database;
+
+  // Singleton pattern for UnitProvider
+  static final UnitProvider _instance = UnitProvider._internal();
+
+  factory UnitProvider() {
+    return _instance;
   }
 
-  static String tableName = "TextBooks";
+  UnitProvider._internal();
+
+  static const String tableName = "TextBooks";
   
   // Define constants for database
   static const String databaseId = 'id';
@@ -28,9 +32,18 @@ class UnitProvider {
   static const String databaseExtraWords = 'extra_words';
   static const String databaseContent = 'unit_content';
 
+  /// Fetch the singleton instance of the database, checking if it is closed
+  Future<Database> get database async {
+    if (AllProvider.isDbClosed) {
+      throw Exception('Database is closed and cannot be accessed.');
+    }
+    _database ??= await AllProvider().database;
+    return _database!;
+  }
 
-  static Future<void> addWordsInUnit(Unit unit) async {
-    final Database db = await getDBConnect();
+  /// Adds words in the unit to the database
+  Future<void> addWordsInUnit(Unit unit) async {
+    final Database db = await database;
     await db.insert(
       tableName,
       unit.toMap(),
@@ -38,8 +51,9 @@ class UnitProvider {
     );
   }
 
-  static Future<int> getTotalWordCount({required String inputPublisher, required int inputGrade, required String inputSemester}) async {
-    final Database db = await getDBConnect();
+  /// Fetches total word count for the given publisher, grade, and semester
+  Future<int> getTotalWordCount({required String inputPublisher, required int inputGrade, required String inputSemester}) async {
+    final Database db = await database;
     List<Map<String, Object?>> unitWords = await db.query(
       tableName,
       columns: [databaseNewWords, databaseExtraWords],
@@ -48,14 +62,14 @@ class UnitProvider {
     );
     int count = 0;
     for (var unit in unitWords) {
-      count += unit[databaseNewWords]!.toString().length;
-      count += unit[databaseExtraWords]!.toString().length;
+      count += unit[databaseNewWords]?.toString().length ?? 0;
+      count += unit[databaseExtraWords]?.toString().length ?? 0;
     }
     return count;
   }
 
-  static Future<int> getLearnedWordCount({required String inputAccount, required String inputPublisher, required int inputGrade, required String inputSemester}) async {
-    // debugPrint('getLearnedWordCount, $inputAccount, $inputPublisher, $inputGrade, $inputSemester');
+  /// Fetches learned word count for the given account, publisher, grade, and semester
+  Future<int> getLearnedWordCount({required String inputAccount, required String inputPublisher, required int inputGrade, required String inputSemester}) async {
     List<Unit> units = await getUnits(
       inputGrade: inputGrade, 
       inputPublisher: inputPublisher, 
@@ -63,31 +77,32 @@ class UnitProvider {
     );
     int count = 0;
 
-    for (var unit in units){
+    for (var unit in units) {
       try {
-        List<WordStatus> wordStatuses = await WordStatusProvider.getWordsStatus(
+        List<WordStatus> wordStatuses = await WordStatusProvider().getWordsStatus(
           words: List.from(unit.newWords)..addAll(unit.extraWords),
           account: inputAccount
         );
-        for (var status in wordStatuses){
-          count += status.learned ? 1 : 0 ;
+        for (var status in wordStatuses) {
+          count += status.learned ? 1 : 0;
         }
-      } catch(e) {
+      } catch (e) {
         debugPrint('Unit ${unit.unitId} hasn\'t been read before');
       }
     }
-    // debugPrint('getLearnedWordCount $count');
     return count;
   }
     
-  static Future<List<Unit>> getUnits({required String inputPublisher, required int inputGrade, required String inputSemester}) async {
-    final Database db = await getDBConnect();
-    final List<Map<String, dynamic>> maps = await db.query(tableName,
+  /// Fetches units for the given publisher, grade, and semester
+  Future<List<Unit>> getUnits({required String inputPublisher, required int inputGrade, required String inputSemester}) async {
+    final Database db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      tableName,
       columns: [databaseId, databaseUnitId, databaseUnitTitle, databaseNewWords, databaseExtraWords],
       where: "$databasePublisher = ? and $databaseGrade = ? and $databaseSemester = ?",
       whereArgs: [inputPublisher, inputGrade, inputSemester]
     );
-    // debugPrint('getUnits, $maps');
+
     return List.generate(maps.length, (i) {
       return Unit(
         id: maps[i][databaseId],
@@ -103,10 +118,9 @@ class UnitProvider {
     });
   }
 
-  static void closeDb() async {
-    database = null;
-    await deleteDatabase(
-      join(await getDatabasesPath(), 'all.sqlite')
-    );
+  /// Closes the database connection and disposes the provider
+  Future<void> dispose() async {
+    await AllProvider().closeDb();
+    _database = null;
   }
 }

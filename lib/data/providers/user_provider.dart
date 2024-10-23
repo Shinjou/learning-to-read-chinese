@@ -4,13 +4,21 @@ import 'package:path/path.dart';
 import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:sqflite/sqflite.dart';
-
-
 import '../models/user_model.dart';
 
 class UserProvider {
+  // Singleton pattern - single instance of Database
+  static final UserProvider _instance = UserProvider._internal();
+  
+  factory UserProvider() {
+    return _instance;
+  }
+
+  UserProvider._internal();
+
   static Database? _database;
   static bool dbExists = false;  
+  static bool isDbClosed = true;  // Flag to track the database state
   static String tableName = 'users';
 
   // Define constants for database
@@ -26,22 +34,26 @@ class UserProvider {
   static const String databasePublisher = 'publisher';
 
   static const String _dbName = 'users.sqlite';
-    static const int _dbNewVersion = 10; // 10/14/2024
+  static const int _dbNewVersion = 10; 
   static const String _wordStatusTable = 'wordStatus';
 
-  static Future<Database> get database async {
-    _database ??= await _initDatabase();
+  /// Gets the singleton database instance, initializing if necessary.
+  Future<Database> get database async {
+    if (_database != null && !isDbClosed) {
+      return _database!;
+    }
+
+    // Try initializing the database
+    _database = await _initDatabase();
+
+    if (_database == null) {
+      throw Exception('Failed to initialize the database.');
+    }
+
     return _database!;
   }
 
-  static Future<Database> getDBConnect() async {
-    if (!dbExists){
-      _database = await _initDatabase();
-    }
-    return _database!;
-  }  
-
-  static Future<Database?> _initDatabase() async {
+  Future<Database?> _initDatabase() async {
     try {
       String dbPath = join(await getDatabasesPath(), _dbName);
       debugPrint('Path to $_dbName: $dbPath');
@@ -52,56 +64,57 @@ class UserProvider {
         dbExists = true;
         _database = await openDatabase(dbPath);
         debugPrint('$_dbName copied from assets.');
-        return _database!;
-      } 
+        isDbClosed = false;  // Mark database as open
+        return _database;
+      }
 
-      // Open the database
       _database = await openDatabase(dbPath);
+      isDbClosed = false;  // Mark database as open
 
       // Check and potentially upgrade the database version
       int currentVersion = await _database!.getVersion();
       if (currentVersion < _dbNewVersion) {
-        debugPrint('Upgrading $_dbName from version $currentVersion to $_dbNewVersion ...');
-        // users.sqlite如果需要 upgrade，需要個別處理
-        // Ver 4，新增“鸚”一字。先刪掉舊的，再新增新的。
-        try {
-          await deleteWord(db: _database, userAccount: 'tester', word: '鸚');
-          await addWord(db: _database, userAccount: 'tester', word: '鸚', learned: 1, liked: 1);
-
-          bool userBpmfExists = await checkIfAccountExists('testerbpmf');
-          if (!userBpmfExists) {
-            await addUser(
-              user: User(
-                account: 'testerbpmf',
-                password: '1234',
-                username: 'testerbpmf',
-                safetyQuestionId1: 1,
-                safetyAnswer1: '1234',
-                safetyQuestionId2: 2,
-                safetyAnswer2: '1234',
-                grade: 1,
-                semester: '上',
-                publisher: '康軒',
-              ),
-            );       
-          }         
-          await _database!.setVersion(_dbNewVersion);  
-          debugPrint('Upgrade $_dbName successfully from $currentVersion to $_dbNewVersion');
-        } catch (e) {
-          debugPrint ("Error in upgrading users.sqlite: $e");
-        }
-      } else {
-        debugPrint('Database $_dbName opened successfully...');
+        await _performUpgrade(_database!, currentVersion);
       }
 
       return _database!;
     } catch (e) {
       debugPrint('Error initializing $_dbName: $e');
-      rethrow; // Consider handling this more gracefully
+      return null;
     }
   }
 
-  static Future<void> _copyDbFromAssets(String dbPath) async {
+  Future<void> _performUpgrade(Database db, int currentVersion) async {
+    try {
+      debugPrint('Upgrading $_dbName from version $currentVersion to $_dbNewVersion...');
+      await deleteWord(db: db, userAccount: 'tester', word: '鸚');
+      await addWord(db: db, userAccount: 'tester', word: '鸚', learned: 1, liked: 1);
+      
+      bool userBpmfExists = await checkIfAccountExists('testerbpmf');
+      if (!userBpmfExists) {
+        await addUser(
+          user: User(
+            account: 'testerbpmf',
+            password: '1234',
+            username: 'testerbpmf',
+            safetyQuestionId1: 1,
+            safetyAnswer1: '1234',
+            safetyQuestionId2: 2,
+            safetyAnswer2: '1234',
+            grade: 1,
+            semester: '上',
+            publisher: '康軒',
+          ),
+        );       
+      }         
+      await db.setVersion(_dbNewVersion);  
+      debugPrint('Upgrade $_dbName successfully from $currentVersion to $_dbNewVersion');
+    } catch (e) {
+      debugPrint("Error in upgrading users.sqlite: $e");
+    }
+  }
+
+  Future<void> _copyDbFromAssets(String dbPath) async {
     try {
       debugPrint('Copying $_dbName from assets/data_files/...');
       ByteData data = await rootBundle.load(join('assets/data_files/', _dbName));
@@ -114,13 +127,12 @@ class UserProvider {
     }
   }
 
-  /// Retrieves the current version of the users.sqlite database.
-  static Future<int> getCurrentDatabaseVersion() async {
-    final db = await database;
+  Future<int> getCurrentDatabaseVersion() async {
+    final Database db = await database;
     return await db.getVersion(); // Returns the current version of the opened database
   }
 
-  static Future<void> addWord({
+  Future<void> addWord({
     required Database? db,
     required String userAccount,
     required String word,
@@ -144,7 +156,7 @@ class UserProvider {
     }
   }
 
-  static Future<void> deleteWord({
+  Future<void> deleteWord({
     required Database? db,
     required String userAccount,
     required String word,
@@ -161,18 +173,10 @@ class UserProvider {
     }
   }
 
-  static Future<void> addUser({required User user}) async {
+  Future<void> addUser({required User user}) async {
     try {
-      // Validate user input
       validateUser(user);
-
-      /* Hash sensitive information
-      user.password = hashPassword(user.password);
-      user.safetyAnswer1 = hashPassword(user.safetyAnswer1);
-      user.safetyAnswer2 = hashPassword(user.safetyAnswer2);
-      */
-
-      final Database db = await getDBConnect();
+      final Database db = await database;
       await db.insert(
         tableName,
         user.toMap(),
@@ -185,16 +189,14 @@ class UserProvider {
     }
   }
 
-
-  static void validateUser(User user) {
+  void validateUser(User user) {
     if (user.account.isEmpty || user.password.isEmpty) {
       throw Exception('Account and password cannot be empty');
     }
-    // Add more validation as needed
   }  
 
-  static Future<User> getUser({required String inputAccount}) async {
-    final Database db = await getDBConnect();
+  Future<User> getUser({required String inputAccount}) async {
+    final Database db = await database;    
     try {
       final List<Map<String, dynamic>> maps = await db.query(tableName,
           columns: [
@@ -211,7 +213,7 @@ class UserProvider {
           ],
           where: " $databaseAccount = ? ",
           whereArgs: [inputAccount]
-          );
+      );
       return User(
         account: maps[0][databaseAccount],
         password: maps[0][databasePassword],
@@ -229,8 +231,8 @@ class UserProvider {
     }
   }
 
-  static Future<List<String>> getAllUserAccounts() async {
-    final Database db = await getDBConnect();
+  Future<List<String>> getAllUserAccounts() async {
+    final Database db = await database;    
     final List<Map<String, dynamic>> maps = await db.query(tableName,
       columns: [databaseAccount],
     );
@@ -239,54 +241,47 @@ class UserProvider {
     });
   }
 
-  static Future<void> updateUser({required User user}) async {
-    final Database db = await getDBConnect();
+  Future<void> updateUser({required User user}) async {
+    final Database db = await database;
     await db.update(
       tableName, 
       user.toMap(),
         where: " $databaseAccount = ? ", 
       whereArgs: [user.account]
-      );
+    );
   }
 
-  static Future<void> deleteUser({required String inputAccount}) async {
+  Future<void> deleteUser({required String inputAccount}) async {
     try {
-      final Database db = await getDBConnect();
+      final Database db = await database;
       await db.delete(tableName,
         where: " $databaseAccount = ? ", 
         whereArgs: [inputAccount]
       );
       await db.rawDelete("DELETE FROM wordStatus WHERE userAccount = ?", [inputAccount]);
     } catch (e) {
-      // Error reporting
       debugPrint('Error deleting user $inputAccount: $e');
-      // Consider using more sophisticated error reporting if available in your app
     }
   }
 
-  static Future<bool> checkIfAccountExists(String accountName) async {
+  Future<bool> checkIfAccountExists(String accountName) async {
     try {
-      // Attempt to get the user with the provided account name
       User user = await getUser(inputAccount: accountName);
-      
-      // If the query returns a user, the account exists
       if (user.account == accountName) {
         return true;  // Account exists
       }
       return false;   // Account does not exist
     } catch (e) {
-      // If an error occurs, it could mean that the account doesn't exist or there's another issue
       debugPrint("[Provider] Error fetching user: $e");
-      return false; // Assume account does not exist in case of an error
+      return false; 
     }
   }
 
-
-  static Future<void> closeDb() async {
+  Future<void> closeDb() async {
     if (_database != null) {
       await _database!.close();
       _database = null;
+      isDbClosed = true;  // Mark database as closed
     }
   }
 }
-

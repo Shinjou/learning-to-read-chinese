@@ -1,18 +1,21 @@
 import 'dart:async';
-import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:ltrc/data/providers/all_provider.dart';
-
 import '../models/word_model.dart';
 
 class WordProvider {
-  static Database? database;
-  static Future<Database> getDBConnect() async {
-    database ??= await AllProvider.getDBConnect();
-    return database!;
+  Database? _database;
+
+  // Singleton pattern for WordProvider
+  static final WordProvider _instance = WordProvider._internal();
+
+  factory WordProvider() {
+    return _instance;
   }
 
-  static String tableName = 'Words';
+  WordProvider._internal();
+
+  static const String tableName = 'Words';
   
   // Define constants for database
   static const String databaseId = 'id';
@@ -25,9 +28,18 @@ class WordProvider {
   static const String databaseStrokes = 'strokes';
   static const String databaseCommon = 'common';
 
+  /// Fetch the singleton instance of the database, checking if it is closed
+  Future<Database> get database async {
+    if (AllProvider.isDbClosed) {
+      throw Exception('Database is closed and cannot be accessed.');
+    }
+    _database ??= await AllProvider().database;
+    return _database!;
+  }
 
-  static Future<void> addWord(Word word) async {
-    final Database db = await getDBConnect();
+  /// Adds a word to the database
+  Future<void> addWord(Word word) async {
+    final Database db = await database;
     await db.insert(
       tableName,
       word.toMap(),
@@ -35,30 +47,36 @@ class WordProvider {
     );
   }
 
-  static Future<Word> getWord({required String inputWord}) async {
-    final Database db = await getDBConnect();
-    final List<Map<String, dynamic>> maps = await db.query(tableName,
+  /// Fetches a word by its name
+  Future<Word> getWord({required String inputWord}) async {
+    final Database db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      tableName,
       columns: ["*"],
       where: "$databaseWord=?",
       whereArgs: [inputWord]
     );
-    return Word(
-      id: maps[0][databaseId],
-      word: maps[0][databaseWord],
-      phoneticTone: maps[0][databasePhoneticTone],
-      phonetic: maps[0][databasePhonetic],
-      tone: maps[0][databaseTone],
-      shapeSymbol: maps[0][databaseShapeSymbol],
-      soundSymbol: maps[0][databaseSoundSymbol],
-      strokes: (maps[0][databaseStrokes].runtimeType == String) ? 0 : maps[0][databaseStrokes],
-      common: (maps[0][databaseCommon].runtimeType == String) ? 0 : maps[0][databaseCommon],
-    );
+
+    if (maps.isNotEmpty) {
+      return Word(
+        id: maps[0][databaseId],
+        word: maps[0][databaseWord],
+        phoneticTone: maps[0][databasePhoneticTone],
+        phonetic: maps[0][databasePhonetic],
+        tone: maps[0][databaseTone],
+        shapeSymbol: maps[0][databaseShapeSymbol],
+        soundSymbol: maps[0][databaseSoundSymbol],
+        strokes: (maps[0][databaseStrokes].runtimeType == String) ? 0 : maps[0][databaseStrokes],
+        common: (maps[0][databaseCommon].runtimeType == String) ? 0 : maps[0][databaseCommon],
+      );
+    } else {
+      throw Exception('No word found for $inputWord');
+    }
   }
 
-  static Future<void> closeDb() async{
-    database = null;
-    await deleteDatabase(
-      join(await getDatabasesPath(), 'all.sqlite')
-    );
+  /// Closes the database connection and disposes the provider
+  Future<void> dispose() async {
+    await AllProvider().closeDb();
+    _database = null;
   }
 }
