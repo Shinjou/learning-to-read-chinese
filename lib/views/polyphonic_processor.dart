@@ -88,7 +88,7 @@ class PolyphonicProcessor {
       return 0; // ?? Default tone for non-Chinese characters or null input
     }    
     try {
-      Word word = await WordProvider.getWord(inputWord: char);
+      Word word = await WordProvider().getWord(inputWord: char);
       return word.tone;
     } catch (e) {
       // debugPrint('Error fetching tone for character $char: $e');

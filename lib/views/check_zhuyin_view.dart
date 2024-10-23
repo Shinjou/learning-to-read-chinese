@@ -53,7 +53,7 @@ class CheckZhuyinViewState extends ConsumerState<CheckZhuyinView> {
       // Use ApplicationDocumentsDirectory in release mode
       directory = (await getApplicationDocumentsDirectory()).path;
     }    
-    maxId = await WordPhraseSentenceProvider.getMaxId(); // Assuming this method fetches the maximum ID
+    maxId = await WordPhraseSentenceProvider().getMaxId(); // Assuming this method fetches the maximum ID
     debugPrint('Max ID: $maxId');
     setState(() {});
   }
@@ -178,7 +178,7 @@ class CheckZhuyinViewState extends ConsumerState<CheckZhuyinView> {
       List<TextSpan> tempTextSpans = [];
       try {
           // debugPrint("Starting to process ID $id.");
-          WordPhraseSentence? entry = await WordPhraseSentenceProvider.getWordPhraseSentenceById(inputWordPhraseSentenceId: id);
+          WordPhraseSentence? entry = await WordPhraseSentenceProvider().getWordPhraseSentenceById(inputWordPhraseSentenceId: id);
           if (entry == null) {
               // Handle the case where the entry does not exist
               debugPrint("No entry found for ID $id.");

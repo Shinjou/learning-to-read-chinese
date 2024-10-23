@@ -273,7 +273,7 @@ class _RegisterAccountViewState extends ConsumerState<RegisterAccountView> {
                           });
                         } else {
                           List<String> userAccounts =
-                              await UserProvider.getAllUserAccounts();
+                              await UserProvider().getAllUserAccounts();
                           if (userAccounts.contains(accountController.text)) {
                             setState(() {
                               showErrorHint = duplicateAccountErrorHint;

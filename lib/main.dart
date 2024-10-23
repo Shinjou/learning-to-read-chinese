@@ -15,12 +15,13 @@ import 'package:ltrc/views/polyphonic_processor.dart';
 import 'package:ltrc/contants/routes.dart';
 // import 'package:ltrc/extensions.dart';
 
+/*
 Future<void> main() async {
   try {
     WidgetsFlutterBinding.ensureInitialized();
     setupLogger();
-    await AllProvider.database;
-    await UserProvider.database;
+    await AllProvider().database;
+    await UserProvider().database;
     await PolyphonicProcessor.instance.loadPolyphonicData();
 
     runApp(const ProviderScope(child: MyApp()));
@@ -28,6 +29,29 @@ Future<void> main() async {
     debugPrint('Failed to init the database: $e');
   }
 }
+*/
+
+Future<void> main() async {
+  try {
+    WidgetsFlutterBinding.ensureInitialized();
+    setupLogger();
+    
+    debugPrint('Initializing AllProvider database...');
+    await AllProvider().database;
+    debugPrint('AllProvider database initialized.');
+
+    debugPrint('Initializing UserProvider database...');
+    await UserProvider().database;
+    debugPrint('UserProvider database initialized.');
+
+    await PolyphonicProcessor.instance.loadPolyphonicData();
+
+    runApp(const ProviderScope(child: MyApp()));
+  } catch (e) {
+    debugPrint('Failed to init the database: $e');
+  }
+}
+
 
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});

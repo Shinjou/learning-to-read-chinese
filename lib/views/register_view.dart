@@ -180,7 +180,7 @@ class RegisterViewState extends ConsumerState<RegisterView> {
                     iconSize: deviceHeight * 0.09,
                     onPressed: () async {
                       try {
-                        await UserProvider.addUser(
+                        await UserProvider().addUser(
                           user: User(
                             account: account,
                             password: pwd,
@@ -198,7 +198,7 @@ class RegisterViewState extends ConsumerState<RegisterView> {
                       }
 
                       ref.read(totalWordCountProvider.notifier).state =
-                          await UnitProvider.getTotalWordCount(
+                          await UnitProvider().getTotalWordCount(
                         inputPublisher: publisherCodeTable[publisherCode]!,
                         inputGrade: grade,
                         // inputSemester: "上", // Need to enhance

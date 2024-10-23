@@ -142,7 +142,7 @@ class _ResetPwdAccountViewState extends ConsumerState<ResetPwdAccountView> {
                             showErrorHint = pwdLengthErrorHint;
                           });
                         } else {
-                          User user = await UserProvider.getUser(
+                          User user = await UserProvider().getUser(
                               inputAccount: accountController.text);
                           // Navigator.of(context).pushNamed('/safetyHintVerify',arguments: {'user': user});
                           if (!context.mounted) return;

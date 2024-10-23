@@ -40,7 +40,7 @@ class SwVersionViewState extends ConsumerState<SwVersionView> {
 
   Future<String> _getAllDatabaseVersion() async {
     try {
-      String currentVersion = (await AllProvider.getCurrentDatabaseVersion()).toString();
+      String currentVersion = (await AllProvider().getCurrentDatabaseVersion()).toString();
       debugPrint('Current all.sqlite version: $currentVersion');
       return currentVersion;
     } catch (e) {
@@ -51,7 +51,7 @@ class SwVersionViewState extends ConsumerState<SwVersionView> {
 
   Future<String> _getUserDatabaseVersion() async {
     try {
-      String currentVersion = (await UserProvider.getCurrentDatabaseVersion()).toString();
+      String currentVersion = (await UserProvider().getCurrentDatabaseVersion()).toString();
       debugPrint('Current users.sqlite version: $currentVersion');
       return currentVersion;
     } catch (e) {

@@ -68,7 +68,7 @@ class MainPageView extends ConsumerWidget {
                 () async {
                   int semesterCode = ref.watch(semesterCodeProvider);
                   int publisherCode = ref.watch(publisherCodeProvider);
-                  List<Unit> units = await UnitProvider.getUnits(
+                  List<Unit> units = await UnitProvider().getUnits(
                     inputPublisher: publisherCodeTable[publisherCode]!,
                     inputGrade: ref.watch(gradeProvider),
                     inputSemester: semesterCodeTable[semesterCode]!);

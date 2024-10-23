@@ -33,7 +33,7 @@ class _BopomoQuizState extends ConsumerState<BopomoQuizView> {
         answer.prenuclear.isEmpty &&
         answer.finals.isEmpty) {
       Word answerWord =
-          await WordProvider.getWord(inputWord: bopomoSpellingWords[problemId]);
+          await WordProvider().getWord(inputWord: bopomoSpellingWords[problemId]);
       String answerSpelling = answerWord.phonetic;
       List<String> spellingList = answerSpelling.split('');
       switch (spellingList.length) {

@@ -53,7 +53,7 @@ class WordCardState extends ConsumerState<WordCard> {
     newStatus.liked = liked;
     // Use WidgetsBinding to schedule the update after the current frame
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      WordStatusProvider.updateWordStatus(status: newStatus);
+      WordStatusProvider().updateWordStatus(status: newStatus);
     });
   }
 

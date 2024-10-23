@@ -189,7 +189,7 @@ class LogInViewState extends ConsumerState<LogInView> {
                                 });
                               } else {
                                 try {
-                                  User user = await UserProvider.getUser(inputAccount: accountController.text);
+                                  User user = await UserProvider().getUser(inputAccount: accountController.text);
 
                                   debugPrint('User found: ${user.account}');
 
@@ -209,13 +209,13 @@ class LogInViewState extends ConsumerState<LogInView> {
                                     ref.read(publisherCodeProvider.notifier).state = publisherCodeTable.keys.firstWhere(
                                             (e) => publisherCodeTable[e] == user.publisher);
 
-                                    ref.read(totalWordCountProvider.notifier).state = await UnitProvider.getTotalWordCount(
+                                    ref.read(totalWordCountProvider.notifier).state = await UnitProvider().getTotalWordCount(
                                       inputPublisher: user.publisher,
                                       inputGrade: user.grade,
                                       inputSemester: user.semester,
                                     );
 
-                                    ref.read(learnedWordCountProvider.notifier).state = await UnitProvider.getLearnedWordCount(
+                                    ref.read(learnedWordCountProvider.notifier).state = await UnitProvider().getLearnedWordCount(
                                       inputAccount: accountController.text,
                                       inputPublisher: user.publisher,
                                       inputGrade: user.grade,

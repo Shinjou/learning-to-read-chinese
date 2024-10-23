@@ -197,7 +197,7 @@ class _ResetPwdViewState extends ConsumerState<ResetPwdView> {
                       });
                     } else {
                       user.password = pwdController.text;
-                      UserProvider.updateUser(user: user);
+                      UserProvider().updateUser(user: user);
                       // Navigator.of(context).pushNamed('/login');
                       navigateWithProvider(context, '/login', ref);
                     }

@@ -431,9 +431,9 @@ class SettingViewState extends ConsumerState<SettingView> {
   void _handleGradeChange(int? grade) async {
     if (grade == null) return;
     try {
-      User userToUpdate = await UserProvider.getUser(inputAccount: account);
+      User userToUpdate = await UserProvider().getUser(inputAccount: account);
       userToUpdate.grade = grade;
-      await UserProvider.updateUser(user: userToUpdate);
+      await UserProvider().updateUser(user: userToUpdate);
       if (!context.mounted) return;
       ref.read(gradeProvider.notifier).state = grade;
       _updateWordCounts(grade: grade);
@@ -445,9 +445,9 @@ class SettingViewState extends ConsumerState<SettingView> {
   void _handleSemesterChange(int? semester) async {
     if (semester == null) return;
     try {
-      User userToUpdate = await UserProvider.getUser(inputAccount: account);
+      User userToUpdate = await UserProvider().getUser(inputAccount: account);
       userToUpdate.semester = semesterCodeTable[semester]!;
-      await UserProvider.updateUser(user: userToUpdate);
+      await UserProvider().updateUser(user: userToUpdate);
       if (!context.mounted) return;
       ref.read(semesterCodeProvider.notifier).state = semester;
       _updateWordCounts(semester: semester);
@@ -459,9 +459,9 @@ class SettingViewState extends ConsumerState<SettingView> {
   void _handlePublisherChange(int? publisher) async {
     if (publisher == null) return;
     try {
-      User userToUpdate = await UserProvider.getUser(inputAccount: account);
+      User userToUpdate = await UserProvider().getUser(inputAccount: account);
       userToUpdate.publisher = publisherCodeTable[publisher]!;
-      await UserProvider.updateUser(user: userToUpdate);
+      await UserProvider().updateUser(user: userToUpdate);
       if (!context.mounted) return;
       ref.read(publisherCodeProvider.notifier).state = publisher;
       _updateWordCounts(publisher: publisher);
@@ -476,13 +476,13 @@ class SettingViewState extends ConsumerState<SettingView> {
       int selectedSemester = semester ?? ref.read(semesterCodeProvider);
       int selectedPublisher = publisher ?? ref.read(publisherCodeProvider);
 
-      ref.read(totalWordCountProvider.notifier).state = await UnitProvider.getTotalWordCount(
+      ref.read(totalWordCountProvider.notifier).state = await UnitProvider().getTotalWordCount(
         inputPublisher: publisherCodeTable[selectedPublisher]!,
         inputGrade: selectedGrade,
         inputSemester: semesterCodeTable[selectedSemester]!,
       );
 
-      ref.read(learnedWordCountProvider.notifier).state = await UnitProvider.getLearnedWordCount(
+      ref.read(learnedWordCountProvider.notifier).state = await UnitProvider().getLearnedWordCount(
         inputAccount: account,
         inputPublisher: publisherCodeTable[selectedPublisher]!,
         inputGrade: selectedGrade,
@@ -512,7 +512,7 @@ class SettingViewState extends ConsumerState<SettingView> {
               child: Text('確定', style: TextStyle(color: Colors.black, fontSize: fontSize * 1.0)),
               onPressed: () async {
                 try {
-                  await UserProvider.deleteUser(inputAccount: account);
+                  await UserProvider().deleteUser(inputAccount: account);
                   if (!context.mounted) return;
                   navigateWithProvider(context, '/login', ref);
                   debugPrint('Deleted account $account');

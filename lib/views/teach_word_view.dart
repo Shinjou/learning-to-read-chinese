@@ -504,7 +504,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
       
       ref.read(learnedWordCountProvider.notifier).state += learned ? 1 : 0;
       
-      await WordStatusProvider.updateWordStatus(status: newStatus);
+      await WordStatusProvider().updateWordStatus(status: newStatus);
       
       if (mounted) {
         setState(() {
