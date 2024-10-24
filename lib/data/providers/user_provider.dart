@@ -65,12 +65,16 @@ class UserProvider {
         _database = await openDatabase(dbPath);
         debugPrint('$_dbName copied from assets.');
         isDbClosed = false;  // Mark database as open
+
+        // Create index on wordStatus table
+        await _createIndexes(_database!);        
         return _database;
       }
 
       _database = await openDatabase(dbPath);
       isDbClosed = false;  // Mark database as open
-
+      // Create index on wordStatus table
+      await _createIndexes(_database!);
       // Check and potentially upgrade the database version
       int currentVersion = await _database!.getVersion();
       if (currentVersion < _dbNewVersion) {
@@ -107,7 +111,11 @@ class UserProvider {
           ),
         );       
       }         
-      await db.setVersion(_dbNewVersion);  
+      // Ensure indexes are created after upgrade
+      await _createIndexes(db);
+
+      // Update the database version
+      await db.setVersion(_dbNewVersion);
       debugPrint('Upgrade $_dbName successfully from $currentVersion to $_dbNewVersion');
     } catch (e) {
       debugPrint("Error in upgrading users.sqlite: $e");
@@ -126,6 +134,16 @@ class UserProvider {
       rethrow;
     }
   }
+
+  // Create indexes for optimization
+  Future<void> _createIndexes(Database db) async {
+    try {
+      await db.execute('CREATE INDEX IF NOT EXISTS idx_word_user ON wordStatus (word, userAccount)');
+      debugPrint('Index idx_word_user created on wordStatus table.');
+    } catch (e) {
+      debugPrint('Error creating index on wordStatus table: $e');
+    }
+  }  
 
   Future<int> getCurrentDatabaseVersion() async {
     final Database db = await database;

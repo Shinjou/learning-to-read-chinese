@@ -57,6 +57,9 @@ class AllProvider {
       // Mark the database as open
       isDbClosed = false;
 
+      // Create necessary indexes
+      await _createIndexes(_database!);
+
       // Check and potentially upgrade the database version
       int currentVersion = await _database!.getVersion();
       debugPrint('$_dbName: New version $_dbNewVersion, Current: $currentVersion');
@@ -80,6 +83,9 @@ class AllProvider {
     _database = await openDatabase(dbPath);
     debugPrint('Database upgraded to version $_dbNewVersion');
     isDbClosed = false;  // Mark the database as open again
+
+    // Create indexes after upgrade
+    await _createIndexes(_database!);
   }  
 
   /// Copies the database from the assets folder into the device's app directory.
@@ -111,5 +117,16 @@ class AllProvider {
   Future<int> getCurrentDatabaseVersion() async {
     final db = await database;
     return await db.getVersion(); // Returns the current version of the opened database
+  }
+
+  /// Creates necessary indexes on frequently queried columns.
+  Future<void> _createIndexes(Database db) async {
+    try {
+      // Add indexes for commonly queried columns such as 'word' and 'userAccount'
+      await db.execute('CREATE INDEX IF NOT EXISTS idx_word_user ON wordStatus (word, userAccount)');
+      debugPrint('Index idx_word_user created on wordStatus table.');
+    } catch (e) {
+      debugPrint('Error creating index on wordStatus table: $e');
+    }
   }
 }
