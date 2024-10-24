@@ -71,6 +71,7 @@ class CheckZhuyinViewState extends ConsumerState<CheckZhuyinView> {
 
   @override
   void dispose() {
+    idController.dispose();
     super.dispose();
   }
 

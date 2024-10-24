@@ -41,6 +41,8 @@ class DuoyinziViewState extends ConsumerState<DuoyinziView> {
 
   @override
   void dispose() {
+    ftts.stop();
+    _controller.dispose();
     super.dispose();
   }
 

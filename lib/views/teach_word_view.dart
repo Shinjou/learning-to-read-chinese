@@ -92,6 +92,16 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
     _initializeComponents();
   }
 
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    _strokeOrderAnimationController?.dispose();
+    ftts.stop();
+    player.dispose();    
+    super.dispose();
+  }
+  
   // REFACTOR: New method to encapsulate initialization logic
   void _initializeComponents() {
     _initializeTts();
@@ -258,13 +268,6 @@ class TeachWordViewState extends ConsumerState<TeachWordView>
     return List.generate(vocabCnt, (index) => buildPage(index));
   }
 
-  @override
-  void dispose() {
-    _tabController.dispose();
-    ftts.stop();
-    player.dispose();    
-    super.dispose();
-  }
 
   void nextTab() async {
     if (kDebugMode) {

@@ -23,6 +23,11 @@ class StrokeOrderAnimatorState extends State<StrokeOrderAnimator> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onPanUpdate: (DragUpdateDetails details) {

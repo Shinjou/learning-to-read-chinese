@@ -35,6 +35,13 @@ class LogInViewState extends ConsumerState<LogInView> {
   }
 
   @override
+  void dispose() {
+    accountController.dispose();
+    pwdController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final screenInfo = ref.watch(screenInfoProvider);
     double fontSize = screenInfo.fontSize;

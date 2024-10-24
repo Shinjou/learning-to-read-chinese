@@ -28,6 +28,12 @@ class _ResetPwdAccountViewState extends ConsumerState<ResetPwdAccountView> {
   }
 
   @override
+  void dispose() {
+    accountController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     // final screenInfo = ref.watch(screenInfoProvider);
     final screenInfo = ref.watch(screenInfoProvider);

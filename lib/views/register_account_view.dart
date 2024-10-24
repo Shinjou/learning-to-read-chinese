@@ -49,6 +49,18 @@ class _RegisterAccountViewState extends ConsumerState<RegisterAccountView> {
   }
 
   @override
+  void dispose() {
+    accountController.dispose();
+    pwdController.dispose();
+    confirmPwdController.dispose();
+    q1Controller.dispose();
+    a1Controller.dispose();
+    q2Controller.dispose();
+    a2Controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     // final screenInfo = ref.watch(screenInfoProvider);
     final screenInfo = ref.watch(screenInfoProvider);

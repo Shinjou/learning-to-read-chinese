@@ -30,6 +30,13 @@ class _SafetyHintVerifyState extends ConsumerState<SafetyHintVerifyView> {
   }
 
   @override
+  void dispose() {
+    a1Controller.dispose();
+    a2Controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     // final screenInfo = ref.watch(screenInfoProvider);
     final screenInfo = ref.watch(screenInfoProvider);
