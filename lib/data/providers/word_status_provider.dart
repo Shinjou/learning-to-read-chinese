@@ -16,7 +16,7 @@ class WordStatusProvider {
   WordStatusProvider._internal();
 
   static const String tableName = 'wordStatus';
-  
+
   // Define constants for the database columns
   static const String databaseId = 'id';
   static const String databaseUserAccount = 'userAccount';
@@ -66,7 +66,7 @@ class WordStatusProvider {
     final Database db = await database;
     final List<Map<String, dynamic>> maps = await db.query(
       tableName,
-      columns: [databaseId, databaseUserAccount, databaseWord, databaseLearned, databaseLiked],
+      columns: [databaseId, databaseUserAccount, databaseWord, databaseLearned, databaseLiked],  // Select only necessary columns
       where: "$databaseUserAccount = ? and $databaseWord = ?",
       whereArgs: [account, word]
     );
@@ -92,7 +92,7 @@ class WordStatusProvider {
     for (var word in words) {
       List<Map<String, dynamic>> maps = await db.query(
         tableName,
-        columns: [databaseId, databaseUserAccount, databaseWord, databaseLearned, databaseLiked],
+        columns: [databaseId, databaseUserAccount, databaseWord, databaseLearned, databaseLiked], // Select only necessary columns
         where: "$databaseUserAccount = ? and $databaseWord = ?",
         whereArgs: [account, word]
       );
@@ -118,9 +118,10 @@ class WordStatusProvider {
     final Database db = await database;
     List<WordStatus> statuses = [];
 
+    // Select only the necessary columns
     List<Map<String, dynamic>> maps = await db.query(
       tableName,
-      columns: ['*'],
+      columns: [databaseId, databaseUserAccount, databaseWord, databaseLearned, databaseLiked],  // Only fetch required columns
       where: "$databaseUserAccount = ? and $databaseLiked = ?",
       whereArgs: [account, 1]
     );
