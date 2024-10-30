@@ -20,13 +20,9 @@ Future<void> main() async {
     WidgetsFlutterBinding.ensureInitialized();
     setupLogger();
     
-    debugPrint('Initializing AllProvider database...');
     await AllProvider().database;
-    debugPrint('AllProvider database initialized.');
-
-    debugPrint('Initializing UserProvider database...');
     await UserProvider().database;
-    debugPrint('UserProvider database initialized.');
+
 
     await PolyphonicProcessor.instance.loadPolyphonicData();
 

@@ -138,6 +138,7 @@ class UserProvider {
   // Create indexes for optimization
   Future<void> _createIndexes(Database db) async {
     try {
+      // Add indexes for commonly queried columns such as 'word' and 'userAccount'
       await db.execute('CREATE INDEX IF NOT EXISTS idx_word_user ON wordStatus (word, userAccount)');
       debugPrint('Index idx_word_user created on wordStatus table.');
     } catch (e) {

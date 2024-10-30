@@ -122,9 +122,9 @@ class AllProvider {
   /// Creates necessary indexes on frequently queried columns.
   Future<void> _createIndexes(Database db) async {
     try {
-      // Add indexes for commonly queried columns such as 'word' and 'userAccount'
-      await db.execute('CREATE INDEX IF NOT EXISTS idx_word_user ON wordStatus (word, userAccount)');
-      debugPrint('Index idx_word_user created on wordStatus table.');
+      // Add indexes for commonly queried columns such as 'word'
+      await db.execute('CREATE INDEX IF NOT EXISTS idx_word ON WordPhraseSentence (word)');
+      debugPrint('Index idx_word created on WordPhraseSentence table.');
     } catch (e) {
       debugPrint('Error creating index on wordStatus table: $e');
     }

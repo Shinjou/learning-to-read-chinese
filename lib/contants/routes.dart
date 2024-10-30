@@ -70,7 +70,9 @@ class AppRoutes {
           unitId: args['unitId'] as int,
           unitTitle: args['unitTitle'] as String,
           wordsStatus: (args['wordsStatus'] as List).cast<WordStatus>(),
-          wordsPhrase: args['wordsPhrase'] as List<Map>,
+          wordsPhrase: (args['wordsPhrase'] as List<Map>)
+              .map((map) => Map<String, dynamic>.from(map))
+              .toList(),          
           wordIndex: args['wordIndex'] as int,
         );
       },      

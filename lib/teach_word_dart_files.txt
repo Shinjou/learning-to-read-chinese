@@ -1,0 +1,4126 @@
+// File: ./views/teach_word/tabs/look_tab.dart
+
+// tabs/look_tab.dart
+
+import 'dart:math';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ltrc/providers.dart';
+import 'package:ltrc/views/teach_word/state/teach_word_providers.dart';
+import 'package:ltrc/views/teach_word/state/teach_word_state.dart';
+import 'package:ltrc/views/view_utils.dart';
+import 'package:ltrc/views/teach_word/teach_word_controllers.dart';
+import 'package:ltrc/widgets/mainPage/left_right_switch.dart';
+import 'package:ltrc/widgets/teach_word/card_title.dart';
+import 'package:ltrc/widgets/teach_word/tab_bar_view.dart';
+
+class LookTab extends ConsumerWidget {
+  final TeachWordControllers controllers;
+  final TeachWordState state;
+  final ScreenInfo screenInfo;
+
+  const LookTab({
+    super.key,
+    required this.controllers,
+    required this.state,
+    required this.screenInfo,
+  });
+
+  String get word => state.word;
+  bool get isBpmf => state.isBpmf;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    debugPrint('Building LookTab - word: ${state.word}, nextStepId: ${state.nextStepId}, isLearned: ${state.isLearned}');
+
+    return TeachWordTabBarView(
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Flexible(
+              fit: FlexFit.loose,
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: screenInfo.screenWidth * 0.90,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      _buildLookHeader(context, ref),
+                      SizedBox(height: screenInfo.fontSize * 0.3),
+                      _buildLookImage(context, ref),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLookHeader(BuildContext context, WidgetRef ref) {
+    return LeftRightSwitch(
+      iconsColor: lightGray,
+      iconsSize: screenInfo.fontSize * 2.0,
+      rightBorder: true,
+      middleWidget: const TeachWordCardTitle(
+        sectionName: '看一看',
+        iconsColor: lightGray,
+      ),
+      isFirst: true,
+      isLast: false,
+      /*
+      onRightClicked: state.isLearned || state.nextStepId == TeachWordConstants.steps['goToListen']
+          ? () async {
+              debugPrint('Navigate next clicked in LookTab');
+              await _handleNext(ref);
+              controllers.navigateToNextTab();
+            }
+          : null,
+      */
+      onRightClicked: () async { // Always allow Right Click in LookTab
+        debugPrint('Navigate next clicked in LookTab');
+        await _handleNext(ref);
+        controllers.navigateToNextTab();
+      },
+    );
+  }
+
+  Widget _buildLookImage(BuildContext context, WidgetRef ref) {
+    return Flexible(
+      fit: FlexFit.loose,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+              color: darkBrown,
+            ),
+            child: Center(
+              child: Image(
+                width: max(17.6 * screenInfo.fontSize, 300.0),
+                image: state.isBpmf
+                    ? AssetImage('lib/assets/img/bopomo/${state.word}.png')
+                    : AssetImage('lib/assets/img/oldWords/${state.word}.webp'),
+                errorBuilder: (context, error, stackTrace) {
+                  debugPrint('Error loading image: $error');
+                  return Center(
+                    child: Text(
+                      state.word,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: screenInfo.fontSize * 8.0,
+                        color: backgroundColor,
+                        fontWeight: FontWeight.w100,
+                        fontFamily: state.isBpmf ? "BpmfOnly" : "BpmfIansui",
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _handleNext(WidgetRef ref) async {
+    debugPrint('LookTab _handleNext called - nextStepId: ${state.nextStepId}');
+    
+    // Increment step before playing sound
+    ref.read(teachWordStateProvider.notifier).incrementNextStepId();
+    final audioService = ref.read(audioServiceProvider);
+    audioService.playWordSound(word, isBpmf);
+  }
+}
+
+
+// End of file: ./views/teach_word/tabs/look_tab.dart
+//----------------------
+
+// File: ./views/teach_word/tabs/use_tab.dart
+
+// lib/views/teach_word/tabs/use_tab.dart
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ltrc/providers.dart';
+import 'package:ltrc/views/teach_word/state/teach_word_providers.dart';
+import 'package:ltrc/views/view_utils.dart';
+import 'package:ltrc/views/teach_word/state/teach_word_state.dart';
+import 'package:ltrc/views/teach_word/teach_word_controllers.dart';
+import 'package:ltrc/views/teach_word/teach_word_constants.dart';
+import 'package:ltrc/widgets/mainPage/left_right_switch.dart';
+import 'package:ltrc/widgets/teach_word/card_title.dart';
+import 'package:ltrc/views/teach_word/widgets/bpmf_vocal_content.dart';
+import 'package:ltrc/views/teach_word/widgets/word_vocal_content.dart';
+import 'package:ltrc/widgets/teach_word/tab_bar_view.dart';
+
+class UseTab extends ConsumerStatefulWidget {
+  final TeachWordControllers controllers;
+  final TeachWordState state;
+  final ScreenInfo screenInfo;
+  final Map<String, dynamic> wordsPhrase;
+
+  const UseTab({
+    super.key,
+    required this.controllers,
+    required this.state,
+    required this.screenInfo,
+    required this.wordsPhrase,
+  });
+
+  @override
+  UseTabState createState() => UseTabState();
+}
+
+class UseTabState extends ConsumerState<UseTab> {
+  late final ValueNotifier<String> _userMessage;
+  late final ValueNotifier<bool> _showContinueButton;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeControllers();
+    debugPrint('UseTab initialized');
+  }
+
+  void _initializeControllers() {
+    _userMessage = ValueNotifier('');
+    _showContinueButton = ValueNotifier(false);
+  }
+
+  @override
+  void dispose() {
+    debugPrint('UseTab disposing');
+    _userMessage.dispose();
+    _showContinueButton.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    debugPrint('Building UseTab - nextStepId: ${widget.state.nextStepId}, vocabIndex: ${widget.state.vocabIndex}');
+    
+    return TeachWordTabBarView(
+      content: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildContent(),
+              ],
+            ),
+          ),
+          _buildPageIndicator(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContent() {
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxWidth: widget.screenInfo.screenWidth * 0.95,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          _buildHeader(),
+          SizedBox(height: widget.screenInfo.fontSize * 0.2),
+          _buildVocabContent(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeader() {    
+    return LeftRightSwitch(
+      iconsColor: lightGray,
+      iconsSize: widget.screenInfo.fontSize * 2.0,
+      rightBorder: _shouldShowRightBorder,
+      middleWidget: const TeachWordCardTitle(
+        sectionName: '用一用',
+        iconsColor: lightGray,
+      ),
+      isFirst: false,
+      isLast: _isLastVocabPage,
+      onLeftClicked: _canNavigatePrevious ? () => _handlePrevious() : null,
+      onRightClicked: _canNavigateNext ? () => _handleNext() : null,
+    );
+  }
+
+  Widget _buildVocabContent() {
+    if (widget.state.isBpmf) {
+      return BopomofoVocabContent(
+        word: widget.state.word,
+        vocab: _getCurrentVocab(),
+        sentence: _getCurrentSentence(),
+      );
+    } else {
+      return Column(
+        children: [
+          WordVocabContent(
+            vocab: _getCurrentVocab(),
+            meaning: _getCurrentMeaning(),
+            sentence: _getCurrentSentence(),
+            vocab2: _getNextVocab(),
+          ),
+          _buildVocabImage(),
+          ValueListenableBuilder<String>(
+            valueListenable: _userMessage,
+            builder: (context, message, child) {
+              return _buildMessageAndContinueButton(message);
+            },
+          ),
+        ],
+      );
+    }
+  }
+
+  Widget _buildVocabImage() {
+    if (!widget.state.isBpmf && _imageExistsForCurrentVocab) {
+      return SizedBox(
+        height: widget.screenInfo.fontSize * 3.0,
+        child: Image(
+          height: widget.screenInfo.fontSize * 3.0,
+          image: AssetImage('lib/assets/img/vocabulary/${_getCurrentVocab()}.webp'),
+          errorBuilder: (context, error, stackTrace) {
+            debugPrint('Error loading vocab image: $error');
+            return const SizedBox.shrink();
+          },          
+        ),
+      );
+    }
+    return SizedBox(height: widget.screenInfo.fontSize * 0.5);
+  }
+
+  Widget _buildMessageAndContinueButton(String message) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: widget.screenInfo.fontSize * 0.5),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            message,
+            style: TextStyle(
+              color: explanationColor,
+              fontSize: widget.screenInfo.fontSize,
+            ),
+          ),
+          ValueListenableBuilder<bool>(
+            valueListenable: _showContinueButton,
+            builder: (context, show, child) {
+              return show ? _buildContinueButton() : const SizedBox.shrink();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContinueButton() {
+    return TextButton(
+      onPressed: _handleContinue,
+      child: Text(
+        '繼續',
+        style: TextStyle(
+          fontSize: widget.screenInfo.fontSize,
+          color: Colors.transparent,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPageIndicator() {
+    return Positioned(
+      right: widget.screenInfo.fontSize,
+      bottom: widget.screenInfo.fontSize,
+      child: Text(
+        "${widget.state.vocabIndex + 1} / ${widget.state.vocabCount}",
+        style: TextStyle(
+          fontSize: widget.screenInfo.fontSize * 0.75,
+          fontWeight: FontWeight.normal,
+          color: backgroundColor,
+        ),
+      ),
+    );
+  }
+
+  // Helper methods
+  String _getCurrentVocab() => widget.wordsPhrase['vocab${widget.state.vocabIndex + 1}'] ?? '';
+  String _getCurrentMeaning() => widget.wordsPhrase['meaning${widget.state.vocabIndex + 1}'] ?? '';
+  String _getCurrentSentence() => widget.wordsPhrase['sentence${widget.state.vocabIndex + 1}'] ?? '';
+  String _getNextVocab() {
+    int nextIndex = (widget.state.vocabIndex + 1) % widget.state.vocabCount + 1;
+    return widget.wordsPhrase['vocab$nextIndex'] ?? '';
+  }
+
+  bool get _imageExistsForCurrentVocab => 
+    widget.state.vocabIndex == 0 ? widget.state.img1Exists : widget.state.img2Exists;
+
+  bool get _isLastVocabPage => 
+    widget.state.vocabIndex == widget.state.vocabCount - 1;
+
+  bool get _shouldShowRightBorder =>
+    widget.state.vocabIndex == 0 && 
+    widget.state.nextStepId == TeachWordConstants.steps['goToUse2'];
+
+  bool get _canNavigatePrevious =>
+    widget.state.isLearned || 
+    (widget.state.vocabIndex == 0 
+      ? widget.state.nextStepId == TeachWordConstants.steps['goToUse2'] 
+      : true);
+
+  bool get _canNavigateNext =>
+    !_isLastVocabPage && 
+    (widget.state.nextStepId == TeachWordConstants.steps['goToUse${widget.state.vocabIndex + 2}'] || 
+     widget.state.isLearned);
+
+  // Event handlers
+  Future<void> _handlePrevious() async {
+    debugPrint('UseTab handlePrevious called - vocabIndex: ${widget.state.vocabIndex}');
+    if (widget.state.vocabIndex == 0) {
+      widget.controllers.navigateToPreviousTab();
+    } else {
+      await _speakPreviousVocab();
+      ref.read(teachWordStateProvider.notifier).updateVocabIndex(
+        widget.state.vocabIndex - 1
+      );
+    }
+  }
+
+  Future<void> _handleNext() async {
+    debugPrint('UseTab handleNext called - vocabIndex: ${widget.state.vocabIndex}');
+
+    if (!_isLastVocabPage) {
+      await _speakNextVocab();
+      if (widget.state.nextStepId == TeachWordConstants.steps['goToUse${widget.state.vocabIndex + 2}']) {
+        widget.controllers.navigateToNextTab();
+      }
+      ref.read(teachWordStateProvider.notifier).updateVocabIndex(
+        widget.state.vocabIndex + 1
+      );
+    }
+  }
+
+  void _handleContinue() {
+    debugPrint('UseTab handleContinue called');
+    setState(() {
+      _userMessage.value = '';
+      _showContinueButton.value = false;
+    });
+  }
+
+  Future<void> _speakPreviousVocab() async {
+    String prevVocab = widget.wordsPhrase['vocab${widget.state.vocabIndex}'];
+    String prevSentence = widget.wordsPhrase['sentence${widget.state.vocabIndex}'];
+    final tts = ref.read(ttsProvider);
+    await tts.speak("$prevVocab。$prevSentence");
+  }
+
+  Future<void> _speakNextVocab() async {
+    String nextVocab = widget.wordsPhrase['vocab${widget.state.vocabIndex + 2}'];
+    String nextSentence = widget.wordsPhrase['sentence${widget.state.vocabIndex + 2}'];
+    final tts = ref.read(ttsProvider);
+    await tts.speak("$nextVocab。$nextSentence");
+  }
+}
+
+
+// End of file: ./views/teach_word/tabs/use_tab.dart
+//----------------------
+
+// File: ./views/teach_word/tabs/write_tab.dart
+
+// ./lib/views/teach_word/tabs/write_tab.dart
+
+/*
+// import 'package:audioplayers/audioplayers.dart' show AssetSource;
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart' hide ChangeNotifierProvider, Consumer;
+import 'package:ltrc/widgets/teach_word/stroke_order_animation_controller.dart';
+import 'package:provider/provider.dart';
+import 'package:ltrc/views/view_utils.dart';
+import 'package:ltrc/views/teach_word/state/teach_word_state.dart';
+import 'package:ltrc/views/teach_word/teach_word_controllers.dart';
+import 'package:ltrc/views/teach_word/teach_word_constants.dart';
+import 'package:ltrc/widgets/teach_word/stroke_order_animator.dart';
+import 'package:ltrc/widgets/mainPage/left_right_switch.dart';
+import 'package:ltrc/widgets/teach_word/card_title.dart';
+import 'package:ltrc/widgets/teach_word/tab_bar_view.dart';
+
+class WriteTab extends ConsumerWidget {
+  final TeachWordControllers controllers;
+  final TeachWordState state;
+  final ScreenInfo screenInfo;  
+
+  const WriteTab({
+    super.key,
+    required this.controllers,
+    required this.state,
+    required this.screenInfo,
+  });
+
+  /*
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    debugPrint('Building WriteTab - nextStepId: ${state.nextStepId}');
+    if (controllers.strokeOrderAnimationController == null) {
+      return _buildErrorWidget();
+    }
+
+    return TeachWordTabBarView(
+      content: _WriteTabContent(
+        controllers: controllers,
+        state: state,
+        screenInfo: screenInfo,
+        ref: ref,
+      ),
+    );
+  }
+
+  Widget _buildErrorWidget() {
+    return Center(
+      child: Text(
+        '無法載入筆順動畫',
+        style: TextStyle(
+          fontSize: screenInfo.fontSize,
+          color: Colors.red,
+        ),
+      ),
+    );
+  }
+}
+
+class _WriteTabContent extends ConsumerWidget {
+  final TeachWordControllers controllers;
+  final TeachWordState state;
+  final ScreenInfo screenInfo;
+  final WidgetRef ref;
+
+  const _WriteTabContent({
+    required this.controllers,
+    required this.state,
+    required this.screenInfo,
+    required this.ref,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    debugPrint('Building WriteTabContent - nextStepId: ${state.nextStepId}');
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxWidth: screenInfo.screenWidth * 0.90,
+        maxHeight: screenInfo.screenHeight - screenInfo.screenHeight * 0.15,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildWriteHeader(),
+          SizedBox(height: screenInfo.fontSize * 0.2),
+          Flexible(
+            child: _buildStrokeAnimator(),
+          ),
+          _buildControlButtons(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWriteHeader() {
+    return LeftRightSwitch(
+      iconsColor: lightGray,
+      iconsSize: screenInfo.fontSize * 2.0,
+      rightBorder: state.nextStepId == TeachWordConstants.steps['goToUse1'],
+      middleWidget: const TeachWordCardTitle(
+        sectionName: '寫一寫',
+        iconsColor: lightGray,
+      ),
+      isFirst: false,
+      isLast: false,
+      onLeftClicked: state.isWordLearned ? _handlePrevious : null,
+      onRightClicked: _canNavigateNext ? _handleNext : null,
+    );
+  }
+
+  Widget _buildStrokeAnimator() {
+    return SizedBox(
+      width: screenInfo.screenWidth,
+      height: (screenInfo.screenHeight - screenInfo.screenHeight * 0.15) * 0.5,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return Container(
+            decoration: _buildStrokeAnimatorDecoration(),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                _buildPracticeTimeIndicators(),
+                _buildStrokeOrderAnimator(),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  BoxDecoration _buildStrokeAnimatorDecoration() {
+    return !state.isBpmf
+        ? const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("lib/assets/img/box.png"),
+              fit: BoxFit.fitWidth,
+            ),
+          )
+        : const BoxDecoration(color: darkBrown);
+  }
+
+  Widget _buildPracticeTimeIndicators() {
+    return Positioned(
+      left: 10,
+      top: 5,
+      child: Column(
+        children: [
+          _buildPracticeIndicator(4),
+          _buildPracticeIndicator(3),
+          _buildPracticeIndicator(2),
+          SizedBox(height: screenInfo.fontSize * 0.9),
+          _buildPracticeIndicator(1),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPracticeIndicator(int threshold) {
+    final bool isActive = state.practiceTimeLeft >= threshold && !state.isWordLearned;
+    return Icon(
+      isActive ? Icons.circle_outlined : Icons.check_circle,
+      size: screenInfo.fontSize * 1.5,
+      color: isActive ? mediumGray : warmOrange,
+    );
+  }
+
+  Widget _buildStrokeOrderAnimator() {
+    return FittedBox(
+      child: ChangeNotifierProvider<StrokeOrderAnimationController>.value(
+        value: controllers.strokeOrderAnimationController!,
+        child: Consumer<StrokeOrderAnimationController>(
+          builder: (context, controller, child) {
+            return StrokeOrderAnimator(
+              controller,
+              key: UniqueKey(),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildControlButtons() {
+    return Flexible(
+      fit: FlexFit.loose,
+      child: GridView.count(
+        crossAxisCount: 3,
+        childAspectRatio: 1.0,
+        mainAxisSpacing: 2,
+        crossAxisSpacing: 3,
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        children: [
+          _buildAnimationButton(),
+          _buildWriteButton(),
+          _buildOutlineButton(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAnimationButton() {
+    final bool isAnimating = controllers.strokeOrderAnimationController?.isAnimating ?? false;
+    
+    return _buildControlButton(
+      border: _shouldShowAnimationBorder,
+      iconData: isAnimating ? Icons.pause : Icons.play_arrow,
+      label: '筆順',
+      isSelected: isAnimating,
+      onPressed: _canShowAnimation ? _handleAnimationToggle : null,
+    );
+  }
+
+  Widget _buildWriteButton() {
+    final bool isQuizzing = controllers.strokeOrderAnimationController?.isQuizzing ?? false;
+    
+    return _buildControlButton(
+      border: _shouldShowWriteBorder,
+      iconData: isQuizzing ? Icons.edit_off : Icons.edit,
+      label: '寫字',
+      isSelected: isQuizzing,
+      onPressed: _canWrite ? _handleWriteToggle : null,
+    );
+  }
+
+  Widget _buildOutlineButton() {
+    final bool showOutline = controllers.strokeOrderAnimationController?.showOutline ?? false;
+    
+    return _buildControlButton(
+      border: _shouldShowOutlineBorder,
+      iconData: showOutline ? Icons.remove_red_eye : Icons.remove_red_eye_outlined,
+      label: '邊框',
+      isSelected: showOutline,
+      onPressed: _canToggleOutline ? _handleOutlineToggle : null,
+    );
+  }
+
+  Widget _buildControlButton({
+    required bool border,
+    required IconData iconData,
+    required String label,
+    required bool isSelected,
+    required VoidCallback? onPressed,
+  }) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          decoration: border
+              ? BoxDecoration(
+                  border: Border.all(
+                    color: lightYellow,
+                    width: 1.5,
+                  ),
+                )
+              : null,
+          child: IconButton(
+            icon: Icon(
+              iconData,
+              size: screenInfo.fontSize,
+            ),
+            color: backgroundColor,
+            onPressed: onPressed,
+          ),
+        ),
+        Text(
+          label,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: screenInfo.fontSize,
+            color: backgroundColor,
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Navigation handlers
+  void _handlePrevious() {
+    debugPrint('WriteTab handlePrevious called');
+    controllers.handlePreviousInWriteTab(state);
+  }
+
+  void _handleNext() {
+    debugPrint('WriteTab handleNext called');
+    controllers.handleNextInWriteTab(state);
+  }
+
+  // Button handlers
+  void _handleAnimationToggle() {
+    debugPrint('Animation toggle - isAnimating: ${controllers.strokeOrderAnimationController?.isAnimating}');
+    if (!controllers.strokeOrderAnimationController!.isAnimating) {
+      controllers.startAnimation(state);
+    } else {
+      controllers.stopAnimation();
+    }
+  }
+
+  void _handleWriteToggle() async {
+    debugPrint('Write toggle called');
+    await controllers.handleWriteToggle(state);
+  }
+
+  void _handleOutlineToggle() {
+    debugPrint('Outline toggle called');
+    controllers.handleOutlineToggle(state, ref);
+  }
+
+  // Conditional checks
+  bool get _canNavigateNext =>
+    state.nextStepId == TeachWordConstants.steps['goToUse1'] || 
+    state.isWordLearned;
+
+  bool get _shouldShowAnimationBorder =>
+    state.nextStepId == TeachWordConstants.steps['seeAnimation'] && 
+    !state.isWordLearned;
+
+  bool get _shouldShowWriteBorder =>
+    ((state.nextStepId > TeachWordConstants.steps['seeAnimation']! && 
+      state.nextStepId < TeachWordConstants.steps['turnBorderOff']!) && 
+     !state.isWordLearned && 
+     !(controllers.strokeOrderAnimationController?.isQuizzing ?? false)) || 
+    (state.nextStepId == TeachWordConstants.steps['practiceWithoutBorder1']!);
+
+  bool get _shouldShowOutlineBorder =>
+    state.nextStepId == TeachWordConstants.steps['turnBorderOff'] && 
+    !state.isWordLearned;
+
+  bool get _canShowAnimation =>
+    (!controllers.strokeOrderAnimationController!.isQuizzing && 
+     (state.nextStepId == TeachWordConstants.steps['seeAnimation'])) || 
+    state.isWordLearned;
+
+  bool get _canWrite =>
+    ((state.nextStepId > TeachWordConstants.steps['seeAnimation']! && 
+      state.nextStepId < TeachWordConstants.steps['turnBorderOff']!) || 
+     state.isWordLearned || 
+     (state.nextStepId == TeachWordConstants.steps['practiceWithoutBorder1']!));
+
+  bool get _canToggleOutline =>
+    state.nextStepId == TeachWordConstants.steps['turnBorderOff'] || 
+    state.isWordLearned;
+}
+*/
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    debugPrint('Building WriteTab - word: ${state.word}, nextStepId: ${state.nextStepId}, isLearned: ${state.isLearned}');
+
+    return TeachWordTabBarView(
+      content: Center(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: screenInfo.screenWidth * 0.90,
+            maxHeight: screenInfo.screenHeight - screenInfo.nonConsumedHeight,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              _buildTopControls(context, ref),
+              const SizedBox(height: 8),
+              _buildWritingArea(context, ref),
+              _buildBottomControls(context, ref),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTopControls(BuildContext context, WidgetRef ref) {
+    debugPrint('Building top controls - isLearned: ${state.isLearned}');
+    return LeftRightSwitch(
+      iconsColor: lightGray,
+      iconsSize: screenInfo.iconSize,
+      rightBorder: state.nextStepId == TeachWordConstants.steps['goToUse1'],
+      middleWidget: const TeachWordCardTitle(
+        sectionName: '寫一寫',
+        iconsColor: lightGray,
+      ),
+      isFirst: false,
+      isLast: false,
+      onLeftClicked: state.isLearned || state.canNavigatePrevious()
+          ? () => _handlePreviousNavigation(ref)
+          : null,
+      onRightClicked: state.isLearned || state.nextStepId == TeachWordConstants.steps['goToUse1']
+          ? () => _handleNextNavigation(ref)
+          : null,
+    );
+  }
+
+  Widget _buildWritingArea(BuildContext context, WidgetRef ref) {
+    return Flexible(
+      child: ChangeNotifierProvider<StrokeOrderAnimationController>.value(
+        value: _strokeOrderAnimationController!,
+        child: Consumer<StrokeOrderAnimationController>(
+          builder: (context, controller, _) {
+            return Stack(
+              alignment: Alignment.center,
+              children: [
+                _buildStrokeCanvas(controller),
+                _buildPracticeIndicators(),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStrokeCanvas(StrokeOrderAnimationController controller) {
+    return Container(
+      decoration: !state.isBpmf
+          ? const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("lib/assets/img/box.png"),
+                fit: BoxFit.fitWidth,
+              ),
+            )
+          : const BoxDecoration(color: darkBrown),
+      child: StrokeOrderAnimator(
+        controller,
+        key: ValueKey('${state.word}-${state.nextStepId}'),
+      ),
+    );
+  }
+
+  Widget _buildPracticeIndicators() {
+    return Positioned(
+      left: 10,
+      top: 5,
+      child: Column(
+        children: List.generate(4, (index) =>
+          _buildPracticeIcon(index < state.practiceTimeLeft && !state.isLearned)
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBottomControls(BuildContext context, WidgetRef ref) {
+    return GridView.count(
+      crossAxisCount: 3,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      children: [
+        _buildControlButton(
+          context: context,
+          border: state.nextStepId == TeachWordConstants.steps['seeAnimation'] && !state.isLearned,
+          iconData: [Icons.pause, Icons.play_arrow],
+          label: '筆順',
+          onPressed: () => _handleStrokeOrder(ref),
+          isSelected: ref.watch(strokeAnimationPlayingProvider),
+        ),
+        _buildControlButton(
+          context: context,
+          border: state.canStartWriting(),
+          iconData: [Icons.edit_off, Icons.edit],
+          label: '寫字',
+          onPressed: () => _handleWriting(ref),
+          isSelected: ref.watch(strokeQuizActiveProvider),
+        ),
+        _buildControlButton(
+          context: context,
+          border: state.canToggleOutline(),
+          iconData: [Icons.remove_red_eye, Icons.remove_red_eye_outlined],
+          label: '邊框',
+          onPressed: () => _handleOutlineToggle(ref),
+          isSelected: ref.watch(showOutlineProvider),
+        ),
+      ],
+    );
+  }
+
+  void _handleStrokeOrder(WidgetRef ref) {
+    debugPrint('Handling stroke order button - nextStepId: ${state.nextStepId}');
+    final notifier = ref.read(teachWordStateProvider.notifier);
+    final controller = ref.read(strokeOrderControllerProvider);
+
+    if (!controller.isAnimating) {
+      controller.startAnimation();
+      if (state.nextStepId == TeachWordConstants.steps['seeAnimation']) {
+        notifier.incrementNextStepId();
+      }
+    } else {
+      controller.stopAnimation();
+    }
+  }
+
+  void _handleWriting(WidgetRef ref) {
+    debugPrint('Handling writing button - nextStepId: ${state.nextStepId}');
+    if (state.canStartWriting()) {
+      final controller = ref.read(strokeOrderControllerProvider);
+      controller.startQuiz();
+    }
+  }
+
+  void _handleOutlineToggle(WidgetRef ref) {
+    debugPrint('Handling outline toggle - nextStepId: ${state.nextStepId}');
+    if (state.canToggleOutline()) {
+      final controller = ref.read(strokeOrderControllerProvider);
+      controller.toggleOutline();
+      
+      if (state.nextStepId == TeachWordConstants.steps['turnBorderOff']) {
+        ref.read(teachWordStateProvider.notifier).incrementNextStepId();
+      }
+    }
+  }
+
+  void _handlePreviousNavigation(WidgetRef ref) {
+    debugPrint('Handling previous navigation');
+    controllers.navigateToPreviousTab(state);
+  }
+
+  void _handleNextNavigation(WidgetRef ref) {
+    debugPrint('Handling next navigation');
+    controllers.navigateToNextTab(state);
+  }
+
+  Widget _buildControlButton({
+    required BuildContext context,
+    required bool border,
+    required List<IconData> iconData,
+    required String label,
+    required VoidCallback? onPressed,
+    required bool isSelected,
+  }) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            border: border
+                ? Border.all(color: lightYellow, width: 1.5)
+                : null,
+          ),
+          child: IconButton(
+            icon: Icon(
+              isSelected ? iconData[0] : iconData[1],
+              size: screenInfo.fontSize,
+            ),
+            color: backgroundColor,
+            onPressed: onPressed,
+          ),
+        ),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: screenInfo.fontSize,
+            color: backgroundColor,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPracticeIcon(bool isActive) {
+    return Icon(
+      isActive ? Icons.check_circle_outline_outlined : Icons.check_circle,
+      color: isActive ? mediumGray : warmOrange,
+      size: screenInfo.fontSize * 1.5,
+    );
+  }
+}
+*/
+
+// lib/views/teach_word/tabs/write_tab.dart
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart' hide ChangeNotifierProvider, Consumer;
+// import 'package:ltrc/providers.dart';
+import 'package:ltrc/views/teach_word/state/teach_word_providers.dart';
+// import 'package:ltrc/widgets/teach_word/stroke_order_animation_controller.dart';
+// import 'package:provider/provider.dart';
+import 'package:ltrc/views/view_utils.dart';
+import 'package:ltrc/views/teach_word/state/teach_word_state.dart';
+import 'package:ltrc/views/teach_word/teach_word_controllers.dart';
+import 'package:ltrc/views/teach_word/teach_word_constants.dart';
+import 'package:ltrc/widgets/teach_word/stroke_order_animation_controller.dart';
+import 'package:ltrc/widgets/teach_word/stroke_order_animator.dart';
+import 'package:ltrc/widgets/mainPage/left_right_switch.dart';
+import 'package:ltrc/widgets/teach_word/card_title.dart';
+import 'package:ltrc/widgets/teach_word/tab_bar_view.dart';
+
+class WriteTab extends ConsumerWidget {
+  final TeachWordControllers controllers;
+  final TeachWordState state;
+  final ScreenInfo screenInfo;  
+
+  const WriteTab({
+    super.key,
+    required this.controllers,
+    required this.state,
+    required this.screenInfo,    
+    });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    debugPrint('Building WriteTab - word: ${state.word}, stepId: ${state.nextStepId}, learned: ${state.isLearned}');
+
+    return TeachWordTabBarView(
+      content: Center(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: screenInfo.screenWidth * 0.90,
+            maxHeight: screenInfo.screenHeight - (screenInfo.screenHeight * 0.15),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildTopNavigation(screenInfo, state, controllers),
+              SizedBox(height: screenInfo.fontSize * 0.2),
+              _buildWritingArea(ref, screenInfo, state),
+              _buildControlButtons(ref, screenInfo, state, controllers),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTopNavigation(ScreenInfo screenInfo, TeachWordState state, TeachWordControllers controllers) {
+    return LeftRightSwitch(
+      iconsColor: lightGray,
+      iconsSize: screenInfo.fontSize * 2.0,
+      rightBorder: state.nextStepId == TeachWordConstants.steps['goToUse1'],
+      middleWidget: const TeachWordCardTitle(
+        sectionName: '寫一寫',
+        iconsColor: lightGray,
+      ),
+      isFirst: false,
+      isLast: false,
+      onLeftClicked: state.canNavigatePrevious
+          ? () {
+              debugPrint('Navigate previous clicked');
+              controllers.navigateToPreviousTab();
+            }
+          : null,
+      onRightClicked: state.isLearned || state.nextStepId == TeachWordConstants.steps['goToUse1']
+          ? () {
+              debugPrint('Navigate next clicked');
+              controllers.navigateToNextTab();
+            }
+          : null,
+    );
+  }
+
+  Widget _buildWritingArea(WidgetRef ref, ScreenInfo screenInfo, TeachWordState state) {
+    final strokeController = ref.watch(strokeOrderControllerProvider);
+    if (strokeController == null) return const SizedBox.shrink();
+    final strokeOrderAnimationController = ref.watch(strokeOrderControllerProvider.notifier);
+    final isBpmf = state.isBpmf;
+    final practiceTimeLeft = state.practiceTimeLeft;
+    final wordIsLearned = state.isLearned;
+    final fontSize = screenInfo.fontSize;
+    final availableWidth = screenInfo.screenWidth;
+    final availableHeight = screenInfo.screenHeight;
+    final nonConsumedHeight = screenInfo.nonConsumedHeight;
+
+    return SizedBox(                            
+      width: availableWidth,
+      height: (availableHeight - nonConsumedHeight) * 0.5,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return Container(
+            decoration: !isBpmf
+                ? const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage("lib/assets/img/box.png"),
+                      fit: BoxFit.fitWidth,
+                    ),
+                  )
+                : const BoxDecoration(color: darkBrown),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Positioned(
+                  left: 10,
+                  top: 5,
+                  child: Column(children: [
+                    _buildPracticeTimeIcon(practiceTimeLeft >= 4 && !wordIsLearned, fontSize, mediumGray, warmOrange),
+                    _buildPracticeTimeIcon(practiceTimeLeft >= 3 && !wordIsLearned, fontSize, mediumGray, warmOrange),
+                    _buildPracticeTimeIcon(practiceTimeLeft >= 2 && !wordIsLearned, fontSize, mediumGray, warmOrange),
+                    SizedBox(height: fontSize * 0.9),
+                    _buildPracticeTimeIcon(practiceTimeLeft >= 1 && !wordIsLearned, fontSize, mediumGray, warmOrange),
+                  ]),
+                ),
+                FittedBox(
+                  child: StrokeOrderAnimator(
+                    strokeOrderAnimationController as StrokeOrderAnimationController,
+                    key: UniqueKey(),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  
+
+    /*
+    return Flexible(
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Container(
+            decoration: !state.isBpmf
+                ? const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage("lib/assets/img/box.png"),
+                      fit: BoxFit.fitWidth,
+                    ),
+                  )
+                : const BoxDecoration(color: darkBrown),
+            child: StrokeOrderAnimator(
+              strokeController,
+              key: ValueKey('${state.word}-${state.nextStepId}'),
+            ),
+          ),
+          Positioned(
+            left: screenInfo.fontSize * 0.5,
+            top: screenInfo.fontSize * 0.2,
+            child: Column(
+              children: List.generate(
+                4,
+                (index) => _buildPracticeIndicator(
+                  index < state.practiceTimeLeft && !state.isLearned,
+                  screenInfo.fontSize,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+    */
+
+  }
+
+  Widget _buildControlButtons(
+    WidgetRef ref, 
+    ScreenInfo screenInfo, 
+    TeachWordState state,
+    TeachWordControllers controllers
+  ) {
+    return GridView.count(
+      crossAxisCount: 3,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      childAspectRatio: 1.0,
+      mainAxisSpacing: screenInfo.fontSize * 0.1,
+      crossAxisSpacing: screenInfo.fontSize * 0.15,
+      children: [
+        _buildControlButton(
+          border: state.nextStepId == TeachWordConstants.steps['seeAnimation'] && !state.isLearned,
+          iconData: ref.watch(strokeAnimationPlayingProvider)
+              ? Icons.pause
+              : Icons.play_arrow,
+          label: '筆順',
+          onPressed: state.canShowStrokeOrder
+              ? () => controllers.handleStrokeOrderAnimation()
+              : null,
+          fontSize: screenInfo.fontSize,
+        ),
+        _buildControlButton(
+          border: state.canShowWriteButton,
+          iconData: ref.watch(strokeQuizActiveProvider)
+              ? Icons.edit_off
+              : Icons.edit,
+          label: '寫字',
+          onPressed: state.canShowWriteButton
+              ? () => controllers.handleWriting()
+              : null,
+          fontSize: screenInfo.fontSize,
+        ),
+        _buildControlButton(
+          border: state.canToggleOutline,
+          iconData: ref.watch(showOutlineProvider)
+              ? Icons.remove_red_eye
+              : Icons.remove_red_eye_outlined,
+          label: '邊框',
+          onPressed: state.canToggleOutline
+              ? () => controllers.handleOutlineToggle()
+              : null,
+          fontSize: screenInfo.fontSize,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildControlButton({
+    required bool border,
+    required IconData iconData,
+    required String label,
+    required VoidCallback? onPressed,
+    required double fontSize,
+  }) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          decoration: border
+              ? BoxDecoration(
+                  border: Border.all(color: lightYellow, width: 1.5),
+                )
+              : null,
+          child: IconButton(
+            icon: Icon(
+              iconData,
+              size: fontSize,
+            ),
+            color: backgroundColor,
+            onPressed: onPressed,
+          ),
+        ),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: fontSize,
+            color: backgroundColor,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPracticeTimeIcon(bool condition, double fontSize, Color defaultColor, Color activeColor) {
+    return Icon(
+      condition ? Icons.check_circle_outline_outlined : Icons.check_circle,
+      color: condition ? defaultColor : activeColor,
+      size: fontSize * 1.5,
+    );
+  }
+
+}
+
+
+// End of file: ./views/teach_word/tabs/write_tab.dart
+//----------------------
+
+// File: ./views/teach_word/tabs/use_tab_integration.dart
+
+// tabs/use_tab_integration.dart
+import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
+import 'package:ltrc/views/teach_word/state/teach_word_state.dart';
+import 'package:ltrc/views/teach_word/teach_word_controllers.dart';
+import 'package:ltrc/views/view_utils.dart';
+import 'package:ltrc/widgets/teach_word/bpmf_vocab_content.dart';
+import 'package:ltrc/widgets/teach_word/tab_bar_view.dart';
+import 'package:ltrc/widgets/teach_word/word_vocab_content.dart';
+// import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+class UseTab extends StatefulWidget {
+  final TeachWordState state;
+  final Map<String, dynamic> wordsPhrase;
+  final TeachWordControllers controllers;
+  final ScreenInfo screenInfo;
+
+  const UseTab({
+    super.key,
+    required this.state,
+    required this.wordsPhrase,
+    required this.controllers,
+    required this.screenInfo,
+  });
+
+  @override
+  UseTabState createState() => UseTabState();
+}
+
+class UseTabState extends State<UseTab> {
+  late final VocabContentController _contentController;
+  late final AudioController _audioController;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeControllers();
+  }
+
+  void _initializeControllers() {
+    _contentController = VocabContentController(
+      onVocabComplete: _handleVocabComplete,
+      onVocabRetry: _handleVocabRetry,
+    );
+    
+    _audioController = AudioController(
+      onPlayComplete: _handleAudioComplete,
+      onPlayError: _handleAudioError,
+    );
+  }
+
+  @override
+  void dispose() {
+    _contentController.dispose();
+    _audioController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TeachWordTabBarView(
+      content: _UseTabContent(
+        state: widget.state,
+        wordsPhrase: widget.wordsPhrase,
+        contentController: _contentController,
+        audioController: _audioController,
+        screenInfo: widget.screenInfo,
+        onNavigatePrevious: _handlePrevious,
+        onNavigateNext: _handleNext,
+      ),
+    );
+  }
+
+  // Event Handlers
+  void _handleVocabComplete() {
+    debugPrint('Vocabulary completed');
+    widget.controllers.handleNextInUseTab(widget.state, context.read); // Notify next step in the controllers
+  }
+
+  void _handleVocabRetry() {
+    debugPrint('Retrying vocabulary');
+  }
+
+  void _handleAudioComplete() {
+    debugPrint('Audio playback completed');
+  }
+
+  void _handleAudioError(String error) {
+    debugPrint('Audio playback error: $error');
+  }
+
+  void _handlePrevious() {
+    debugPrint('Navigating to previous vocab');
+    widget.controllers.handlePreviousInUseTab(widget.state, context.read); // Passing WidgetRef context
+  }
+
+  void _handleNext() {
+    debugPrint('Navigating to next vocab');
+    widget.controllers.handleNextInUseTab(widget.state, context.read); // Passing WidgetRef context
+  }
+}
+
+// Controllers for managing content and audio state
+class VocabContentController extends ChangeNotifier {
+  final VoidCallback onVocabComplete;
+  final VoidCallback onVocabRetry;
+  
+  bool _isAnswerCorrect = false;
+  String _selectedWord = '';
+  String _message = '';
+
+  bool get isAnswerCorrect => _isAnswerCorrect;
+  String get selectedWord => _selectedWord;
+  String get message => _message;
+
+  VocabContentController({
+    required this.onVocabComplete,
+    required this.onVocabRetry,
+  });
+
+  void setAnswer(bool isCorrect, String word) {
+    debugPrint('Setting answer: $word is correct? $isCorrect');
+    _isAnswerCorrect = isCorrect;
+    _selectedWord = word;
+    _message = isCorrect ? '答對了！' : '再試試！';
+    notifyListeners();
+
+    if (isCorrect) {
+      onVocabComplete();
+    } else {
+      onVocabRetry();
+    }
+  }
+
+  void reset() {
+    debugPrint('Resetting vocab content controller');
+    _isAnswerCorrect = false;
+    _selectedWord = '';
+    _message = '';
+    notifyListeners();
+  }
+}
+
+class AudioController {
+  final VoidCallback onPlayComplete;
+  final Function(String) onPlayError;
+  
+  final FlutterTts _tts = FlutterTts();
+  bool _isPlaying = false;
+
+  AudioController({
+    required this.onPlayComplete,
+    required this.onPlayError,
+  }) {
+    _initializeTts();
+  }
+
+  void _initializeTts() {
+    _tts.setLanguage("zh-tw");
+    _tts.setSpeechRate(0.5);
+    _tts.setVolume(1.0);
+    _tts.setCompletionHandler(() {
+      debugPrint('Audio playback complete');
+      _isPlaying = false;
+      onPlayComplete();
+    });
+    _tts.setErrorHandler((msg) {
+      debugPrint('Audio playback error: $msg');
+      _isPlaying = false;
+      onPlayError(msg.toString());
+    });
+  }
+
+  Future<void> speak(String text) async {
+    debugPrint('TTS speaking: $text');
+    if (_isPlaying) {
+      await _tts.stop();
+      debugPrint('Stopped current TTS playback');
+    }
+    _isPlaying = true;
+    await _tts.speak(text);
+  }
+
+  Future<void> stop() async {
+    debugPrint('Stopping audio playback');
+    if (_isPlaying) {
+      await _tts.stop();
+      _isPlaying = false;
+    }
+  }
+
+  void dispose() {
+    debugPrint('Disposing TTS controller');
+    _tts.stop();
+  }
+}
+
+// Content Widget
+class _UseTabContent extends StatelessWidget {
+  final TeachWordState state;
+  final Map wordsPhrase;
+  final VocabContentController contentController;
+  final AudioController audioController;
+  final ScreenInfo screenInfo;
+  final VoidCallback onNavigatePrevious;
+  final VoidCallback onNavigateNext;
+
+  const _UseTabContent({
+    required this.state,
+    required this.wordsPhrase,
+    required this.contentController,
+    required this.audioController,
+    required this.screenInfo,
+    required this.onNavigatePrevious,
+    required this.onNavigateNext,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildContent(),
+            ],
+          ),
+        ),
+        Positioned(
+          right: screenInfo.fontSize,
+          bottom: screenInfo.fontSize,
+          child: _buildPageIndicator(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildContent() {
+    return state.isBpmf
+        ? BopomofoVocabContent(
+            word: state.word,
+            vocab: _getCurrentVocab(),
+            sentence: _getCurrentSentence(),
+            audioController: audioController,
+            onComplete: contentController.onVocabComplete, // Link the vocab completion here
+          )
+        : WordVocabContent(
+            vocab: _getCurrentVocab(),
+            meaning: _getCurrentMeaning(),
+            sentence: _getCurrentSentence(),
+            vocab2: _getNextVocab(),
+            contentController: contentController,
+            audioController: audioController,
+            onComplete: contentController.onVocabComplete, // Link completion callback here
+          );
+  }
+
+  Widget _buildPageIndicator() {
+    return Text(
+      "${state.vocabIndex + 1} / ${state.vocabCnt}",
+      style: TextStyle(
+        fontSize: screenInfo.fontSize * 0.75,
+        color: Colors.black,
+      ),
+    );
+  }
+
+  // Helper methods for accessing vocabulary data
+  String _getCurrentVocab() => wordsPhrase['vocab${state.vocabIndex + 1}'] ?? '';
+  String _getCurrentMeaning() => wordsPhrase['meaning${state.vocabIndex + 1}'] ?? '';
+  String _getCurrentSentence() => wordsPhrase['sentence${state.vocabIndex + 1}'] ?? '';
+  String _getNextVocab() {
+    int nextIndex = (state.vocabIndex + 1) % state.vocabCnt + 1;
+    return wordsPhrase['vocab$nextIndex'] ?? '';
+  }
+}
+
+// End of file: ./views/teach_word/tabs/use_tab_integration.dart
+//----------------------
+
+// File: ./views/teach_word/tabs/listen_tab.dart
+
+// ./lib/views/teach_word/tabs/listen_tab.dart
+
+
+// import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ltrc/providers.dart';
+import 'package:ltrc/views/teach_word/state/teach_word_providers.dart';
+import 'package:ltrc/views/teach_word/state/teach_word_state.dart';
+import 'package:ltrc/views/view_utils.dart';
+import 'package:ltrc/views/teach_word/teach_word_controllers.dart';
+import 'package:ltrc/views/teach_word/teach_word_constants.dart';
+import 'package:ltrc/widgets/mainPage/left_right_switch.dart';
+import 'package:ltrc/widgets/teach_word/card_title.dart';
+import 'package:ltrc/widgets/teach_word/tab_bar_view.dart';
+
+class ListenTab extends ConsumerWidget {
+  final TeachWordControllers controllers;
+  final TeachWordState state;
+  final ScreenInfo screenInfo;
+
+  const ListenTab({
+    super.key,
+    required this.controllers,
+    required this.state,
+    required this.screenInfo,
+  });
+
+  String get word => state.word;
+  bool get isBpmf => state.isBpmf;  
+
+  @override  
+  Widget build(BuildContext context, WidgetRef ref) {
+    debugPrint('ListenTab build - nextStepId: ${state.nextStepId}, isLearned: ${state.isLearned}');
+        
+    return TeachWordTabBarView(
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: screenInfo.screenHeight * 0.9,
+                maxWidth: screenInfo.screenWidth * 0.9,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  _buildListenHeader(ref),
+                  SizedBox(height: screenInfo.fontSize * 0.3),
+                  _buildListenWord(ref),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildListenHeader(WidgetRef ref) {
+    final canNavigatePrevious = _canNavigatePrevious;
+    final canNavigateNext = _canNavigateNext;
+    
+    debugPrint('ListenTab header - canNavigatePrevious: $canNavigatePrevious, canNavigateNext: $canNavigateNext');
+    debugPrint('Current nextStepId: ${state.nextStepId}, Write step: ${TeachWordConstants.steps['goToWrite']}');
+
+    return LeftRightSwitch(
+      iconsColor: lightGray,
+      iconsSize: screenInfo.fontSize * 2.0,
+      rightBorder: state.nextStepId == TeachWordConstants.steps['goToWrite'],
+      middleWidget: const TeachWordCardTitle(
+        sectionName: '聽一聽',
+        iconsColor: lightGray,
+      ),
+      isFirst: false,
+      isLast: false,
+      onLeftClicked: canNavigatePrevious ? () => _handlePrevious(ref) : null,
+      onRightClicked: canNavigateNext ? () => _handleNext(ref) : null,
+    );
+  }
+
+  Widget _buildListenWord(WidgetRef ref) {
+    return SizedBox(
+      height: (screenInfo.screenHeight * 0.4),
+      width: screenInfo.screenWidth,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Container(
+            decoration: const BoxDecoration(color: darkBrown),
+            child: Center(
+              child: GestureDetector(
+                onTap: () {    // Changed to a closure
+                  _playWordSound(ref);  // Don't await here
+                },                
+                child: Text(
+                  state.word,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: screenInfo.fontSize * 8.0,
+                    color: backgroundColor,
+                    fontWeight: FontWeight.w100,
+                    fontFamily: state.isBpmf ? "BpmfOnly" : "BpmfIansui",
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: screenInfo.fontSize,
+            child: IconButton(
+              icon: Icon(
+                Icons.volume_up,
+                size: screenInfo.fontSize * 2.0,
+                color: backgroundColor,
+              ),
+              onPressed: () {    // Changed to a closure
+                _playWordSound(ref);  // Don't await here
+              },                          
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  bool get _canNavigatePrevious {
+    final bool canNavigate = state.nextStepId >= TeachWordConstants.steps['goToWrite']! || 
+                            state.isLearned;
+    debugPrint('_canNavigatePrevious: $canNavigate (nextStepId: ${state.nextStepId}, isLearned: ${state.isLearned})');
+    return canNavigate;
+  }
+
+  bool get _canNavigateNext {
+    final bool canNavigate = state.nextStepId >= TeachWordConstants.steps['goToWrite']! || 
+                            state.isLearned;
+    debugPrint('_canNavigateNext: $canNavigate (nextStepId: ${state.nextStepId}, isLearned: ${state.isLearned})');
+    return canNavigate;
+  }
+
+  Future<void> _playWordSound(WidgetRef ref) async {
+    final audioService = ref.read(audioServiceProvider);
+    audioService.playWordSound(word, isBpmf);
+    debugPrint('_playWordSound: ${state.word}');
+  }
+
+  Future<void> _handlePrevious(WidgetRef ref) async {
+    debugPrint('ListenTab _handlePrevious called');
+    controllers.navigateToPreviousTab();
+  }
+
+  Future<void> _handleNext(WidgetRef ref) async {
+    debugPrint('ListenTab _handleNext called - nextStepId: ${state.nextStepId}');
+    // Increment step before navigation
+    ref.read(teachWordStateProvider.notifier).incrementNextStepId();
+    
+    await _playWordSound(ref);
+    controllers.navigateToNextTab();
+  }
+}
+
+
+// End of file: ./views/teach_word/tabs/listen_tab.dart
+//----------------------
+
+// File: ./views/teach_word/tabs/t_controllers.dart
+
+// teach_word_controllers.dart
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:ltrc/views/teach_word/state/teach_word_providers.dart';
+import 'package:ltrc/views/teach_word/state/teach_word_state.dart';
+import 'package:ltrc/views/teach_word/teach_word_constants.dart';
+import 'package:ltrc/widgets/teach_word/stroke_order_animation_controller.dart';
+
+class TeachWordControllers {
+  final WidgetRef ref;  
+  final TabController tabController;
+  StrokeOrderAnimationController? strokeOrderAnimationController;
+
+  TeachWordControllers(this.ref, this.tabController) {
+    debugPrint('TeachWordControllers initialized');
+    
+    tabController.addListener(() {
+      final state = ref.read(teachWordStateProvider);
+      debugPrint('Tab changed to: ${tabController.index} for word: ${state.word}');
+    });
+  }
+
+  // Navigation Methods
+  void navigateToNextTab() {
+    final state = ref.read(teachWordStateProvider);
+    debugPrint('Attempting next navigation - current step: ${state.nextStepId}, learned: ${state.isLearned}');
+
+    if (!state.canNavigateNext) {
+      debugPrint('Cannot navigate next - conditions not met');
+      return;
+    }
+
+    if (state.isLearned) {
+      _navigateToNextTabLearned();
+    } else {
+      _navigateToNextTabUnlearned(state);
+    }
+  }
+
+  void navigateToPreviousTab() {
+    final state = ref.read(teachWordStateProvider);
+    debugPrint('Attempting previous navigation - current step: ${state.nextStepId}, learned: ${state.isLearned}');
+
+    if (tabController.index > 0) {
+      if (state.isLearned) {
+        _navigateToPreviousTabLearned();
+      } else {
+        _navigateToPreviousTabUnlearned(state);
+      }
+    }
+  }
+
+  void _navigateToNextTabLearned() {
+    int nextIndex = tabController.index + 1;
+    if (nextIndex < tabController.length) {
+      debugPrint('Learned word - moving to next tab: $nextIndex');
+      tabController.animateTo(nextIndex);
+    }
+  }
+
+  void _navigateToNextTabUnlearned(TeachWordState state) {
+    int targetIndex = _getTargetTabIndex(state.nextStepId);
+    if (targetIndex != tabController.index && targetIndex < tabController.length) {
+      debugPrint('Unlearned word - moving to target tab: $targetIndex');
+      tabController.animateTo(targetIndex);
+    }
+  }
+
+  void _navigateToPreviousTabLearned() {
+    debugPrint('Learned word - moving to previous tab');
+    tabController.animateTo(tabController.index - 1);
+  }
+
+  void _navigateToPreviousTabUnlearned(TeachWordState state) {
+    int targetIndex = _getTargetTabIndex(state.nextStepId - 1);
+    debugPrint('Unlearned word - moving to target tab: $targetIndex');
+    tabController.animateTo(targetIndex);
+  }
+
+  int _getTargetTabIndex(int stepId) {
+    if (stepId < TeachWordConstants.steps['goToListen']!) {
+      return 0; // Look tab
+    } else if (stepId < TeachWordConstants.steps['goToWrite']!) {
+      return 1; // Listen tab
+    } else if (stepId < TeachWordConstants.steps['goToUse1']!) {
+      return 2; // Write tab
+    } else {
+      return 3; // Use tab
+    }
+  }  
+
+  // Stroke Order Control Methods
+  Future<void> initializeStrokeController(
+    String jsonData,
+    TickerProvider vsync,
+    Function(QuizSummary) onQuizComplete
+  ) async {
+    debugPrint('Initializing stroke controller');
+    strokeOrderAnimationController = StrokeOrderAnimationController(
+      jsonData,
+      vsync,
+      onQuizCompleteCallback: onQuizComplete,
+    );
+    ref.read(strokeOrderControllerProvider.notifier).update((state) => strokeOrderAnimationController);
+  }
+
+  void handleStrokeOrderAnimation() {
+    final state = ref.read(teachWordStateProvider);
+    debugPrint('Handling stroke animation - stepId: ${state.nextStepId}, isLearned: ${state.isLearned}');
+
+    if (state.canShowStrokeOrder && strokeOrderAnimationController != null) {
+      if (!strokeOrderAnimationController!.isAnimating) {
+        strokeOrderAnimationController!.startAnimation();
+        if (state.nextStepId == TeachWordConstants.steps['seeAnimation']) {
+          ref.read(teachWordStateProvider.notifier).incrementNextStepId();
+        }
+      } else {
+        strokeOrderAnimationController!.stopAnimation();
+      }
+    }
+  }
+
+  void handleWriting() {
+    final state = ref.read(teachWordStateProvider);
+    debugPrint('Handling writing - stepId: ${state.nextStepId}, isLearned: ${state.isLearned}');
+
+    if (state.canShowWriteButton && strokeOrderAnimationController != null) {
+      strokeOrderAnimationController!.startQuiz();
+    }
+  }
+
+  void handleOutlineToggle() {
+    final state = ref.read(teachWordStateProvider);
+    debugPrint('Handling outline toggle - stepId: ${state.nextStepId}, isLearned: ${state.isLearned}');
+
+    if (state.canToggleOutline && strokeOrderAnimationController != null) {
+      strokeOrderAnimationController!.setShowOutline(!strokeOrderAnimationController!.showOutline);
+      
+      if (state.nextStepId == TeachWordConstants.steps['turnBorderOff']) {
+        ref.read(teachWordStateProvider.notifier).incrementNextStepId();
+      }
+    }
+  }
+
+  // UI Feedback Methods
+  void showPracticeCompletionToast(int practiceTimeLeft, bool isTurnOffBorder, double fontSize) {
+    String message = isTurnOffBorder
+        ? "恭喜筆畫正確！讓我們 去掉邊框 再練習 $practiceTimeLeft 遍哦！"
+        : "恭喜筆畫正確！讓我們再練習 $practiceTimeLeft 次哦！";
+
+    Fluttertoast.showToast(
+      msg: message,
+      fontSize: fontSize * 1.2,
+    );
+  }
+
+  void showCompletionToast(double fontSize) {
+    Fluttertoast.showToast(
+      msg: "恭喜筆畫正確！",
+      fontSize: fontSize * 1.2,
+    );
+  }
+
+  void showErrorDialog(BuildContext context, String title, String message, double fontSize) {
+    if (!context.mounted) return;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            title,
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: fontSize * 1.2,
+            ),
+          ),
+          content: Text(
+            message,
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: fontSize * 1.2,
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text(
+                '回首頁',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: fontSize * 1.2,
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pushReplacementNamed('/mainPage');
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+  
+  void dispose() {    
+    debugPrint('Disposing controllers');
+    strokeOrderAnimationController?.dispose();
+    tabController.dispose();
+  }
+}
+
+// Provider for TeachWordControllers
+final teachWordControllersProvider = Provider.family<TeachWordControllers, TickerProvider>((ref, tickerProvider) {
+  final tabController = TabController(
+    length: TeachWordConstants.tabCount,
+    vsync: tickerProvider,
+  );
+  
+  return TeachWordControllers(ref as WidgetRef, tabController);
+});
+// End of file: ./views/teach_word/tabs/t_controllers.dart
+//----------------------
+
+// File: ./views/teach_word/tabs/use_tab_state_persistence.dart
+
+// tabs/use_tab_state_persistence.dart
+
+import 'package:flutter/material.dart';
+import 'package:shared_preferences.dart';
+
+// State persistence manager
+class UseTabStateManager {
+  static const String _keyPrefix = 'use_tab_state_';
+  final String _wordId;
+  
+  UseTabStateManager(this._wordId);
+
+  // Keys for different state aspects
+  String get _vocabIndexKey => '${_keyPrefix}vocab_index_$_wordId';
+  String get _completedVocabsKey => '${_keyPrefix}completed_vocabs_$_wordId';
+  String get _currentProgressKey => '${_keyPrefix}current_progress_$_wordId';
+
+  // Save state
+  Future<void> saveState({
+    required int vocabIndex,
+    required List<String> completedVocabs,
+    required Map<String, dynamic> currentProgress,
+  }) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_vocabIndexKey, vocabIndex);
+    await prefs.setStringList(_completedVocabsKey, completedVocabs);
+    await prefs.setString(_currentProgressKey, json.encode(currentProgress));
+  }
+
+  // Restore state
+  Future<UseTabRestoredState?> restoreState() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      
+      if (!prefs.containsKey(_vocabIndexKey)) {
+        return null;
+      }
+
+      return UseTabRestoredState(
+        vocabIndex: prefs.getInt(_vocabIndexKey) ?? 0,
+        completedVocabs: prefs.getStringList(_completedVocabsKey) ?? [],
+        currentProgress: json.decode(prefs.getString(_currentProgressKey) ?? '{}'),
+      );
+    } catch (e) {
+      debugPrint('Error restoring state: $e');
+      return null;
+    }
+  }
+
+  // Clear state
+  Future<void> clearState() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_vocabIndexKey);
+    await prefs.remove(_completedVocabsKey);
+    await prefs.remove(_currentProgressKey);
+  }
+}
+
+// Enhanced UseTab with state persistence and edge case handling
+class UseTab extends StatefulWidget {
+  // ... existing properties ...
+
+  @override
+  UseTabState createState() => UseTabState();
+}
+
+class UseTabState extends State<UseTab> with WidgetsBindingObserver {
+  late final UseTabStateManager _stateManager;
+  late final TabFocusHandler _focusHandler;
+  late final AudioStateManager _audioManager;
+  late final ErrorHandler _errorHandler;
+  Timer? _autoSaveTimer;
+  bool _isRestoringState = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _initializeManagers();
+    _setupAutoSave();
+    _restoreState();
+  }
+
+  void _initializeManagers() {
+    _stateManager = UseTabStateManager(widget.state.word);
+    _focusHandler = TabFocusHandler(
+      onFocusGained: _handleTabFocused,
+      onFocusLost: _handleTabUnfocused,
+    );
+    _audioManager = AudioStateManager(
+      onInterruption: _handleAudioInterruption,
+      onError: _handleAudioError,
+    );
+    _errorHandler = ErrorHandler(
+      onError: _handleError,
+      onRecovery: _handleErrorRecovery,
+    );
+  }
+
+  void _setupAutoSave() {
+    _autoSaveTimer = Timer.periodic(
+      const Duration(seconds: 30),
+      (_) => _saveCurrentState(),
+    );
+  }
+
+  Future<void> _restoreState() async {
+    setState(() => _isRestoringState = true);
+    
+    try {
+      final restoredState = await _stateManager.restoreState();
+      if (restoredState != null) {
+        _applyRestoredState(restoredState);
+      }
+    } catch (e) {
+      _errorHandler.handleError(
+        ErrorType.stateRestoration,
+        error: e,
+        context: context,
+      );
+    } finally {
+      setState(() => _isRestoringState = false);
+    }
+  }
+
+  void _applyRestoredState(UseTabRestoredState state) {
+    setState(() {
+      widget.state.vocabIndex = state.vocabIndex;
+      // Apply other restored state properties
+    });
+  }
+
+  Future<void> _saveCurrentState() async {
+    if (_isRestoringState) return;
+
+    try {
+      await _stateManager.saveState(
+        vocabIndex: widget.state.vocabIndex,
+        completedVocabs: _getCompletedVocabs(),
+        currentProgress: _getCurrentProgress(),
+      );
+    } catch (e) {
+      _errorHandler.handleError(
+        ErrorType.stateSaving,
+        error: e,
+        context: context,
+      );
+    }
+  }
+
+  // Edge case handling
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.paused:
+        _handleAppPaused();
+        break;
+      case AppLifecycleState.resumed:
+        _handleAppResumed();
+        break;
+      default:
+        break;
+    }
+  }
+
+  void _handleAppPaused() {
+    _audioManager.pauseAudio();
+    _saveCurrentState();
+  }
+
+  void _handleAppResumed() {
+    _restoreState();
+  }
+
+  void _handleTabFocused() {
+    _audioManager.resumeAudio();
+    _restoreState();
+  }
+
+  void _handleTabUnfocused() {
+    _audioManager.pauseAudio();
+    _saveCurrentState();
+  }
+
+  void _handleAudioInterruption() {
+    _audioManager.handleInterruption();
+  }
+
+  void _handleAudioError(AudioError error) {
+    _errorHandler.handleError(
+      ErrorType.audio,
+      error: error,
+      context: context,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isRestoringState) {
+      return _buildLoadingState();
+    }
+
+    return ErrorBoundary(
+      onError: _handleError,
+      child: TabFocusWrapper(
+        handler: _focusHandler,
+        child: _UseTabContent(
+          state: widget.state,
+          wordsPhrase: widget.wordsPhrase,
+          audioManager: _audioManager,
+          errorHandler: _errorHandler,
+          onStateChange: _handleStateChange,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLoadingState() {
+    return const Center(
+      child: CircularProgressIndicator(),
+    );
+  }
+
+  void _handleStateChange() {
+    _saveCurrentState();
+  }
+
+  @override
+  void dispose() {
+    _autoSaveTimer?.cancel();
+    _audioManager.dispose();
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+}
+
+// Error handling
+class ErrorHandler {
+  final Function(ErrorType, {dynamic error, BuildContext? context}) onError;
+  final Function()? onRecovery;
+
+  ErrorHandler({
+    required this.onError,
+    this.onRecovery,
+  });
+
+  void handleError(ErrorType type, {dynamic error, BuildContext? context}) {
+    debugPrint('Error of type $type: $error');
+    onError(type, error: error, context: context);
+  }
+
+  Future<void> attemptRecovery() async {
+    try {
+      await onRecovery?.call();
+    } catch (e) {
+      handleError(ErrorType.recovery, error: e);
+    }
+  }
+}
+
+// Audio state management
+class AudioStateManager {
+  final VoidCallback onInterruption;
+  final Function(AudioError) onError;
+  
+  bool _isPlaying = false;
+  final FlutterTts _tts = FlutterTts();
+  AudioFocus? _audioFocus;
+
+  AudioStateManager({
+    required this.onInterruption,
+    required this.onError,
+  }) {
+    _initializeAudio();
+  }
+
+  Future<void> _initializeAudio() async {
+    try {
+      await _tts.setLanguage("zh-tw");
+      await _tts.setSpeechRate(0.5);
+      await _tts.setVolume(1.0);
+      
+      _tts.setCompletionHandler(() {
+        _isPlaying = false;
+      });
+
+      _tts.setErrorHandler((msg) {
+        _isPlaying = false;
+        onError(AudioError(msg.toString()));
+      });
+
+      _initializeAudioFocus();
+    } catch (e) {
+      onError(AudioError(e.toString()));
+    }
+  }
+
+  Future<void> _initializeAudioFocus() async {
+    _audioFocus = await AudioFocus.requestFocus(
+      onFocusChange: (focus) {
+        if (focus == AudioFocusState.loss) {
+          pauseAudio();
+          onInterruption();
+        }
+      },
+    );
+  }
+
+  Future<void> playAudio(String text) async {
+    if (!_isPlaying) {
+      try {
+        final focusResult = await _audioFocus?.requestFocus();
+        if (focusResult == AudioFocusRequest.granted) {
+          _isPlaying = true;
+          await _tts.speak(text);
+        }
+      } catch (e) {
+        onError(AudioError(e.toString()));
+      }
+    }
+  }
+
+  Future<void> pauseAudio() async {
+    if (_isPlaying) {
+      try {
+        await _tts.stop();
+        _isPlaying = false;
+        await _audioFocus?.abandonFocus();
+      } catch (e) {
+        onError(AudioError(e.toString()));
+      }
+    }
+  }
+
+  void dispose() {
+    _tts.stop();
+    _audioFocus?.abandonFocus();
+  }
+}
+
+// Tab focus management
+class TabFocusHandler {
+  final VoidCallback onFocusGained;
+  final VoidCallback onFocusLost;
+  bool _hasFocus = false;
+
+  TabFocusHandler({
+    required this.onFocusGained,
+    required this.onFocusLost,
+  });
+
+  void handleFocusChange(bool focused) {
+    if (focused != _hasFocus) {
+      _hasFocus = focused;
+      if (focused) {
+        onFocusGained();
+      } else {
+        onFocusLost();
+      }
+    }
+  }
+}
+
+// End of file: ./views/teach_word/tabs/use_tab_state_persistence.dart
+//----------------------
+
+// File: ./views/teach_word/teach_word_controllers.dart
+
+// ./lib/views/teach_word/teach_word_controllers.dart
+//  providers.dart handles "what" (state)
+//  controllers.dart handles "how" (behavior)
+//  providers.dart focuses on data
+//  controllers.dart focuses on actions
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:ltrc/views/teach_word/state/teach_word_providers.dart';
+import 'package:ltrc/views/teach_word/state/teach_word_state.dart';
+import 'package:ltrc/views/teach_word/teach_word_constants.dart';
+import 'package:ltrc/widgets/teach_word/stroke_order_animation_controller.dart';
+
+class TeachWordControllers {
+  final WidgetRef ref;  
+  final TabController tabController;
+  StrokeOrderAnimationController? strokeOrderAnimationController;
+
+  TeachWordControllers(this.ref, this.tabController) {
+    debugPrint('TeachWordControllers initialized');
+    
+    // Add listener for debugging
+    tabController.addListener(() {
+      final state = ref.read(teachWordStateProvider);
+      debugPrint('Tab changed to: ${tabController.index} for word: ${state.word}');
+    });
+  } 
+
+  // Navigation Methods
+  void navigateToNextTab() {
+    final state = ref.read(teachWordStateProvider);
+    debugPrint('Attempting next navigation - current step: ${state.nextStepId}, learned: ${state.isLearned}');
+
+    if (!state.canNavigateNext) {
+      debugPrint('Cannot navigate next - conditions not met');
+      return;
+    }
+
+    if (state.isLearned) {
+      _navigateToNextTabLearned();
+    } else {
+      _navigateToNextTabUnlearned(state);
+    }
+  }
+
+  void navigateToPreviousTab() {
+    final state = ref.read(teachWordStateProvider);
+    debugPrint('Attempting previous navigation - current step: ${state.nextStepId}, learned: ${state.isLearned}');
+
+    if (tabController.index > 0) {
+      if (state.isLearned) {
+        _navigateToPreviousTabLearned();
+      } else {
+        _navigateToPreviousTabUnlearned(state);
+      }
+    }
+  }
+
+  void _navigateToNextTabLearned() {
+    int nextIndex = tabController.index + 1;
+    if (nextIndex < tabController.length) {
+      debugPrint('Learned word - moving to next tab: $nextIndex');
+      tabController.animateTo(nextIndex);
+    }
+  }
+
+  void _navigateToNextTabUnlearned(TeachWordState state) {
+    int targetIndex = _getTargetTabIndex(state.nextStepId);
+    if (targetIndex != tabController.index && targetIndex < tabController.length) {
+      debugPrint('Unlearned word - moving to target tab: $targetIndex');
+      tabController.animateTo(targetIndex);
+    }
+  }
+
+  void _navigateToPreviousTabLearned() {
+    debugPrint('Learned word - moving to previous tab');
+    tabController.animateTo(tabController.index - 1);
+  }
+
+  void _navigateToPreviousTabUnlearned(TeachWordState state) {
+    int targetIndex = _getTargetTabIndex(state.nextStepId - 1);
+    debugPrint('Unlearned word - moving to target tab: $targetIndex');
+    tabController.animateTo(targetIndex);
+  }
+
+  int _getTargetTabIndex(int stepId) {
+    if (stepId < TeachWordConstants.steps['goToListen']!) {
+      return 0; // Look tab
+    } else if (stepId < TeachWordConstants.steps['goToWrite']!) {
+      return 1; // Listen tab
+    } else if (stepId < TeachWordConstants.steps['goToUse1']!) {
+      return 2; // Write tab
+    } else {
+      return 3; // Use tab
+    }
+  }  
+
+  // Stroke Order Control Methods
+  Future<void> initializeStrokeController(
+    String jsonData,
+    TickerProvider vsync,
+    Function(QuizSummary) onQuizComplete
+  ) async {
+    debugPrint('initializeStrokeController');
+    strokeOrderAnimationController = StrokeOrderAnimationController(
+      jsonData,
+      vsync,
+      onQuizCompleteCallback: onQuizComplete,
+    );
+    // Use the new method
+    ref.read(strokeOrderControllerProvider.notifier).setController(strokeOrderAnimationController!);
+  }
+
+  void handleStrokeOrderAnimation() {
+    final state = ref.read(teachWordStateProvider);
+    debugPrint('Handling stroke animation - stepId: ${state.nextStepId}, isLearned: ${state.isLearned}');
+
+    if (state.canShowStrokeOrder && strokeOrderAnimationController != null) {
+      if (!strokeOrderAnimationController!.isAnimating) {
+        strokeOrderAnimationController!.startAnimation();
+        if (state.nextStepId == TeachWordConstants.steps['seeAnimation']) {
+          ref.read(teachWordStateProvider.notifier).incrementNextStepId();
+        }
+      } else {
+        strokeOrderAnimationController!.stopAnimation();
+      }
+    }
+  }
+
+  void handleWriting() {
+    final state = ref.read(teachWordStateProvider);
+    debugPrint('Handling writing - stepId: ${state.nextStepId}, isLearned: ${state.isLearned}');
+
+    if (state.canShowWriteButton && strokeOrderAnimationController != null) {
+      strokeOrderAnimationController!.startQuiz();
+    }
+  }
+
+  void handleOutlineToggle() {
+    final state = ref.read(teachWordStateProvider);
+    debugPrint('Handling outline toggle - stepId: ${state.nextStepId}, isLearned: ${state.isLearned}');
+
+    if (state.canToggleOutline && strokeOrderAnimationController != null) {
+      strokeOrderAnimationController!.setShowOutline(!strokeOrderAnimationController!.showOutline);
+      
+      if (state.nextStepId == TeachWordConstants.steps['turnBorderOff']) {
+        ref.read(teachWordStateProvider.notifier).incrementNextStepId();
+      }
+    }
+  }
+
+  // UI Feedback Methods
+  void showPracticeCompletionToast(int practiceTimeLeft, bool isTurnOffBorder, double fontSize) {
+    String message = isTurnOffBorder
+        ? "恭喜筆畫正確！讓我們 去掉邊框 再練習 $practiceTimeLeft 遍哦！"
+        : "恭喜筆畫正確！讓我們再練習 $practiceTimeLeft 次哦！";
+
+    Fluttertoast.showToast(
+      msg: message,
+      fontSize: fontSize * 1.2,
+    );
+  }
+
+  void showCompletionToast(double fontSize) {
+    Fluttertoast.showToast(
+      msg: "恭喜筆畫正確！",
+      fontSize: fontSize * 1.2,
+    );
+  }
+
+  void showErrorDialog(BuildContext context, String title, String message, double fontSize) {
+    if (!context.mounted) return;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,  // This ensures the dialog is modal
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            title,
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: fontSize * 1.2,
+            ),
+          ),
+          content: Text(
+            message,
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: fontSize * 1.2,
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text(
+                '回首頁',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: fontSize * 1.2,
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pushReplacementNamed('/mainPage');
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void dispose() {    
+    debugPrint('Disposing controllers');
+    strokeOrderAnimationController?.dispose();
+    tabController.dispose();
+  }
+}
+
+// Provider for TeachWordControllers
+final teachWordControllersProvider = Provider.family<TeachWordControllers, TickerProvider>((ref, tickerProvider) {
+  final tabController = TabController(
+    length: TeachWordConstants.tabCount,
+    vsync: tickerProvider,
+  );
+  
+  return TeachWordControllers(ref as WidgetRef, tabController);
+});
+
+/*
+  Future<void> handleNextInLookTab(TeachWordState state) async {
+    debugPrint('handleNextInLookTab - starting navigation');
+    navigateToNextTab(state);
+    debugPrint('handleNextInLookTab - completed navigation');
+  }
+
+  void handlePreviousInListenTab(TeachWordState state) {
+    debugPrint('TeachWordControllers handlePreviousInListenTab - before navigation');
+    navigateToPrevTab(state);
+    debugPrint('TeachWordControllers handlePreviousInListenTab - after navigation');
+  }
+
+  void handleNextInListenTab(TeachWordState state, WidgetRef ref) {
+    debugPrint('handleNextInListenTab - starting navigation');
+    // State update is now handled in the tab component
+    navigateToNextTab(state);
+    debugPrint('handleNextInListenTab - completed navigation');
+  }
+
+  void navigateToNextTab(TeachWordState state) {
+    debugPrint('navigateToNextTab - current: ${state.currentTabIndex}, nextStepId: ${state.nextStepId}');
+    if (state.currentTabIndex < TeachWordConstants.tabCount - 1) {
+      tabController.animateTo(state.currentTabIndex + 1);
+      debugPrint('Tab animation completed');
+    }
+  }
+
+  void navigateToPrevTab(TeachWordState state) {
+    debugPrint('TeachWordControllers navigateToPrevTab - currentTabIndex: ${state.currentTabIndex}');
+    if (state.currentTabIndex > 0) {
+      tabController.animateTo(state.currentTabIndex - 1);
+    }
+  }
+
+  void handlePreviousInWriteTab(TeachWordState state) {
+    navigateToPrevTab(state);
+  }
+
+  void handleNextInWriteTab(TeachWordState state) {
+    navigateToNextTab(state);
+  }
+
+  void handlePreviousInUseTab(TeachWordState state, WidgetRef ref) {
+    if (state.vocabIndex == 0) {
+      navigateToPrevTab(state);
+    }
+  }
+
+  void handleNextInUseTab(TeachWordState state, WidgetRef ref) {
+    // Handle state changes before navigation
+    if (state.nextStepId == TeachWordConstants.steps['goToUse${state.vocabIndex + 2}']) {
+      ref.read(teachWordStateProvider.notifier).incrementNextStepId();
+    }
+    navigateToNextTab(state);
+  }
+
+  void incrementNextStepId(TeachWordState state, WidgetRef ref) {
+    ref.read(teachWordStateProvider.notifier).incrementNextStepId();
+  }
+
+  void initializeStrokeAnimationController(String json, {
+    required Function(QuizSummary) onQuizComplete,
+  }) {
+    strokeOrderAnimationController = StrokeOrderAnimationController(
+      json,
+      _tickerProvider,
+      onQuizCompleteCallback: onQuizComplete,
+    );
+  }
+
+  void startAnimation(TeachWordState state) async {
+    if (strokeOrderAnimationController?.isAnimating == false) {
+      strokeOrderAnimationController?.startAnimation();
+      await playWordSound(state.word, state.isBpmf);
+    }
+  }
+
+  void stopAnimation() {
+    strokeOrderAnimationController?.stopAnimation();
+  }
+
+
+  Future<void> handleWriteToggle(TeachWordState state) async {
+    await playWordSound(state.word, state.isBpmf);
+    strokeOrderAnimationController?.startQuiz();
+  }
+
+  void handleOutlineToggle(TeachWordState state, WidgetRef ref) {
+    if (state.nextStepId == TeachWordConstants.steps['turnBorderOff']) {
+      ref.read(teachWordStateProvider.notifier).incrementNextStepId();
+    }
+    strokeOrderAnimationController?.setShowOutline(
+      !strokeOrderAnimationController!.showOutline
+    );
+  }
+
+  void handleQuizCompletion(QuizSummary summary, TeachWordState state, double fontSize) {
+    if (state.nextStepId >= TeachWordConstants.steps['practiceWithBorder1']! &&
+        state.nextStepId <= TeachWordConstants.steps['turnBorderOff']!) {
+      showPracticeCompletionToast(
+        state.practiceTimeLeft,
+        state.nextStepId == TeachWordConstants.steps['turnBorderOff'],
+        fontSize,
+      );
+    } else if (state.nextStepId == TeachWordConstants.steps['practiceWithoutBorder1']) {
+      showCompletionToast(fontSize);
+    }
+    onQuizCompleteCallback?.call();
+  }
+
+  void showPracticeCompletionToast(int practiceTimeLeft, bool isLastPractice, double fontSize) {
+    Fluttertoast.showToast(
+      msg: isLastPractice 
+        ? "恭喜筆畫正確！讓我們 去掉邊框 再練習 $practiceTimeLeft 遍哦！"
+        : "恭喜筆畫正確！讓我們再練習 $practiceTimeLeft 次哦！",
+      fontSize: fontSize,
+    );
+  }
+
+  void showCompletionToast(double fontSize) {
+    Fluttertoast.showToast(
+      msg: "恭喜筆畫正確！",
+      fontSize: fontSize,
+    );
+  }
+
+
+
+  void handleJsonError(BuildContext context, String word) {
+    debugPrint('JSON error for word: $word');
+    showErrorDialog(
+      context,
+      '',
+      '「$word」不在SQL。請截圖回報。謝謝！',
+    );
+  }
+
+  void handleJsonProcessError(BuildContext context, String word) {
+    showErrorDialog(
+      context,
+      '',
+      '「$word」筆順檔問題，請截圖回報。謝謝！',
+    );
+  }
+
+  Future<void> playWordSound(String word, bool isBpmf) async {
+    debugPrint('playWordSound: $word, isBpmf: $isBpmf');
+    if (isBpmf) {
+      await player?.play(AssetSource('bopomo/$word.mp3'));
+    } else {
+      await ftts?.speak(word);
+    }
+  }
+
+  void dispose() {    
+    debugPrint('Disposing controllers');
+    tabController.dispose();
+    strokeOrderAnimationController?.dispose();
+    ftts?.stop();
+    player?.dispose();
+    ftts = null;
+    player = null;
+  }
+}
+*/
+
+// End of file: ./views/teach_word/teach_word_controllers.dart
+//----------------------
+
+// File: ./views/teach_word/teach_word_constants.dart
+
+// lib/views/teach_word/teach_word_constants.dart
+
+class TeachWordConstants {
+  static const int tabCount = 4;
+  static const double strokeWidth = 2.0;
+  static const Duration animationDuration = Duration(milliseconds: 300);    
+  
+  // Tab indices for direct reference
+  static const int lookTabIndex = 0;
+  static const int listenTabIndex = 1;
+  static const int writeTabIndex = 2;
+  static const int useTabIndex = 3;
+
+  // Step progression map
+  static const Map<String, int> steps = {
+    'goToListen': 0,
+    'goToWrite': 1,
+    'seeAnimation': 2,
+    'practiceWithBorder1': 3,
+    'practiceWithBorder2': 4,
+    'practiceWithBorder3': 5,
+    'turnBorderOff': 6,
+    'practiceWithoutBorder1': 7,
+    'goToUse1': 8,
+    'goToUse2': 9,
+  };
+
+  // Helper method to get tab index based on step
+  static int getTabIndexForStep(int stepId) {
+    if (stepId < steps['goToListen']!) {
+      return lookTabIndex;
+    } else if (stepId < steps['goToWrite']!) {
+      return listenTabIndex;
+    } else if (stepId < steps['goToUse1']!) {
+      return writeTabIndex;
+    } else {
+      return useTabIndex;
+    }
+  }
+}
+
+// End of file: ./views/teach_word/teach_word_constants.dart
+//----------------------
+
+// File: ./views/teach_word/state/teach_word_providers.dart
+
+// lib/views/teach_word/state/teach_word_providers.dart
+//  providers.dart handles "what" (state)
+//  controllers.dart handles "how" (behavior)
+//  providers.dart focuses on data
+//  controllers.dart focuses on actions
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ltrc/views/teach_word/state/teach_word_state.dart';
+import 'package:ltrc/views/teach_word/teach_word_constants.dart';
+import 'package:ltrc/widgets/teach_word/stroke_order_animation_controller.dart';
+
+// Word state provider
+final teachWordStateProvider = StateNotifierProvider<TeachWordNotifier, TeachWordState>((ref) {
+  return TeachWordNotifier();
+});
+
+// Stroke animation related providers
+class StrokeOrderControllerNotifier extends StateNotifier<StrokeOrderAnimationController?> {
+  StrokeOrderControllerNotifier() : super(null);
+
+  void setController(StrokeOrderAnimationController controller) {
+    state?.dispose(); // Dispose old controller if exists
+    state = controller;
+  }
+
+  @override
+  void dispose() {
+    debugPrint('Disposing StrokeOrderController');
+    state?.dispose();
+    super.dispose();
+  }
+}
+
+final strokeOrderControllerProvider = StateNotifierProvider<StrokeOrderControllerNotifier, StrokeOrderAnimationController?>((ref) {
+  return StrokeOrderControllerNotifier();
+});
+
+final strokeAnimationPlayingProvider = StateProvider<bool>((ref) {
+  final controller = ref.watch(strokeOrderControllerProvider);
+  return controller?.isAnimating ?? false;
+});
+
+final strokeQuizActiveProvider = StateProvider<bool>((ref) {
+  final controller = ref.watch(strokeOrderControllerProvider);
+  return controller?.isQuizzing ?? false;
+});
+
+final showOutlineProvider = StateProvider<bool>((ref) {
+  final controller = ref.watch(strokeOrderControllerProvider);
+  return controller?.showOutline ?? false;
+});
+
+class TeachWordNotifier extends StateNotifier<TeachWordState> {
+  TeachWordNotifier() : super(const TeachWordState(word: '', wordData: {}));
+
+  void initializeWord(String word, Map<String, dynamic> wordData, bool isLearned) {
+    debugPrint('initializeWord: $word, learned: $isLearned');
+    
+    state = TeachWordState(
+      word: word,
+      wordData: wordData,
+      isLearned: isLearned,
+      nextStepId: 0,
+    );
+    
+    _initializeWordData();
+  }
+
+  void _initializeWordData() {
+    debugPrint('_initializeWordData() for: ${state.word}');
+    
+    int vocabCount = 0;
+    if (state.wordData['vocab1']?.isNotEmpty ?? false) vocabCount++;
+    if (state.wordData['vocab2']?.isNotEmpty ?? false) vocabCount++;
+
+    state = state.copyWith(
+      vocabCount: vocabCount,
+      wordExists: true,
+    );
+  }
+
+  // State update methods
+  void setSvgFileExists(bool exists) {
+    debugPrint('setSvgFileExists: $exists for word: ${state.word}');
+    state = state.copyWith(svgFileExists: exists);
+  }
+
+  void incrementNextStepId() {
+    if (state.canNavigateNext) {
+      state = state.copyWith(nextStepId: state.nextStepId + 1);
+      debugPrint('incrementNextStepId to: ${state.nextStepId}');
+    }
+  }
+
+  void decrementPracticeTimeLeft() {
+    if (state.practiceTimeLeft > 0) {
+      state = state.copyWith(practiceTimeLeft: state.practiceTimeLeft - 1);
+      debugPrint('decrementPracticeTimeLeft to: ${state.practiceTimeLeft}');
+    }
+  }
+
+  void markWordAsLearned() {
+    state = state.copyWith(isLearned: true);
+    debugPrint('markWordAsLearned: ${state.word}');
+  }  
+
+  void handleWriteCompletion() {
+    debugPrint('handleWriteCompletion at step: ${state.nextStepId}');
+    
+    if (state.nextStepId >= TeachWordConstants.steps['practiceWithBorder1']! &&
+        state.nextStepId <= TeachWordConstants.steps['turnBorderOff']!) {
+      decrementPracticeTimeLeft();
+      incrementNextStepId();
+    } else if (state.nextStepId == TeachWordConstants.steps['practiceWithoutBorder1']) {
+      decrementPracticeTimeLeft();
+      incrementNextStepId();
+      markWordAsLearned();
+    }
+  }
+
+  void updateVocabIndex(int index) {
+    if (index >= 0 && index < state.vocabCount) {
+      state = state.copyWith(vocabIndex: index);
+      debugPrint('updateVocabIndex to: $index');
+    }
+  }  
+
+  void setCurrentTabIndex(int index) {
+    if (index >= 0 && index < TeachWordConstants.tabCount) {
+      state = state.copyWith(currentTabIndex: index);
+      debugPrint('setCurrentTabIndex to: $index');
+    }
+  }  
+/*
+  void setVocabIndex(int index) {
+    if (index < 0 || index >= state.vocabCount) return;
+    state = state.copyWith(vocabIndex: index);
+  }
+
+  void setCurrentTabIndex(int index) {
+    if (index >= 0 && index < TeachWordConstants.tabCount) {
+      debugPrint('setCurrentTabIndex to: $index');
+      state = state.copyWith(currentTabIndex: index);
+    }
+  }
+
+}
+
+final teachWordStateProvider = StateNotifierProvider<TeachWordStateNotifier, TeachWordState>((ref) {
+  return TeachWordStateNotifier();
+});
+
+// Provider to track learned word count
+final learnedWordCountProvider = StateProvider<int>((ref) => 0);
+
+// Provider to track current tab
+// final currentTabIndexProvider = StateProvider<int>((ref) => 0);
+var currentTabIndexProvider = StateProvider<int>((ref) => 0);
+
+// Provider to access whether a word is learned
+final isWordLearnedProvider = Provider<bool>((ref) => ref.watch(teachWordStateProvider).isWordLearned);
+*/
+}
+// End of file: ./views/teach_word/state/teach_word_providers.dart
+//----------------------
+
+// File: ./views/teach_word/state/teach_word_state.dart
+
+// lib/views/teach_word/state/teach_word_state.dart
+
+import 'package:flutter/foundation.dart';
+import 'package:ltrc/views/teach_word/teach_word_constants.dart';
+
+@immutable
+class TeachWordState {
+  final String word;
+  final bool wordExists;
+  final bool svgFileExists;
+  final bool isLearned;
+  final int nextStepId;
+  final int practiceTimeLeft;
+  final Map<String, dynamic> wordData;
+  final int vocabCount;
+  final int vocabIndex;
+  final bool isBpmf;
+  final bool img1Exists;
+  final bool img2Exists;  
+  final int currentTabIndex; 
+
+  const TeachWordState({
+    required this.word,
+    this.wordExists = false,
+    this.svgFileExists = false,
+    this.isLearned = false,
+    this.nextStepId = 0,
+    this.practiceTimeLeft = 4,
+    required this.wordData,
+    this.vocabCount = 0,
+    this.vocabIndex = 0,
+    this.isBpmf = false,
+    this.img1Exists = false, 
+    this.img2Exists = false,     
+    this.currentTabIndex = 0,
+  });
+
+  // Write tab control helpers
+  bool get canShowStrokeOrder => 
+    svgFileExists && (isLearned || nextStepId == TeachWordConstants.steps['seeAnimation']);
+
+  bool get canShowWriteButton =>
+    svgFileExists && (isLearned || 
+    (nextStepId > TeachWordConstants.steps['seeAnimation']! &&
+     nextStepId <= TeachWordConstants.steps['turnBorderOff']!));
+
+  bool get canToggleOutline =>
+    svgFileExists && (isLearned || nextStepId == TeachWordConstants.steps['turnBorderOff']);
+
+  bool get canNavigateNext =>
+    isLearned || nextStepId < TeachWordConstants.steps['goToUse2']!;
+
+  bool get canNavigatePrevious => true;  // Always allow going back
+
+  TeachWordState copyWith({
+    String? word,
+    bool? wordExists,
+    bool? svgFileExists,
+    bool? isLearned,
+    int? nextStepId,
+    int? practiceTimeLeft,
+    Map<String, dynamic>? wordData,
+    int? vocabCount,
+    int? vocabIndex,
+    bool? isBpmf,
+    bool? img1Exists,
+    bool? img2Exists,    
+    int? currentTabIndex,
+  }) {
+    return TeachWordState(
+      word: word ?? this.word,
+      wordExists: wordExists ?? this.wordExists,
+      svgFileExists: svgFileExists ?? this.svgFileExists,
+      isLearned: isLearned ?? this.isLearned,
+      nextStepId: nextStepId ?? this.nextStepId,
+      practiceTimeLeft: practiceTimeLeft ?? this.practiceTimeLeft,
+      wordData: wordData ?? this.wordData,
+      vocabCount: vocabCount ?? this.vocabCount,
+      vocabIndex: vocabIndex ?? this.vocabIndex,
+      isBpmf: isBpmf ?? this.isBpmf,
+      img1Exists: img1Exists ?? this.img1Exists,
+      img2Exists: img2Exists ?? this.img2Exists,  
+      currentTabIndex: currentTabIndex ?? this.currentTabIndex,    
+    );
+  }
+
+  @override
+  String toString() {
+    return 'TeachWordState(word: $word, exists: $wordExists, svg: $svgFileExists, '
+           'learned: $isLearned, stepId: $nextStepId, practiceLeft: $practiceTimeLeft)';
+  }
+}
+
+// End of file: ./views/teach_word/state/teach_word_state.dart
+//----------------------
+
+// File: ./views/teach_word/t_teach_word_view.dart
+
+// In teach_word_view.dart
+
+class TeachWordViewState extends ConsumerState<TeachWordView> with TickerProviderStateMixin {
+  late final TeachWordControllers _controllers;
+
+  @override
+  void initState() {
+    super.initState();
+    debugPrint('TeachWordView initState for word: ${widget.wordsStatus[widget.wordIndex].word}, learned: ${widget.wordsStatus[widget.wordIndex].learned}');
+    
+    _controllers = TeachWordControllers(
+      ref,
+      TabController(
+        length: TeachWordConstants.tabCount,
+        vsync: this,
+      ),
+    );
+    
+    _initializeView();
+  }
+
+  Future<void> _initializeView() async {
+    final word = widget.wordsStatus[widget.wordIndex].word;
+    final isLearned = widget.wordsStatus[widget.wordIndex].learned;
+    
+    // Initialize the state first
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(teachWordStateProvider.notifier).initializeWord(
+        word,
+        Map<String, dynamic>.from(widget.wordsPhrase[widget.wordIndex]),
+        isLearned,
+      );
+    });
+
+    // Then initialize stroke order
+    await _initializeStrokeOrder();
+  }
+
+  Future<void> _initializeStrokeOrder() async {
+    final state = ref.read(teachWordStateProvider);
+    if (!state.wordExists) return;
+
+    try {
+      final json = await readJson(state.word);
+      if (json.isNotEmpty) {
+        await _controllers.initializeStrokeController(
+          json,
+          this,  // Pass this as TickerProvider
+          _handleQuizCompletion,
+        );
+        
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ref.read(teachWordStateProvider.notifier).setSvgFileExists(true);
+        });
+      }
+    } catch (e) {
+      debugPrint('Error initializing stroke order: $e');
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(teachWordStateProvider.notifier).setSvgFileExists(false);
+      });
+    }
+  }
+
+  void _handleQuizCompletion(QuizSummary summary) {
+    // ... existing completion handler
+  }
+
+  // ... rest of the class
+}
+// End of file: ./views/teach_word/t_teach_word_view.dart
+//----------------------
+
+// File: ./views/teach_word/widgets/temp.dart
+
+
+// End of file: ./views/teach_word/widgets/temp.dart
+//----------------------
+
+// File: ./views/teach_word/widgets/bpmf_vocal_content.dart
+
+// widgets/teach_word/bpmf_vocab_content.dart
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_tts/flutter_tts.dart';
+import 'package:ltrc/providers.dart';
+// import 'package:ltrc/views/view_utils.dart';
+import 'package:ltrc/widgets/teach_word/zhuyin_processing.dart';
+
+class BopomofoVocabContent extends ConsumerStatefulWidget {
+  final String word;
+  final String vocab;
+  final String sentence;
+
+  const BopomofoVocabContent({
+    super.key,
+    required this.word,
+    required this.vocab,
+    required this.sentence,
+  });
+
+  @override
+  BopomofoVocabContentState createState() => BopomofoVocabContentState();
+}
+
+class BopomofoVocabContentState extends ConsumerState<BopomofoVocabContent> {
+  final FlutterTts ftts = FlutterTts();
+  late final String truncatedSentence;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeTts();
+    truncatedSentence = _truncateSentence(widget.sentence);
+  }
+
+  void _initializeTts() {
+    ftts.setLanguage("zh-tw");
+    ftts.setSpeechRate(0.5);
+    ftts.setVolume(1.0);
+    ftts.setCompletionHandler(() {
+      debugPrint('TTS Completed');
+    });
+    ftts.setErrorHandler((msg) {
+      debugPrint('TTS Error: $msg');
+    });
+  }
+
+  String _truncateSentence(String sentence) {
+    if (sentence.length > 25) {
+      return "${sentence.substring(0, 25)}...。";
+    }
+    return sentence;
+  }
+
+  Future<void> _speak(String text) async {
+    try {
+      await ftts.speak(text);
+    } catch (e) {
+      debugPrint('TTS Error: $e');
+    }
+  }
+
+  @override
+  void dispose() {
+    ftts.stop();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final screenInfo = ref.watch(screenInfoProvider);
+    final fontSize = screenInfo.fontSize;
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Container(
+          alignment: Alignment.center,
+          child: Column(
+            children: [
+              _buildVocabWithAudio(fontSize),
+              _buildCharacterImage(fontSize),
+              SizedBox(height: fontSize * 0.5),
+              _buildSentenceWithAudio(fontSize),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildVocabWithAudio(double fontSize) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        ZhuyinProcessing(
+          text: widget.vocab,
+          fontSize: fontSize * 2.0,
+          color: const Color.fromRGBO(228, 219, 124, 1),
+          highlightOn: true,
+        ),
+        IconButton(
+          icon: const Icon(Icons.volume_up),
+          iconSize: fontSize * 2.0,
+          color: const Color.fromRGBO(228, 219, 124, 1),
+          onPressed: () => _speak(widget.vocab),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCharacterImage(double fontSize) {
+    return Image(
+      height: fontSize * 8.5,
+      image: AssetImage('lib/assets/img/bopomo/${widget.word}.png'),
+      errorBuilder: (context, error, stackTrace) {
+        debugPrint('Error loading image: $error');
+        return SizedBox(height: fontSize * 8.5);
+      },
+    );
+  }
+
+  Widget _buildSentenceWithAudio(double fontSize) {
+    return Column(
+      children: [
+        ZhuyinProcessing(
+          text: truncatedSentence,
+          fontSize: fontSize * 1.3,
+          color: const Color.fromRGBO(245, 245, 220, 100),
+          highlightOn: true,
+        ),
+        IconButton(
+          icon: const Icon(Icons.volume_up),
+          iconSize: fontSize * 1.3,
+          color: const Color.fromRGBO(245, 245, 220, 100),
+          onPressed: () => _speak(truncatedSentence),
+        ),
+      ],
+    );
+  }
+}
+
+
+// End of file: ./views/teach_word/widgets/bpmf_vocal_content.dart
+//----------------------
+
+// File: ./views/teach_word/widgets/teach_word_bottom_bar.dart
+
+// lib/views/teach_word/widgets/teach_word_bottom_bar.dart
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ltrc/data/models/word_status_model.dart';
+import 'package:ltrc/views/teach_word/state/teach_word_state.dart';
+import 'package:ltrc/views/teach_word/teach_word_controllers.dart';
+import 'package:ltrc/views/view_utils.dart';
+import 'package:ltrc/widgets/mainPage/left_right_switch.dart';
+import 'package:ltrc/widgets/word_card.dart';
+
+class TeachWordBottomBar extends ConsumerWidget {
+  final ScreenInfo screenInfo;
+  final TeachWordControllers controllers;
+  final TeachWordState state;
+  final int unitId;
+  final String unitTitle;
+  final List<WordStatus> wordsStatus;
+  final List<Map> wordsPhrase;
+  final int wordIndex;
+
+  const TeachWordBottomBar({
+    super.key,
+    required this.screenInfo,
+    required this.controllers,
+    required this.state,
+    required this.unitId,
+    required this.unitTitle,
+    required this.wordsStatus,
+    required this.wordsPhrase,
+    required this.wordIndex,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {  // Added WidgetRef parameter
+    return BottomAppBar(
+      height: screenInfo.fontSize * 4.0,
+      elevation: 0,
+      color: darkBrown,
+      child: _buildBottomBarContent(context, ref),
+    );
+  }
+
+  Widget _buildBottomBarContent(BuildContext context, WidgetRef ref) {
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxWidth: screenInfo.screenWidth,
+      ),
+      child: _buildNavigationBar(context, ref),
+    );
+  }
+
+  Widget _buildNavigationBar(BuildContext context, WidgetRef ref) {
+    return LeftRightSwitch(
+      iconsColor: beige,
+      iconsSize: screenInfo.fontSize * 2.0,
+      rightBorder: false,
+      middleWidget: _buildWordCard(),
+      isFirst: (wordIndex == 0),
+      isLast: (wordIndex == wordsStatus.length - 1),
+      onLeftClicked: _buildLeftClickHandler(context, ref),
+      onRightClicked: _buildRightClickHandler(context, ref),
+    );
+  }
+
+  Widget _buildWordCard() {
+    return WordCard(
+      unitId: unitId,
+      unitTitle: unitTitle,
+      wordsStatus: wordsStatus,
+      wordsPhrase: wordsPhrase,
+      wordIndex: wordIndex,
+      sizedBoxWidth: screenInfo.fontSize * 10,
+      sizedBoxHeight: screenInfo.fontSize * 4.0,
+      fontSize: screenInfo.fontSize * 1.2,
+      isBpmf: state.isBpmf,
+      isVertical: false,
+      disable: true,
+    );
+  }
+
+  VoidCallback? _buildLeftClickHandler(BuildContext context, WidgetRef ref) {
+    if (wordIndex == 0) return null;
+
+    return () => navigateWithProvider(
+      context,
+      '/teachWord',
+      ref,
+      arguments: {
+        'unitId': unitId,
+        'unitTitle': unitTitle,
+        'wordsStatus': wordsStatus,
+        'wordsPhrase': wordsPhrase,
+        'wordIndex': wordIndex - 1,
+      },
+    );
+  }
+
+  VoidCallback? _buildRightClickHandler(BuildContext context, WidgetRef ref) {
+    if (wordIndex == wordsStatus.length - 1) return null;
+
+    return () => navigateWithProvider(
+      context,
+      '/teachWord',
+      ref,
+      arguments: {
+        'unitId': unitId,
+        'unitTitle': unitTitle,
+        'wordsStatus': wordsStatus,
+        'wordsPhrase': wordsPhrase,
+        'wordIndex': wordIndex + 1,
+      },
+    );
+  }
+}
+
+
+// End of file: ./views/teach_word/widgets/teach_word_bottom_bar.dart
+//----------------------
+
+// File: ./views/teach_word/widgets/word_vocal_content.dart
+
+// widgets/teach_word/word_vocab_content.dart
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_tts/flutter_tts.dart';
+import 'package:ltrc/providers.dart';
+import 'package:ltrc/views/view_utils.dart';
+import 'package:ltrc/widgets/teach_word/zhuyin_processing.dart';
+
+class WordVocabContent extends ConsumerStatefulWidget {
+  final String vocab;
+  final String meaning;
+  final String sentence;
+  final String vocab2;
+
+  const WordVocabContent({
+    super.key,
+    required this.vocab,
+    required this.meaning,
+    required this.sentence,
+    required this.vocab2,
+  });
+
+  @override
+  WordVocabContentState createState() => WordVocabContentState();
+}
+
+class WordVocabContentState extends ConsumerState<WordVocabContent> {
+  final FlutterTts ftts = FlutterTts();
+  late final ValueNotifier<String> selectedWord;
+  late final ValueNotifier<String> message;
+  final ValueNotifier<bool> isAnswerCorrect = ValueNotifier(false);
+
+  @override
+  void initState() {
+    super.initState();
+    selectedWord = ValueNotifier('');
+    message = ValueNotifier('');
+    _initializeTts();
+  }
+
+  void _initializeTts() {
+    ftts.setLanguage("zh-tw");
+    ftts.setSpeechRate(0.5);
+    ftts.setVolume(1.0);
+  }
+
+  @override
+  void dispose() {
+    selectedWord.dispose();
+    message.dispose();
+    isAnswerCorrect.dispose();
+    ftts.stop();
+    super.dispose();
+  }
+
+  Future<void> _speak(String text) async {
+    try {
+      await ftts.speak(text);
+    } catch (e) {
+      debugPrint('TTS Error: $e');
+    }
+  }
+
+  void _handleWordSelection(String word) {
+    _speak(word);
+    if (word == widget.vocab) {
+      selectedWord.value = word;
+      message.value = '答對了！';
+      isAnswerCorrect.value = true;
+    } else {
+      message.value = '再試試！';
+      isAnswerCorrect.value = false;
+    }
+    _speak(message.value);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final screenInfo = ref.watch(screenInfoProvider);
+    final fontSize = screenInfo.fontSize;
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _buildVocabHeader(fontSize),
+        _buildMeaning(fontSize),
+        SizedBox(height: fontSize * 0.1),
+        _buildSentence(fontSize),
+        _buildWordOptions(fontSize),
+        _buildMessage(fontSize),
+      ],
+    );
+  }
+
+  Widget _buildVocabHeader(double fontSize) {
+    return Container(
+      alignment: Alignment.center,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ValueListenableBuilder<String>(
+            valueListenable: selectedWord,
+            builder: (context, selected, child) {
+              return Text(
+                selected.isEmpty ? widget.vocab : selected,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: fontSize * 1.2,
+                  color: explanationColor,
+                ),
+              );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.volume_up),
+            iconSize: fontSize * 1.2,
+            color: explanationColor,
+            onPressed: () => _speak(widget.vocab),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMeaning(double fontSize) {
+    return Padding(
+      padding: EdgeInsets.only(left: fontSize * 0.5),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(
+                "解釋：",
+                style: TextStyle(
+                  fontSize: fontSize,
+                  color: explanationColor,
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.volume_up),
+                iconSize: fontSize,
+                color: explanationColor,
+                onPressed: () => _speak(widget.meaning),
+              ),
+            ],
+          ),
+          ZhuyinProcessing(
+            text: widget.meaning,
+            fontSize: fontSize,
+            color: whiteColor,
+            highlightOn: true,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSentence(double fontSize) {
+    return Padding(
+      padding: EdgeInsets.only(left: fontSize * 0.5),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(
+                "例句：",
+                style: TextStyle(
+                  fontSize: fontSize,
+                  color: explanationColor,
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.volume_up),
+                iconSize: fontSize,
+                color: explanationColor,
+                onPressed: () => _speak(widget.sentence),
+              ),
+            ],
+          ),
+          ValueListenableBuilder<String>(
+            valueListenable: selectedWord,
+            builder: (context, selected, child) {
+              final displaySentence = selected.isEmpty ? 
+                widget.sentence.replaceAll(widget.vocab, "__" * widget.vocab.length) : 
+                widget.sentence;
+              return ZhuyinProcessing(
+                text: displaySentence,
+                fontSize: fontSize,
+                color: whiteColor,
+                highlightOn: true,
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWordOptions(double fontSize) {
+    final options = [widget.vocab, widget.vocab2]..shuffle();
+    
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: fontSize * 0.5),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: options.map((word) {
+          return Expanded(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: fontSize * 0.25),
+              child: ElevatedButton(
+                onPressed: () => _handleWordSelection(word),
+                style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(vertical: fontSize * 0.5),
+                ),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    word,
+                    style: TextStyle(
+                      fontSize: fontSize * 0.90,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildMessage(double fontSize) {
+    return ValueListenableBuilder<String>(
+      valueListenable: message,
+      builder: (context, msg, child) {
+        return Center(
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: fontSize * 0.5),
+            child: Text(
+              msg,
+              style: TextStyle(
+                color: explanationColor,
+                fontSize: fontSize,
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+// End of file: ./views/teach_word/widgets/word_vocal_content.dart
+//----------------------
+
+// File: ./views/teach_word/widgets/teach_word_app_bar.dart
+
+// views/teach_word/widgets/teach_word_app_bar.dart
+
+import 'package:flutter/material.dart';
+import 'package:ltrc/views/teach_word/state/teach_word_providers.dart';
+import 'package:ltrc/views/teach_word/state/teach_word_state.dart';
+import 'package:ltrc/views/teach_word/teach_word_controllers.dart';
+import 'package:ltrc/views/view_utils.dart';
+
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+class TeachWordAppBar extends PreferredSize {
+  TeachWordAppBar({
+    super.key,
+    required ScreenInfo screenInfo,
+    required TeachWordControllers controllers,
+    required TeachWordState state,
+    required int unitId,
+    required String unitTitle,
+  }) : super(
+    preferredSize: const Size.fromHeight(kToolbarHeight * 2),
+    child: _TeachWordAppBarContent(
+      screenInfo: screenInfo,
+      controllers: controllers,
+      state: state,
+      unitId: unitId,
+      unitTitle: unitTitle,
+    ),
+  );
+}
+
+class _TeachWordAppBarContent extends ConsumerWidget {
+  final ScreenInfo screenInfo;
+  final TeachWordControllers controllers;
+  final TeachWordState state;
+  final int unitId;
+  final String unitTitle;
+
+  const _TeachWordAppBarContent({
+    required this.screenInfo,
+    required this.controllers,
+    required this.state,
+    required this.unitId,
+    required this.unitTitle,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Center(
+      child: SizedBox(
+        width: screenInfo.screenWidth,
+        child: SafeArea(
+          child: Column(
+            children: [
+              _buildTopBar(context),
+              _buildTabBar(ref), // Pass ref to _buildTabBar
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTopBar(BuildContext context) {
+    return SizedBox(
+      height: kToolbarHeight,
+      child: Row(
+        children: [
+          _buildBackButton(context),
+          Expanded(child: _buildTitle()),
+          _buildHomeButton(context),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBackButton(BuildContext context) {
+    return IconButton(
+      icon: Icon(
+        Icons.chevron_left,
+        color: beige,
+        size: screenInfo.fontSize * 1.5,
+      ),
+      onPressed: () => Navigator.pop(context),
+    );
+  }
+
+  Widget _buildTitle() {
+    String title = (unitId == -1)
+        ? unitTitle
+        : "${unitId.toString().padLeft(2, '0')} | $unitTitle";
+            
+    return Text(
+      title,
+      style: TextStyle(
+        fontSize: screenInfo.fontSize * 1.2,
+      ),
+      textAlign: TextAlign.center,
+    );
+  }
+
+  Widget _buildHomeButton(BuildContext context) {
+    return IconButton(
+      onPressed: () {
+        Navigator.of(context).pushReplacementNamed('/mainPage');
+      },
+      icon: Icon(
+        Icons.home_filled,
+        color: beige,
+        size: screenInfo.fontSize * 1.5,
+      ),
+    );
+  }
+
+  Widget _buildTabBar(WidgetRef ref) {  // Add WidgetRef parameter here
+    return SizedBox(
+      height: kToolbarHeight,
+      child: TabBar(
+        tabs: _buildTabs(),
+        controller: controllers.tabController,
+        onTap: (index) => _handleTabTap(index, ref), // Pass ref to _handleTabTap
+        labelColor: darkBrown,
+        dividerColor: mediumGray,
+        unselectedLabelColor: mediumGray,
+        indicatorSize: TabBarIndicatorSize.tab,
+        indicatorPadding: const EdgeInsets.symmetric(horizontal: 2),
+        indicator: const BoxDecoration(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(10),
+            topRight: Radius.circular(10),
+          ),
+          color: mediumGray,
+        ),
+      ),
+    );
+  }
+
+  List<Widget> _buildTabs() {
+    return [
+      Tab(icon: Icon(Icons.image, size: screenInfo.fontSize * 0.75)),
+      Tab(icon: Icon(Icons.hearing, size: screenInfo.fontSize * 0.75)),
+      Tab(icon: Icon(Icons.create, size: screenInfo.fontSize * 0.75)),
+      Tab(icon: Icon(Icons.school, size: screenInfo.fontSize * 0.75)),
+    ];
+  }
+
+  void _handleTabTap(int index, WidgetRef ref) { // Add WidgetRef parameter here
+    if (_shouldAllowTabSwitch(index)) {
+      ref.read(teachWordStateProvider.notifier).setCurrentTabIndex(index);
+    } else {
+      controllers.tabController.index = ref.read(teachWordStateProvider).currentTabIndex;
+    }
+  }
+
+  bool _shouldAllowTabSwitch(int index) {
+    if (state.isLearned && state.svgFileExists) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+}
+
+
+// End of file: ./views/teach_word/widgets/teach_word_app_bar.dart
+//----------------------
+
+// File: ./views/teach_word_view.dart
+
+/* File Structure:
+lib/
+  views/
+    teach_word_view.dart         // Main view
+    teach_word/
+      state/
+         teach_word_provider.dart
+         teach_word_state.dart   // State management
+      teach_word_controllers.dart  // Logic and control
+      teach_word_constants.dart    // Constants and steps
+      widgets/
+        teach_word_app_bar.dart
+        teach_word_bottom_bar.dar
+        bpmf_vocal_content.dart
+        word_vocal_content.dart
+      tabs/
+        look_tab.dart
+        listen_tab.dart
+        write_tab.dart
+        use_tab.dart
+*/
+
+// lib/views/teach_word_view.dart
+
+// import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+// import 'package:flutter_tts/flutter_tts.dart';
+// import 'package:fluttertoast/fluttertoast.dart';
+import 'package:ltrc/data/models/word_status_model.dart';
+import 'package:ltrc/data/providers/word_status_provider.dart';
+import 'package:ltrc/providers.dart';
+import 'package:ltrc/views/teach_word/state/teach_word_providers.dart';
+// import 'package:ltrc/views/state/teach_word_state.dart';
+import 'package:ltrc/views/teach_word/tabs/look_tab.dart';
+import 'package:ltrc/views/teach_word/tabs/listen_tab.dart';
+import 'package:ltrc/views/teach_word/tabs/write_tab.dart';
+import 'package:ltrc/views/teach_word/tabs/use_tab.dart';
+import 'package:ltrc/views/teach_word/teach_word_constants.dart';
+import 'package:ltrc/views/teach_word/widgets/teach_word_app_bar.dart';
+import 'package:ltrc/views/teach_word/widgets/teach_word_bottom_bar.dart';
+import 'package:ltrc/widgets/teach_word/stroke_order_animation_controller.dart';
+import 'package:ltrc/views/teach_word/teach_word_controllers.dart';
+
+final teachWordControllersProvider = Provider.family<TeachWordControllers, TickerProvider>((ref, tickerProvider) {
+  return TeachWordControllers(tickerProvider as WidgetRef, ref as TabController);
+});
+
+class TeachWordView extends ConsumerStatefulWidget {
+  final int unitId;
+  final String unitTitle;
+  final List<WordStatus> wordsStatus;
+  final List<Map<String, dynamic>> wordsPhrase;
+  final int wordIndex;
+
+  const TeachWordView({
+    super.key,
+    required this.unitId,
+    required this.unitTitle,
+    required this.wordsStatus,
+    required this.wordsPhrase,
+    required this.wordIndex,
+  });
+
+  @override
+  TeachWordViewState createState() => TeachWordViewState();
+}
+
+class TeachWordViewState extends ConsumerState<TeachWordView> with TickerProviderStateMixin {
+  late final TeachWordControllers controllers;
+  bool svgFileExist = false;
+  String word = '';
+  bool isLearned = false;
+  // bool _firstNullStroke = true;
+  bool _showErrorDialog = false;
+  int _numberOfNullStroke = 0;
+  final int _maxNumberOfNullStroke = 30;
+
+  @override
+  void initState() {
+    super.initState();
+    word = widget.wordsStatus[widget.wordIndex].word;
+    isLearned = widget.wordsStatus[widget.wordIndex].learned;
+    debugPrint('TeachWordView initState for word: $word, learned: $isLearned');
+    
+    // Initialize controllers with the current TickerProvider
+    controllers = TeachWordControllers(
+      ref,
+      TabController(
+        length: TeachWordConstants.tabCount,
+        vsync: this,
+      ),
+    );
+    
+    _initializeView();
+  }
+
+  // Q：wordData 是否應該變成這個 class 的 global variable？
+  Future<void> _initializeView() async {
+    // Cast the Map to the correct type
+    final wordData = Map<String, dynamic>.from(widget.wordsPhrase[widget.wordIndex]);
+
+    // Initialize the state first. Wrap state initialization in a post-frame callback
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Initialize the state first
+      ref.read(teachWordStateProvider.notifier).initializeWord(
+        word,
+        wordData,
+        isLearned,
+      );
+    });
+
+    // Then initialize stroke order
+    await _initializeStrokeOrder();
+  }
+
+  // Q：state 是否應該變成這個 class 的 global variable？
+  Future<void> _initializeStrokeOrder() async {
+    final state = ref.read(teachWordStateProvider); // Q: When was wordExists set?
+    if (!state.wordExists) return;
+
+    try {
+      final json = await readJson(state.word);
+      if (json.isNotEmpty) {
+        await controllers.initializeStrokeController(
+          json,
+          this, // Pass the ticker provider
+          _handleQuizCompletion,
+        );
+        ref.read(teachWordStateProvider.notifier).setSvgFileExists(true);
+      }
+    } catch (e) {
+      debugPrint('_initializeStrokeOrder error: $e');
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(teachWordStateProvider.notifier).setSvgFileExists(false);
+      });
+    }
+  }
+
+  void _handleQuizCompletion(QuizSummary summary) {
+    final notifier = ref.read(teachWordStateProvider.notifier);
+    final state = ref.read(teachWordStateProvider);
+    final screenInfo = ref.read(screenInfoProvider);  // Get current screenInfo
+
+    if (state.nextStepId >= TeachWordConstants.steps['practiceWithBorder1']! &&
+        state.nextStepId <= TeachWordConstants.steps['turnBorderOff']!) {
+      notifier.decrementPracticeTimeLeft();
+      notifier.incrementNextStepId();
+      
+      controllers.showPracticeCompletionToast(
+        state.practiceTimeLeft,
+        state.nextStepId == TeachWordConstants.steps['turnBorderOff'],
+        screenInfo.fontSize,  // Pass current fontSize
+      );
+    } else if (state.nextStepId == TeachWordConstants.steps['practiceWithoutBorder1']) {
+      notifier.decrementPracticeTimeLeft();
+      notifier.incrementNextStepId();
+      notifier.markWordAsLearned(); // Note: 未來要改成用一用結束後，才標記為已學習。
+      _updateWordStatusInDatabase();
+      controllers.showCompletionToast(screenInfo.fontSize);  // Pass current fontSize
+    }
+  }
+  
+  Future<void> _updateWordStatusInDatabase() async {
+    final status = widget.wordsStatus[widget.wordIndex];
+    status.learned = true;
+    await WordStatusProvider().updateWordStatus(status: status);
+  }
+
+  Future<String> readJson(String word) async {
+    // Define the noSvgList. This list needs to be updated every new school semester
+    List<String> noSvgList = [
+      '吔', '姍', '媼', '嬤', '履', '搧', '枴', '椏', '欓', '汙',
+      '溼', '漥', '痠', '礫', '粄', '粿', '綰', '蓆', '襬', '譟',
+      '踖', '踧', '鎚', '鏗', '鏘', '陳', '颺', '齒'
+    ];
+
+    String tempWord = word;
+
+    // If the word is in the noSvgList, set svgFileExist to false and use '學' as a fallback
+    if (noSvgList.contains(word)) {
+      tempWord = '學';
+      svgFileExist = false;
+    } else {
+      svgFileExist = true;
+    }
+
+    debugPrint('readJson() word: $tempWord, svgFileExist: $svgFileExist');
+
+    // Proceed with loading the SVG file. If svgFileExist is false, 
+    // load “學” so that 看一看、聽一聽、用一用 still work.  
+    try {
+      final String response = await rootBundle.loadString('lib/assets/svg/$tempWord.json');
+      return response.replaceAll("\"", "'");
+    } catch (e) {
+      svgFileExist = false;
+      debugPrint('readJson() error: $e, svgFileExist: $svgFileExist');
+      return ''; // Return an empty string in case of error
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final state = ref.watch(teachWordStateProvider);
+    final screenInfo = ref.watch(screenInfoProvider);
+    
+    if (state.word == '' || screenInfo.fontSize == 0) {
+      debugPrint('TeachWordView build() word: $word, fontSize: ${screenInfo.fontSize}');
+      return Container();
+    } 
+    
+    if (controllers.strokeOrderAnimationController == null) {
+      debugPrint('TeachWordView build() strokeOrderAnimationController is null');
+      return _buildErrorWidget(state.word, screenInfo.fontSize);
+    }
+
+    return DefaultTabController(
+      length: TeachWordConstants.tabCount,
+      child: Scaffold(
+        appBar: TeachWordAppBar(
+          screenInfo: screenInfo,
+          controllers: controllers,
+          state: state,
+          unitId: widget.unitId,
+          unitTitle: widget.unitTitle,
+        ),
+        body: TabBarView(
+          physics: const NeverScrollableScrollPhysics(),
+          controller: controllers.tabController,
+          children: [
+            LookTab(
+              controllers: controllers,
+              screenInfo: screenInfo,
+              state: state,
+            ),
+            ListenTab(
+              controllers: controllers,
+              screenInfo: screenInfo,
+              state: state,
+            ),
+            WriteTab(
+              controllers: controllers,
+              screenInfo: screenInfo,
+              state: state,
+            ),            
+            UseTab(
+              controllers: controllers,
+              screenInfo: screenInfo,
+              state: state,
+              wordsPhrase: Map<String, dynamic>.from(widget.wordsPhrase[widget.wordIndex]),
+            ),
+          ],
+        ),
+        bottomNavigationBar: TeachWordBottomBar(
+          screenInfo: screenInfo,
+          controllers: controllers,
+          state: state,
+          unitId: widget.unitId,
+          unitTitle: widget.unitTitle,
+          wordsStatus: widget.wordsStatus,
+          wordsPhrase: widget.wordsPhrase,
+          wordIndex: widget.wordIndex,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildErrorWidget(String word, double fontSize) {
+    if (_numberOfNullStroke < _maxNumberOfNullStroke) {
+      _numberOfNullStroke++;
+      debugPrint('buildErrorWidget() word: $word, numberOfNullStroke: $_numberOfNullStroke');      
+      return Container();
+    } else {
+      _showErrorDialog = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_showErrorDialog) {
+          controllers.showErrorDialog(
+            context,
+            '','「$word」沒有筆順2。請截圖回報。謝謝！',
+            fontSize,
+          );
+          _numberOfNullStroke = 0;
+          _showErrorDialog = false;
+        }
+      });
+      return Container();
+    }
+  }
+
+  @override
+  Ticker createTicker(TickerCallback onTick) => Ticker(onTick);
+}
+
+
+
+// End of file: ./views/teach_word_view.dart
+//----------------------
+

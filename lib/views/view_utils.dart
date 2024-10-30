@@ -32,19 +32,41 @@ const Color veryDarkGrayishBlue = Color(0xFF1C1B1F);
 const Color black = Color(0xFF000000);
 
 class ScreenInfo {
+  final double screenWidth;  
   final double screenHeight;
-  final double screenWidth;
   final double fontSize;
   final Orientation orientation;
   final bool isTablet;
 
+  // Computed values for layout
+  double get availableWidth => screenWidth - 10;
+  double get availableHeight => screenHeight - kToolbarHeight * 3;
+  double get nonConsumedHeight => screenHeight * 0.15;
+  double get iconSize => fontSize * 2.0;
+
   ScreenInfo({
-    required this.screenHeight,
     required this.screenWidth,
+    required this.screenHeight,
     required this.fontSize,
     required this.orientation,
     required this.isTablet,
   });
+
+  ScreenInfo copyWith({
+    double? screenWidth,
+    double? screenHeight,
+    double? fontSize,
+    Orientation? orientation,
+    bool? isTablet,
+  }) {
+    return ScreenInfo(
+      screenWidth: screenWidth ?? this.screenWidth,
+      screenHeight: screenHeight ?? this.screenHeight,
+      fontSize: fontSize ?? this.fontSize,
+      orientation: orientation ?? this.orientation,
+      isTablet: isTablet ?? this.isTablet,
+    );
+  }
 }
 
 class ScreenInfoNotifier extends StateNotifier<ScreenInfo> {
