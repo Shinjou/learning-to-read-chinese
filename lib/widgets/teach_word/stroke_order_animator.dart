@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'stroke_order_animation_controller.dart';
+import 'package:ltrc/widgets/teach_word/stroke_order_animation_controller.dart';
 
 /// A widget for displaying a stroke order diagram.
 /// Takes a `StrokeOrderAnimationController` as argument.

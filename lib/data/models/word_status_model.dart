@@ -36,4 +36,6 @@ class WordStatus {
   String toString() {
     return "WordStatus{id : $id, userAccount : $userAccount, word : $word, learned : $learned, liked: $liked}";
   }
+
+  copyWith({required bool learned}) {}
 } 

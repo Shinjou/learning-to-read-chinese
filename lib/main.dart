@@ -6,6 +6,8 @@ import 'package:ltrc/views/view_utils.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:logger/logger.dart';
 import 'dart:io';
+import 'package:flutter_tts/flutter_tts.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 import 'package:ltrc/providers.dart';
 import 'package:ltrc/data/providers/all_provider.dart';
@@ -14,26 +16,54 @@ import 'package:ltrc/views/log_in_view.dart';
 import 'package:ltrc/views/polyphonic_processor.dart';
 import 'package:ltrc/contants/routes.dart';
 
-
 Future<void> main() async {
   try {
     WidgetsFlutterBinding.ensureInitialized();
     setupLogger();
     
-    debugPrint('Initializing AllProvider database...');
+    // Initialize databases
     await AllProvider().database;
-    debugPrint('AllProvider database initialized.');
 
-    debugPrint('Initializing UserProvider database...');
     await UserProvider().database;
-    debugPrint('UserProvider database initialized.');
 
     await PolyphonicProcessor.instance.loadPolyphonicData();
 
-    runApp(const ProviderScope(child: MyApp()));
+    // Initialize audio providers
+    final container = ProviderContainer(
+      overrides: [
+        // Pre-initialize audio providers
+        ttsProvider.overrideWithValue(
+          await initializeTts(),
+        ),
+        audioPlayerProvider.overrideWithValue(
+          await initializeAudioPlayer(),
+        ),
+      ],
+    );
+
+    runApp(
+      UncontrolledProviderScope(
+        container: container,
+        child: const MyApp(),
+      ),
+    );
   } catch (e) {
-    debugPrint('Failed to init the database: $e');
+    debugPrint('Failed to init the app: $e');
   }
+}
+
+Future<FlutterTts> initializeTts() async {
+  final tts = FlutterTts();
+  await tts.setLanguage("zh-tw");
+  await tts.setSpeechRate(0.5);
+  await tts.setVolume(1.0);
+  return tts;
+}
+
+Future<AudioPlayer> initializeAudioPlayer() async {
+  final player = AudioPlayer();
+  // Add any needed audio player initialization here
+  return player;
 }
 
 class MyApp extends ConsumerWidget {

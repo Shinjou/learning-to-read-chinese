@@ -1,6 +1,8 @@
 // import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/views/view_utils.dart';
+import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 
 final soundSpeedProvider = StateProvider<double>((ref) => 0.5);
 final zhuyinOnProvider = StateProvider<bool>((ref) => true);
@@ -17,4 +19,16 @@ final learnedWordCountProvider = StateProvider<int>((ref) => 0);
 
 final screenInfoProvider = StateNotifierProvider<ScreenInfoNotifier, ScreenInfo>((ref) {
   return ScreenInfoNotifier();
+});
+
+final ttsProvider = Provider<FlutterTts>((ref) {
+  final tts = FlutterTts();
+  tts.setLanguage("zh-tw");
+  tts.setSpeechRate(0.5);
+  tts.setVolume(1.0);
+  return tts;
+});
+
+final audioPlayerProvider = Provider<AudioPlayer>((ref) {
+  return AudioPlayer();
 });
