@@ -1,8 +1,6 @@
 name: ltrc
 description: A new Flutter project.
-# The following line prevents the package from being accidentally published to
-# pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: 'none'
 
 version: 1.8.0+5
 
@@ -12,12 +10,6 @@ ios:
 environment:
   sdk: '>=3.0.5 <4.0.0'
 
-# Dependencies specify other packages that your package needs in order to work.
-# To automatically upgrade your package dependencies to the latest versions
-# consider running `flutter pub upgrade --major-versions`. Alternatively,
-# dependencies can be manually updated by changing the version numbers below to
-# the latest version available on pub.dev. To see which dependencies have newer
-# versions available, run `flutter pub outdated`.
 dependencies:
   flutter:
     sdk: flutter
@@ -37,48 +29,35 @@ dependencies:
   file_picker: ^8.0.0+1
   screenshot: ^3.0.0
   intl: ^0.19.0
-  stack_trace:
+  stack_trace: ^1.11.0
   package_info_plus: ^8.0.2
+  freezed_annotation: ^2.4.4
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_lints: ^5.0.0
+  freezed: ^2.4.1  # Required for code generation with freezed_annotation
 
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
-  flutter_lints: ^4.0.0
-
-# For information on the generic Dart part of this file, see the
-# following page: https://dart.dev/tools/pub/pubspec
-
-# The following section is specific to Flutter packages.
 flutter:
   fonts:
     - family: Iansui     
       fonts:
-        - asset: lib\assets\fonts\Iansui-Regular.ttf        
+        - asset: lib/assets/fonts/Iansui-Regular.ttf        
     - family: BpmfOnly
       fonts:
-        - asset: lib\assets\fonts\BpmfZihiOnly-R.ttf
+        - asset: lib/assets/fonts/BpmfZihiOnly-R.ttf
     - family: BpmfIansui
       fonts:
-        - asset: lib\assets\fonts\BpmfIansui-Regular.ttf      
-  # The following line ensures that the Material Icons font is
-  # included with your application, so that you can use the icons in
-  # the material Icons class.
+        - asset: lib/assets/fonts/BpmfIansui-Regular.ttf      
   uses-material-design: true
 
-  # To add assets to your application, add an assets section, like this:
   assets:
     - assets/data_files/
     - lib/assets/svg/
     - lib/assets/img/
     - lib/assets/img/word/
     - lib/assets/img/oldWords/
-  #  - lib/assets/img/vocabulary/
     - lib/assets/img/bopomo/
     - lib/assets/img/bopomo_spelling/
     - assets/bopomo/
