@@ -1,25 +1,26 @@
 // lib/teach_word/states/navigation_state.dart
 
+// Navigation state management
 class NavigationState {
-  final int currentTabIndex;
+  final int currentTab;
   final bool canNavigateNext;
-  final bool canNavigatePrevious;
+  final bool canNavigatePrev;
 
   const NavigationState({
-    this.currentTabIndex = 0,
+    this.currentTab = 0,
     this.canNavigateNext = true,
-    this.canNavigatePrevious = true,
+    this.canNavigatePrev = false,
   });
 
   NavigationState copyWith({
-    int? currentTabIndex,
+    int? currentTab,
     bool? canNavigateNext,
-    bool? canNavigatePrevious,
+    bool? canNavigatePrev,
   }) {
     return NavigationState(
-      currentTabIndex: currentTabIndex ?? this.currentTabIndex,
+      currentTab: currentTab ?? this.currentTab,
       canNavigateNext: canNavigateNext ?? this.canNavigateNext,
-      canNavigatePrevious: canNavigatePrevious ?? this.canNavigatePrevious,
+      canNavigatePrev: canNavigatePrev ?? this.canNavigatePrev,
     );
   }
 }

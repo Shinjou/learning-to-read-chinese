@@ -76,6 +76,7 @@ class RegisterViewState extends ConsumerState<RegisterView> {
             ),
             LeftRightSwitch(
               // 年級
+              fontSize: fontSize,
               iconsColor: beige,
               iconsSize: fontSize * 1.5,
               rightBorder: false,
@@ -106,6 +107,7 @@ class RegisterViewState extends ConsumerState<RegisterView> {
             SizedBox(height: fontSize * 0.3),
             LeftRightSwitch(
               // 學期
+              fontSize: fontSize,
               iconsColor: beige,
               iconsSize: fontSize * 1.5,
               rightBorder: false,
@@ -136,6 +138,7 @@ class RegisterViewState extends ConsumerState<RegisterView> {
             SizedBox(height: fontSize * 0.3),
             LeftRightSwitch(
               // 出版商
+              fontSize: fontSize,
               iconsColor: beige,
               iconsSize: fontSize * 1.5,
               rightBorder: false,

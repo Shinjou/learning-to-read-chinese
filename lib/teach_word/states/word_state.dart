@@ -7,6 +7,8 @@ enum StrokeMode { animation, practice, review }
 
 class WordState {
   final String currentWord;
+  final int unitId;
+  final String unitTitle;
   final String fallbackWord;
   final bool isLearned;
   final int nextStepId;
@@ -36,6 +38,8 @@ class WordState {
 
   const WordState({
     required this.currentWord,
+    this.unitId = 0,
+    this.unitTitle = '',
     this.fallbackWord = '學',
     this.isLearned = false,
     this.nextStepId = 0,
@@ -66,6 +70,8 @@ class WordState {
 
   WordState copyWith({
     String? currentWord,
+    int? unitId,
+    String? unitTitle,
     String? fallbackWord,
     bool? isLearned,
     int? nextStepId,
@@ -95,6 +101,8 @@ class WordState {
   }) {
     return WordState(
       currentWord: currentWord ?? this.currentWord,
+      unitId: unitId ?? this.unitId,
+      unitTitle: unitTitle ?? this.unitTitle,
       fallbackWord: fallbackWord ?? this.fallbackWord,
       isLearned: isLearned ?? this.isLearned,
       nextStepId: nextStepId ?? this.nextStepId,
