@@ -32,3 +32,27 @@ final ttsProvider = Provider<FlutterTts>((ref) {
 final audioPlayerProvider = Provider<AudioPlayer>((ref) {
   return AudioPlayer();
 });
+
+class AudioPlaybackState {
+  final bool isPlaying;
+  final bool isSpeaking;
+
+  const AudioPlaybackState({
+    this.isPlaying = false,
+    this.isSpeaking = false,
+  });
+
+  AudioPlaybackState copyWith({
+    bool? isPlaying,
+    bool? isSpeaking,
+  }) {
+    return AudioPlaybackState(
+      isPlaying: isPlaying ?? this.isPlaying,
+      isSpeaking: isSpeaking ?? this.isSpeaking,
+    );
+  }
+}
+
+final audioStateProvider = StateProvider<AudioPlaybackState>((ref) {
+  return const AudioPlaybackState();
+});

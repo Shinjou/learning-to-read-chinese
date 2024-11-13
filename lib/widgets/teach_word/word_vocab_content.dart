@@ -25,7 +25,7 @@ class WordVocabContent extends ConsumerStatefulWidget {
 }
 
 class WordVocabContentState extends ConsumerState<WordVocabContent> {
-  final FlutterTts ftts = FlutterTts();
+  late FlutterTts ftts;
   late String vocab;
   late String vocab2;
   late String meaning;
@@ -64,6 +64,7 @@ class WordVocabContentState extends ConsumerState<WordVocabContent> {
     displayedSentence = blankSentence;
     options = [vocab, vocab2]..shuffle();
     message = '';
+    ftts = ref.read(ttsProvider);
     debugPrint('Initialized variables: vocab = $vocab, options = $options');
   }
 

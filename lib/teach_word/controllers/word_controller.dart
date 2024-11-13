@@ -1,15 +1,20 @@
 // lib/teach_word/controllers/word_controller.dart
 
-// import 'dart:math' as math;
+import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+// import 'package:fluttertoast/fluttertoast.dart';
 import 'package:ltrc/data/models/word_status_model.dart';
 // import 'package:ltrc/data/providers/word_status_provider.dart';
 import 'package:ltrc/providers.dart';
 import 'package:ltrc/teach_word/constants/steps.dart';
+import 'package:ltrc/teach_word/presentation/teach_word_utils.dart';
+import 'package:ltrc/teach_word/presentation/teach_word_view_testing.dart';
+// import 'package:ltrc/teach_word/presentation/teach_word_utils.dart';
 import 'package:ltrc/teach_word/providers/word_provider.dart';
 import 'package:ltrc/teach_word/services/word_service.dart';
 import 'package:ltrc/widgets/teach_word/stroke_order_animation_controller.dart';
@@ -49,6 +54,28 @@ class WordController extends StateNotifier<WordState> {
     }
   }
 
+  // Called by teach_word_view.dart
+  void setStrokeController(
+    StrokeOrderAnimationController controller, 
+    BuildContext context, 
+    WidgetRef ref, 
+    TeachWordView widget,
+    double fontSize
+  ) {
+    _strokeController = controller;
+
+    // Add necessary callbacks with access to context, ref, and widget
+    controller.addOnQuizCompleteCallback((summary) {
+      _handleQuizComplete(summary, fontSize, context, ref, widget);
+    });
+    
+    controller.addOnWrongStrokeCallback(_handleWrongStroke);
+    controller.addOnCorrectStrokeCallback(_handleCorrectStroke);
+    controller.addListener(_handleStrokeControllerStateChange);
+    syncStateWithController(controller);
+  }
+
+  /*
   void setStrokeController(StrokeOrderAnimationController controller) {
     _strokeController = controller;
     
@@ -56,8 +83,84 @@ class WordController extends StateNotifier<WordState> {
     controller.addOnQuizCompleteCallback(_handleQuizComplete);
     controller.addOnWrongStrokeCallback(_handleWrongStroke);
     controller.addOnCorrectStrokeCallback(_handleCorrectStroke);
+    controller.addListener(_handleStrokeControllerStateChange);
+    syncStateWithController(controller);
+  }
+  */
 
-    // Sync initial state
+  // Used by setStrokeController in this class
+  void _handleQuizComplete(
+    QuizSummary summary, 
+    double fontSize,
+    BuildContext context, 
+    WidgetRef ref, 
+    TeachWordView widget
+  ) {
+    if (state.nextStepId >= TeachWordSteps.steps['practiceWithBorder1']! &&
+        state.nextStepId <= TeachWordSteps.steps['turnBorderOff']!) {
+      state = state.copyWith(
+        practiceTimeLeft: state.practiceTimeLeft - 1,
+        nextStepId: state.nextStepId + 1,
+      );
+
+      Fluttertoast.showToast(
+        msg: state.nextStepId == TeachWordSteps.steps['turnBorderOff']
+            ? "恭喜筆畫正確！讓我們 去掉邊框 再練習 ${state.practiceTimeLeft} 遍哦！"
+            : "恭喜筆畫正確！讓我們再練習 ${state.practiceTimeLeft} 次哦！",
+        fontSize: fontSize * 1.2,
+      );
+    } else if (state.nextStepId == TeachWordSteps.steps['practiceWithoutBorder1']) {
+      state = state.copyWith(
+        practiceTimeLeft: state.practiceTimeLeft - 1,
+        nextStepId: state.nextStepId + 1,
+        isLearned: true,
+      );
+
+      // Use `updateWordStatus` with ref and widget now accessible
+      updateWordStatus(context, ref, widget.wordsStatus[widget.wordIndex], true);
+
+      Fluttertoast.showToast(
+        msg: "恭喜筆畫正確！",
+        fontSize: fontSize * 1.2,
+      );
+    }
+  }
+  
+  /*
+  void _handleQuizComplete(QuizSummary summary, double fontSize) {
+    if (state.nextStepId >= TeachWordSteps.steps['practiceWithBorder1']! &&
+        state.nextStepId <= TeachWordSteps.steps['turnBorderOff']!) {
+      state = state.copyWith(
+        practiceTimeLeft: state.practiceTimeLeft - 1,
+        nextStepId: state.nextStepId + 1,
+      );
+      
+      // Show success toast
+      Fluttertoast.showToast(
+        msg: state.nextStepId == TeachWordSteps.steps['turnBorderOff']
+            ? "恭喜筆畫正確！讓我們 去掉邊框 再練習 ${state.practiceTimeLeft} 遍哦！"
+            : "恭喜筆畫正確！讓我們再練習 ${state.practiceTimeLeft} 次哦！",
+        fontSize: fontSize * 1.2,
+      );
+    } else if (state.nextStepId == TeachWordSteps.steps['practiceWithoutBorder1']) {
+      state = state.copyWith(
+        practiceTimeLeft: state.practiceTimeLeft - 1,
+        nextStepId: state.nextStepId + 1,
+        isLearned: true,
+      );
+      // _updateWordStatus(true);
+      updateWordStatus(context, ref, widget.wordsStatus[widget.wordIndex], true); 
+      
+      // Show success toast
+      Fluttertoast.showToast(
+        msg: "恭喜筆畫正確！",
+        fontSize: fontSize * 1.2,
+      );
+    }
+  }
+  */
+
+  void syncStateWithController(StrokeOrderAnimationController controller) {
     state = state.copyWith(
       isAnimating: controller.isAnimating,
       isQuizzing: controller.isQuizzing,
@@ -67,6 +170,94 @@ class WordController extends StateNotifier<WordState> {
 
     // Add listener for state changes
     controller.addListener(_handleStrokeControllerStateChange);
+  }
+
+  Future<String> loadSvgData(String word) async {
+    final noSvgList = [
+      '吔', '姍', '媼', '嬤', '履', '搧', '枴', '椏', '欓', '汙',
+      '溼', '漥', '痠', '礫', '粄', '粿', '綰', '蓆', '襬', '譟',
+      '踖', '踧', '鎚', '鏗', '鏘', '陳', '颺', '齒'
+    ];
+    debugPrint('Loading SVG data for word: $word');
+    String tempWord = word;
+
+    if (noSvgList.contains(word)) {
+      tempWord = '學';
+      state = state.copyWith(svgExists: false);
+    } else {
+      state = state.copyWith(svgExists: true);
+    }
+
+    try {
+      final response = await rootBundle.loadString('lib/assets/svg/$tempWord.json');
+      return response.replaceAll("\"", "'");
+    } catch (e) {
+      state = state.copyWith(svgExists: false);
+      handleError('svgError');
+      return '';
+    }
+  }
+
+  void handleNavigationLogic(TabController tabController, {required bool isNext}) {
+    final isLastStep = state.nextStepId >= TeachWordSteps.steps['goToUse2']!;
+    final isFirstTab = tabController.index == 0;
+
+    if (isNext && !isLastStep) {
+      incrementNextStepId();
+      tabController.animateTo(tabController.index + 1);
+    } else if (!isNext && !isFirstTab) {
+      tabController.animateTo(tabController.index - 1);
+      decrementNextStepId();
+    }
+  }
+
+  void incrementNextStepId() {
+    state = state.copyWith(nextStepId: state.nextStepId + 1);
+  }
+
+  void decrementNextStepId() {
+    final step = max(TeachWordSteps.steps['goToListen']!, state.nextStepId - 1);
+    state = state.copyWith(nextStepId: step);
+  }
+
+  Future<void> handleGoToUse() async {
+    try {
+      switch (state.vocabCount) {
+        case 1:
+          await playVocabAudio(0);
+          state = state.copyWith(
+            nextStepId: TeachWordSteps.steps['goToUse2']!,
+            isLearned: true,
+          );
+          break;
+        case 2:
+          if (state.nextStepId == TeachWordSteps.steps['goToUse1']) {
+            await playVocabAudio(0);
+            incrementNextStepId();
+          } else if (state.nextStepId == TeachWordSteps.steps['goToUse2']) {
+            await playVocabAudio(1);
+            state = state.copyWith(isLearned: true);
+          }
+          break;
+      }
+    } catch (e) {
+      debugPrint('Error in handleGoToUse: $e');
+      handleError('audioError');
+    }
+  }
+
+  Future<void> playWordAudio() async {
+    if (state.isBpmf) {
+      await player.play(AssetSource('bopomo/${state.currentWord}.mp3'));
+    } else {
+      await tts.speak(state.currentWord);
+    }
+  }
+
+  Future<void> playVocabAudio(int index) async {
+    final vocab = state.wordsPhrase[state.wordIndex]['vocab${index + 1}'];
+    final sentence = state.wordsPhrase[state.wordIndex]['sentence${index + 1}'];
+    await tts.speak("$vocab。$sentence");
   }
 
   StrokeOrderAnimationController get strokeController {
@@ -86,37 +277,7 @@ class WordController extends StateNotifier<WordState> {
       currentStroke: _strokeController!.currentStroke,
     );
   }
-
-  void _handleQuizComplete(QuizSummary summary) {
-    if (state.nextStepId >= TeachWordSteps.steps['practiceWithBorder1']! &&
-        state.nextStepId <= TeachWordSteps.steps['turnBorderOff']!) {
-      state = state.copyWith(
-        practiceTimeLeft: state.practiceTimeLeft - 1,
-        nextStepId: state.nextStepId + 1,
-      );
-      
-      // Show success toast
-      Fluttertoast.showToast(
-        msg: state.nextStepId == TeachWordSteps.steps['turnBorderOff']
-            ? "恭喜筆畫正確！讓我們 去掉邊框 再練習 ${state.practiceTimeLeft} 遍哦！"
-            : "恭喜筆畫正確！讓我們再練習 ${state.practiceTimeLeft} 次哦！",
-        fontSize: 30,
-      );
-    } else if (state.nextStepId == TeachWordSteps.steps['practiceWithoutBorder1']) {
-      state = state.copyWith(
-        practiceTimeLeft: state.practiceTimeLeft - 1,
-        nextStepId: state.nextStepId + 1,
-        isLearned: true,
-      );
-      _updateWordStatus(true);
-      
-      // Show success toast
-      Fluttertoast.showToast(
-        msg: "恭喜筆畫正確！",
-        fontSize: 30,
-      );
-    }
-  }
+  
 
   void _handleWrongStroke(int strokeIndex) {
     if (!mounted) return;
@@ -215,41 +376,10 @@ class WordController extends StateNotifier<WordState> {
     );
   }
 
-  Future<void> handleGoToUse() async {
-    try {
-      switch (state.vocabCount) {
-        case 1:
-          await _playVocabAudio(0);
-          state = state.copyWith(
-            nextStepId: TeachWordSteps.steps['goToUse2']!,
-            isLearned: true,
-          );
-          break;
-
-        case 2:
-          if (state.nextStepId == TeachWordSteps.steps['goToUse1']) {
-            await _playVocabAudio(0);
-            state = state.copyWith(nextStepId: state.nextStepId + 1);
-          } else if (state.nextStepId == TeachWordSteps.steps['goToUse2']) {
-            await _playVocabAudio(1);
-            state = state.copyWith(isLearned: true);
-          }
-          break;
-      }
-    } catch (e) {
-      debugPrint('Error in handleGoToUse: $e');
-      handleError('audioError');
-    }
-  }
-
   Future<void> _playVocabAudio(int index) async {
     final vocab = state.wordsPhrase[state.wordIndex]['vocab${index + 1}'];
     final sentence = state.wordsPhrase[state.wordIndex]['sentence${index + 1}'];
     await tts.speak("$vocab。$sentence");
-  }
-
-  void incrementNextStepId() {
-    state = state.copyWith(nextStepId: state.nextStepId + 1);
   }
 
   Future<void> _updateWordStatus(bool learned) async {
@@ -267,19 +397,6 @@ class WordController extends StateNotifier<WordState> {
     }
   }
 //====  Begin  ======================================================================
-
-  Future<void> playWordAudio() async {
-    if (state.isBpmf) {
-      await player.play(AssetSource('bopomo/${state.currentWord}.mp3'));
-    } else {
-      await tts.speak(state.currentWord);
-    }
-  }
-
-  Future<void> playVocabAudio(int index) async {
-    await tts.speak("${state.wordsPhrase[state.wordIndex]['vocab${index + 1}']}.${state.wordsPhrase[state.wordIndex]['sentence${index + 1}']}");
-  }
-
   void markWordAsLearned(WordState wordState) {
     state = state.copyWith(
       isLearned: true,
@@ -354,3 +471,4 @@ class WordController extends StateNotifier<WordState> {
     super.dispose();
   }
 }
+

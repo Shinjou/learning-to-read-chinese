@@ -73,7 +73,7 @@ class UseTabState extends ConsumerState<UseTab> with TickerProviderStateMixin {
   ValueNotifier<int> currentTabIndex = ValueNotifier(0);  
   bool img1Exist = false;
   bool img2Exist = false;
-  int vocabIndex = 0;
+
 
 
   // Local state
@@ -86,18 +86,19 @@ class UseTabState extends ConsumerState<UseTab> with TickerProviderStateMixin {
   late List<String> options;
   late String message;
   late String blankSentence;
+  int vocabIndex = 0;  
   bool isAnswerCorrect = false;
 
   @override
   void initState() {
     super.initState();
-    _initVariables();
+    ftts = ref.read(ttsProvider);
+    player = ref.read(audioPlayerProvider);    
+    _initVariables(vocabIndex); // Initialize with the first vocabulary entry
   }
 
-  void _initVariables() {    
+  void _initVariables(int pageIndex) {    
     word = widget.wordsStatus[widget.wordIndex].word;     
-    ftts = ref.read(ttsProvider);
-    player = ref.read(audioPlayerProvider);
     isBpmf = widget.isBpmf;
     svgFileExist = widget.svgFileExist;
     wordIsLearned = widget.wordIsLearned; 
@@ -109,16 +110,15 @@ class UseTabState extends ConsumerState<UseTab> with TickerProviderStateMixin {
 
     nextStepId = TeachWordSteps.steps['goToUse1']!;
     // new code needed to merge WordVocabContentState into UseTabState
-    vocab = widget.wordObj['vocab1'] ?? '';
-    vocab2 = widget.wordObj['vocab2'] ?? ''; // Example for the wrong answer
-    meaning = widget.wordObj['meaning1'] ?? '';
-    sentence = widget.wordObj['sentence1'] ?? '';
+    vocab = widget.wordObj['vocab${pageIndex + 1}'] ?? '';
+    vocab2 = widget.wordObj['vocab${(pageIndex + 1) % widget.vocabCnt + 1}'] ?? '';
+    meaning = widget.wordObj['meaning${pageIndex + 1}'] ?? '';
+    sentence = widget.wordObj['sentence${pageIndex + 1}'] ?? '';
     blankSentence = _createBlankSentence(sentence, vocab);
     displayedSentence = blankSentence;
     options = [vocab, vocab2]..shuffle();
     message = '';
     isAnswerCorrect = false;
- 
   }
 
   String _createBlankSentence(String sentence, String vocab) {
@@ -129,11 +129,7 @@ class UseTabState extends ConsumerState<UseTab> with TickerProviderStateMixin {
 
   Future<void> _speak(String text) async {
     int result = await ftts.speak(text);
-    if (result == 1) {
-      debugPrint('UseTab _speak succeeded! text: $text');
-    } else {
-      debugPrint('UseTab _speak failed! text: $text');
-    }
+    debugPrint(result == 1 ? 'TTS succeeded: $text' : 'TTS failed: $text');
   }
 
   void _selectWord(String word) {
@@ -155,10 +151,15 @@ class UseTabState extends ConsumerState<UseTab> with TickerProviderStateMixin {
   }
 
   void _onContinuePressed() {
-    debugPrint('_onContinuePressed: init variables');
-    _initVariables(); // Reset for a new page
     setState(() {
-      message = '';
+      vocabIndex++;
+      if (vocabIndex < widget.vocabCnt) {
+        _initVariables(vocabIndex); // Move to the next vocabulary entry
+      } else {
+        // Reset or handle end of vocab list if needed
+        vocabIndex = 0;
+        _initVariables(vocabIndex);
+      }
     });
   }
 
@@ -183,11 +184,166 @@ class UseTabState extends ConsumerState<UseTab> with TickerProviderStateMixin {
       ),
     );
   }
+  
+  /*
+  Widget _buildTabPage(double fontSize) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // LeftRightSwitch navigation component
+        LeftRightSwitch(
+          fontSize: fontSize,
+          iconsColor: Colors.grey,
+          iconsSize: fontSize * 1.5,
+          isFirst: vocabIndex == 0,
+          isLast: vocabIndex == widget.vocabCnt - 1,
+          middleWidget: Text(
+            '用一用',
+            style: TextStyle(
+              color: Colors.grey,
+              fontSize: fontSize * 1.2,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          onLeftClicked: vocabIndex > 0
+              ? () {
+                  setState(() {
+                    vocabIndex--;
+                    _initVariables(vocabIndex); // Go to previous page
+                  });
+                }
+              : null,
+          onRightClicked: isAnswerCorrect && vocabIndex < widget.vocabCnt - 1
+              ? () {
+                  _onContinuePressed(); // Move to the next page only if the answer is correct
+                }
+              : null,
+        ),
+        // Vocabulary display with TTS button
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              vocab,
+              style: TextStyle(fontSize: fontSize * 1.2),
+            ),
+            IconButton(
+              icon: Icon(Icons.volume_up),
+              onPressed: () => _speak(vocab),
+            ),
+          ],
+        ),
+        // Meaning display with TTS button
+        Padding(
+          padding: EdgeInsets.only(left: fontSize * 0.5),
+          child: Row(
+            children: [
+              Text(
+                "解釋：$meaning",
+                style: TextStyle(fontSize: fontSize),
+              ),
+              IconButton(
+                icon: Icon(Icons.volume_up),
+                onPressed: () => _speak(meaning),
+              ),
+            ],
+          ),
+        ),
+        // Sentence with blank (underscore) where vocab should be
+        Padding(
+          padding: EdgeInsets.only(left: fontSize * 0.5),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Text("例句：", style: TextStyle(fontSize: fontSize)),
+                  IconButton(
+                    icon: Icon(Icons.volume_up),
+                    onPressed: () => _speak(sentence),
+                  ),
+                ],
+              ),
+              Text(
+                displayedSentence,
+                style: TextStyle(fontSize: fontSize * 1.1),
+              ),
+            ],
+          ),
+        ),
+        // Display options (vocab and vocab2) as buttons
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: options.map((word) {
+            return ElevatedButton(
+              onPressed: () => _selectWord(word),
+              child: Text(
+                word,
+                style: TextStyle(fontSize: fontSize),
+              ),
+            );
+          }).toList(),
+        ),
+        // Feedback message
+        if (message.isNotEmpty)
+          Text(
+            message,
+            style: TextStyle(
+              color: isAnswerCorrect ? Colors.green : Colors.red,
+              fontSize: fontSize,
+            ),
+          ),
+        // Indicator for the page index
+        Padding(
+          padding: EdgeInsets.only(top: fontSize * 0.5),
+          child: Text(
+            "${vocabIndex + 1} / ${widget.vocabCnt}",
+            style: TextStyle(fontSize: fontSize * 0.8, color: Colors.grey),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ],
+    );
+  }
+  */
 
-  Widget _buildTabPage(int pageIndex, double fontSize) {
+ Widget _buildTabPage(int pageIndex, double fontSize) {
     bool isLastPage = pageIndex == widget.vocabCnt - 1;
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,      
       children: [
+        LeftRightSwitch(
+          fontSize: fontSize,
+          iconsColor: Colors.grey,
+          iconsSize: fontSize * 1.5,
+          rightBorder: pageIndex == 0 ? nextStepId == TeachWordSteps.steps['goToUse2'] : false,
+          isFirst: vocabIndex == 0,
+          isLast: vocabIndex == widget.vocabCnt - 1,
+          middleWidget: Text(
+            '用一用',
+            style: TextStyle(
+              color: Colors.grey,
+              fontSize: fontSize * 1.2,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          onLeftClicked: vocabIndex > 0
+              ? () {
+                  setState(() {
+                    vocabIndex--;
+                    _initVariables(vocabIndex); // Go to previous page
+                  });
+                }
+              : null,
+          onRightClicked: isAnswerCorrect && vocabIndex < widget.vocabCnt - 1
+              ? () {
+                  _onContinuePressed(); // Move to the next page only if the answer is correct
+                }
+              : null,
+
+        // to be reviewed and edited
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -227,7 +383,6 @@ class UseTabState extends ConsumerState<UseTab> with TickerProviderStateMixin {
       ],
     );
   }
-
 
   @override
   void dispose() {

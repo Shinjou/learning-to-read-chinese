@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ltrc/views/view_utils.dart';
 
 class LeftRightSwitch extends StatelessWidget {
+  final double fontSize;
   final Color iconsColor;
   final double iconsSize;
   final bool rightBorder;
@@ -13,6 +14,7 @@ class LeftRightSwitch extends StatelessWidget {
 
   const LeftRightSwitch({
     super.key,
+    required this.fontSize,
     required this.iconsColor,
     required this.iconsSize,
     required this.rightBorder,
@@ -24,7 +26,8 @@ class LeftRightSwitch extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {  
+    final fontSize = this.fontSize;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -38,7 +41,7 @@ class LeftRightSwitch extends StatelessWidget {
           ),
           iconSize: iconsSize,
           onPressed: onLeftClicked ?? ()=>{},
-        ) : Container(width: 40,),
+        ) : Container(width: fontSize * 2.5,),
         middleWidget,
         (!isLast) ? Container(
           decoration: BoxDecoration(
@@ -56,7 +59,7 @@ class LeftRightSwitch extends StatelessWidget {
             onPressed: onRightClicked ?? ()=>{},
           )
         )
-         : Container(width: 40,),
+         : Container(width: fontSize * 2.5,),
       ],
     );
   }

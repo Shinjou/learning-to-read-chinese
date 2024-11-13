@@ -1,11 +1,11 @@
 // view_utils.dart
-import 'package:flutter/foundation.dart';
+// import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/contants/routes.dart';
 import 'package:ltrc/providers.dart';
-import 'package:stack_trace/stack_trace.dart';
+// import 'package:stack_trace/stack_trace.dart';
 
 // Color constants: from whit to black. Some can be merged.
 const Color whiteColor = Colors.white;
@@ -125,6 +125,7 @@ onPressed: () => navigateWithProvider(
 ),
 */
 
+/*
 void navigateWithProvider(
     BuildContext context, 
     String routeName, 
@@ -178,6 +179,134 @@ void navigateWithProvider(
       debugPrint('Navigation to $routeName completed');       
     }).catchError((error) {
       debugPrint('Error during navigation to $routeName: $error');
+    }
+  );
+}
+*/
+
+/* 11/7/2024
+void navigateWithProvider(
+  BuildContext context,
+  String routeName,
+  WidgetRef ref, 
+  {
+    Map<String, dynamic>? arguments,
+    int offset = 0,
+  }) {
+
+  // Extract the caller method using the stack_trace package for debugging purposes
+  if (kDebugMode) {
+    String callerInfo = "";
+    try {
+      final stackTrace = StackTrace.current;
+      final trace = Trace.from(stackTrace);
+      final frame = trace.frames[1];
+      callerInfo = '${frame.member} in ${frame.library}';
+    } catch (e) {
+      callerInfo = "Caller unknown";
+    }
+    debugPrint("navigateWithProvider called by $callerInfo, to $routeName");
+  }
+
+  final routes = AppRoutes.define();
+  if (!routes.containsKey(routeName)) {
+    debugPrint('Error: Route $routeName not found in AppRoutes.');
+    return;
+  }
+
+  // Adjust the wordIndex in arguments if it exists and apply the offset
+  if (arguments != null && arguments.containsKey('wordIndex')) {
+    arguments['wordIndex'] = (arguments['wordIndex'] as int) + offset;
+  }
+
+  Navigator.of(context).push(
+    MaterialPageRoute(
+      builder: (context) {
+        return routes[routeName]!(context);
+      },
+      settings: RouteSettings(name: routeName, arguments: arguments),
+    ),
+  ).then((_) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (ref.read(screenInfoProvider.notifier).mounted) {
+          ref.read(screenInfoProvider.notifier).updateFromContext(context);
+        }
+      });
+      debugPrint('Navigation to $routeName completed');       
+    }).catchError((error) {
+      debugPrint('Error during navigation to $routeName: $error');
+    }
+  );
+}
+*/
+
+// view_utils.dart
+
+void navigateWithProvider(
+  BuildContext context,
+  String routeName,
+  WidgetRef ref, 
+  {
+    Map<String, dynamic>? arguments,
+    int offset = 0,
+  }) {
+
+  // Extract the caller method using the stack_trace package for debugging purposes
+  /*
+  if (kDebugMode) {
+    String callerInfo = "";
+    try {
+      final stackTrace = StackTrace.current;
+      final trace = Trace.from(stackTrace);
+      final frame = trace.frames[1];
+      callerInfo = '${frame.member} in ${frame.library}';
+    } catch (e) {
+      callerInfo = "Caller unknown";
+    }
+    debugPrint("navigateWithProvider called by $callerInfo, to $routeName");
+  }
+  
+  // Check the initial arguments and offset
+  debugPrint("navigateWithProvider: Initial arguments - $arguments, offset - $offset");
+  */
+
+  final routes = AppRoutes.define();
+  if (!routes.containsKey(routeName)) {
+    debugPrint('Error: Route $routeName not found in AppRoutes.');
+    return;
+  }
+
+  // Adjust the wordIndex in arguments if it exists and apply the offset
+  if (arguments != null && arguments.containsKey('wordIndex')) {
+    final initialWordIndex = arguments['wordIndex'];
+    arguments['wordIndex'] = (initialWordIndex as int) + offset;
+    debugPrint("navigateWithProvider: Adjusted wordIndex - initial: $initialWordIndex, offset: $offset, new: ${arguments['wordIndex']}");
+  } else {
+    debugPrint("navigateWithProvider: No wordIndex in arguments or arguments are null.");
+  }
+
+  // Read and print the screenInfo state for debugging
+  final screenInfo = ref.read(screenInfoProvider);
+  debugPrint("navigateWithProvider: Current screenInfo - H: ${screenInfo.screenHeight}, W: ${screenInfo.screenWidth}, F: ${screenInfo.fontSize}, Orientation: ${screenInfo.orientation}, isTablet: ${screenInfo.isTablet}");
+
+  Navigator.of(context).push(
+    MaterialPageRoute(
+      builder: (context) {
+        return routes[routeName]!(context);
+      },
+      settings: RouteSettings(name: routeName, arguments: arguments),
+    ),
+  ).then((_) {
+      // Post-navigation: update screenInfo and confirm completion
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (ref.read(screenInfoProvider.notifier).mounted) {
+          ref.read(screenInfoProvider.notifier).updateFromContext(context);
+          debugPrint("navigateWithProvider: screenInfo updated post-navigation");
+        }
+      });
+      debugPrint('navigateWithProvider: Navigation to $routeName completed');       
+    }).catchError((error) {
+      debugPrint('navigateWithProvider: Error during navigation to $routeName: $error');
     }
   );
 }

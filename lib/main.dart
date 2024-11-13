@@ -1,5 +1,7 @@
 // main.dart 
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/views/view_utils.dart';
@@ -23,28 +25,27 @@ Future<void> main() async {
     
     // Initialize databases
     await AllProvider().database;
-
     await UserProvider().database;
-
     await PolyphonicProcessor.instance.loadPolyphonicData();
 
     // Initialize audio providers
     final container = ProviderContainer(
       overrides: [
         // Pre-initialize audio providers
-        ttsProvider.overrideWithValue(
-          await initializeTts(),
-        ),
-        audioPlayerProvider.overrideWithValue(
-          await initializeAudioPlayer(),
-        ),
+        ttsProvider.overrideWithValue(await initializeTts()),
+        audioPlayerProvider.overrideWithValue(await initializeAudioPlayer()),
+        // Ensure screenInfoProvider retains global state across the app
+        screenInfoProvider,
       ],
     );
 
+    debugPrint('Main: Starting app initialization.');
     runApp(
-      UncontrolledProviderScope(
-        container: container,
-        child: const MyApp(),
+      ProviderScope(
+        child: UncontrolledProviderScope(
+          container: container,
+          child: const MyApp(),
+        ),
       ),
     );
   } catch (e) {
@@ -57,12 +58,13 @@ Future<FlutterTts> initializeTts() async {
   await tts.setLanguage("zh-tw");
   await tts.setSpeechRate(0.5);
   await tts.setVolume(1.0);
+  debugPrint('Main: TTS initialized.');
   return tts;
 }
 
 Future<AudioPlayer> initializeAudioPlayer() async {
   final player = AudioPlayer();
-  // Add any needed audio player initialization here
+  debugPrint('Main: Audio player initialized.');
   return player;
 }
 
@@ -72,6 +74,7 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final grade = ref.watch(gradeProvider);
+    debugPrint('MyApp: Building app with grade: $grade');
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -118,6 +121,87 @@ class ScreenInfoInitializer extends ConsumerStatefulWidget {
 
 class ScreenInfoInitializerState extends ConsumerState<ScreenInfoInitializer> with WidgetsBindingObserver {
   late Future<void> _initFuture;
+  double? _lastHeight;
+  double? _lastWidth;
+  double? _lastFontSize;
+  Timer? _debounceTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _initFuture = _initializeScreenInfo();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _debounceTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  void didChangeMetrics() {
+    // Cancel any previous timer if it’s still active
+    _debounceTimer?.cancel();
+
+    // Set a timer to delay the update
+    _debounceTimer = Timer(const Duration(milliseconds: 300), () {
+      _updateScreenInfoIfChanged();
+    });
+  }
+
+  Future<void> _initializeScreenInfo() async {
+    await WidgetsBinding.instance.endOfFrame;
+    if (mounted) {
+      _updateScreenInfoIfChanged();
+    }
+  }
+
+  void _updateScreenInfoIfChanged() {
+    if (!mounted) return;
+
+    final screenInfoNotifier = ref.read(screenInfoProvider.notifier);
+    screenInfoNotifier.init(context);
+    final screenInfo = ref.read(screenInfoProvider);
+
+    if (screenInfo.screenHeight != _lastHeight ||
+        screenInfo.screenWidth != _lastWidth ||
+        screenInfo.fontSize != _lastFontSize) {
+      
+      debugPrint("ScreenInfoInitializer: Updated screen info - H: ${screenInfo.screenHeight}, W: ${screenInfo.screenWidth}, F: ${screenInfo.fontSize}");
+
+      _lastHeight = screenInfo.screenHeight;
+      _lastWidth = screenInfo.screenWidth;
+      _lastFontSize = screenInfo.fontSize;
+    } else {
+      debugPrint("ScreenInfoNotifier unchanged, no update necessary.");
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<void>(
+      future: _initFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        final screenInfo = ref.watch(screenInfoProvider);
+        if (screenInfo.screenHeight == 0 || screenInfo.screenWidth == 0) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        return widget.child;
+      },
+    );
+  }
+}
+
+/*
+class ScreenInfoInitializerState extends ConsumerState<ScreenInfoInitializer> with WidgetsBindingObserver {
+  late Future<void> _initFuture;
 
   @override
   void initState() {
@@ -148,6 +232,8 @@ class ScreenInfoInitializerState extends ConsumerState<ScreenInfoInitializer> wi
   void _updateScreenInfo() {
     if (mounted) {
       ref.read(screenInfoProvider.notifier).init(context);
+      final screenInfo = ref.read(screenInfoProvider);
+      debugPrint("ScreenInfoInitializer: Updated screen info - H: ${screenInfo.screenHeight}, W: ${screenInfo.screenWidth}, F: ${screenInfo.fontSize}");
     }
   }
 
@@ -170,6 +256,7 @@ class ScreenInfoInitializerState extends ConsumerState<ScreenInfoInitializer> wi
     );
   }
 }
+*/
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -187,7 +274,7 @@ class HomePage extends ConsumerWidget {
       appBar: AppBar(
         title: Text(
           '學國語',
-          style: TextStyle(fontSize: screenInfo.fontSize),
+          style: TextStyle(fontSize: screenInfo.fontSize * 1.5),
         ),
       ),
       body: const LogInView(),

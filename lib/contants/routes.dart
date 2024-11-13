@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ltrc/data/models/word_status_model.dart';
+
 import 'package:ltrc/views/acknowledge.dart';
 import 'package:ltrc/views/check_zhuyin_view.dart';
 import 'package:ltrc/views/bopomo_quiz.dart';
@@ -16,10 +16,19 @@ import 'package:ltrc/views/safety_hint_register_view.dart';
 import 'package:ltrc/views/safety_hint_verify_view.dart';
 import 'package:ltrc/views/setting_view.dart';
 import 'package:ltrc/views/sw_version_view.dart';
-import 'package:ltrc/teach_word/presentation/teach_word_view.dart';
+// import 'package:ltrc/views/teach_word_view.dart';
+import 'package:ltrc/teach_word/presentation/teach_word_view_testing.dart';
 import 'package:ltrc/views/units_view.dart';
-import 'package:ltrc/views/words_view.dart';
 
+import 'package:ltrc/views/words_view.dart';
+// to pass contextProvider and wordControllerProvider
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ltrc/providers.dart';
+import 'package:ltrc/teach_word/controllers/word_controller.dart';
+import 'package:ltrc/teach_word/providers/teach_word_providers.dart';
+import 'package:ltrc/teach_word/providers/word_provider.dart';
+// import 'package:ltrc/views/view_utils.dart';
+//
 
 class AppRoutes {
   AppRoutes._();
@@ -64,16 +73,76 @@ class AppRoutes {
       words: (context) => const WordsView(),
       duoyinzi: (context) => const DuoyinziView(),
       checkzhuyin: (context) => const CheckZhuyinView(), // To test zhuyin
+      /* works for screenInfo, but not wordControllerProvider
       teachWord: (context) {
+        // Extract arguments directly for use in TeachWordView
         final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
         return TeachWordView(
-          unitId: args['unitId'] as int,
-          unitTitle: args['unitTitle'] as String,
-          wordsStatus: (args['wordsStatus'] as List).cast<WordStatus>(),
-          wordsPhrase: args['wordsPhrase'] as List<Map>,
-          wordIndex: args['wordIndex'] as int,
+          unitId: args['unitId'],
+          unitTitle: args['unitTitle'],
+          wordsStatus: args['wordsStatus'],
+          wordsPhrase: args['wordsPhrase'],
+          wordIndex: args['wordIndex'],
         );
-      },      
+      },
+      */
+
+      // Another try to pass contextProvider and wordControllerProvider
+      teachWord: (context) {
+        final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+
+        return ProviderScope(
+          overrides: [
+            contextProvider.overrideWithValue(context),
+            wordControllerProvider.overrideWith((ref) => WordController(
+              context,
+              ref,
+              ref.read(ttsProvider),                // Text-to-Speech instance
+              ref.read(audioPlayerProvider),         // Audio player instance
+              ref.read(wordServiceProvider),         // Word service instance
+              ref.watch(initialWordStateProvider),   // Initial state for WordController
+            )),
+          ],
+          child: TeachWordView(
+            unitId: args['unitId'],
+            unitTitle: args['unitTitle'],
+            wordsStatus: args['wordsStatus'],
+            wordsPhrase: args['wordsPhrase'],
+            wordIndex: args['wordIndex'],
+          ),
+        );
+      },
+
+
+      /*
+      teachWord: (context) {
+        final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+        
+        return ProviderScope(
+          overrides: [
+            contextProvider.overrideWithValue(context),
+            screenInfoProvider.overrideWith((ref) => ScreenInfoNotifier()),
+
+            // Only override `wordControllerProvider` for `TeachWordView`
+            wordControllerProvider.overrideWith((ref) => WordController(
+              context,
+              ref,
+              ref.read(ttsProvider),                // Text-to-Speech instance
+              ref.read(audioPlayerProvider),         // Audio player instance
+              ref.read(wordServiceProvider),         // Word service instance
+              ref.watch(initialWordStateProvider),   // Initial state for WordController
+            )),
+          ],
+          child: TeachWordView(
+            unitId: args['unitId'],
+            unitTitle: args['unitTitle'],
+            wordsStatus: args['wordsStatus'],
+            wordsPhrase: args['wordsPhrase'],
+            wordIndex: args['wordIndex'],
+          ),
+        );
+      },
+      */
     };
   }
 }

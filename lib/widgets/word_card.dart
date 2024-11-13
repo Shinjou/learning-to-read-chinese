@@ -1,3 +1,5 @@
+// lib/widgets/word_card.dart
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/data/models/word_status_model.dart';
