@@ -57,14 +57,14 @@ Future<FlutterTts> initializeTts() async {
   final ftts = FlutterTts();
 
   ftts.setStartHandler(() { // Need more processing
-    debugPrint("TTS Start");
+    debugPrint("TTS Start");  // we only saw "TTS Start", but no "TTS Complete". Why?
   });
 
-  ftts.setCompletionHandler(() { // Need more processing
+  ftts.setCompletionHandler(() { // No "TTS Complete" message. Why?
     debugPrint("TTS Complete");
   });
 
-  ftts.setErrorHandler((msg) { // Need more processing
+  ftts.setErrorHandler((msg) { // 
     debugPrint("TTS Error: $msg");
   });
 

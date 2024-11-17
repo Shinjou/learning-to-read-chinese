@@ -50,27 +50,6 @@ class DuoyinziViewState extends ConsumerState<DuoyinziView> {
     ftts = ref.read(ttsProvider);
     player = ref.read(audioPlayerProvider);
   }
-  /*
-  void _initializeTts() {
-
-    ftts.setStartHandler(() {
-      debugPrint("TTS Start");
-    });
-
-    ftts.setCompletionHandler(() {
-      debugPrint("TTS Complete");
-    });
-
-    ftts.setErrorHandler((msg) {
-      debugPrint("TTS Error: $msg");
-    });
-
-    // Set language, pitch, volume, and other parameters as needed
-    ftts.setLanguage("zh-tw");
-    ftts.setSpeechRate(0.5); 
-    ftts.setPitch(1.0);     
-  }
-  */
 
   void handleStart() async {
     String text = _controller.text;

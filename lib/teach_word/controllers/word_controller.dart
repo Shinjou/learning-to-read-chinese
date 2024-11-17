@@ -12,7 +12,7 @@ import 'package:ltrc/data/models/word_status_model.dart';
 // import 'package:ltrc/data/providers/word_status_provider.dart';
 import 'package:ltrc/providers.dart';
 import 'package:ltrc/teach_word/constants/steps.dart';
-import 'package:ltrc/teach_word/presentation/teach_word_utils.dart';
+// import 'package:ltrc/teach_word/presentation/teach_word_utils.dart';
 import 'package:ltrc/teach_word/presentation/teach_word_view_testing.dart';
 // import 'package:ltrc/teach_word/presentation/teach_word_utils.dart';
 import 'package:ltrc/teach_word/providers/word_provider.dart';
@@ -116,8 +116,8 @@ class WordController extends StateNotifier<WordState> {
         isLearned: true,
       );
 
-      // Use `updateWordStatus` with ref and widget now accessible
-      updateWordStatus(context, ref, widget.wordsStatus[widget.wordIndex], true);
+      // 以前是，寫一寫完後，就設定為”已學“。現在改成當用一用兩個詞都對時，才設定為“已學”
+      // updateWordStatus(context, ref, widget.wordsStatus[widget.wordIndex], true);
 
       Fluttertoast.showToast(
         msg: "恭喜筆畫正確！",
