@@ -74,6 +74,7 @@ class WordCardState extends ConsumerState<WordCard> {
             'wordsStatus': widget.wordsStatus,
             'wordsPhrase': widget.wordsPhrase,
             'wordIndex': widget.wordIndex,
+            'widgetId': 0,
           },
         );
         debugPrint('Navigation to teachWord page initiated');

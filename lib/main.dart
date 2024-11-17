@@ -54,12 +54,25 @@ Future<void> main() async {
 }
 
 Future<FlutterTts> initializeTts() async {
-  final tts = FlutterTts();
-  await tts.setLanguage("zh-tw");
-  await tts.setSpeechRate(0.5);
-  await tts.setVolume(1.0);
+  final ftts = FlutterTts();
+
+  ftts.setStartHandler(() { // Need more processing
+    debugPrint("TTS Start");
+  });
+
+  ftts.setCompletionHandler(() { // Need more processing
+    debugPrint("TTS Complete");
+  });
+
+  ftts.setErrorHandler((msg) { // Need more processing
+    debugPrint("TTS Error: $msg");
+  });
+
+  await ftts.setLanguage("zh-tw");
+  await ftts.setSpeechRate(0.5);
+  await ftts.setVolume(1.0);
   debugPrint('Main: TTS initialized.');
-  return tts;
+  return ftts;
 }
 
 Future<AudioPlayer> initializeAudioPlayer() async {

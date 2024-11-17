@@ -23,7 +23,7 @@ import 'package:ltrc/teach_word/states/word_state.dart';
 class WordController extends StateNotifier<WordState> {
   final BuildContext context;
   final Ref ref;
-  final FlutterTts tts;
+  final FlutterTts ftts;
   final AudioPlayer player;
   final WordService wordService;
   StrokeOrderAnimationController? _strokeController;
@@ -31,7 +31,7 @@ class WordController extends StateNotifier<WordState> {
   WordController(
     this.context,
     this.ref,
-    this.tts,
+    this.ftts,
     this.player,
     this.wordService,
     WordState initialState,
@@ -40,10 +40,10 @@ class WordController extends StateNotifier<WordState> {
   }
 
   Future<void> _initializeAudio() async {
-    tts.setLanguage("zh-tw");
-    tts.setSpeechRate(0.5);
-    tts.setVolume(1.0);
-    tts.setCompletionHandler(_onAudioComplete);
+    ftts.setLanguage("zh-tw");
+    ftts.setSpeechRate(0.5);
+    ftts.setVolume(1.0);
+    ftts.setCompletionHandler(_onAudioComplete);
   }
 
   void _onAudioComplete() {
@@ -250,14 +250,14 @@ class WordController extends StateNotifier<WordState> {
     if (state.isBpmf) {
       await player.play(AssetSource('bopomo/${state.currentWord}.mp3'));
     } else {
-      await tts.speak(state.currentWord);
+      await ftts.speak(state.currentWord);
     }
   }
 
   Future<void> playVocabAudio(int index) async {
     final vocab = state.wordsPhrase[state.wordIndex]['vocab${index + 1}'];
     final sentence = state.wordsPhrase[state.wordIndex]['sentence${index + 1}'];
-    await tts.speak("$vocab。$sentence");
+    await ftts.speak("$vocab。$sentence");
   }
 
   StrokeOrderAnimationController get strokeController {
@@ -379,7 +379,7 @@ class WordController extends StateNotifier<WordState> {
   Future<void> _playVocabAudio(int index) async {
     final vocab = state.wordsPhrase[state.wordIndex]['vocab${index + 1}'];
     final sentence = state.wordsPhrase[state.wordIndex]['sentence${index + 1}'];
-    await tts.speak("$vocab。$sentence");
+    await ftts.speak("$vocab。$sentence");
   }
 
   Future<void> _updateWordStatus(bool learned) async {
@@ -460,15 +460,6 @@ class WordController extends StateNotifier<WordState> {
 
 //==== End  ==========================================================================
 
-
-  @override
-  void dispose() {
-    tts.stop();
-    player.dispose();
-    if (_strokeController != null) {
-      _strokeController!.removeListener(_handleStrokeControllerStateChange);
-    }    
-    super.dispose();
-  }
+  // Nothing to close in this provider, so no need for dispose
 }
 

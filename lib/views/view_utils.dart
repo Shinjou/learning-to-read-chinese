@@ -47,6 +47,54 @@ class ScreenInfo {
   });
 }
 
+/* disabled to test a new code to prevent looping
+class ScreenInfoNotifier extends StateNotifier<ScreenInfo> {
+  ScreenInfoNotifier()
+      : super(ScreenInfo(
+          screenHeight: 0,
+          screenWidth: 0,
+          fontSize: 0,
+          orientation: Orientation.portrait,
+          isTablet: false,
+        ));
+
+  Timer? _debounceTimer;
+
+  // new init method - 11/15/2024
+  void init(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final newScreenInfo = ScreenInfo(
+      screenHeight: mediaQuery.size.height,
+      screenWidth: mediaQuery.size.width,
+      fontSize: _calculateFontSize(mediaQuery),
+      orientation: mediaQuery.orientation,
+      isTablet: mediaQuery.size.shortestSide > 600,
+    );
+
+    if (state != newScreenInfo) {
+      state = newScreenInfo;
+      debugPrint('ScreenInfoNotifier updated: $newScreenInfo');
+    }
+  }
+
+  double _calculateFontSize(MediaQueryData mediaQuery) {
+    final baseWidth = mediaQuery.size.shortestSide > 600 ? 600 : 360;
+    final baseFontSize = mediaQuery.size.shortestSide > 600 ? 24.0 : 15.0;
+    return (baseFontSize * mediaQuery.size.width / baseWidth).roundToDouble();
+  }
+
+  @override
+  void dispose() {
+    _debounceTimer?.cancel();
+    super.dispose();
+  }
+
+  void updateFromContext(BuildContext context) {
+    init(context);
+  }  
+}
+*/
+/* disabled to test a new code by Claude to prevent looping
 class ScreenInfoNotifier extends StateNotifier<ScreenInfo> {
   ScreenInfoNotifier()
       : super(ScreenInfo(
@@ -60,44 +108,92 @@ class ScreenInfoNotifier extends StateNotifier<ScreenInfo> {
   Timer? _debounceTimer;
 
   void init(BuildContext context) {
-    if (_debounceTimer?.isActive ?? false) return;
+    final mediaQuery = MediaQuery.of(context);
+    final newScreenInfo = ScreenInfo(
+      screenHeight: mediaQuery.size.height,
+      screenWidth: mediaQuery.size.width,
+      fontSize: _calculateFontSize(mediaQuery),
+      orientation: mediaQuery.orientation,
+      isTablet: mediaQuery.size.shortestSide > 600,
+    );
 
-    _debounceTimer = Timer(const Duration(milliseconds: 250), () {
-      final mediaQuery = MediaQuery.of(context);
-      double screenHeight = mediaQuery.size.height;
-      double screenWidth = mediaQuery.size.width;
-      double shortestSide = mediaQuery.size.shortestSide;
-      Orientation orientation = mediaQuery.orientation;
-      bool isTablet = shortestSide > 600;
+    if (state != newScreenInfo) {
+      state = newScreenInfo;
+      debugPrint('ScreenInfoNotifier updated: $newScreenInfo');
+    }
+  }
 
-      double baseScreenWidth = isTablet ? 600 : 360;
-      double baseFontSize = isTablet ? 24.0 : 15.0;
+  double _calculateFontSize(MediaQueryData mediaQuery) {
+    final baseWidth = mediaQuery.size.shortestSide > 600 ? 600 : 360;
+    final baseFontSize = mediaQuery.size.shortestSide > 600 ? 24.0 : 15.0;
+    return (baseFontSize * mediaQuery.size.width / baseWidth).roundToDouble();
+  }
 
-      if (orientation == Orientation.landscape) {
-        screenHeight = mediaQuery.size.shortestSide;
-        screenWidth = screenHeight * 3 / 4;
-      }
+  void updateFromContext(BuildContext context) {
+    // Throttle updates using a debounce timer
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(const Duration(milliseconds: 200), () {
+      init(context);
+    });
+  }
 
-      double fontSize = (baseFontSize * screenWidth / baseScreenWidth).roundToDouble();
+  @override
+  void dispose() {
+    _debounceTimer?.cancel();
+    super.dispose();
+  }
+}
+*/
 
-      // Only update if the state has changed
-      if (screenHeight != state.screenHeight ||
-          screenWidth != state.screenWidth ||
-          fontSize != state.fontSize ||
-          orientation != state.orientation) {
-        
-        final newState = ScreenInfo(
-          screenHeight: screenHeight,
-          screenWidth: screenWidth,
-          fontSize: fontSize,
-          orientation: orientation,
-          isTablet: isTablet,
-        );
+class ScreenInfoNotifier extends StateNotifier<ScreenInfo> {
+  ScreenInfoNotifier()
+      : super(ScreenInfo(
+          screenHeight: 0,
+          screenWidth: 0,
+          fontSize: 0,
+          orientation: Orientation.portrait,
+          isTablet: false,
+        ));
 
-        state = newState;
-        debugPrint('ScreenInfoNotifier updated: H: $screenHeight, W: $screenWidth, F: $fontSize, $orientation, T: $isTablet');
-      } else {
-        debugPrint('ScreenInfoNotifier unchanged, no update necessary.');
+  Timer? _debounceTimer;
+
+  void init(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final newScreenInfo = ScreenInfo(
+      screenHeight: mediaQuery.size.height,
+      screenWidth: mediaQuery.size.width,
+      fontSize: _calculateFontSize(mediaQuery),
+      orientation: mediaQuery.orientation,
+      isTablet: mediaQuery.size.shortestSide > 600,
+    );
+
+    if (_shouldUpdate(newScreenInfo)) {
+      state = newScreenInfo;
+      debugPrint('ScreenInfoNotifier updated with new values');
+    } else {
+      debugPrint('ScreenInfoNotifier skipped update - no changes detected');
+    }
+  }
+
+  bool _shouldUpdate(ScreenInfo newInfo) {
+    return state.screenHeight != newInfo.screenHeight ||
+           state.screenWidth != newInfo.screenWidth ||
+           state.fontSize != newInfo.fontSize ||
+           state.orientation != newInfo.orientation ||
+           state.isTablet != newInfo.isTablet;
+  }
+
+  double _calculateFontSize(MediaQueryData mediaQuery) {
+    final baseWidth = mediaQuery.size.shortestSide > 600 ? 600 : 360;
+    final baseFontSize = mediaQuery.size.shortestSide > 600 ? 24.0 : 15.0;
+    return (baseFontSize * mediaQuery.size.width / baseWidth).roundToDouble();
+  }
+
+  void updateFromContext(BuildContext context) {
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(const Duration(milliseconds: 200), () {
+      if (mounted) {
+        init(context);
       }
     });
   }
@@ -107,10 +203,6 @@ class ScreenInfoNotifier extends StateNotifier<ScreenInfo> {
     _debounceTimer?.cancel();
     super.dispose();
   }
-
-  void updateFromContext(BuildContext context) {
-    init(context);
-  }  
 }
 
 /* Usage of navigateWithProvider
@@ -124,124 +216,7 @@ onPressed: () => navigateWithProvider(
   arguments: {'units': units}
 ),
 */
-
-/*
-void navigateWithProvider(
-    BuildContext context, 
-    String routeName, 
-    WidgetRef ref, 
-    {Map<String, dynamic>? arguments}) {
-   
-  // Extract the caller method using the stack_trace package
-  // Only enable the following code in development mode
-
-  if (kDebugMode) {
-    String callerInfo = "";
-    try {
-      // Capture the current stack trace
-      final stackTrace = StackTrace.current;
-      // Use Trace from stack_trace package to parse it
-      final trace = Trace.from(stackTrace);
-
-      // The second frame in the trace is likely the caller method
-      final frame = trace.frames[1]; // Adjust frame index as needed
-      callerInfo = '${frame.member} in ${frame.library}';
-    } catch (e) {
-      callerInfo = "Caller unknown";
-    }
-    debugPrint("navigateWithProvider called by $callerInfo, to $routeName");
-  }
-
-  final screenInfo = ref.read(screenInfoProvider);
-  debugPrint("navigateWithProvider screenInfo: H: ${screenInfo.screenHeight}, W: ${screenInfo.screenWidth}, F: ${screenInfo.fontSize}");
-
-  final routes = AppRoutes.define();
-
-  if (!routes.containsKey(routeName)) {
-    debugPrint('Error: Route $routeName not found in AppRoutes.');
-    return;
-  }
-
-  Navigator.of(context).push(
-    MaterialPageRoute(
-      builder: (context) {
-        return routes[routeName]!(context);
-      },
-      settings: RouteSettings(name: routeName, arguments: arguments),
-    ),
-  ).then((_) {
-      // Update screen info after navigation is complete
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (ref.read(screenInfoProvider.notifier).mounted) {
-          ref.read(screenInfoProvider.notifier).updateFromContext(context);
-        }
-      });
-      debugPrint('Navigation to $routeName completed');       
-    }).catchError((error) {
-      debugPrint('Error during navigation to $routeName: $error');
-    }
-  );
-}
-*/
-
-/* 11/7/2024
-void navigateWithProvider(
-  BuildContext context,
-  String routeName,
-  WidgetRef ref, 
-  {
-    Map<String, dynamic>? arguments,
-    int offset = 0,
-  }) {
-
-  // Extract the caller method using the stack_trace package for debugging purposes
-  if (kDebugMode) {
-    String callerInfo = "";
-    try {
-      final stackTrace = StackTrace.current;
-      final trace = Trace.from(stackTrace);
-      final frame = trace.frames[1];
-      callerInfo = '${frame.member} in ${frame.library}';
-    } catch (e) {
-      callerInfo = "Caller unknown";
-    }
-    debugPrint("navigateWithProvider called by $callerInfo, to $routeName");
-  }
-
-  final routes = AppRoutes.define();
-  if (!routes.containsKey(routeName)) {
-    debugPrint('Error: Route $routeName not found in AppRoutes.');
-    return;
-  }
-
-  // Adjust the wordIndex in arguments if it exists and apply the offset
-  if (arguments != null && arguments.containsKey('wordIndex')) {
-    arguments['wordIndex'] = (arguments['wordIndex'] as int) + offset;
-  }
-
-  Navigator.of(context).push(
-    MaterialPageRoute(
-      builder: (context) {
-        return routes[routeName]!(context);
-      },
-      settings: RouteSettings(name: routeName, arguments: arguments),
-    ),
-  ).then((_) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (ref.read(screenInfoProvider.notifier).mounted) {
-          ref.read(screenInfoProvider.notifier).updateFromContext(context);
-        }
-      });
-      debugPrint('Navigation to $routeName completed');       
-    }).catchError((error) {
-      debugPrint('Error during navigation to $routeName: $error');
-    }
-  );
-}
-*/
-
-// view_utils.dart
-
+/* disabled to test a new code to prevent looping
 void navigateWithProvider(
   BuildContext context,
   String routeName,
@@ -310,3 +285,53 @@ void navigateWithProvider(
     }
   );
 }
+*/
+
+void navigateWithProvider(
+  BuildContext context,
+  String routeName,
+  WidgetRef ref, {
+  Map<String, dynamic>? arguments,
+  int offset = 0,
+}) {
+  final routes = AppRoutes.define();
+  if (!routes.containsKey(routeName)) {
+    debugPrint('Error: Route $routeName not found in AppRoutes.');
+    return;
+  }
+
+  // Adjust the wordIndex in arguments if it exists and apply the offset
+  if (arguments != null && arguments.containsKey('wordIndex')) {
+    final initialWordIndex = arguments['wordIndex'];
+    arguments['wordIndex'] = (initialWordIndex as int) + offset;
+    debugPrint("navigateWithProvider: Adjusted wordIndex - initial: $initialWordIndex, offset: $offset, new: ${arguments['wordIndex']}");
+  } else {
+    debugPrint("navigateWithProvider: No wordIndex in arguments or arguments are null.");
+  }
+
+  // Read and print the screenInfo state for debugging
+  final screenInfo = ref.read(screenInfoProvider);
+  debugPrint("navigateWithProvider: Current screenInfo - H: ${screenInfo.screenHeight}, W: ${screenInfo.screenWidth}, F: ${screenInfo.fontSize}, Orientation: ${screenInfo.orientation}, isTablet: ${screenInfo.isTablet}");
+
+  Navigator.of(context).push(
+    MaterialPageRoute(
+      builder: (context) {
+        return routes[routeName]!(context);
+      },
+      settings: RouteSettings(name: routeName, arguments: arguments),
+    ),
+  ).then((_) {
+    // Post-navigation: update screenInfo and confirm completion
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final notifier = ref.read(screenInfoProvider.notifier);
+      if (notifier.mounted) {
+        notifier.updateFromContext(context);
+        debugPrint("navigateWithProvider: screenInfo updated post-navigation");
+      }
+    });
+    debugPrint('navigateWithProvider: Navigation to $routeName completed');
+  }).catchError((error) {
+    debugPrint('navigateWithProvider: Error during navigation to $routeName: $error');
+  });
+}
+

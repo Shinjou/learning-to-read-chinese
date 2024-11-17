@@ -1,6 +1,7 @@
 // import 'dart:async';
 // import 'dart:io';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_tts/flutter_tts.dart';
@@ -29,24 +30,29 @@ class DuoyinziViewState extends ConsumerState<DuoyinziView> {
   List<TextSpan> processedTextSpans = [];
   String processedUnicode = '';
   late FlutterTts ftts;
+  late AudioPlayer player;
   late double fontSize;
 
   @override
   void initState() {
     super.initState();
-
-    ftts = FlutterTts();
-    initializeTts();
+    _initializeTts();
   }
 
   @override
   void dispose() {
-    ftts.stop();
+    // ftts.stop();
     _controller.dispose();
     super.dispose();
   }
 
-  void initializeTts() {
+  void _initializeTts() {
+    ftts = ref.read(ttsProvider);
+    player = ref.read(audioPlayerProvider);
+  }
+  /*
+  void _initializeTts() {
+
     ftts.setStartHandler(() {
       debugPrint("TTS Start");
     });
@@ -64,6 +70,7 @@ class DuoyinziViewState extends ConsumerState<DuoyinziView> {
     ftts.setSpeechRate(0.5); 
     ftts.setPitch(1.0);     
   }
+  */
 
   void handleStart() async {
     String text = _controller.text;

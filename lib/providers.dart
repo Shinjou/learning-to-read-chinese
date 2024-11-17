@@ -1,4 +1,5 @@
 // import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/views/view_utils.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -21,13 +22,31 @@ final screenInfoProvider = StateNotifierProvider<ScreenInfoNotifier, ScreenInfo>
   return ScreenInfoNotifier();
 });
 
+
+
 final ttsProvider = Provider<FlutterTts>((ref) {
-  final tts = FlutterTts();
-  tts.setLanguage("zh-tw");
-  tts.setSpeechRate(0.5);
-  tts.setVolume(1.0);
-  return tts;
+  final ftts = FlutterTts();
+
+  // Set up the TTS engine
+  ftts.setLanguage("zh-TW");
+  ftts.setSpeechRate(0.5);
+  ftts.setVolume(1.0);
+
+  // Add debug logging
+  ftts.setStartHandler(() {
+    debugPrint('TTS: Speech started');
+  });
+  ftts.setCompletionHandler(() {
+    debugPrint('TTS: Speech completed');
+  });
+  ftts.setErrorHandler((msg) {
+    debugPrint('TTS Error: $msg');
+  });
+
+  return ftts;
 });
+
+
 
 final audioPlayerProvider = Provider<AudioPlayer>((ref) {
   return AudioPlayer();

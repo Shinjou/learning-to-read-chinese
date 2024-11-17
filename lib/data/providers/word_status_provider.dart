@@ -152,9 +152,5 @@ class WordStatusProvider {
     );
   }
 
-  /// Closes the database connection and disposes the provider
-  Future<void> dispose() async {
-    await UserProvider().closeDb();
-    _database = null;
-  }
+  // Nothing to close in this provider, so no need for dispose
 }

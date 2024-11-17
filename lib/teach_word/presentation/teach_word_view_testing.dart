@@ -35,6 +35,7 @@ class TeachWordView extends ConsumerStatefulWidget {
   final List<WordStatus> wordsStatus;
   final List<Map> wordsPhrase;
   final int wordIndex;
+  final int widgetId; // Debug identifier
 
   const TeachWordView({
     super.key,
@@ -43,6 +44,7 @@ class TeachWordView extends ConsumerStatefulWidget {
     required this.wordsStatus,
     required this.wordsPhrase,
     required this.wordIndex,
+    required this.widgetId,
   });
 
   @override
@@ -56,8 +58,8 @@ class TeachWordViewState extends ConsumerState<TeachWordView> with TickerProvide
   // duplicate variable from the original code
   StrokeOrderAnimationController? strokeController;
   late TabController _tabController;
-  FlutterTts ftts = FlutterTts();
-  final player = AudioPlayer();
+  late FlutterTts ftts;
+  late AudioPlayer player;
   late Map wordsPhrase;
   late Map wordObj;
   String word = '';
@@ -79,14 +81,15 @@ class TeachWordViewState extends ConsumerState<TeachWordView> with TickerProvide
   bool firstNullStrokeFlag = true;
   bool showErrorFlag = false;
   // end of duplicate variable
-
+  late int widgetId;
 
   @override
   void initState() {
     super.initState();
+    widgetId = widget.widgetId;
     word = widget.wordsStatus[widget.wordIndex].word; 
     _initializeComponents();
-    debugPrint('TeachWordView: Initializing components.');    
+    debugPrint('TeachWordView: Initializing components. widgetId: $widgetId');    
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initializeStrokeController();
@@ -94,11 +97,16 @@ class TeachWordViewState extends ConsumerState<TeachWordView> with TickerProvide
   }
 
   void _initializeComponents() {
-    // _initializeTts(); // Removed because it is done in main.dart
+    _initializeTts(); 
     _initializeTabController();
     _checkIfBpmf();
     getWord();
     checkWordExistence();
+  }
+
+  void _initializeTts() {
+    ftts = ref.read(ttsProvider);
+    player = ref.read(audioPlayerProvider);
   }
 
   void _initializeTabController() {
@@ -337,15 +345,14 @@ class TeachWordViewState extends ConsumerState<TeachWordView> with TickerProvide
 
   void onPlayAudio() {
     final WordState wordState = ref.read(wordControllerProvider);
-    final FlutterTts tts = ref.read(ttsProvider);
-    final AudioPlayer audioPlayer = ref.read(audioPlayerProvider);
+
     final String word = wordState.currentWord;
     debugPrint('TeachWordView: Playing audio for word $word.');
     
     if (wordState.isBpmf) {
-      audioPlayer.play(AssetSource('bopomo/$word.mp3'));
+      player.play(AssetSource('bopomo/$word.mp3'));
     } else {
-      tts.speak(word);
+      ftts.speak(word);
     }
   }
 
@@ -405,7 +412,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView> with TickerProvide
   Widget build(BuildContext context) {
     final ScreenInfo screenInfo = ref.watch(screenInfoProvider);
     fontSize = screenInfo.fontSize;
-    debugPrint('TeachWordView: Building with fontSize ${screenInfo.fontSize}');
+    debugPrint('TeachWordView: Building with fontSize ${screenInfo.fontSize} for widgetId: $widgetId');
     
     if (!_isInitialized) {
       return const Scaffold(
@@ -483,6 +490,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView> with TickerProvide
             img2Exist: img2Exist,   
             vocabCnt: vocabCnt,      
             wordObj: wordObj,              
+            widgetId: widget.widgetId,
             ),
         ],
       ),
@@ -600,6 +608,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView> with TickerProvide
         'wordsStatus': widget.wordsStatus,
         'wordsPhrase': widget.wordsPhrase,
         'wordIndex': widget.wordIndex + offset,
+        'widgetId': 9,
       },
     );    
   }

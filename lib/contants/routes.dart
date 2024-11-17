@@ -109,6 +109,7 @@ class AppRoutes {
             wordsStatus: args['wordsStatus'],
             wordsPhrase: args['wordsPhrase'],
             wordIndex: args['wordIndex'],
+            widgetId: args['widgetId'],
           ),
         );
       },
