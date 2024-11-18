@@ -9,6 +9,8 @@
 .history
 .svn/
 migrate_working_dir/
+# Tools. Move sh file under lib before execution
+lib/tools/
 
 # IntelliJ related
 *.iml
