@@ -1,5 +1,5 @@
-// import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
+// lib.provider.dart
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/views/view_utils.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -26,7 +26,7 @@ final screenInfoProvider = StateNotifierProvider<ScreenInfoNotifier, ScreenInfo>
 
 final ttsProvider = Provider<FlutterTts>((ref) {
   final ftts = FlutterTts();
-
+  /* This is not necessary because main.dart already did this
   // Set up the TTS engine  Is this necessary given that main.dart already did this?
   ftts.setLanguage("zh-TW");
   ftts.setSpeechRate(0.5);
@@ -42,7 +42,7 @@ final ttsProvider = Provider<FlutterTts>((ref) {
   ftts.setErrorHandler((msg) {
     debugPrint('TTS Error: $msg');
   });
-
+  */
   return ftts;
 });
 
