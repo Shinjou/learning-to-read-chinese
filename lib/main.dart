@@ -35,7 +35,7 @@ Future<void> main() async {
         ttsProvider.overrideWithValue(await initializeTts()),
         audioPlayerProvider.overrideWithValue(await initializeAudioPlayer()),
         // Ensure screenInfoProvider retains global state across the app
-        screenInfoProvider,
+        // screenInfoProvider,
       ],
     );
 
@@ -57,15 +57,15 @@ Future<FlutterTts> initializeTts() async {
   final ftts = FlutterTts();
 
   ftts.setStartHandler(() { // Need more processing
-    debugPrint("TTS Start");  // we only saw "TTS Start", but no "TTS Complete". Why?
+    debugPrint("Main: TTS Started");  // we only saw "TTS Start", but no "TTS Complete". Why?
   });
 
   ftts.setCompletionHandler(() { // No "TTS Complete" message. Why?
-    debugPrint("TTS Complete");
+    debugPrint("Main: TTS Completed");
   });
 
   ftts.setErrorHandler((msg) { // 
-    debugPrint("TTS Error: $msg");
+    debugPrint("Main: TTS Error: $msg");
   });
 
   await ftts.setLanguage("zh-tw");
@@ -124,6 +124,50 @@ class MyApp extends ConsumerWidget {
   }
 }
 
+class ScreenInfoInitializer extends ConsumerStatefulWidget {
+  final Widget child;
+  const ScreenInfoInitializer({super.key, required this.child});
+
+  @override
+  ScreenInfoInitializerState createState() => ScreenInfoInitializerState();
+}
+
+class ScreenInfoInitializerState extends ConsumerState<ScreenInfoInitializer> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        ref.read(screenInfoProvider.notifier).updateScreenInfo(context);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }  
+
+  @override
+  void didChangeMetrics() {
+    if (mounted) {
+      ref.read(screenInfoProvider.notifier).updateScreenInfo(context);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final screenInfo = ref.watch(screenInfoProvider);
+    if (screenInfo.screenHeight == 0 || screenInfo.screenWidth == 0) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    return widget.child;
+  }
+}
+
+/*
 class ScreenInfoInitializer extends ConsumerStatefulWidget {
   final Widget child;
   const ScreenInfoInitializer({super.key, required this.child});
@@ -204,64 +248,6 @@ class ScreenInfoInitializerState extends ConsumerState<ScreenInfoInitializer> wi
         final screenInfo = ref.watch(screenInfoProvider);
         if (screenInfo.screenHeight == 0 || screenInfo.screenWidth == 0) {
           return const Center(child: CircularProgressIndicator());
-        }
-
-        return widget.child;
-      },
-    );
-  }
-}
-
-/*
-class ScreenInfoInitializerState extends ConsumerState<ScreenInfoInitializer> with WidgetsBindingObserver {
-  late Future<void> _initFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addObserver(this);
-    _initFuture = _initializeScreenInfo();
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
-
-  @override
-  void didChangeMetrics() {
-    _updateScreenInfo();
-  }
-
-  Future<void> _initializeScreenInfo() async {
-    // Wait for the first frame to ensure we have valid metrics
-    await WidgetsBinding.instance.endOfFrame;
-    if (mounted) {
-      _updateScreenInfo();
-    }
-  }
-
-  void _updateScreenInfo() {
-    if (mounted) {
-      ref.read(screenInfoProvider.notifier).init(context);
-      final screenInfo = ref.read(screenInfoProvider);
-      debugPrint("ScreenInfoInitializer: Updated screen info - H: ${screenInfo.screenHeight}, W: ${screenInfo.screenWidth}, F: ${screenInfo.fontSize}");
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<void>(
-      future: _initFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());  // Show a loading spinner until the screen info is ready
-        }
-
-        final screenInfo = ref.watch(screenInfoProvider);
-        if (screenInfo.screenHeight == 0 || screenInfo.screenWidth == 0) {
-          return const Center(child: CircularProgressIndicator());  // Show a spinner while screen info is zero
         }
 
         return widget.child;
