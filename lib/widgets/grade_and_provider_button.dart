@@ -17,8 +17,8 @@ class GradeAndProviderButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // final screenInfo = ref.watch(screenInfoProvider);
-    final screenInfo = ref.watch(screenInfoProvider);
+    // final screenInfo = ref.read(screenInfoProvider);
+    final screenInfo = ref.read(screenInfoProvider);
     double fontSize = screenInfo.fontSize;    
 
     return Container(

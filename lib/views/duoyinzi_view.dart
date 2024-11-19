@@ -102,8 +102,8 @@ class DuoyinziViewState extends ConsumerState<DuoyinziView> {
 
   @override
   Widget build(BuildContext context) {
-    // final screenInfo = ref.watch(screenInfoProvider);
-    final screenInfo = ref.watch(screenInfoProvider);
+    // final screenInfo = ref.read(screenInfoProvider);
+    final screenInfo = ref.read(screenInfoProvider);
     fontSize = screenInfo.fontSize;   
 
     if (kDebugMode) {

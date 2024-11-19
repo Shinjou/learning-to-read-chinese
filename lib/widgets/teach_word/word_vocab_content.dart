@@ -116,7 +116,7 @@ class WordVocabContentState extends ConsumerState<WordVocabContent> {
 
   @override
   Widget build(BuildContext context) {
-    final screenInfo = ref.watch(screenInfoProvider);
+    final screenInfo = ref.read(screenInfoProvider);
     double fontSize = screenInfo.fontSize;
     debugPrint('Building WordVocabContent: fontSize = $fontSize, width = ${screenInfo.screenWidth}');
 
@@ -127,6 +127,7 @@ class WordVocabContentState extends ConsumerState<WordVocabContent> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
+            /* add ZhuyinProcessing widget
             Text(
               widget.vocab,
               textAlign: TextAlign.center,
@@ -135,6 +136,13 @@ class WordVocabContentState extends ConsumerState<WordVocabContent> {
                 color: explanationColor,
               ),
             ),
+            */
+            ZhuyinProcessing(
+              text: widget.vocab,
+              color: explanationColor,
+              fontSize: fontSize * 1.2,        
+              centered: true,  // Optional centering
+            ),                  
             IconButton(
               icon: const Icon(Icons.volume_up),
               iconSize: fontSize * 1.2,
@@ -172,7 +180,6 @@ class WordVocabContentState extends ConsumerState<WordVocabContent> {
               text: widget.meaning,
               fontSize: fontSize,
               color: whiteColor,
-              highlightOn: true,
             ),
           ],
         ),
@@ -206,7 +213,6 @@ class WordVocabContentState extends ConsumerState<WordVocabContent> {
               text: displayedSentence,
               fontSize: fontSize,
               color: whiteColor,
-              highlightOn: true,
             ),
           ],
         ),

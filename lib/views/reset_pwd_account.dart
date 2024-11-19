@@ -35,8 +35,8 @@ class _ResetPwdAccountViewState extends ConsumerState<ResetPwdAccountView> {
 
   @override
   Widget build(BuildContext context) {
-    // final screenInfo = ref.watch(screenInfoProvider);
-    final screenInfo = ref.watch(screenInfoProvider);
+    // final screenInfo = ref.read(screenInfoProvider);
+    final screenInfo = ref.read(screenInfoProvider);
     double fontSize = screenInfo.fontSize;    
     double deviceHeight = screenInfo.screenHeight;
 

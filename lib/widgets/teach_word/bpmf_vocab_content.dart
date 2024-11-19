@@ -30,14 +30,16 @@ class BopomofoVocabContent extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // final screenInfo = ref.watch(screenInfoProvider);
-    final screenInfo = ref.watch(screenInfoProvider);
+    // final screenInfo = ref.read(screenInfoProvider);
+    final screenInfo = ref.read(screenInfoProvider);
     double fontSize = screenInfo.fontSize;    
 
+    /* no need to limit the length of the sentence
     String subSentence = sentence;
     if (subSentence.length > 25) {
       subSentence = "${subSentence.substring(0, 25)}...。";
     }
+    */
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -54,7 +56,6 @@ class BopomofoVocabContent extends ConsumerWidget {
                     text: vocab,
                     fontSize: fontSize * 2.0, 
                     color: const Color.fromRGBO(228, 219, 124, 1),
-                    highlightOn: true,
                   ),
                   IconButton(
                     icon: const Icon(Icons.volume_up),
@@ -70,16 +71,15 @@ class BopomofoVocabContent extends ConsumerWidget {
               ),
               SizedBox(height: fontSize * 0.5),
               ZhuyinProcessing(
-                text: subSentence,
+                text: sentence, // whole sentence. no limitation on length
                 fontSize: fontSize * 1.3, 
                 color: const Color.fromRGBO(245, 245, 220, 100),
-                highlightOn: true,
               ),              
               IconButton(
                 icon: const Icon(Icons.volume_up),
                 iconSize: fontSize * 1.3,
                 color: const Color.fromRGBO(245, 245, 220, 100),
-                onPressed: () => _speak(subSentence),
+                onPressed: () => _speak(sentence),
               ),
             ],
           ),

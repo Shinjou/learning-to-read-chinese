@@ -62,7 +62,7 @@ class SwVersionViewState extends ConsumerState<SwVersionView> {
 
   @override
   Widget build(BuildContext context) {
-    final screenInfo = ref.watch(screenInfoProvider);
+    final screenInfo = ref.read(screenInfoProvider);
     fontSize = screenInfo.fontSize;
     if (screenInfo.isTablet && MediaQuery.of(context).orientation == Orientation.landscape) {
       fontSize *= 1.3;

@@ -49,7 +49,7 @@ class SettingViewState extends ConsumerState<SettingView> {
 
   @override
   Widget build(BuildContext context) {
-    final screenInfo = ref.watch(screenInfoProvider);
+    final screenInfo = ref.read(screenInfoProvider);
     fontSize = screenInfo.fontSize;
     deviceHeight = screenInfo.screenHeight;
     deviceWidth = screenInfo.screenWidth;
