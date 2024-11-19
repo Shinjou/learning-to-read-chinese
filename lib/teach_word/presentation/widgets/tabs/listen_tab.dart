@@ -12,6 +12,7 @@ import 'package:ltrc/teach_word/presentation/teach_word_utils.dart';
 import 'package:ltrc/views/view_utils.dart';
 import 'package:ltrc/widgets/mainPage/left_right_switch.dart';
 import 'package:ltrc/widgets/teach_word/tab_bar_view.dart';
+import 'package:ltrc/widgets/teach_word/zhuyin_processing.dart';
 
 class ListenTab extends ConsumerStatefulWidget {
   final int unitId;
@@ -76,7 +77,7 @@ class LookTabState extends ConsumerState<ListenTab> with TickerProviderStateMixi
 
   @override
   Widget build(BuildContext context) {
-    final ScreenInfo screenInfo = ref.watch(screenInfoProvider);
+    final ScreenInfo screenInfo = ref.read(screenInfoProvider);
     final double fontSize = screenInfo.fontSize;
     double deviceWidth = screenInfo.screenWidth;
     debugPrint("ListenTab: Building ListenTab with fontSize $fontSize and word $word");
@@ -120,6 +121,7 @@ class LookTabState extends ConsumerState<ListenTab> with TickerProviderStateMixi
       iconsColor: lightGray,
       iconsSize: max(fontSize * 1.5, 48.0),
       rightBorder: true, // always true for 看一看 and 聽一聽
+      /*
       middleWidget: Text('聽一聽',
           style: TextStyle(
             color: lightGray,
@@ -127,6 +129,14 @@ class LookTabState extends ConsumerState<ListenTab> with TickerProviderStateMixi
             fontWeight: FontWeight.bold,
           ),
         ),      
+      */  
+      middleWidget: ZhuyinProcessing(
+        text: '聽一聽',
+        color: lightGray,
+        fontSize: fontSize * 1.2,        
+        fontWeight: FontWeight.bold,  // Optional font weight
+        centered: true,  // Optional centering
+      ),      
       isFirst: false,
       isLast: false,
       onLeftClicked: () async {

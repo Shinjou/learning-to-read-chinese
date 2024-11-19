@@ -13,6 +13,7 @@ import 'package:ltrc/teach_word/presentation/teach_word_utils.dart';
 import 'package:ltrc/views/view_utils.dart';
 import 'package:ltrc/widgets/mainPage/left_right_switch.dart';
 import 'package:ltrc/widgets/teach_word/tab_bar_view.dart';
+import 'package:ltrc/widgets/teach_word/zhuyin_processing.dart';
 
 class LookTab extends ConsumerStatefulWidget {
   final int unitId;
@@ -77,7 +78,7 @@ class LookTabState extends ConsumerState<LookTab> with TickerProviderStateMixin 
 
   @override
   Widget build(BuildContext context) {
-    final ScreenInfo screenInfo = ref.watch(screenInfoProvider);
+    final ScreenInfo screenInfo = ref.read(screenInfoProvider);
     final double fontSize = screenInfo.fontSize;
     // double deviceHeight = screenInfo.screenHeight;
     double deviceWidth = screenInfo.screenWidth;
@@ -136,13 +137,22 @@ class LookTabState extends ConsumerState<LookTab> with TickerProviderStateMixin 
       iconsColor: lightGray,
       iconsSize: max(fontSize * 1.5, 48.0),
       rightBorder: true, // always true for 看一看 and 聽一聽
-      middleWidget: Text('看一看',
+      /*
+      middleWidget: Text('看一看', 
           style: TextStyle(
             color: lightGray,
             fontSize: fontSize * 1.2,
             fontWeight: FontWeight.bold,
           ),
         ),
+      */  
+      middleWidget: ZhuyinProcessing(
+        text: '看一看',
+        color: lightGray,
+        fontSize: fontSize * 1.2,        
+        fontWeight: FontWeight.bold,  // Optional font weight
+        centered: true,  // Optional centering
+      ),      
       isFirst: true,
       isLast: false,
       onRightClicked: () async {

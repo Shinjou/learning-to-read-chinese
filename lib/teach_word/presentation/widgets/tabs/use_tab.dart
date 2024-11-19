@@ -216,7 +216,6 @@ class UseTabState extends ConsumerState<UseTab> {
             text: vocab,
             fontSize: fontSize * 1.2,
             color: explanationColor,
-            highlightOn: kDebugMode,
           ),
           IconButton(
             icon: const Icon(Icons.volume_up),
@@ -256,7 +255,6 @@ class UseTabState extends ConsumerState<UseTab> {
             text: meaning,
             fontSize: fontSize,
             color: whiteColor,
-            highlightOn: kDebugMode,
           ),
         ],
       ),
@@ -290,7 +288,6 @@ class UseTabState extends ConsumerState<UseTab> {
             text: displayedSentence,
             fontSize: fontSize,
             color: whiteColor,
-            highlightOn: kDebugMode,
           ),
         ],
       ),
@@ -418,7 +415,8 @@ class UseTabState extends ConsumerState<UseTab> {
       iconsColor: lightGray,
       iconsSize: fontSize * 1.5,
       rightBorder: isAnswerCorrect && vocabIndex == 0,
-      middleWidget: Text(
+      /*
+      middleWidget: Text( 
         '用一用',
         style: TextStyle(
           color: lightGray,
@@ -426,6 +424,14 @@ class UseTabState extends ConsumerState<UseTab> {
           fontWeight: FontWeight.bold,
         ),
       ),
+      */  
+      middleWidget: ZhuyinProcessing(
+        text: '用一用',
+        color: lightGray,
+        fontSize: fontSize * 1.2,        
+        fontWeight: FontWeight.bold,  // Optional font weight
+        centered: true,  // Optional centering
+      ),            
       isFirst: false,
       isLast: isLastPage,
       onLeftClicked: vocabIndex > 0

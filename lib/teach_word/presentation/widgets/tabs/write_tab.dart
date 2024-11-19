@@ -16,6 +16,7 @@ import 'package:ltrc/widgets/mainPage/left_right_switch.dart';
 import 'package:ltrc/widgets/teach_word/stroke_order_animation_controller.dart';
 import 'package:ltrc/widgets/teach_word/stroke_order_animator.dart';
 import 'package:ltrc/widgets/teach_word/tab_bar_view.dart';
+import 'package:ltrc/widgets/teach_word/zhuyin_processing.dart';
 import 'package:provider/provider.dart';
 
 
@@ -192,7 +193,7 @@ class WriteTabState extends ConsumerState<WriteTab> with TickerProviderStateMixi
     }
 
 
-    final ScreenInfo screenInfo = ref.watch(screenInfoProvider);
+    final ScreenInfo screenInfo = ref.read(screenInfoProvider);
     final double fontSize = screenInfo.fontSize;
     double deviceHeight = screenInfo.screenHeight;
     double deviceWidth = screenInfo.screenWidth;
@@ -246,6 +247,7 @@ class WriteTabState extends ConsumerState<WriteTab> with TickerProviderStateMixi
       iconsColor: lightGray,
       iconsSize: max(fontSize * 1.5, 48.0),
       rightBorder: _canMoveToUse(),
+      /*
       middleWidget: Text('寫一寫',
           style: TextStyle(
             color: lightGray,
@@ -253,6 +255,14 @@ class WriteTabState extends ConsumerState<WriteTab> with TickerProviderStateMixi
             fontWeight: FontWeight.bold,
           ),
         ),
+      */
+      middleWidget: ZhuyinProcessing(
+        text: '寫一寫',
+        color: lightGray,
+        fontSize: fontSize * 1.2,        
+        fontWeight: FontWeight.bold,  // Optional font weight
+        centered: true,  // Optional centering
+      ),              
       isFirst: false,
       isLast: false,
       onLeftClicked: wordIsLearned
