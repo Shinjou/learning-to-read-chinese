@@ -1,5 +1,6 @@
 // lib/teach_word/states/word_state.dart
 
+/* replaced by a better separation of concerns
 import 'package:ltrc/data/models/word_status_model.dart';
 
 enum QuizMode { none, practice, test }
@@ -132,4 +133,117 @@ class WordState {
     );
   }
 }
+
+*/
+
+
+import 'package:ltrc/data/models/word_status_model.dart';
+import 'package:ltrc/widgets/teach_word/stroke_order_animation_controller.dart';
+
+// Keep the enums for write-specific state
+enum QuizMode { none, practice, test }
+enum StrokeMode { animation, practice, review }
+
+// Immutable configuration data (stays the same)
+class WordConfig {
+  final String word;
+  final int unitId;
+  final String unitTitle;
+  final bool isBpmf;
+  final bool svgFileExist;
+  final String svgData;
+  final Map wordObj;
+  final int vocabCnt;
+  final bool img1Exist;
+  final bool img2Exist;
+  
+  const WordConfig({
+    required this.word,
+    required this.unitId,
+    required this.unitTitle,
+    required this.isBpmf,
+    required this.svgFileExist,
+    required this.svgData,
+    required this.wordObj,
+    required this.vocabCnt,
+    this.img1Exist = false,
+    this.img2Exist = false,
+  });
+}
+
+// Write-specific state
+class WriteState {
+  final int nextStepId;
+  final int practiceTimeLeft;
+  final bool isQuizzing;
+  final bool isAnimating;
+  final bool showOutline;
+  final StrokeOrderAnimationController strokeController;
+
+  WriteState({
+    required this.strokeController,
+    this.nextStepId = 0,
+    this.practiceTimeLeft = 4,
+    this.isQuizzing = false,
+    this.isAnimating = false,
+    this.showOutline = true,
+  });
+
+  WriteState copyWith({
+    int? nextStepId,
+    int? practiceTimeLeft,
+    bool? isQuizzing,
+    bool? isAnimating,
+    bool? showOutline,
+  }) {
+    return WriteState(
+      strokeController: strokeController,
+      nextStepId: nextStepId ?? this.nextStepId,
+      practiceTimeLeft: practiceTimeLeft ?? this.practiceTimeLeft,
+      isQuizzing: isQuizzing ?? this.isQuizzing,
+      isAnimating: isAnimating ?? this.isAnimating,
+      showOutline: showOutline ?? this.showOutline,
+    );
+  }
+}
+
+// Main word state
+class WordState {
+  final WordConfig config;
+  final bool isLearned;
+  final int currentTabIndex;
+  final WordStatus wordStatus;
+  final WriteState? writeState;
+
+  const WordState({
+    required this.config,
+    required this.isLearned,
+    this.currentTabIndex = 0,
+    required this.wordStatus,
+    this.writeState,
+  });
+
+  WordState copyWith({
+    bool? isLearned,
+    int? currentTabIndex,
+    WordStatus? wordStatus,
+    WriteState? writeState,
+  }) {
+    return WordState(
+      config: config,
+      isLearned: isLearned ?? this.isLearned,
+      currentTabIndex: currentTabIndex ?? this.currentTabIndex,
+      wordStatus: wordStatus ?? this.wordStatus,
+      writeState: writeState ?? this.writeState,
+    );
+  }
+
+  // Convenience getters for config properties
+  String get currentWord => config.word;
+  int get unitId => config.unitId;
+  String get unitTitle => config.unitTitle;
+  // ... other config getters as needed
+
+}
+
 
