@@ -2,7 +2,7 @@
 // ChatGPT generated code based on the original code.
 
 
-import 'dart:math' as math;
+// import 'dart:math' as math;
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -104,13 +104,13 @@ class TeachWordViewState extends ConsumerState<TeachWordView> with TickerProvide
     checkWordExistence();
   }
 
-  void _initializeTts() {
+  void _initializeTts() { // The real initialization is done in main.dart
     ftts = ref.read(ttsProvider);
     player = ref.read(audioPlayerProvider);
   }
 
   void _initializeTabController() {
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: totalTabNum, vsync: this);
     _tabController.addListener(_handleTabChange);
     debugPrint('TeachWordView: TabController initialized.');    
   }
@@ -120,21 +120,6 @@ class TeachWordViewState extends ConsumerState<TeachWordView> with TickerProvide
         prenuclear.contains(word) ||
         finals.contains(word);
   }
-
-  /* where do we set up TTS completion handler???
-  void _onTtsComplete() {
-    debugPrint("Speech has completed");
-    if (!context.mounted) return;
-
-    if (nextStepId == steps['goToListen']) {
-      incrementNextStepId();
-    } else if (nextStepId == steps['goToUse1']) {
-      handleGoToUse();
-    } else if (nextStepId == steps['goToUse2']) {
-      // No action needed here, as per original code
-    }
-  }
-  */
 
   void getWord() {
     // getWord() is called in initState(), NO setState() is called
@@ -200,7 +185,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView> with TickerProvide
   void checkWordExistence() {
     if (!wordExist) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        showErrorDialog(context, '','「$word」不在SQL。請截圖回報。謝謝！', fontSize);
+        showErrorDialog(context, ref, '','「$word」不在SQL。請截圖回報。謝謝！');
       });
     } else {
       readJsonAndProcess(); // setState() is called here
@@ -222,7 +207,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView> with TickerProvide
         });
       } else {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          showErrorDialog(context, '','「$word」的筆順檔無法下載。請截圖回報。謝謝！', fontSize);
+          showErrorDialog(context, ref, '','「$word」的筆順檔無法下載。請截圖回報。謝謝！');
           debugPrint('readJsonAndProcess error: $word 的筆順檔無法下載, svgFileExist: $svgFileExist');
           firstNullStrokeFlag = true;
           showErrorFlag = false;
@@ -234,7 +219,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView> with TickerProvide
       }
     } catch (error) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        showErrorDialog(context, '','「$word」筆順檔問題，請截圖回報。svgFileExist: $svgFileExist。謝謝！', fontSize);
+        showErrorDialog(context, ref, '','「$word」筆順檔問題，請截圖回報。svgFileExist: $svgFileExist。謝謝！');
         firstNullStrokeFlag = true;
         showErrorFlag = false;
       });
@@ -281,13 +266,14 @@ class TeachWordViewState extends ConsumerState<TeachWordView> with TickerProvide
   // Need to review the following methods carefully
   void _handleTabChange() {
     Future(() {
+      debugPrint('_handleTabChange: Tab changed from ${tabNames[_tabController.previousIndex]} to ${tabNames[_tabController.index]}.');
       final WordState wordState = ref.read(wordControllerProvider);
       ref.read(navigationStateProvider.notifier).state = NavigationState(
         currentTab: _tabController.index,
-        canNavigateNext: _tabController.index < 3 && !wordState.isLearned,
-        canNavigatePrev: _tabController.index > 0,
+        canNavigateNext: (_tabController.index < totalTabNum) && !wordState.isLearned,
+        canNavigatePrev: _tabController.index >= 0,
       );
-      debugPrint('_handleTabChange: Tab changed to index ${_tabController.index}.');
+      debugPrint('_handleTabChange: Tab changed from ${tabNames[_tabController.previousIndex]} to ${tabNames[_tabController.index]}.'); 
     });
   }
 
@@ -313,35 +299,12 @@ class TeachWordViewState extends ConsumerState<TeachWordView> with TickerProvide
       }
     } catch (e, stackTrace) {
       debugPrint('Error initializing stroke controller: $e\n$stackTrace');
-      showErrorDialog(context, 
+      showErrorDialog(context, ref,
         'Initialization Error',
-        'Failed to load the stroke order for the word. Please try again.', fontSize
+        'Failed to load the stroke order for the word. Please try again.'
       );
     }
   }
-
-  /* duplicate???
-  void showErrorDialog(String title, String message) {
-    if (!mounted) return;
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) => AlertDialog(
-        title: Text(title),
-        content: Text(message),
-        actions: <Widget>[
-          TextButton(
-            child: const Text('回首頁'),
-            onPressed: () {
-              Navigator.of(context).pop();
-              Navigator.of(context).pushReplacementNamed('/mainPage');
-            },
-          ),
-        ],
-      ),
-    );
-  }
-  */
 
   void onPlayAudio() {
     final WordState wordState = ref.read(wordControllerProvider);
@@ -363,50 +326,6 @@ class TeachWordViewState extends ConsumerState<TeachWordView> with TickerProvide
     super.dispose();
     debugPrint("TeachWordView: TabController and other resources disposed.");
   }
-
-  void prevTab() async {
-    final WordState wordState = ref.read(wordControllerProvider);
-    final NavigationState navigationState = ref.read(navigationStateProvider);
-    final int currentTab = navigationState.currentTab;
-    final int nextTab = math.max(currentTab - 1, 0);
-    debugPrint('TeachWordView: Navigating to previous tab $nextTab.');
-    ref.read(navigationStateProvider.notifier).state = navigationState.copyWith(
-      currentTab: nextTab,
-      canNavigateNext: nextTab < 3 && !wordState.isLearned,
-      canNavigatePrev: nextTab > 0,
-    );
-    _tabController.animateTo(nextTab);
-  }
-
-  void nextTab() async {
-    final WordState wordState = ref.read(wordControllerProvider);
-    final NavigationState navigationState = ref.read(navigationStateProvider);
-    final int currentTab = navigationState.currentTab;
-    final int nextTab = math.min(currentTab + 1, 3);
-    debugPrint('TeachWordView: Navigating to next tab $nextTab.');
-    ref.read(navigationStateProvider.notifier).state = navigationState.copyWith(
-      currentTab: nextTab,
-      canNavigateNext: nextTab < 3 && !wordState.isLearned,
-      canNavigatePrev: nextTab > 0,
-    );
-    _tabController.animateTo(nextTab);
-  }
-
-  void handleGoToUse() {
-    final WordState wordState = ref.read(wordControllerProvider);
-    final NavigationState navigationState = ref.read(navigationStateProvider);
-    final int currentTab = navigationState.currentTab;
-    final int nextTab = 3;
-    debugPrint('TeachWordView: Navigating to Use from tab $currentTab to tab $nextTab.');
-    ref.read(navigationStateProvider.notifier).state = navigationState.copyWith(
-      currentTab: nextTab,
-      canNavigateNext: nextTab < 3 && !wordState.isLearned,
-      canNavigatePrev: nextTab > 0,
-    );
-    _tabController.animateTo(nextTab);
-  }
-  
-
 
   @override
   Widget build(BuildContext context) {
@@ -542,7 +461,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView> with TickerProvide
       ],
       controller: _tabController,
       onTap: (index) {
-        _tabController.index = currentTabIndex.value;
+        navigateToTab(_tabController, _tabController.previousIndex, _tabController.index, wordIsLearned);
       },
       labelColor: darkBrown,
       dividerColor: mediumGray,
