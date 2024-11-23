@@ -413,7 +413,7 @@ class StrokeOrderAnimationController extends ChangeNotifier {
           tmpRadicalStrokeIndices = [];
         }
       } else {
-        debugPrint("No radical stroke indices found in JSON."); // why this error?
+        debugPrint("No radical stroke indices found in JSON."); // why this error every time?
         tmpRadicalStrokeIndices = [];
       }
 
