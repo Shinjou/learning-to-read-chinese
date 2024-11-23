@@ -103,7 +103,7 @@ class UseTabState extends ConsumerState<UseTab> {
     _initVariables(pageIndex); // Start with first page
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!hasSpoken) handleGoToUse();
+      if (!hasSpoken) _handleGoToUse();
       setState(() => _isInitialized = true);
     });
   }
@@ -115,9 +115,7 @@ class UseTabState extends ConsumerState<UseTab> {
   }
 
   void _initVariables(int pageIndex) {
-    final screenInfo = ref.read(screenInfoProvider);
-    fontSize = screenInfo.fontSize;
-    deviceWidth = screenInfo.screenWidth;
+
 
     vocabIndex = pageIndex.clamp(0, widget.vocabCnt - 1);
     vocab = widget.wordObj['vocab${pageIndex + 1}'] ?? '';
@@ -145,11 +143,12 @@ class UseTabState extends ConsumerState<UseTab> {
     return sentence.replaceAll(vocab, "__" * vocab.length);
   }
 
-  Future<void> handleGoToUse() async {
-    debugPrint('handleGoToUse hasSpoken=$hasSpoken, vocabCnt=${widget.vocabCnt}, vocabIndex=$vocabIndex, nextStepId=$nextStepId');
+  Future<void> _handleGoToUse() async {
+    debugPrint('_handleGoToUse hasSpoken=$hasSpoken, vocabCnt=${widget.vocabCnt}, vocabIndex=$vocabIndex, nextStepId=$nextStepId');
     if (hasSpoken) return; // Prevent multiple calls
     hasSpoken = true;    
-    
+    await handleGoToUse(widget.vocabCnt, vocabIndex, nextStepId, widget.wordObj, ftts);
+    /*
     try {
       switch (widget.vocabCnt) {
         case 1:
@@ -168,8 +167,9 @@ class UseTabState extends ConsumerState<UseTab> {
           debugPrint('Unexpected vocabCnt: ${widget.vocabCnt}');
       }
     } catch (e) {
-      debugPrint('Error in handleGoToUse: $e');
+      debugPrint('Error in _handleGoToUse: $e');
     }
+    */
   }
 
   Future<void> _speak(String text) async {
@@ -202,7 +202,7 @@ class UseTabState extends ConsumerState<UseTab> {
         hasSpoken = false; // Reset for the next page
         _initVariables(vocabIndex);
       });
-      handleGoToUse();
+      _handleGoToUse();
     }
   }
 
@@ -440,7 +440,7 @@ class UseTabState extends ConsumerState<UseTab> {
                 vocabIndex--;
                 _initVariables(vocabIndex);
               });
-              handleGoToUse();
+              _handleGoToUse();
             }
           : null,
       onRightClicked: isAnswerCorrect && !isLastPage ? _onContinuePressed : null,
@@ -464,6 +464,11 @@ class UseTabState extends ConsumerState<UseTab> {
 
   @override
   Widget build(BuildContext context) {
+    final screenInfo = ref.read(screenInfoProvider);
+    fontSize = screenInfo.fontSize;
+    deviceWidth = screenInfo.screenWidth;    
+    debugPrint('UseTab: Building with fontSize $fontSize, widgetId: ${widget.widgetId}, vocabCnt=${widget.vocabCnt}, vocabIndex=$vocabIndex');
+
     if (!_isInitialized) {
       return const Center(child: CircularProgressIndicator());
     }
