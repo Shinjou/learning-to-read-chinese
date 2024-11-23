@@ -55,12 +55,12 @@ class LookTabState extends ConsumerState<LookTab> with TickerProviderStateMixin 
   bool svgFileExist = false;
   bool wordIsLearned = false;
   late TabController tabController;
-  int nextStepId = 0;
   int vocabCnt = 0;
   Map wordObj = {};
   late FlutterTts ftts;
   late AudioPlayer player;
   double fontSize = 16.0;
+  double deviceWidth = 0.0;
   ValueNotifier<int> currentTabIndex = ValueNotifier(0);  
 
 
@@ -79,14 +79,9 @@ class LookTabState extends ConsumerState<LookTab> with TickerProviderStateMixin 
   @override
   Widget build(BuildContext context) {
     final ScreenInfo screenInfo = ref.read(screenInfoProvider);
-    final double fontSize = screenInfo.fontSize;
-    // double deviceHeight = screenInfo.screenHeight;
-    double deviceWidth = screenInfo.screenWidth;
-    // double availableWidth = deviceWidth - 10;
-    // double availableHeight = deviceHeight - 10;
-    // double nonConsumedHeight = deviceHeight * 0.15;
-    // bool isTablet = screenInfo.isTablet;
-    debugPrint("LookTab: Building LookTab with fontSize $fontSize and word $word");
+    fontSize = screenInfo.fontSize;
+    deviceWidth = screenInfo.screenWidth;
+    debugPrint("LookTab: Building fontSize $fontSize, word: $word, learned: $wordIsLearned");
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -126,11 +121,6 @@ class LookTabState extends ConsumerState<LookTab> with TickerProviderStateMixin 
   }
 
   Widget _buildLookLeftRightSwitch(double fontSize) {
-    // final WordState wordState = ref.watch(wordControllerProvider);
-    // final FlutterTts ftts = ref.read(ttsProvider);
-    // final AudioPlayer player = ref.read(audioPlayerProvider);    
-    final nextStepId = 0;
-    debugPrint("LookTab: Building word: $word, nextId: $nextStepId, learned: $wordIsLearned");
 
     return LeftRightSwitch(
       fontSize: fontSize,

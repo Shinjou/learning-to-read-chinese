@@ -60,6 +60,7 @@ class LookTabState extends ConsumerState<ListenTab> with TickerProviderStateMixi
   late FlutterTts ftts;
   late AudioPlayer player;
   double fontSize = 16.0;
+  double deviceWidth = 0.0;
   ValueNotifier<int> currentTabIndex = ValueNotifier(0);  
 
 
@@ -78,8 +79,8 @@ class LookTabState extends ConsumerState<ListenTab> with TickerProviderStateMixi
   @override
   Widget build(BuildContext context) {
     final ScreenInfo screenInfo = ref.read(screenInfoProvider);
-    final double fontSize = screenInfo.fontSize;
-    double deviceWidth = screenInfo.screenWidth;
+    fontSize = screenInfo.fontSize;
+    deviceWidth = screenInfo.screenWidth;
     debugPrint("ListenTab: Building ListenTab with fontSize $fontSize and word $word");
 
     return LayoutBuilder(

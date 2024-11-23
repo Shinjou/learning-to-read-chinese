@@ -14,12 +14,12 @@ class WordsView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // final screenInfo = ref.watch(screenInfoProvider);
     final screenInfo = ref.watch(screenInfoProvider);
     double fontSize = screenInfo.fontSize;
-    bool isTablet = screenInfo.screenWidth > 600;
-    if (isTablet) {fontSize = fontSize * 1.2;}
-
+    bool isTablet = screenInfo.isTablet;
+    if (isTablet && MediaQuery.of(context).orientation == Orientation.landscape) fontSize = (fontSize * 1.3 * 10).round() / 10;
+    debugPrint('WordsView: Building fontSize: $fontSize');
+    
     dynamic obj = ModalRoute.of(context)!.settings.arguments;
     Unit unit = obj["unit"];
     List<WordStatus> newWordsStatus = obj["newWordsStatus"];

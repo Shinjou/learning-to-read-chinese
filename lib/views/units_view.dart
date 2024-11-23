@@ -39,7 +39,7 @@ class UnitsViewState extends ConsumerState<UnitsView> {
     final screenInfo = ref.watch(screenInfoProvider);
     double fontSize = screenInfo.fontSize;    
     bool isTablet = screenInfo.isTablet;
-    if (isTablet && MediaQuery.of(context).orientation == Orientation.landscape) fontSize *= 1.3;
+    if (isTablet && MediaQuery.of(context).orientation == Orientation.landscape) fontSize = (fontSize * 1.3 * 10).round() / 10;
 
     final gradeCode = ref.watch(gradeProvider);
     final semesterCode = ref.watch(semesterCodeProvider);
@@ -50,7 +50,7 @@ class UnitsViewState extends ConsumerState<UnitsView> {
     final publisherName = publisherCodeTable[publisherCode] ?? 'Unknown Publisher';
 
     String title = '$publisherName：$gradeName$semesterName';
-    debugPrint('UnitsView: title: $title, publisher $publisherName, grade $gradeName, semester $semesterName');
+    debugPrint('UnitsView: fontSize: $fontSize, title: $title');
 
     // Extract the arguments safely
     final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
