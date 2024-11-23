@@ -1,6 +1,6 @@
 // lib/teach_word/controllers/word_controller.dart
 
-import 'dart:math';
+// import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,9 +8,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 // import 'package:fluttertoast/fluttertoast.dart';
-import 'package:ltrc/data/models/word_status_model.dart';
+// import 'package:ltrc/data/models/word_status_model.dart';
 // import 'package:ltrc/data/providers/word_status_provider.dart';
-import 'package:ltrc/providers.dart';
+// import 'package:ltrc/providers.dart';
 import 'package:ltrc/teach_word/constants/steps.dart';
 // import 'package:ltrc/teach_word/presentation/teach_word_utils.dart';
 import 'package:ltrc/teach_word/presentation/teach_word_view_testing.dart';
@@ -137,6 +137,7 @@ class WordController extends StateNotifier<WordState> {
     }
   }
 
+  /*
   void incrementNextStepId() {
     state = state.copyWith(nextStepId: state.nextStepId + 1);
   }
@@ -159,6 +160,7 @@ class WordController extends StateNotifier<WordState> {
     final sentence = state.wordsPhrase[state.wordIndex]['sentence${index + 1}'];
     await ftts.speak("$vocab。$sentence");
   }
+  */
 
   StrokeOrderAnimationController get strokeController {
     if (_strokeController == null) {
@@ -177,7 +179,6 @@ class WordController extends StateNotifier<WordState> {
       currentStroke: _strokeController!.currentStroke,
     );
   }
-  
 
   void _handleWrongStroke(int strokeIndex) {
     if (!mounted) return;
@@ -202,7 +203,7 @@ class WordController extends StateNotifier<WordState> {
     );
   }
 
-
+  /*
   Future<void> initializeWord(WordStatus wordStatus, Map wordPhrase) async {
     final word = wordStatus.word;
     final wordData = await wordService.getWordData(word);
@@ -239,7 +240,7 @@ class WordController extends StateNotifier<WordState> {
     if (wordPhrase['vocab2']?.isNotEmpty ?? false) count++;
     return count;
   }
-
+  */
 
   void handleError(String errorType) {
     ref.read(errorHandlerProvider).handleError(
@@ -262,6 +263,7 @@ class WordController extends StateNotifier<WordState> {
     );
   }
 
+  /*
   void updateState({
     int? nextStepId,
     int? currentTabIndex,
@@ -281,7 +283,9 @@ class WordController extends StateNotifier<WordState> {
     final sentence = state.wordsPhrase[state.wordIndex]['sentence${index + 1}'];
     await ftts.speak("$vocab。$sentence");
   }
+  */
 
+  /* No one is calling this _updateWordStatus function
   Future<void> _updateWordStatus(bool learned) async {
     try {
       final newStatus = state.currentWordStatus.copyWith(learned: learned);
@@ -303,7 +307,8 @@ class WordController extends StateNotifier<WordState> {
     );
     _updateWordStatus(true);
   }
-
+  */
+  // Used in WriteTab's _buildStrokeOrderButtonOnPressed
   void startAnimation() {
     state = state.copyWith(
       isAnimating: true,
