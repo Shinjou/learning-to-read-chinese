@@ -207,6 +207,9 @@ class UseTabState extends ConsumerState<UseTab> {
   }
 
   Widget _buildMeaningSection() {
+    if (widget.isBpmf) {
+      return SizedBox(height: fontSize);
+    }    
     return Padding(
       padding: EdgeInsets.only(left: fontSize * 0.5),
       child: Column(
