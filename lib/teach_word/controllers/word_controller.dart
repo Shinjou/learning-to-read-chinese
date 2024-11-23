@@ -36,22 +36,7 @@ class WordController extends StateNotifier<WordState> {
     this.wordService,
     WordState initialState,
   ) : super(initialState) {
-    _initializeAudio();
-  }
-
-  Future<void> _initializeAudio() async {
-    ftts.setLanguage("zh-tw");
-    ftts.setSpeechRate(0.5);
-    ftts.setVolume(1.0);
-    ftts.setCompletionHandler(_onAudioComplete);
-  }
-
-  void _onAudioComplete() {
-    if (state.nextStepId == TeachWordSteps.steps['goToListen']) {
-      incrementNextStepId();
-    } else if (state.nextStepId == TeachWordSteps.steps['goToUse1']) {
-      handleGoToUse();
-    }
+    // _initializeAudio();
   }
 
   // Called by teach_word_view.dart
@@ -74,19 +59,6 @@ class WordController extends StateNotifier<WordState> {
     controller.addListener(_handleStrokeControllerStateChange);
     syncStateWithController(controller);
   }
-
-  /*
-  void setStrokeController(StrokeOrderAnimationController controller) {
-    _strokeController = controller;
-    
-    // Add all necessary callbacks
-    controller.addOnQuizCompleteCallback(_handleQuizComplete);
-    controller.addOnWrongStrokeCallback(_handleWrongStroke);
-    controller.addOnCorrectStrokeCallback(_handleCorrectStroke);
-    controller.addListener(_handleStrokeControllerStateChange);
-    syncStateWithController(controller);
-  }
-  */
 
   // Used by setStrokeController in this class
   void _handleQuizComplete(
@@ -125,40 +97,6 @@ class WordController extends StateNotifier<WordState> {
       );
     }
   }
-  
-  /*
-  void _handleQuizComplete(QuizSummary summary, double fontSize) {
-    if (state.nextStepId >= TeachWordSteps.steps['practiceWithBorder1']! &&
-        state.nextStepId <= TeachWordSteps.steps['turnBorderOff']!) {
-      state = state.copyWith(
-        practiceTimeLeft: state.practiceTimeLeft - 1,
-        nextStepId: state.nextStepId + 1,
-      );
-      
-      // Show success toast
-      Fluttertoast.showToast(
-        msg: state.nextStepId == TeachWordSteps.steps['turnBorderOff']
-            ? "恭喜筆畫正確！讓我們 去掉邊框 再練習 ${state.practiceTimeLeft} 遍哦！"
-            : "恭喜筆畫正確！讓我們再練習 ${state.practiceTimeLeft} 次哦！",
-        fontSize: fontSize * 1.2,
-      );
-    } else if (state.nextStepId == TeachWordSteps.steps['practiceWithoutBorder1']) {
-      state = state.copyWith(
-        practiceTimeLeft: state.practiceTimeLeft - 1,
-        nextStepId: state.nextStepId + 1,
-        isLearned: true,
-      );
-      // _updateWordStatus(true);
-      updateWordStatus(context, ref, widget.wordsStatus[widget.wordIndex], true); 
-      
-      // Show success toast
-      Fluttertoast.showToast(
-        msg: "恭喜筆畫正確！",
-        fontSize: fontSize * 1.2,
-      );
-    }
-  }
-  */
 
   void syncStateWithController(StrokeOrderAnimationController controller) {
     state = state.copyWith(
@@ -172,6 +110,7 @@ class WordController extends StateNotifier<WordState> {
     controller.addListener(_handleStrokeControllerStateChange);
   }
 
+  // called by teach_word_view.dart
   Future<String> loadSvgData(String word) async {
     final noSvgList = [
       '吔', '姍', '媼', '嬤', '履', '搧', '枴', '椏', '欓', '汙',
@@ -198,19 +137,6 @@ class WordController extends StateNotifier<WordState> {
     }
   }
 
-  void handleNavigationLogic(TabController tabController, {required bool isNext}) {
-    final isLastStep = state.nextStepId >= TeachWordSteps.steps['goToUse2']!;
-    final isFirstTab = tabController.index == 0;
-
-    if (isNext && !isLastStep) {
-      incrementNextStepId();
-      tabController.animateTo(tabController.index + 1);
-    } else if (!isNext && !isFirstTab) {
-      tabController.animateTo(tabController.index - 1);
-      decrementNextStepId();
-    }
-  }
-
   void incrementNextStepId() {
     state = state.copyWith(nextStepId: state.nextStepId + 1);
   }
@@ -218,32 +144,6 @@ class WordController extends StateNotifier<WordState> {
   void decrementNextStepId() {
     final step = max(TeachWordSteps.steps['goToListen']!, state.nextStepId - 1);
     state = state.copyWith(nextStepId: step);
-  }
-
-  Future<void> handleGoToUse() async {
-    try {
-      switch (state.vocabCount) {
-        case 1:
-          await playVocabAudio(0);
-          state = state.copyWith(
-            nextStepId: TeachWordSteps.steps['goToUse2']!,
-            isLearned: true,
-          );
-          break;
-        case 2:
-          if (state.nextStepId == TeachWordSteps.steps['goToUse1']) {
-            await playVocabAudio(0);
-            incrementNextStepId();
-          } else if (state.nextStepId == TeachWordSteps.steps['goToUse2']) {
-            await playVocabAudio(1);
-            state = state.copyWith(isLearned: true);
-          }
-          break;
-      }
-    } catch (e) {
-      debugPrint('Error in handleGoToUse: $e');
-      handleError('audioError');
-    }
   }
 
   Future<void> playWordAudio() async {
@@ -396,45 +296,12 @@ class WordController extends StateNotifier<WordState> {
       handleError('statusUpdateError');
     }
   }
-//====  Begin  ======================================================================
+
   void markWordAsLearned(WordState wordState) {
     state = state.copyWith(
       isLearned: true,
     );
     _updateWordStatus(true);
-  }
-
-
-  void handleStrokeAnimationPressed(WordState state) {
-    if (!state.isQuizzing) {
-      if (!state.isAnimating) {
-        startAnimation();
-        playWordAudio();
-        if (state.nextStepId == TeachWordSteps.steps['seeAnimation']) {
-          incrementNextStepId();
-        }
-      } else {
-        stopAnimation();
-      }
-    }
-  }
-
-  void startPracticeMode(WordState state) {
-    if (state.strokeMode != StrokeMode.practice) {
-      state = state.copyWith(
-        strokeMode: StrokeMode.practice,
-        quizMode: QuizMode.practice,
-        isQuizzing: true,
-      );
-      strokeController.startQuiz();
-    }
-  }
-
-  void toggleOutline(WordState state) {
-    state = state.copyWith(
-      showOutline: !state.showOutline,
-    );
-    strokeController.setShowOutline(!strokeController.showOutline);
   }
 
   void startAnimation() {
@@ -458,8 +325,5 @@ class WordController extends StateNotifier<WordState> {
   }
 
 
-//==== End  ==========================================================================
-
-  // Nothing to close in this provider, so no need for dispose
 }
 

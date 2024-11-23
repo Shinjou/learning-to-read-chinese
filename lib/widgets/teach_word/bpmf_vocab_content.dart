@@ -34,13 +34,6 @@ class BopomofoVocabContent extends ConsumerWidget {
     final screenInfo = ref.read(screenInfoProvider);
     double fontSize = screenInfo.fontSize;    
 
-    /* no need to limit the length of the sentence
-    String subSentence = sentence;
-    if (subSentence.length > 25) {
-      subSentence = "${subSentence.substring(0, 25)}...。";
-    }
-    */
-
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,

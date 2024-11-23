@@ -122,15 +122,6 @@ class LookTabState extends ConsumerState<ListenTab> with TickerProviderStateMixi
       iconsColor: lightGray,
       iconsSize: max(fontSize * 1.5, 48.0),
       rightBorder: true, // always true for 看一看 and 聽一聽
-      /*
-      middleWidget: Text('聽一聽',
-          style: TextStyle(
-            color: lightGray,
-            fontSize: fontSize * 1.2,
-            fontWeight: FontWeight.bold,
-          ),
-        ),      
-      */  
       middleWidget: ZhuyinProcessing(
         text: '聽一聽',
         color: lightGray,

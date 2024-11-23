@@ -26,23 +26,7 @@ final screenInfoProvider = StateNotifierProvider<ScreenInfoNotifier, ScreenInfo>
 
 final ttsProvider = Provider<FlutterTts>((ref) {
   final ftts = FlutterTts();
-  /* This is not necessary because main.dart already did this
-  // Set up the TTS engine  Is this necessary given that main.dart already did this?
-  ftts.setLanguage("zh-TW");
-  ftts.setSpeechRate(0.5);
-  ftts.setVolume(1.0);
-
-  // Add debug logging
-  ftts.setStartHandler(() {
-    debugPrint('TTS: Speech started');  // These are not showing up. Why?
-  });
-  ftts.setCompletionHandler(() {
-    debugPrint('TTS: Speech completed'); // These are not showing up. Why?
-  });
-  ftts.setErrorHandler((msg) {
-    debugPrint('TTS Error: $msg');
-  });
-  */
+  // main.dart has initialized ftts. So no need to do it here.
   return ftts;
 });
 

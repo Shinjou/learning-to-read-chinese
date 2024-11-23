@@ -158,30 +158,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView> with TickerProvide
       debugPrint('getWord error: : $error。wordExist: $wordExist,${wordObj['vocab1']}');
     }
   }
-  /*
-  // Where is _updateWordStatus() called???
-  Future<void> _updateWordStatus(WordStatus newStatus, {required bool learned}) async {
-    debugPrint('_updateWordStatus. mounted: ${context.mounted}, learned: $learned, nextStepId: $nextStepId');
-    if (!context.mounted) return;
 
-    try {
-      newStatus.learned = learned;
-      
-      ref.read(learnedWordCountProvider.notifier).state += learned ? 1 : 0;
-      await WordStatusProvider().updateWordStatus(status: newStatus);
-      
-      if (mounted) {
-        setState(() {
-          debugPrint('setState _updateWordStatus: newStatus.learned: $learned, nextStepId: $nextStepId');
-        });
-      }
-    } catch (e) {
-      debugPrint('Error in _updateWordStatus: $e');
-      // Handle error (e.g., show a snackbar to the user)      
-    }
-  }  
-  */
-    
   void checkWordExistence() {
     if (!wordExist) {
       WidgetsBinding.instance.addPostFrameCallback((_) {

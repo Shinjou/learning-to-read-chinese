@@ -148,28 +148,6 @@ class UseTabState extends ConsumerState<UseTab> {
     if (hasSpoken) return; // Prevent multiple calls
     hasSpoken = true;    
     await handleGoToUse(widget.vocabCnt, vocabIndex, nextStepId, widget.wordObj, ftts);
-    /*
-    try {
-      switch (widget.vocabCnt) {
-        case 1:
-          await ftts.speak("${widget.wordObj['vocab1']}。${widget.wordObj['sentence1']}");
-          break;
-        case 2:
-          final step = vocabIndex == 0 ? 'goToUse1' : 'goToUse2';
-          debugPrint('nextId=${TeachWordSteps.steps[step]}, vocab1: ${widget.wordObj['vocab1']}, vocab2: ${widget.wordObj['vocab2']}');
-          if (TeachWordSteps.steps[step] == 8) {
-            await ftts.speak("${widget.wordObj['vocab1']}。${widget.wordObj['sentence1']}");
-          } else {
-            await ftts.speak("${widget.wordObj['vocab2']}。${widget.wordObj['sentence2']}");
-          }
-          break;
-        default:
-          debugPrint('Unexpected vocabCnt: ${widget.vocabCnt}');
-      }
-    } catch (e) {
-      debugPrint('Error in _handleGoToUse: $e');
-    }
-    */
   }
 
   Future<void> _speak(String text) async {
@@ -415,16 +393,6 @@ class UseTabState extends ConsumerState<UseTab> {
       iconsColor: lightGray,
       iconsSize: fontSize * 1.5,
       rightBorder: isAnswerCorrect && vocabIndex == 0,
-      /*
-      middleWidget: Text( 
-        '用一用',
-        style: TextStyle(
-          color: lightGray,
-          fontSize: fontSize * 1.2,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      */  
       middleWidget: ZhuyinProcessing(
         text: '用一用',
         color: lightGray,

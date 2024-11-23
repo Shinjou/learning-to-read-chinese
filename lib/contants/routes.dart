@@ -73,19 +73,6 @@ class AppRoutes {
       words: (context) => const WordsView(),
       duoyinzi: (context) => const DuoyinziView(),
       checkzhuyin: (context) => const CheckZhuyinView(), // To test zhuyin
-      /* works for screenInfo, but not wordControllerProvider
-      teachWord: (context) {
-        // Extract arguments directly for use in TeachWordView
-        final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-        return TeachWordView(
-          unitId: args['unitId'],
-          unitTitle: args['unitTitle'],
-          wordsStatus: args['wordsStatus'],
-          wordsPhrase: args['wordsPhrase'],
-          wordIndex: args['wordIndex'],
-        );
-      },
-      */
 
       // Another try to pass contextProvider and wordControllerProvider
       teachWord: (context) {
@@ -113,37 +100,6 @@ class AppRoutes {
           ),
         );
       },
-
-
-      /*
-      teachWord: (context) {
-        final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-        
-        return ProviderScope(
-          overrides: [
-            contextProvider.overrideWithValue(context),
-            screenInfoProvider.overrideWith((ref) => ScreenInfoNotifier()),
-
-            // Only override `wordControllerProvider` for `TeachWordView`
-            wordControllerProvider.overrideWith((ref) => WordController(
-              context,
-              ref,
-              ref.read(ttsProvider),                // Text-to-Speech instance
-              ref.read(audioPlayerProvider),         // Audio player instance
-              ref.read(wordServiceProvider),         // Word service instance
-              ref.watch(initialWordStateProvider),   // Initial state for WordController
-            )),
-          ],
-          child: TeachWordView(
-            unitId: args['unitId'],
-            unitTitle: args['unitTitle'],
-            wordsStatus: args['wordsStatus'],
-            wordsPhrase: args['wordsPhrase'],
-            wordIndex: args['wordIndex'],
-          ),
-        );
-      },
-      */
     };
   }
 }

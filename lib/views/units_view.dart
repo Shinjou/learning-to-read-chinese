@@ -156,15 +156,6 @@ class UnitsViewState extends ConsumerState<UnitsView> {
                         );
                         List<Map> bpmfWordsPhrase = await getWordsPhraseSentence(wordsStatus);
                         if (!context.mounted) return;
-                        /*
-                        Navigator.of(context).pushNamed(
-                          '/bopomos', 
-                          arguments: {
-                            'wordStatus' : wordsStatus,
-                            'wordsPhrase' : bpmfWordsPhrase
-                          }
-                        );
-                        */
                         navigateWithProvider(
                           context, 
                           '/bopomos', 

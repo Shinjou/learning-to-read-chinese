@@ -127,16 +127,6 @@ class WordVocabContentState extends ConsumerState<WordVocabContent> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            /* add ZhuyinProcessing widget
-            Text(
-              widget.vocab,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: fontSize * 1.2,
-                color: explanationColor,
-              ),
-            ),
-            */
             ZhuyinProcessing(
               text: widget.vocab,
               color: explanationColor,

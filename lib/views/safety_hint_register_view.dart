@@ -292,15 +292,6 @@ class _SafetyHintRegisterState extends ConsumerState<SafetyHintRegisterView> {
                             showErrorHint = noAnswerRrrorHint;
                           });
                         } else {
-                          /*
-                          Navigator.of(context)
-                              .pushNamed('/register', arguments: {
-                            'q1': selectedQuestion1?.value,
-                            'a1': a1Controller.text,
-                            'q2': selectedQuestion2?.value,
-                            'a2': a2Controller.text,
-                          });
-                          */
                           navigateWithProvider(
                             context, 
                             '/register', 
