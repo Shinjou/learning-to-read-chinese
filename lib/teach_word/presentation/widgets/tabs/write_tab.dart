@@ -67,9 +67,9 @@ class WriteTabState extends ConsumerState<WriteTab> with TickerProviderStateMixi
   late TabController tabController;
   int vocabCnt = 0;
   Map wordObj = {};
+  int vocabIndex = 0; // We need it for handleGoToUse but what for?
   late FlutterTts ftts;
   late AudioPlayer player;
-  double fontSize = 16.0;
   ValueNotifier<int> currentTabIndex = ValueNotifier(0);  
   StrokeOrderAnimationController? strokeController;
 
@@ -79,6 +79,11 @@ class WriteTabState extends ConsumerState<WriteTab> with TickerProviderStateMixi
   // bool get wordIsLearned => widget.wordsStatus[widget.wordIndex].learned;
   bool _showErrorDialog = false;
   bool _firstNullStroke = true;  
+  bool _noSvgDialogShown = false;
+  double fontSize = 16.0;
+  double deviceHeight = 0.0;
+  double deviceWidth = 0.0;
+  double nonConsumedHeight = 0.0;
 
   @override
   void initState() {
@@ -146,7 +151,6 @@ class WriteTabState extends ConsumerState<WriteTab> with TickerProviderStateMixi
     }
   }
 
-
   bool _canMoveToUse() {
     if ((wordIsLearned) || (practiceTimeLeft == 0)) {
       return true;
@@ -185,23 +189,102 @@ class WriteTabState extends ConsumerState<WriteTab> with TickerProviderStateMixi
     }
   }
 
+  void _handleNoSVG() {
+    debugPrint('_handleNoSVG: svgFileExist: $svgFileExist, _tab.index: ${tabController.index}, _tab.previousIndex: ${tabController.previousIndex}');
+    if ((!svgFileExist) && (tabController.index == writeTabNum)) {
+      if (tabController.previousIndex == lookTabNum) {
+        debugPrint('_handleNoSVG: 看一看 -> 寫一寫');
+      } else
+      if (tabController.previousIndex == listenTabNum) {
+        debugPrint('_handleNoSVG: 聽一聽 -> 寫一寫');
+      } else if (tabController.previousIndex == useTabNum) {
+        debugPrint('_handleNoSVG: 用一用 -> 寫一寫');
+      } 
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await _showNoSvgDialog(context, ref, word, isBpmf);
+      });  
+    }
+  }
+
+  Future<void> _showNoSvgDialog(BuildContext context, WidgetRef ref, String word, bool isBpmf) async {
+    if (!context.mounted) return;
+
+    // final screenInfo = ref.read(screenInfoProvider);
+    // final fontSize = screenInfo.fontSize;
+    // final ftts = ref.read(ttsProvider);
+    // final player = ref.read(audioPlayerProvider);
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            '', // Hardcoded message since it's specific to this dialog
+            style: TextStyle(color: Colors.black, fontSize: fontSize * 1.2),
+          ),
+          content: Text(
+            '抱歉，「$word」還沒有筆順。請繼續。謝謝！',
+            style: TextStyle(color: Colors.black, fontSize: fontSize * 1.2),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text(
+                '聽一聽',
+                style: TextStyle(color: Colors.black, fontSize: fontSize * 1.2),
+              ),
+              onPressed: () async {
+                if (isBpmf) {
+                  await player.play(AssetSource('bopomo/$word.mp3'));
+                } else {
+                  await ftts.speak(word);
+                }
+                if (!context.mounted) return;
+                Navigator.of(context).pop();
+                tabController.animateTo(listenTabNum);
+              },            
+            ),
+            TextButton(
+              child: Text(
+                '用一用',
+                style: TextStyle(color: Colors.black, fontSize: fontSize * 1.2),
+              ),
+              onPressed: () {
+                if (!context.mounted) return;
+                Navigator.of(context).pop();
+                handleGoToUse(vocabCnt, vocabIndex, nextStepId, wordObj, ftts);
+                tabController.animateTo(useTabNum);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final ScreenInfo screenInfo = ref.read(screenInfoProvider);
+    fontSize = screenInfo.fontSize;
+    deviceHeight = screenInfo.screenHeight;
+    deviceWidth = screenInfo.screenWidth;
+    nonConsumedHeight = deviceHeight * 0.15;
+    debugPrint("WriteTab: Building with fontSize $fontSize and word $word");    
+
+    if (!svgFileExist) {
+      if (!_noSvgDialogShown) {
+        _noSvgDialogShown = true;
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
+          _handleNoSVG();
+        });
+      }
+      return CircularProgressIndicator();
+    }
+
     if (strokeController == null) {
       debugPrint("Error: strokeController is not initialized.");
       return _buildErrorWidget(word);
     }
-
-
-    final ScreenInfo screenInfo = ref.read(screenInfoProvider);
-    final double fontSize = screenInfo.fontSize;
-    double deviceHeight = screenInfo.screenHeight;
-    double deviceWidth = screenInfo.screenWidth;
-    // double availableWidth = deviceWidth - 10;
-    // double availableHeight = deviceHeight - 10;
-    double nonConsumedHeight = deviceHeight * 0.15;
-    // bool isTablet = screenInfo.isTablet;
-    debugPrint("WriteTab: Building WriteTab with fontSize $fontSize and word $word");
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -247,15 +330,6 @@ class WriteTabState extends ConsumerState<WriteTab> with TickerProviderStateMixi
       iconsColor: lightGray,
       iconsSize: max(fontSize * 1.5, 48.0),
       rightBorder: _canMoveToUse(),
-      /*
-      middleWidget: Text('寫一寫',
-          style: TextStyle(
-            color: lightGray,
-            fontSize: fontSize * 1.2,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      */
       middleWidget: ZhuyinProcessing(
         text: '寫一寫',
         color: lightGray,
@@ -265,25 +339,18 @@ class WriteTabState extends ConsumerState<WriteTab> with TickerProviderStateMixi
       ),              
       isFirst: false,
       isLast: false,
-      onLeftClicked: wordIsLearned
-          ? () async {
+      onLeftClicked: () async {
               int savedNextStepId = nextStepId;
               int oldTabIndex = currentTabIndex.value;
               nextStepId = TeachWordSteps.steps['goToWrite']!;
-              currentTabIndex.value = 2;
-              debugPrint('回去 聽一聽 說：$word');
+              currentTabIndex.value = writeTabNum;
               speakWord(word, isBpmf, player, ftts,);
-              debugPrint('寫一寫，上一頁2，savedId: $savedNextStepId，nextId: $nextStepId，oldTabIndex: $oldTabIndex, newTabIndex: ${currentTabIndex.value},叫 prevTab()');
-              
-              // prevTab();
-              // return tabController.animateTo(tabController.index - 1);
+              debugPrint('寫一寫=>聽一聽，說：$word，savedId: $savedNextStepId，nextId: $nextStepId，oldTabIndex: $oldTabIndex, newTabIndex: ${currentTabIndex.value}');
               widget.onPreviousTab();
-            }
-          : null,
+            },
       onRightClicked: (nextStepId == TeachWordSteps.steps['goToUse1'] || wordIsLearned)
           ? () {
-              // nextTab();
-              // return tabController.animateTo(tabController.index + 1);
+              debugPrint('寫一寫=>用一用，說：$word， newTabIndex: ${currentTabIndex.value}');            
               widget.onNextTab();
             }
           : null,
@@ -435,7 +502,7 @@ class WriteTabState extends ConsumerState<WriteTab> with TickerProviderStateMixi
       _showErrorDialog = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (_showErrorDialog) {
-          showErrorDialog(context, '','「$word」沒有筆順2。請截圖回報。謝謝！', fontSize);
+          showErrorDialog(context, ref, '','「$word」沒有筆順2。請截圖回報。謝謝！');
           _firstNullStroke = true;
           _showErrorDialog = false;
         }
