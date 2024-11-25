@@ -28,7 +28,8 @@ class BopomoContainer extends ConsumerWidget {
       child: Container(
         width: fontSize * 2.5, // was 44
         height: fontSize * 3.0, // was 50
-        alignment: Alignment.center,
+        padding: const EdgeInsets.fromLTRB(10, 0, 0, 0), // was 4
+        alignment: Alignment.bottomRight, // was Alignment.center
         decoration: BoxDecoration(
             color: color,
             borderRadius: BorderRadius.circular(fontSize), // 12
