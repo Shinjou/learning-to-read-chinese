@@ -17,7 +17,7 @@ import 'package:ltrc/views/safety_hint_verify_view.dart';
 import 'package:ltrc/views/setting_view.dart';
 import 'package:ltrc/views/sw_version_view.dart';
 // import 'package:ltrc/views/teach_word_view.dart';
-import 'package:ltrc/teach_word/presentation/teach_word_view_testing.dart';
+import 'package:ltrc/teach_word/presentation/teach_word_view.dart';
 import 'package:ltrc/views/units_view.dart';
 
 import 'package:ltrc/views/words_view.dart';
