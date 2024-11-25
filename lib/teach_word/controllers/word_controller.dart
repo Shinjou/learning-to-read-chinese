@@ -35,9 +35,7 @@ class WordController extends StateNotifier<WordState> {
     this.player,
     this.wordService,
     WordState initialState,
-  ) : super(initialState) {
-    // _initializeAudio();
-  }
+  ) : super(initialState);
 
   // Called by teach_word_view.dart
   void setStrokeController(
@@ -137,31 +135,6 @@ class WordController extends StateNotifier<WordState> {
     }
   }
 
-  /*
-  void incrementNextStepId() {
-    state = state.copyWith(nextStepId: state.nextStepId + 1);
-  }
-
-  void decrementNextStepId() {
-    final step = max(TeachWordSteps.steps['goToListen']!, state.nextStepId - 1);
-    state = state.copyWith(nextStepId: step);
-  }
-
-  Future<void> playWordAudio() async {
-    if (state.isBpmf) {
-      await player.play(AssetSource('bopomo/${state.currentWord}.mp3'));
-    } else {
-      await ftts.speak(state.currentWord);
-    }
-  }
-
-  Future<void> playVocabAudio(int index) async {
-    final vocab = state.wordsPhrase[state.wordIndex]['vocab${index + 1}'];
-    final sentence = state.wordsPhrase[state.wordIndex]['sentence${index + 1}'];
-    await ftts.speak("$vocab。$sentence");
-  }
-  */
-
   StrokeOrderAnimationController get strokeController {
     if (_strokeController == null) {
       throw StateError('StrokeController not set');
@@ -203,45 +176,6 @@ class WordController extends StateNotifier<WordState> {
     );
   }
 
-  /*
-  Future<void> initializeWord(WordStatus wordStatus, Map wordPhrase) async {
-    final word = wordStatus.word;
-    final wordData = await wordService.getWordData(word);
-
-    state = state.copyWith(
-      currentWord: word,
-      currentWordStatus: wordStatus,
-      isLearned: wordStatus.learned,
-      nextStepId: 0,
-      isBpmf: wordData.isBpmf,
-      svgExists: wordData.svgExists,
-      img1Exists: wordData.img1Exists,
-      img2Exists: wordData.img2Exists,
-      svgData: wordData.svgData,
-      vocab1: wordPhrase['vocab1'] ?? '',
-      vocab2: wordPhrase['vocab2'] ?? '',
-      sentence1: wordPhrase['sentence1'] ?? '',
-      sentence2: wordPhrase['sentence2'] ?? '',
-      meaning1: wordPhrase['meaning1'] ?? '',
-      meaning2: wordPhrase['meaning2'] ?? '',
-      vocabCount: _calculateVocabCount(wordPhrase),
-      wordsPhrase: [wordPhrase],
-      wordIndex: 0,
-    );
-
-    if (wordData.svgExists && _strokeController != null) {
-      _strokeController!.setStrokeOrder(wordData.svgData);
-    }
-  }
-
-  int _calculateVocabCount(Map wordPhrase) {
-    int count = 0;
-    if (wordPhrase['vocab1']?.isNotEmpty ?? false) count++;
-    if (wordPhrase['vocab2']?.isNotEmpty ?? false) count++;
-    return count;
-  }
-  */
-
   void handleError(String errorType) {
     ref.read(errorHandlerProvider).handleError(
       switch (errorType) {
@@ -263,51 +197,6 @@ class WordController extends StateNotifier<WordState> {
     );
   }
 
-  /*
-  void updateState({
-    int? nextStepId,
-    int? currentTabIndex,
-    bool? isLearned,
-    int? practiceTimeLeft,
-  }) {
-    state = state.copyWith(
-      nextStepId: nextStepId,
-      currentTabIndex: currentTabIndex,
-      isLearned: isLearned,
-      practiceTimeLeft: practiceTimeLeft,
-    );
-  }
-
-  Future<void> _playVocabAudio(int index) async {
-    final vocab = state.wordsPhrase[state.wordIndex]['vocab${index + 1}'];
-    final sentence = state.wordsPhrase[state.wordIndex]['sentence${index + 1}'];
-    await ftts.speak("$vocab。$sentence");
-  }
-  */
-
-  /* No one is calling this _updateWordStatus function
-  Future<void> _updateWordStatus(bool learned) async {
-    try {
-      final newStatus = state.currentWordStatus.copyWith(learned: learned);
-      ref.read(learnedWordCountProvider.notifier).state += learned ? 1 : 0;
-      await wordService.markWordAsLearned(newStatus);
-      state = state.copyWith(
-        currentWordStatus: newStatus,
-        isLearned: learned,
-      );
-    } catch (e) {
-      debugPrint('Error updating word status: $e');
-      handleError('statusUpdateError');
-    }
-  }
-
-  void markWordAsLearned(WordState wordState) {
-    state = state.copyWith(
-      isLearned: true,
-    );
-    _updateWordStatus(true);
-  }
-  */
   // Used in WriteTab's _buildStrokeOrderButtonOnPressed
   void startAnimation() {
     state = state.copyWith(

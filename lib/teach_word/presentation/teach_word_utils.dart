@@ -111,15 +111,6 @@ Future<void> updateWordStatus(
   }
 }
 
-/*
-void incrementNextStepId(
-  ValueNotifier<int> nextStepIdNotifier,
-) {
-  nextStepIdNotifier.value += 1;
-  debugPrint('incrementNextStepId: nextId: ${nextStepIdNotifier.value}');
-}
-*/
-
 Future<void> handleGoToUse(
   int vocabCnt,
   int vocabIndex,
