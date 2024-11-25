@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:ltrc/contants/bopomo_spelling_problem.dart';
 import 'package:ltrc/contants/bopomos.dart';
 import 'package:ltrc/data/models/bopomo_spelling_model.dart';
@@ -83,7 +84,6 @@ class _BopomoQuizState extends ConsumerState<BopomoQuizView> {
 
   @override
   Widget build(BuildContext context) {
-    // final screenInfo = ref.watch(screenInfoProvider);
     final screenInfo = ref.watch(screenInfoProvider);
     double fontSize = screenInfo.fontSize;
 
@@ -343,34 +343,104 @@ class _BopomoQuizState extends ConsumerState<BopomoQuizView> {
                               if (problemId < bopomoSpellingWords.length - 1) {
                                 await _getAnswer();
                                 if (answer == caught) {
+                                  // Show success feedback
                                   setState(() {
                                     answerBoxBorderColor = Colors.green;
                                   });
-                                  Timer(const Duration(seconds: 1), () {
+                                  
+                                  // Show success message
+                                  Fluttertoast.showToast(
+                                    msg: "答對了！準備下一題...",
+                                    toastLength: Toast.LENGTH_LONG,
+                                    gravity: ToastGravity.CENTER,
+                                    backgroundColor: Colors.green.withOpacity(0.7),
+                                    textColor: Colors.white,
+                                    fontSize: fontSize * 1.2,
+                                  );
+
+                                  // Wait longer before moving to next question
+                                  await Future.delayed(const Duration(seconds: 2));
+                                  
+                                  if (mounted) {
                                     setState(() {
                                       problemId += 1;
                                       caught = BopomoSpelling();
                                       answer = BopomoSpelling();
-                                      answerBoxBorderColor =
-                                          beige;
+                                      answerBoxBorderColor = beige;
                                     });
-                                  });
+                                    
+                                    // Announce next question
+                                    Fluttertoast.showToast(
+                                      msg: "第${problemId + 1}題",
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.TOP,
+                                      backgroundColor: deepBlue.withOpacity(0.7),
+                                      textColor: beige,
+                                      fontSize: fontSize * 1.2,
+                                    );
+                                  }
                                 } else {
+                                  // Show error feedback
                                   setState(() {
                                     answerBoxBorderColor = Colors.red;
                                   });
-                                  Timer(const Duration(seconds: 1), () {
+                                  // Show error message with hint
+                                  Fluttertoast.showToast(
+                                    msg: "再試一次！\n提示：請檢查聲母、韻母和聲調",
+                                    toastLength: Toast.LENGTH_LONG,
+                                    gravity: ToastGravity.CENTER,
+                                    backgroundColor: Colors.red.withOpacity(0.7),
+                                    textColor: Colors.white,
+                                    fontSize: fontSize * 1.2,
+                                  );
+
+                                  // Wait before resetting border color
+                                  await Future.delayed(const Duration(seconds: 2));
+                                  
+                                  if (mounted) {
                                     setState(() {
-                                      answerBoxBorderColor =
-                                          beige;
+                                      answerBoxBorderColor = beige;
                                     });
-                                  });
+                                  }
                                 }
                               } else {
-                                // Navigator.pushNamed(context, '/bopomoQuizFinish');
-                                navigateWithProvider(context, '/bopomoQuizFinish', ref);
+                                final currentContext = context;
+                                
+                                Fluttertoast.showToast(
+                                  msg: "太棒了！\n你完成了所有題目！",
+                                  toastLength: Toast.LENGTH_LONG,
+                                  gravity: ToastGravity.CENTER,
+                                  backgroundColor: deepBlue.withOpacity(0.7),
+                                  textColor: beige,
+                                  fontSize: fontSize * 1.2,
+                                );
+
+                                await Future.delayed(const Duration(seconds: 2));
+                                
+                                if (currentContext.mounted) {
+                                  navigateWithProvider(currentContext, '/bopomoQuizFinish', ref);
+                                }                                
+                                /*
+                                // Show completion message
+                                Fluttertoast.showToast(
+                                  msg: "太棒了！\n你完成了所有題目！",
+                                  toastLength: Toast.LENGTH_LONG,
+                                  gravity: ToastGravity.CENTER,
+                                  backgroundColor: deepBlue.withOpacity(0.7),
+                                  textColor: beige,
+                                  fontSize: fontSize * 1.2,
+                                );
+
+                                await Future.delayed(const Duration(seconds: 2));
+                                
+                                if (!mounted) {
+                                  return;
+                                } else {
+                                  navigateWithProvider(context, '/bopomoQuizFinish', ref);
+                                }
+                                */
                               }
-                            },
+                            },                            
                           ),
                           Text(
                             '確\n認',
@@ -390,9 +460,9 @@ class _BopomoQuizState extends ConsumerState<BopomoQuizView> {
               sliver: SliverGrid(
                 gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                   maxCrossAxisExtent: fontSize * 2.0,
-                  mainAxisSpacing: fontSize * 0.75, // was 8.0,
-                  crossAxisSpacing: fontSize * 0.75, // was 8.0
-                  childAspectRatio: 1 / 1,
+                  mainAxisSpacing: fontSize * 0.75, // was 0.75
+                  crossAxisSpacing: fontSize * 0.75, // was 0.75
+                  childAspectRatio: 1 / 1,  // was 1 / 1
                 ),
                 delegate: SliverChildBuilderDelegate(
                   (BuildContext context, int index) {
