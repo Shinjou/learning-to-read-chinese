@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import 'package:ltrc/extensions.dart';
 import 'package:ltrc/providers.dart';
-// import 'package:ltrc/providers.dart';
 import 'package:ltrc/views/view_utils.dart';
 
 
@@ -11,9 +9,9 @@ class BopomoQuizFinishView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // final screenInfo = ref.watch(screenInfoProvider);
     final screenInfo = ref.watch(screenInfoProvider);
     double fontSize = screenInfo.fontSize;
+    debugPrint("BopomoQuizFinishView fontSize: $fontSize");
 
     return Scaffold(
         appBar: AppBar(
@@ -23,7 +21,7 @@ class BopomoQuizFinishView extends ConsumerWidget {
           ),
           title: Text(
             "拼拼看",
-            style: TextStyle(fontSize: fontSize * 1.0),
+            style: TextStyle(fontSize: fontSize * 1.5),
           ),
           actions: [
             IconButton(
@@ -43,8 +41,8 @@ class BopomoQuizFinishView extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
-                    height: fontSize * 3.5,
-                    width: fontSize * 14.0,
+                    height: fontSize * 5.0,
+                    width: fontSize * 20.0,
                     alignment: Alignment.center,
                     decoration: const BoxDecoration(
                       color: deepBlue,
@@ -52,29 +50,27 @@ class BopomoQuizFinishView extends ConsumerWidget {
                     child: Text('⭐恭喜⭐\n完成所有題目！',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontSize: fontSize,
+                          fontSize: fontSize * 1.5,
                           color: beige,
                         ))),
                 SizedBox(
-                  height: fontSize * 0.3,
+                  height: fontSize * 0.5,
                 ),
                 ElevatedButton(
                     onPressed: () =>
-                        // Navigator.of(context).pushNamed("/bopomoQuiz"),
                         navigateWithProvider(context, '/bopomoQuiz', ref),
                     child: Text("重新測驗",
                         style: TextStyle(
-                            color: Colors.black, fontSize: fontSize))),
+                            color: Colors.black, fontSize: fontSize * 1.5))),
                 SizedBox(
-                  height: fontSize * 0.3,
+                  height: fontSize * 0.5,
                 ),
                 ElevatedButton(
                     onPressed: () =>
-                        // Navigator.of(context).pushNamed("/mainPage"),
                         navigateWithProvider(context, '/mainPage', ref),
                     child: Text("回首頁",
                         style:
-                            TextStyle(color: Colors.black, fontSize: fontSize)))
+                            TextStyle(color: Colors.black, fontSize: fontSize * 1.5)))
               ],
             )));
   }
