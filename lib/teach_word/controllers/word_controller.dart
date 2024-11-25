@@ -13,7 +13,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 // import 'package:ltrc/providers.dart';
 import 'package:ltrc/teach_word/constants/steps.dart';
 // import 'package:ltrc/teach_word/presentation/teach_word_utils.dart';
-import 'package:ltrc/teach_word/presentation/teach_word_view_testing.dart';
+import 'package:ltrc/teach_word/presentation/teach_word_view.dart';
 // import 'package:ltrc/teach_word/presentation/teach_word_utils.dart';
 import 'package:ltrc/teach_word/providers/word_provider.dart';
 import 'package:ltrc/teach_word/services/word_service.dart';
