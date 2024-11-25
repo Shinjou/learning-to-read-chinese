@@ -102,7 +102,7 @@ class ScreenInfoNotifier extends StateNotifier<ScreenInfo> {
       
       final baseWidth = isTablet ? 600.0 : 360.0;
       final baseFontSize = isTablet ? 24.0 : 15.0;
-      final fontSize = (baseFontSize * screenWidth / baseWidth);
+      final fontSize = ((baseFontSize * screenWidth / baseWidth) * 10).round() / 10;      
 
       final newInfo = ScreenInfo(
         screenHeight: screenHeight,
