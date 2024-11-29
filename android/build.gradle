@@ -1,5 +1,15 @@
+// android/build.gradle
+
 buildscript {
-    ext.kotlin_version = '1.9.10'
+    ext {
+        gradleVersion = '8.4.0'  // Keep your current version
+        kotlinVersion = '1.9.20'
+        kotlin_version = '1.9.20' 
+
+        compileSdkVersion = 34
+        minSdkVersion = 21  // or whatever your min SDK is
+        targetSdkVersion = 34        
+    }    
     repositories {
         google()
         mavenCentral()
@@ -7,8 +17,8 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.3.0'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "com.android.tools.build:gradle:$gradleVersion"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     }
 }
 
