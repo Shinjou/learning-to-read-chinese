@@ -45,6 +45,13 @@
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app requires access to the photo library.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app requires access to the microphone.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>This app requires access to the camera.</string>
+
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 			<!-- Supported orientations for iPhone: only portrait -->
