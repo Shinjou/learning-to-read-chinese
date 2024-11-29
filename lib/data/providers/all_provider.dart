@@ -20,7 +20,7 @@ class AllProvider {
   static bool isDbClosed = true;  // Flag to check if the database is closed
 
   static const String _dbName = 'all.sqlite';  
-  static const int _dbNewVersion = 10; // Always upgrade to the latest version
+  static const int _dbNewVersion = 11; // Always upgrade to the latest version
 
   /// Gets the singleton database instance, initializing if necessary.
   Future<Database> get database async {
