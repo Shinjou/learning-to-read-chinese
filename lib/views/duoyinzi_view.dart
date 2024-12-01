@@ -210,7 +210,7 @@ class DuoyinziViewState extends ConsumerState<DuoyinziView> {
                 ),
               ),
             ),
-
+            /* Disabled 複製 button until it can work with other mobile App
             Container(
               alignment: Alignment.center,
               margin: EdgeInsets.only(bottom: fontSize * 0.5),
@@ -228,6 +228,7 @@ class DuoyinziViewState extends ConsumerState<DuoyinziView> {
                 ],
               ),
             ),
+            */
           ],
         ),
       ),
