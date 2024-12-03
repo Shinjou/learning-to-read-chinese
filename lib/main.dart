@@ -2,14 +2,14 @@
 
 import 'dart:async';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:ltrc/views/view_utils.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:logger/logger.dart';
 import 'dart:io';
-import 'package:flutter_tts/flutter_tts.dart';
-import 'package:audioplayers/audioplayers.dart';
 
 import 'package:ltrc/providers.dart';
 import 'package:ltrc/data/providers/all_provider.dart';
@@ -17,7 +17,10 @@ import 'package:ltrc/data/providers/user_provider.dart';
 import 'package:ltrc/views/log_in_view.dart';
 import 'package:ltrc/views/polyphonic_processor.dart';
 import 'package:ltrc/contants/routes.dart';
+import 'package:record/record.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 
+/*
 Future<void> main() async {
   try {
     WidgetsFlutterBinding.ensureInitialized();
@@ -34,6 +37,8 @@ Future<void> main() async {
         // Pre-initialize audio providers
         ttsProvider.overrideWithValue(await initializeTts()),
         audioPlayerProvider.overrideWithValue(await initializeAudioPlayer()),
+        recorderProvider.overrideWithValue(await initializeRecorder()),
+        speechToTextProvider.overrideWithValue(await initializeSpeechToText()),
         // Ensure screenInfoProvider retains global state across the app
         // screenInfoProvider,
       ],
@@ -52,34 +57,63 @@ Future<void> main() async {
     debugPrint('Failed to init the app: $e');
   }
 }
+*/
 
-Future<FlutterTts> initializeTts() async {
-  final ftts = FlutterTts();
+Future<void> main() async {
+  try {
+    WidgetsFlutterBinding.ensureInitialized();
+    setupLogger();
+    
+    // Initialize databases
+    await AllProvider().database;
+    await UserProvider().database;
+    await PolyphonicProcessor.instance.loadPolyphonicData();
 
-  ftts.setStartHandler(() { // Need more processing
-    debugPrint("Main: TTS Started");  // we only saw "TTS Start", but no "TTS Complete". Why?
-  });
+    // Initialize providers with better error handling
+    FlutterTts? tts;
+    AudioPlayer? audioPlayer;
+    AudioRecorder? recorder;
+    SpeechToText? speechToText;
+    
+    try {
+      tts = await initializeTts();
+      audioPlayer = await initializeAudioPlayer();
+      recorder = await initializeRecorder();
+      speechToText = await initializeSpeechToText();
+    } catch (e) {
+      debugPrint('Error initializing audio services: $e');
+      // Handle initialization failures gracefully
+      if (tts == null) debugPrint('TTS failed to initialize');
+      if (audioPlayer == null) debugPrint('AudioPlayer failed to initialize');
+      if (recorder == null) debugPrint('Recorder failed to initialize');
+      if (speechToText == null) debugPrint('SpeechToText failed to initialize');
+    }
 
-  ftts.setCompletionHandler(() { // No "TTS Complete" message. Why?
-    debugPrint("Main: TTS Completed");
-  });
+    final container = ProviderContainer(
+      overrides: [
+        if (tts != null) ttsProvider.overrideWithValue(tts),
+        if (audioPlayer != null) audioPlayerProvider.overrideWithValue(audioPlayer),
+        if (recorder != null) recorderProvider.overrideWithValue(recorder),
+        if (speechToText != null) speechToTextProvider.overrideWithValue(speechToText),
+      ],
+    );
 
-  ftts.setErrorHandler((msg) { // 
-    debugPrint("Main: TTS Error: $msg");
-  });
-
-  await ftts.setLanguage("zh-tw");
-  await ftts.setSpeechRate(0.5);
-  await ftts.setVolume(1.0);
-  debugPrint('Main: TTS initialized.');
-  return ftts;
+    debugPrint('Main: Starting app initialization.');
+    runApp(
+      ProviderScope(
+        child: UncontrolledProviderScope(
+          container: container,
+          child: const MyApp(),
+        ),
+      ),
+    );
+  } catch (e, stack) {
+    debugPrint('Failed to init the app: $e');
+    debugPrint('Stack trace: $stack');
+  }
 }
 
-Future<AudioPlayer> initializeAudioPlayer() async {
-  final player = AudioPlayer();
-  debugPrint('Main: Audio player initialized.');
-  return player;
-}
+
 
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
