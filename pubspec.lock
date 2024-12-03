@@ -509,6 +509,62 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.0"
+  pedantic:
+    dependency: transitive
+    description:
+      name: pedantic
+      sha256: "67fc27ed9639506c856c840ccce7594d0bdcd91bc8d53d6e52359449a1d50602"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.11.1"
+  permission_handler:
+    dependency: "direct main"
+    description:
+      name: permission_handler
+      sha256: "18bf33f7fefbd812f37e72091a15575e72d5318854877e0e4035a24ac1113ecb"
+      url: "https://pub.dev"
+    source: hosted
+    version: "11.3.1"
+  permission_handler_android:
+    dependency: transitive
+    description:
+      name: permission_handler_android
+      sha256: "71bbecfee799e65aff7c744761a57e817e73b738fedf62ab7afd5593da21f9f1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "12.0.13"
+  permission_handler_apple:
+    dependency: transitive
+    description:
+      name: permission_handler_apple
+      sha256: e6f6d73b12438ef13e648c4ae56bd106ec60d17e90a59c4545db6781229082a0
+      url: "https://pub.dev"
+    source: hosted
+    version: "9.4.5"
+  permission_handler_html:
+    dependency: transitive
+    description:
+      name: permission_handler_html
+      sha256: "38f000e83355abb3392140f6bc3030660cfaef189e1f87824facb76300b4ff24"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.3+5"
+  permission_handler_platform_interface:
+    dependency: transitive
+    description:
+      name: permission_handler_platform_interface
+      sha256: e9c8eadee926c4532d0305dff94b85bf961f16759c3af791486613152af4b4f9
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.2.3"
+  permission_handler_windows:
+    dependency: transitive
+    description:
+      name: permission_handler_windows
+      sha256: "1a790728016f79a41216d88672dbc5df30e686e811ad4e698bfc51f76ad91f1e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.1"
   platform:
     dependency: transitive
     description:
@@ -549,6 +605,62 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.3.0"
+  record:
+    dependency: "direct main"
+    description:
+      name: record
+      sha256: "8cb57763d954624fbc673874930c6f1ceca3baaf9bfee24b25da6fd451362394"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.2.0"
+  record_android:
+    dependency: transitive
+    description:
+      name: record_android
+      sha256: "0b4739a2502fff402b0ac0ff1d6b2740854d116d78e06a4a16b3989821f84446"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.3.0"
+  record_darwin:
+    dependency: transitive
+    description:
+      name: record_darwin
+      sha256: e487eccb19d82a9a39cd0126945cfc47b9986e0df211734e2788c95e3f63c82c
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.2"
+  record_linux:
+    dependency: transitive
+    description:
+      name: record_linux
+      sha256: "74d41a9ebb1eb498a38e9a813dd524e8f0b4fdd627270bda9756f437b110a3e3"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.7.2"
+  record_platform_interface:
+    dependency: transitive
+    description:
+      name: record_platform_interface
+      sha256: "8a575828733d4c3cb5983c914696f40db8667eab3538d4c41c50cbb79e722ef4"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.0"
+  record_web:
+    dependency: transitive
+    description:
+      name: record_web
+      sha256: "10cb041349024ce4256e11dd35874df26d8b45b800678f2f51fd1318901adc64"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.4"
+  record_windows:
+    dependency: transitive
+    description:
+      name: record_windows
+      sha256: "7bce0ac47454212ca8bfa72791d8b6a951f2fb0d4b953b64443c014227f035b4"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.4"
   riverpod:
     dependency: transitive
     description:
@@ -642,6 +754,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.10.0"
+  speech_to_text:
+    dependency: "direct main"
+    description:
+      name: speech_to_text
+      sha256: "6cf8f284997490ebef1d68f8707bef57dcf083f43c0f915cc285428520bfe6be"
+      url: "https://pub.dev"
+    source: hosted
+    version: "7.0.0"
+  speech_to_text_platform_interface:
+    dependency: transitive
+    description:
+      name: speech_to_text_platform_interface
+      sha256: a1935847704e41ee468aad83181ddd2423d0833abe55d769c59afca07adb5114
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.3.0"
   sprintf:
     dependency: transitive
     description:
