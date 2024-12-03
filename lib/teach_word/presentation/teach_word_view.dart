@@ -13,6 +13,7 @@ import 'package:ltrc/contants/bopomos.dart';
 // import 'package:ltrc/data/providers/word_status_provider.dart';
 import 'package:ltrc/providers.dart';
 import 'package:ltrc/data/models/word_status_model.dart';
+import 'package:ltrc/teach_word/presentation/widgets/tabs/speak_tab.dart';
 // import 'package:ltrc/teach_word/constants/steps.dart';
 import 'package:ltrc/teach_word/providers/teach_word_providers.dart';
 import 'package:ltrc/teach_word/states/navigation_state.dart';
@@ -112,7 +113,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView> with TickerProvide
   void _initializeTabController() {
     _tabController = TabController(length: totalTabNum, vsync: this);
     _tabController.addListener(_handleTabChange);
-    debugPrint('TeachWordView: TabController initialized.');    
+    debugPrint('TeachWordView: TabController initialized for $totalTabNum tabs.');    
   }
 
   void _checkIfBpmf() {
@@ -388,6 +389,25 @@ class TeachWordViewState extends ConsumerState<TeachWordView> with TickerProvide
             wordObj: wordObj,              
             widgetId: widget.widgetId,
             ),
+          SpeakTab(
+            unitId: widget.unitId,
+            unitTitle: widget.unitTitle,
+            wordsStatus: widget.wordsStatus,
+            wordsPhrase: widget.wordsPhrase,
+            wordIndex: widget.wordIndex,          
+            onNextTab: () => navigateNextTab(_tabController), 
+            onPreviousTab: () => navigatePreviousTab(_tabController),   
+            // onPlayAudio: onPlayAudio,
+            tabController: _tabController,
+            isBpmf: isBpmf,
+            // svgFileExist: svgFileExist,
+            // wordIsLearned: wordIsLearned,   
+            // img1Exist: img1Exist,
+            // img2Exist: img2Exist,   
+            vocabCnt: vocabCnt,      
+            wordObj: wordObj,              
+            widgetId: widget.widgetId,
+            ),            
         ],
       ),
       bottomNavigationBar: _buildBottomBar(screenInfo),
@@ -435,6 +455,7 @@ class TeachWordViewState extends ConsumerState<TeachWordView> with TickerProvide
         Tab(icon: Icon(Icons.hearing, size: fontSize * 0.75)),
         Tab(icon: Icon(Icons.create, size: fontSize * 0.75)),
         Tab(icon: Icon(Icons.school, size: fontSize * 0.75)),
+        Tab(icon: Icon(Icons.mic, size: fontSize * 0.75)),
       ],
       controller: _tabController,
       onTap: (index) {
