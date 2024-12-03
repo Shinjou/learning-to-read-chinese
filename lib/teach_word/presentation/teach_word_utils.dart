@@ -14,8 +14,10 @@ const lookTabNum = 0;
 const listenTabNum = lookTabNum + 1;
 const writeTabNum = listenTabNum + 1;
 const useTabNum = writeTabNum + 1;
-const totalTabNum = useTabNum + 1;
-const List<String> tabNames = ['看一看', '聽一聽', '寫一寫', '用一用'];
+const speakTabNum = useTabNum + 1;
+const totalTabNum = speakTabNum + 1;
+
+const List<String> tabNames = ['看一看', '聽一聽', '寫一寫', '用一用', '說一說'];
 
 void showErrorDialog(BuildContext context, WidgetRef ref, String message, String title) {
   if (!context.mounted) return;
