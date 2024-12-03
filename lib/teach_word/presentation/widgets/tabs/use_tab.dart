@@ -89,6 +89,8 @@ class UseTabState extends ConsumerState<UseTab> {
   String message = '';
   bool isAnswerCorrect = false;
   late int pageIndex;
+  // Added by sjf
+  ValueNotifier<int> currentTabIndex = ValueNotifier(0);    
 
   @override
   void initState() {
@@ -342,7 +344,6 @@ class UseTabState extends ConsumerState<UseTab> {
     );
 
     return Container();
-
   }
   
 
@@ -373,10 +374,17 @@ class UseTabState extends ConsumerState<UseTab> {
                       if (isLastPage && isAnswerCorrect)
                         Padding(
                           padding: EdgeInsets.only(top: fontSize),
+                          /*
                           child: ElevatedButton(
                             onPressed: _goToNextCharacter,
                             child: Text("下一字", style: TextStyle(fontSize: fontSize)),
                           ),
+                          */
+                          // 兩個用一用都正確後，去朗讀
+                          child: ElevatedButton(
+                            onPressed: widget.onNextTab,
+                            child: Text("朗讀", style: TextStyle(fontSize: fontSize)),
+                          ),                          
                         ),
                     ],
                   ),
@@ -404,7 +412,8 @@ class UseTabState extends ConsumerState<UseTab> {
         centered: true,  // Optional centering
       ),            
       isFirst: false,
-      isLast: isLastPage,
+      // isLast: isLastPage,
+      isLast: false,
       onLeftClicked: vocabIndex > 0
           ? () {
               setState(() {
@@ -414,7 +423,12 @@ class UseTabState extends ConsumerState<UseTab> {
               _handleGoToUse();
             }
           : null,
-      onRightClicked: isAnswerCorrect && !isLastPage ? _onContinuePressed : null,
+      onRightClicked: isAnswerCorrect && !isLastPage 
+          ? _onContinuePressed 
+          : () {
+                debugPrint('用一用=>說一說，說：$vocab， newTabIndex: ${currentTabIndex.value}');            
+                widget.onNextTab();
+              }
     );
   }
 
