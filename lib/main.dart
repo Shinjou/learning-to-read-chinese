@@ -1,11 +1,10 @@
 // main.dart 
 
 import 'dart:async';
-
-import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_tts/flutter_tts.dart';
 import 'package:ltrc/views/view_utils.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:logger/logger.dart';
@@ -17,86 +16,24 @@ import 'package:ltrc/data/providers/user_provider.dart';
 import 'package:ltrc/views/log_in_view.dart';
 import 'package:ltrc/views/polyphonic_processor.dart';
 import 'package:ltrc/contants/routes.dart';
-import 'package:record/record.dart';
-import 'package:speech_to_text/speech_to_text.dart';
-
-/*
-Future<void> main() async {
-  try {
-    WidgetsFlutterBinding.ensureInitialized();
-    setupLogger();
-    
-    // Initialize databases
-    await AllProvider().database;
-    await UserProvider().database;
-    await PolyphonicProcessor.instance.loadPolyphonicData();
-
-    // Initialize audio providers
-    final container = ProviderContainer(
-      overrides: [
-        // Pre-initialize audio providers
-        ttsProvider.overrideWithValue(await initializeTts()),
-        audioPlayerProvider.overrideWithValue(await initializeAudioPlayer()),
-        recorderProvider.overrideWithValue(await initializeRecorder()),
-        speechToTextProvider.overrideWithValue(await initializeSpeechToText()),
-        // Ensure screenInfoProvider retains global state across the app
-        // screenInfoProvider,
-      ],
-    );
-
-    debugPrint('Main: Starting app initialization.');
-    runApp(
-      ProviderScope(
-        child: UncontrolledProviderScope(
-          container: container,
-          child: const MyApp(),
-        ),
-      ),
-    );
-  } catch (e) {
-    debugPrint('Failed to init the app: $e');
-  }
-}
-*/
 
 Future<void> main() async {
   try {
     WidgetsFlutterBinding.ensureInitialized();
     setupLogger();
     
-    // Initialize databases
-    await AllProvider().database;
-    await UserProvider().database;
-    await PolyphonicProcessor.instance.loadPolyphonicData();
+    // Initialize databases and data
+    await Future.wait([
+      AllProvider().database,
+      UserProvider().database,
+      PolyphonicProcessor.instance.loadPolyphonicData(),
+    ]);
 
-    // Initialize providers with better error handling
-    FlutterTts? tts;
-    AudioPlayer? audioPlayer;
-    AudioRecorder? recorder;
-    SpeechToText? speechToText;
-    
-    try {
-      tts = await initializeTts();
-      audioPlayer = await initializeAudioPlayer();
-      recorder = await initializeRecorder();
-      speechToText = await initializeSpeechToText();
-    } catch (e) {
-      debugPrint('Error initializing audio services: $e');
-      // Handle initialization failures gracefully
-      if (tts == null) debugPrint('TTS failed to initialize');
-      if (audioPlayer == null) debugPrint('AudioPlayer failed to initialize');
-      if (recorder == null) debugPrint('Recorder failed to initialize');
-      if (speechToText == null) debugPrint('SpeechToText failed to initialize');
-    }
+    // Initialize core services
+    final serviceInitializer = ServiceInitializer();
+    final providers = await serviceInitializer.initializeServices();
 
-    final container = ProviderContainer(
-      overrides: [
-        if (tts != null) ttsProvider.overrideWithValue(tts),
-        if (audioPlayer != null) audioPlayerProvider.overrideWithValue(audioPlayer),
-        if (recorder != null) recorderProvider.overrideWithValue(recorder),
-        if (speechToText != null) speechToTextProvider.overrideWithValue(speechToText),
-      ],
-    );
+    final container = ProviderContainer(overrides: providers);
 
     debugPrint('Main: Starting app initialization.');
     runApp(
@@ -110,10 +47,52 @@ Future<void> main() async {
   } catch (e, stack) {
     debugPrint('Failed to init the app: $e');
     debugPrint('Stack trace: $stack');
+    runApp(const ErrorApp());
   }
 }
 
+class ServiceInitializer {
+  Future<List<Override>> initializeServices() async {
+    final providers = <Override>[];
+    
+    try {
+      debugPrint('Initializing core services...');
+      
+      // Initialize TTS
+      final tts = await initializeTts();
+      providers.add(ttsProvider.overrideWithValue(tts));
+      debugPrint('TTS initialized');
+      
+      // Initialize Audio Player
+      final player = await initializeAudioPlayer();
+      providers.add(audioPlayerProvider.overrideWithValue(player));
+      debugPrint('Audio player initialized');
+      
+      // Initialize Speech Recognition
+      final speech = await initializeSpeechToText();
+      providers.add(speechToTextProvider.overrideWithValue(speech));
+      debugPrint('Speech recognition initialized');
+      
+      // Initialize Recorder
+      final recorder = await initializeRecorder();
+      providers.add(recorderProvider.overrideWithValue(recorder));
+      debugPrint('Audio recorder initialized');
+      
+      debugPrint('All core services initialized successfully');
+      
+    } catch (e, stack) {
+      debugPrint('Service initialization failed: $e');
+      debugPrint('Stack trace: $stack');
+      throw Exception('Failed to initialize core services: $e');
+    }
 
+    if (providers.isEmpty) {
+      throw Exception('No services were initialized successfully');
+    }
+
+    return providers;
+  }
+}
 
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
@@ -171,6 +150,7 @@ class ScreenInfoInitializerState extends ConsumerState<ScreenInfoInitializer> wi
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         ref.read(screenInfoProvider.notifier).updateScreenInfo(context);
@@ -210,7 +190,7 @@ class HomePage extends ConsumerWidget {
     debugPrint("HomePage build: H: ${screenInfo.screenHeight}, W: ${screenInfo.screenWidth}, F: ${screenInfo.fontSize}, ${screenInfo.orientation}, T: ${screenInfo.isTablet}");
 
     if (screenInfo.screenHeight == 0 || screenInfo.screenWidth == 0) {
-      return const Center(child: CircularProgressIndicator());  // Show a spinner if screen info is still not ready
+      return const Center(child: CircularProgressIndicator());
     }
 
     return Scaffold(
@@ -225,33 +205,57 @@ class HomePage extends ConsumerWidget {
   }
 }
 
-
-class FileLogger extends LogOutput {
-  final File file;
-
-  FileLogger(this.file);
+class ErrorApp extends StatelessWidget {
+  const ErrorApp({super.key});
 
   @override
-  void output(OutputEvent event) {
-    for (var line in event.lines) {
-      file.writeAsString('$line\n', mode: FileMode.append, flush: true).catchError((e) {
-        debugPrint('Error writing to log file: $e');
-        return file;
-      });
-    }
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.error_outline,
+                size: 64,
+                color: Colors.red,
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                '應用程式初始化失敗',
+                style: TextStyle(fontSize: 20),
+              ),
+              const SizedBox(height: 8),
+              ElevatedButton(
+                onPressed: () {
+                  Phoenix.rebirth(context);
+                },
+                child: const Text('重新啟動'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 
-Future<File> _getLogFile() async {
-  final directory = await getApplicationDocumentsDirectory();
-  return File('${directory.path}/app_logs.txt');
-}
-
 void setupLogger() async {
-  final file = await _getLogFile();
-  var logger = Logger(
-    output: FileLogger(file),
-  );
-
-  logger.d("This is a debug message");
+  if (!kDebugMode) {
+    final directory = await getApplicationDocumentsDirectory();
+    final file = File('${directory.path}/app.log');
+    Logger(
+      output: FileOutput(file: file),
+      printer: PrettyPrinter(
+        methodCount: 2,
+        errorMethodCount: 8,
+        lineLength: 120,
+        colors: false,
+        printEmojis: false,
+        printTime: true,
+      ),
+    );
+  }
 }
