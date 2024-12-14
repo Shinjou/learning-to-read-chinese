@@ -210,7 +210,6 @@ class RegisterViewState extends ConsumerState<RegisterView> {
 
                       ref.read(learnedWordCountProvider.notifier).state = 0;
                       if (!context.mounted) return;
-                      // Navigator.of(context).pushNamed('/mainPage');
                       navigateWithProvider(context, '/mainPage', ref);
                     },
                   )),

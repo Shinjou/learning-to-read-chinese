@@ -155,7 +155,11 @@ class LogInViewState extends ConsumerState<LogInView> {
                       child: Align(
                         alignment: AlignmentDirectional.bottomEnd,
                         child: TextButton(
-                          onPressed: () => navigateWithProvider(context, '/resetPwdAccount', ref),
+                          onPressed: () {
+                            if (context.mounted) {
+                              navigateWithProvider(context, '/resetPwdAccount', ref);
+                            }
+                          },
                           style: TextButton.styleFrom(
                             minimumSize: const Size(110, 16),
                           ),
@@ -230,7 +234,6 @@ class LogInViewState extends ConsumerState<LogInView> {
                                     );
 
                                     if (!context.mounted) return;
-
                                     navigateWithProvider(context, '/mainPage', ref);
                                   }
                                 } catch (e) {
@@ -254,7 +257,11 @@ class LogInViewState extends ConsumerState<LogInView> {
                               fontSize: fontSize * 1.4,
                             )),
                         TextButton(
-                            onPressed: () => navigateWithProvider(context, '/registerAccount', ref),
+                            onPressed: () {
+                              if (context.mounted) {
+                                navigateWithProvider(context, '/registerAccount', ref);
+                              }
+                            },
                             style: TextButton.styleFrom(
                               minimumSize: const Size(110, 30),
                             ),

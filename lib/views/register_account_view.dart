@@ -81,7 +81,11 @@ class _RegisterAccountViewState extends ConsumerState<RegisterAccountView> {
           backgroundColor: veryDarkGray,
           leading: IconButton(
             icon: Icon(Icons.chevron_left, size: fontSize * 1.5),
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              if (context.mounted) {
+                Navigator.pop(context);
+              }
+            },
           ),
         ),
         backgroundColor: veryDarkGray,
@@ -305,8 +309,6 @@ class _RegisterAccountViewState extends ConsumerState<RegisterAccountView> {
                             ref.read(pwdProvider.notifier).state =
                                 pwdController.text;
                             if (!context.mounted) return;
-                            // Navigator.of(context).pushNamed('/safetyHintRegister');
-                            // navigateWithProvider(context, '/safetyHintRegister', ref);
                             navigateWithProvider(
                               context, 
                               '/register', 

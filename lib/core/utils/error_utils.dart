@@ -23,24 +23,30 @@ class ErrorUtils {
               TextButton(
                 child: const Text('回首頁'),
                 onPressed: () {
-                  Navigator.of(context).pop();
-                  onDismiss?.call();
-                  Navigator.of(context).pushReplacementNamed('/mainPage');
+                  if (context.mounted) {
+                    Navigator.of(context).pop();
+                    onDismiss?.call();
+                    Navigator.of(context).pushReplacementNamed('/mainPage');
+                  }
                 },
               ),
             if (onRetry != null)
               TextButton(
                 child: const Text('重試'),
                 onPressed: () {
-                  Navigator.of(context).pop();
-                  onRetry();
+                  if (context.mounted) {
+                    Navigator.of(context).pop();
+                    onRetry();
+                  }
                 },
               ),
             TextButton(
               child: const Text('確定'),
               onPressed: () {
-                Navigator.of(context).pop();
-                onDismiss?.call();
+                if (context.mounted) {
+                  Navigator.of(context).pop();
+                  onDismiss?.call();
+                }
               },
             ),
           ],

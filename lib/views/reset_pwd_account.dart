@@ -51,7 +51,11 @@ class _ResetPwdAccountViewState extends ConsumerState<ResetPwdAccountView> {
         appBar: AppBar(
           leading: IconButton(
             icon: Icon(Icons.chevron_left, size: fontSize * 1.5),
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              if (context.mounted) {
+                Navigator.pop(context);
+              }
+            },
           ),
         ),
         resizeToAvoidBottomInset: false,
@@ -150,7 +154,6 @@ class _ResetPwdAccountViewState extends ConsumerState<ResetPwdAccountView> {
                         } else {
                           User user = await UserProvider().getUser(
                               inputAccount: accountController.text);
-                          // Navigator.of(context).pushNamed('/safetyHintVerify',arguments: {'user': user});
                           if (!context.mounted) return;
                           navigateWithProvider(
                             context, 

@@ -40,8 +40,11 @@ class MainPageView extends ConsumerWidget {
               Icons.settings,
               size: fontSize * 1.5,
             ),
-            // onPressed: () => Navigator.of(context).pushNamed('/setting'),
-            onPressed: () => navigateWithProvider(context, '/setting', ref),
+            onPressed: () {
+              if (context.mounted) {
+                navigateWithProvider(context, '/setting', ref);
+              }
+            },
           )
         ],
       ),
@@ -88,7 +91,11 @@ class MainPageView extends ConsumerWidget {
                   context,
                   ref,
                   '檢查字詞的注音',
-                  () => navigateWithProvider(context, '/checkzhuyin', ref),
+                  () {
+                    if (context.mounted) {
+                      navigateWithProvider(context, '/checkzhuyin', ref);
+                    }
+                  },
                   fontSize,
                 ),
                 SizedBox(height: deviceHeight * 0.02),
@@ -98,7 +105,11 @@ class MainPageView extends ConsumerWidget {
                   context,
                   ref,
                   '標示注音符號',
-                  () => navigateWithProvider(context, '/duoyinzi', ref),
+                  () {
+                    if (context.mounted) {
+                      navigateWithProvider(context, '/duoyinzi', ref);
+                    }
+                  },
                   fontSize,
                 ),
                 SizedBox(height: deviceHeight * 0.02),

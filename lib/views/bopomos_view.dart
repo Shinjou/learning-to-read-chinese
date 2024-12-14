@@ -26,7 +26,11 @@ class BopomosView extends ConsumerWidget {
         appBar: AppBar(
           leading: IconButton(
             icon: Icon(Icons.chevron_left, size: fontSize * 1.5),
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              if (context.mounted) {
+                Navigator.pop(context);
+              }
+            },
           ),
           title: Text(
             "00 | 學注音",
@@ -36,8 +40,11 @@ class BopomosView extends ConsumerWidget {
           actions: [
             IconButton(
               icon: Icon(Icons.home, size: fontSize * 1.5),
-              // onPressed: () => Navigator.of(context).pushNamed('/mainPage'),
-              onPressed: () => navigateWithProvider(context, '/mainPage', ref),
+              onPressed: () {
+                if (context.mounted) {
+                  navigateWithProvider(context, '/mainPage', ref);
+                }
+              },
             )
           ],
         ),
@@ -83,8 +90,11 @@ class BopomosView extends ConsumerWidget {
                   delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int idx) {
                   return InkWell(
-                    // onTap: () => Navigator.of(context).pushNamed('/bopomoQuiz'),
-                    onTap: () => navigateWithProvider(context, '/bopomoQuiz', ref),
+                    onTap: () {
+                      if (context.mounted) {
+                        navigateWithProvider(context, '/bopomoQuiz', ref);
+                      }
+                    },
                     child: Container(
                       width: fontSize * 17.5,
                       height: fontSize * 4.0,

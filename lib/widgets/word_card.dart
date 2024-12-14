@@ -64,6 +64,7 @@ class WordCardState extends ConsumerState<WordCard> {
     return InkWell(
       onTap: widget.disable ? null : () {
         debugPrint('WordCard tapped. Attempting to navigate to teachWord page');
+        if (!context.mounted) return;
         navigateWithProvider(
           context,
           '/teachWord',

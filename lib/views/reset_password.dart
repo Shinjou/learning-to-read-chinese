@@ -53,7 +53,11 @@ class _ResetPwdViewState extends ConsumerState<ResetPwdView> {
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.chevron_left, size: fontSize * 1.5),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            if (context.mounted) {
+              Navigator.pop(context);
+            }
+          },
         ),
       ),
       resizeToAvoidBottomInset: false,
@@ -205,8 +209,9 @@ class _ResetPwdViewState extends ConsumerState<ResetPwdView> {
                     } else {
                       user.password = pwdController.text;
                       UserProvider().updateUser(user: user);
-                      // Navigator.of(context).pushNamed('/login');
-                      navigateWithProvider(context, '/login', ref);
+                      if (context.mounted) {
+                        navigateWithProvider(context, '/login', ref);
+                      }
                     }
                   },
                   child: Text('完成',

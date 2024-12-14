@@ -114,7 +114,11 @@ class UnitsViewState extends ConsumerState<UnitsView> {
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.chevron_left, size: fontSize * 1.5), 
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            if (context.mounted) {
+              Navigator.pop(context);
+            }
+          },
         ),
         title: Text(title, style: TextStyle(fontSize: fontSize * 1.5)),
       ),

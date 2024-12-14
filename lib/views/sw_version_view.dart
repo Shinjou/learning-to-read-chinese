@@ -72,7 +72,11 @@ class SwVersionViewState extends ConsumerState<SwVersionView> {
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.chevron_left, size: fontSize * 1.5),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            if (context.mounted) {
+              Navigator.pop(context);
+            }
+          },
         ),
         title: Text(
           "版本資訊",

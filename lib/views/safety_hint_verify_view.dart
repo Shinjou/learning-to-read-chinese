@@ -62,7 +62,11 @@ class _SafetyHintVerifyState extends ConsumerState<SafetyHintVerifyView> {
           appBar: AppBar(
             leading: IconButton(
               icon: Icon(Icons.chevron_left, size: fontSize * 1.5),
-              onPressed: () => Navigator.pop(context),
+              onPressed: () {
+                if (context.mounted) {
+                  Navigator.pop(context);
+                }
+              }
             ),
           ),
           resizeToAvoidBottomInset: false,
@@ -185,14 +189,14 @@ class _SafetyHintVerifyState extends ConsumerState<SafetyHintVerifyView> {
                             showErrorHint = inCorrectRrrorHint;
                           });
                         } else {
-                          // Navigator.of(context).pushNamed('/setNewPwd', arguments: {'user': user});
-                          navigateWithProvider(
-                            context, 
-                            '/setNewPwd', 
-                            ref, 
-                            arguments: {'user': user}
-                          );
-                              
+                          if (context.mounted) {
+                            navigateWithProvider(
+                              context, 
+                              '/setNewPwd', 
+                              ref, 
+                              arguments: {'user': user}
+                            );
+                          }                              
                         }
                       },
                       child: Text('下一步',

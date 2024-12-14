@@ -92,7 +92,11 @@ class _BopomoQuizState extends ConsumerState<BopomoQuizView> {
           // 拼拼看
           leading: IconButton(
             icon: Icon(Icons.chevron_left, size: fontSize * 1.5),
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+             if (context.mounted) {
+               Navigator.pop(context);
+             }
+            },
           ),
           title: Text(
             "拼拼看",
@@ -105,8 +109,11 @@ class _BopomoQuizState extends ConsumerState<BopomoQuizView> {
                 Icons.home,
                 size: fontSize * 1.5,
               ),
-              // onPressed: () => Navigator.of(context).pushNamed('/mainPage'),
-              onPressed: () => navigateWithProvider(context, '/mainPage', ref),
+              onPressed: () {
+                if (context.mounted) {
+                  navigateWithProvider(context, '/mainPage', ref);
+                }
+              },
             )
           ],
         ),
@@ -420,25 +427,6 @@ class _BopomoQuizState extends ConsumerState<BopomoQuizView> {
                                 if (currentContext.mounted) {
                                   navigateWithProvider(currentContext, '/bopomoQuizFinish', ref);
                                 }                                
-                                /*
-                                // Show completion message
-                                Fluttertoast.showToast(
-                                  msg: "太棒了！\n你完成了所有題目！",
-                                  toastLength: Toast.LENGTH_LONG,
-                                  gravity: ToastGravity.CENTER,
-                                  backgroundColor: deepBlue.withOpacity(0.7),
-                                  textColor: beige,
-                                  fontSize: fontSize * 1.2,
-                                );
-
-                                await Future.delayed(const Duration(seconds: 2));
-                                
-                                if (!mounted) {
-                                  return;
-                                } else {
-                                  navigateWithProvider(context, '/bopomoQuizFinish', ref);
-                                }
-                                */
                               }
                             },                            
                           ),

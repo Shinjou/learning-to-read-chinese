@@ -17,7 +17,11 @@ class BopomoQuizFinishView extends ConsumerWidget {
         appBar: AppBar(
           leading: IconButton(
             icon: Icon(Icons.chevron_left, size: fontSize * 1.5),
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              if (context.mounted) {
+                Navigator.pop(context);
+              }
+            },
           ),
           title: Text(
             "拼拼看",
@@ -29,8 +33,11 @@ class BopomoQuizFinishView extends ConsumerWidget {
                 Icons.home,
                 size: fontSize * 1.5,
               ),
-              // onPressed: () => Navigator.of(context).pushNamed('/mainPage'),
-              onPressed: () => navigateWithProvider(context, '/mainPage', ref)
+              onPressed: () {
+                if (context.mounted) {
+                  navigateWithProvider(context, '/mainPage', ref);
+                }
+              },
             )
           ],
         ),
@@ -57,8 +64,11 @@ class BopomoQuizFinishView extends ConsumerWidget {
                   height: fontSize * 0.5,
                 ),
                 ElevatedButton(
-                    onPressed: () =>
-                        navigateWithProvider(context, '/bopomoQuiz', ref),
+                    onPressed: () {
+                      if (context.mounted) {
+                        navigateWithProvider(context, '/bopomoQuiz', ref);
+                      }
+                    },                        
                     child: Text("重新測驗",
                         style: TextStyle(
                             color: Colors.black, fontSize: fontSize * 1.5))),
@@ -66,8 +76,11 @@ class BopomoQuizFinishView extends ConsumerWidget {
                   height: fontSize * 0.5,
                 ),
                 ElevatedButton(
-                    onPressed: () =>
-                        navigateWithProvider(context, '/mainPage', ref),
+                    onPressed:() {
+                      if (context.mounted) {
+                        navigateWithProvider(context, '/mainPage', ref);
+                      }
+                    },                        
                     child: Text("回首頁",
                         style:
                             TextStyle(color: Colors.black, fontSize: fontSize * 1.5)))

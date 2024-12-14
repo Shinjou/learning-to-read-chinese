@@ -116,14 +116,21 @@ class DuoyinziViewState extends ConsumerState<DuoyinziView> {
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.chevron_left, size: fontSize * 1.5),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            if (context.mounted) {
+              Navigator.pop(context);
+            }
+          },
         ),
         title: Text("標示注音符號", style: commonTextStyle), 
         actions: [
           IconButton(
             icon: Icon(Icons.home, size: fontSize * 1.5),
-            // onPressed: () => Navigator.of(context).pushNamed('/mainPage'),
-            onPressed: () => navigateWithProvider(context, '/mainPage', ref),
+            onPressed: () {
+              if (context.mounted) {
+                navigateWithProvider(context, '/mainPage', ref);
+              }
+            },
           )
         ],
       ),      

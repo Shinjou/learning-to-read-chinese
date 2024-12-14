@@ -317,7 +317,11 @@ class SettingViewState extends ConsumerState<SettingView> {
         children: <Widget>[
           Text('授權與致謝', style: TextStyle(color: Colors.black, fontSize: fontSize * 1.0)),
           IconButton(
-            onPressed: () => navigateWithProvider(context, '/acknowledge', ref),
+            onPressed: () {
+              if (context.mounted) {
+                navigateWithProvider(context, '/acknowledge', ref);
+              }
+            },
             icon: const Icon(Icons.arrow_forward_ios),
             color: Colors.black,
             iconSize: fontSize * 1.2,
@@ -336,7 +340,11 @@ class SettingViewState extends ConsumerState<SettingView> {
         children: <Widget>[
           Text('版本資訊', style: TextStyle(color: Colors.black, fontSize: fontSize * 1.0)),
           IconButton(
-            onPressed: () => navigateWithProvider(context, '/swversion', ref),
+            onPressed: () {
+              if (context.mounted) {
+                navigateWithProvider(context, '/swversion', ref);
+              }
+            },
             icon: const Icon(Icons.arrow_forward_ios),
             color: Colors.black,
             iconSize: fontSize * 1.2,
@@ -412,18 +420,17 @@ class SettingViewState extends ConsumerState<SettingView> {
     // Capture the current route before attempting to pop
     debugPrint('Current route before pop: ${ModalRoute.of(context)?.settings.name}');
     
-    if (Navigator.of(context).canPop()) {
-      debugPrint('Navigator can pop. Popping from the stack.');
-      
-      Navigator.of(context).pop();  // Attempt to pop the page
-    } else {
-      debugPrint('Navigator cannot pop. Navigating to main page.');
-      
-      if (mounted) {
+    if (context.mounted) {
+      if (Navigator.of(context).canPop()) {
+        debugPrint('Navigator can pop. Popping from the stack.');
+        
+        Navigator.of(context).pop();  // Attempt to pop the page
+      } else {
+        debugPrint('Navigator cannot pop. Navigating to main page.');
+        
         navigateWithProvider(context, '/mainPage', ref);  // Fallback navigation
       }
-    }
-    
+    }   
     // Log the route after pop without delay
     debugPrint('Current route after pop: ${ModalRoute.of(context)?.settings.name}');
   }
@@ -506,7 +513,11 @@ class SettingViewState extends ConsumerState<SettingView> {
           actions: <Widget>[
             TextButton(
               child: Text('取消', style: TextStyle(color: Colors.black, fontSize: fontSize * 1.0)),
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () {
+                if (context.mounted) {
+                  Navigator.pop(context);
+                }
+              },
             ),
             TextButton(
               child: Text('確定', style: TextStyle(color: Colors.black, fontSize: fontSize * 1.0)),
@@ -533,7 +544,9 @@ class SettingViewState extends ConsumerState<SettingView> {
     ref.read(gradeProvider.notifier).state = 1;
     ref.read(semesterCodeProvider.notifier).state = 0;
     ref.read(publisherCodeProvider.notifier).state = 0;
-    navigateWithProvider(context, '/login', ref);
+    if (context.mounted) {
+      navigateWithProvider(context, '/login', ref);
+    }
   }
 
 }

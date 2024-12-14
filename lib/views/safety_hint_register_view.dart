@@ -104,7 +104,11 @@ class _SafetyHintRegisterState extends ConsumerState<SafetyHintRegisterView> {
           appBar: AppBar(
             leading: IconButton(
               icon: Icon(Icons.chevron_left, size: fontSize * 1.5),
-              onPressed: () => Navigator.pop(context),
+              onPressed: () {
+                if (context.mounted) {
+                  Navigator.pop(context);
+                }
+              },
             ),
           ),
           resizeToAvoidBottomInset: false,
@@ -292,16 +296,18 @@ class _SafetyHintRegisterState extends ConsumerState<SafetyHintRegisterView> {
                             showErrorHint = noAnswerRrrorHint;
                           });
                         } else {
-                          navigateWithProvider(
-                            context, 
-                            '/register', 
-                            ref, 
-                            arguments: {
-                            'q1': selectedQuestion1?.value,
-                            'a1': a1Controller.text,
-                            'q2': selectedQuestion2?.value,
-                            'a2': a2Controller.text,
-                          });
+                          if (context.mounted) {
+                            navigateWithProvider(
+                              context, 
+                              '/register', 
+                              ref, 
+                              arguments: {
+                              'q1': selectedQuestion1?.value,
+                              'a1': a1Controller.text,
+                              'q2': selectedQuestion2?.value,
+                              'a2': a2Controller.text,
+                            });
+                          }
                         }
                       },
                       child: Text('下一步',
