@@ -75,7 +75,7 @@ class UseTabState extends ConsumerState<UseTab> {
   // Navigation state
   int vocabIndex = 0;
   int nextStepId = 0;
-  bool isLastPage = false;
+  bool isLastVocab = false;
   bool hasSpoken = false;
 
   // Word-specific state
@@ -89,7 +89,6 @@ class UseTabState extends ConsumerState<UseTab> {
   String message = '';
   bool isAnswerCorrect = false;
   late int pageIndex;
-  // Added by sjf
   ValueNotifier<int> currentTabIndex = ValueNotifier(0);    
 
   @override
@@ -117,8 +116,6 @@ class UseTabState extends ConsumerState<UseTab> {
   }
 
   void _initVariables(int pageIndex) {
-
-
     vocabIndex = pageIndex.clamp(0, widget.vocabCnt - 1);
     vocab = widget.wordObj['vocab${pageIndex + 1}'] ?? '';
     vocab2 = widget.wordObj['vocab${(pageIndex + 1) % widget.vocabCnt + 1}'] ?? '';
@@ -129,7 +126,7 @@ class UseTabState extends ConsumerState<UseTab> {
     options = [vocab, vocab2]..shuffle();
     message = '';
     isAnswerCorrect = false;
-    isLastPage = (pageIndex == widget.vocabCnt - 1);
+    isLastVocab = (pageIndex == widget.vocabCnt - 1);
     nextStepId = pageIndex == 0
         ? TeachWordSteps.steps['goToUse1']!
         : TeachWordSteps.steps['goToUse2']!;
@@ -137,7 +134,7 @@ class UseTabState extends ConsumerState<UseTab> {
 
     debugPrint(
       'Initialized: pageIndex=$pageIndex, vocabIndex=$vocabIndex, vocabCnt=${widget.vocabCnt}, vocab=$vocab, '
-      'meaning=$meaning, isLastPage=$isLastPage',
+      'meaning=$meaning, isLastVocab=$isLastVocab',
     );
   }
 
@@ -174,7 +171,7 @@ class UseTabState extends ConsumerState<UseTab> {
   }
 
   void _onContinuePressed() {
-    if (isLastPage) {
+    if (isLastVocab) {
       widget.onNextTab();
     } else {
       setState(() {
@@ -193,7 +190,7 @@ class UseTabState extends ConsumerState<UseTab> {
         mainAxisSize: MainAxisSize.min,
         children: [
           ZhuyinProcessing(
-            text: vocab,
+            textParam: vocab,
             fontSize: fontSize * 1.2,
             color: explanationColor,
           ),
@@ -235,7 +232,7 @@ class UseTabState extends ConsumerState<UseTab> {
             ],
           ),
           ZhuyinProcessing(
-            text: meaning,
+            textParam: meaning,
             fontSize: fontSize,
             color: whiteColor,
           ),
@@ -268,7 +265,7 @@ class UseTabState extends ConsumerState<UseTab> {
             ],
           ),
           ZhuyinProcessing(
-            text: displayedSentence,
+            textParam: displayedSentence,
             fontSize: fontSize,
             color: whiteColor,
           ),
@@ -317,36 +314,6 @@ class UseTabState extends ConsumerState<UseTab> {
     );
   }
 
-  Widget _goToNextCharacter() {
-
-    int nextIndex;
-    if (widget.wordIndex < widget.wordsStatus.length - 1) {
-      // Not the last character, go to next character
-      nextIndex = widget.wordIndex + 1;
-    } else {
-      // Last character, go back to first character
-      nextIndex = 0;
-    }
-
-    // Navigate to TeachWordView with the new index
-    navigateWithProvider(
-      context,
-      '/teachWord',
-      ref,
-      arguments: {
-        'unitId': widget.unitId,
-        'unitTitle': widget.unitTitle,
-        'wordsStatus': widget.wordsStatus,
-        'wordsPhrase': widget.wordsPhrase,
-        'wordIndex': nextIndex,
-        'widgetId': widget.widgetId,
-      },
-    );
-
-    return Container();
-  }
-  
-
   Widget _buildUseTabPage() {
     return TeachWordTabBarView(
       content: Stack(
@@ -371,21 +338,6 @@ class UseTabState extends ConsumerState<UseTab> {
                       SizedBox(height: fontSize),
                       _buildOptionsSection(),
                       if (message.isNotEmpty) _buildFeedbackSection(),
-                      if (isLastPage && isAnswerCorrect)
-                        Padding(
-                          padding: EdgeInsets.only(top: fontSize),
-                          /*
-                          child: ElevatedButton(
-                            onPressed: _goToNextCharacter,
-                            child: Text("下一字", style: TextStyle(fontSize: fontSize)),
-                          ),
-                          */
-                          // 兩個用一用都正確後，去朗讀
-                          child: ElevatedButton(
-                            onPressed: widget.onNextTab,
-                            child: Text("朗讀", style: TextStyle(fontSize: fontSize)),
-                          ),                          
-                        ),
                     ],
                   ),
                 ),
@@ -403,16 +355,17 @@ class UseTabState extends ConsumerState<UseTab> {
       fontSize: fontSize,
       iconsColor: lightGray,
       iconsSize: fontSize * 1.5,
-      rightBorder: isAnswerCorrect && vocabIndex == 0,
+      // rightBorder: isAnswerCorrect && vocabIndex == 0,
+      rightBorder: isAnswerCorrect,
       middleWidget: ZhuyinProcessing(
-        text: '用一用',
+        textParam: '用一用',
         color: lightGray,
         fontSize: fontSize * 1.2,        
         fontWeight: FontWeight.bold,  // Optional font weight
         centered: true,  // Optional centering
       ),            
       isFirst: false,
-      // isLast: isLastPage,
+      // isLast: isLastVocab,
       isLast: false,
       onLeftClicked: vocabIndex > 0
           ? () {
@@ -423,7 +376,7 @@ class UseTabState extends ConsumerState<UseTab> {
               _handleGoToUse();
             }
           : null,
-      onRightClicked: isAnswerCorrect && !isLastPage 
+      onRightClicked: isAnswerCorrect && !isLastVocab 
           ? _onContinuePressed 
           : () {
                 debugPrint('用一用=>說一說，說：$vocab， newTabIndex: ${currentTabIndex.value}');            
