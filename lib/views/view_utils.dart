@@ -46,6 +46,23 @@ class ScreenInfo {
     required this.isTablet,
   });
 
+  // Add copyWith method
+  ScreenInfo copyWith({
+    double? screenHeight,
+    double? screenWidth,
+    double? fontSize,
+    Orientation? orientation,
+    bool? isTablet,
+  }) {
+    return ScreenInfo(
+      screenHeight: screenHeight ?? this.screenHeight,
+      screenWidth: screenWidth ?? this.screenWidth,
+      fontSize: fontSize ?? this.fontSize,
+      orientation: orientation ?? this.orientation,
+      isTablet: isTablet ?? this.isTablet,
+    );
+  }
+
   @override
   bool operator ==(Object other) =>
     identical(this, other) ||
@@ -164,6 +181,11 @@ void navigateWithProvider(
   final screenInfo = ref.read(screenInfoProvider);
   debugPrint("navigateWithProvider: screenInfo - H: ${screenInfo.screenHeight}, W: ${screenInfo.screenWidth}, F: ${screenInfo.fontSize}, Orientation: ${screenInfo.orientation}, isTablet: ${screenInfo.isTablet}");
 
+  if (!context.mounted) {
+    debugPrint('navigateWithProvider: Context is not mounted.');
+    return;
+  }
+  
   Navigator.of(context).push(
     MaterialPageRoute(
       builder: (context) {
