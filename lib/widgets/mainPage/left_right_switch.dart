@@ -45,7 +45,7 @@ class LeftRightSwitch extends StatelessWidget {
         middleWidget,
         (!isLast) ? Container(
           decoration: BoxDecoration(
-            border: rightBorder ? Border.all(color: lightYellow, width: 1.5) : null,
+            border: rightBorder ? Border.all(color: lightYellow, width: 1.2) : null,
           ),
           child: IconButton(
             icon: Icon(
