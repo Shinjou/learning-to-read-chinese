@@ -123,36 +123,32 @@ class TeachWordViewState extends ConsumerState<TeachWordView> with TickerProvide
   }
 
   void getWord() {
-    // getWord() is called in initState(), NO setState() is called
     int tempIndex = widget.wordIndex;
     bool phraseEmpty = widget.wordsPhrase.isEmpty;
     debugPrint('getWord begin: phraseEmpty: $phraseEmpty, tempIndex: $tempIndex');
     if (phraseEmpty) {
       debugPrint('getWord error: wordsPhrase is empty');
-      wordObj = {};
+      wordObj = {}; // Ensure wordObj is not null
       wordExist = false;
       return;
-    } else {
-      debugPrint('getWord index: $tempIndex, length: ${widget.wordsPhrase.length}');
-      if (!(tempIndex < widget.wordsPhrase.length)) {
-        debugPrint('getWord error: wordIndex is out of range');
-        wordObj = {};
-        wordExist = false;
-        return;
-      }
+    } else if (!(tempIndex < widget.wordsPhrase.length)) {
+      debugPrint('getWord error: wordIndex is out of range');
+      wordObj = {}; // Ensure wordObj is not null
+      wordExist = false;
+      return;
     }
 
-    wordObj = widget.wordsPhrase[tempIndex];
+    wordObj = widget.wordsPhrase[tempIndex]; // Default to empty map
     try {
       // Process vocab1 and vocab2
-      if (wordObj['vocab1'] != "") {
+      if ((wordObj['vocab1'] ?? '').isNotEmpty) {
         vocabCnt += 1;
       }
-      if (wordObj['vocab2'] != "") {
+      if ((wordObj['vocab2'] ?? '').isNotEmpty) {
         vocabCnt += 1;
       }
 
-      wordExist = true; // 字存在，要檢查 json 是否也存在 (svgFileExist ？)
+      wordExist = true;
       debugPrint('getWord end: wordExist: $wordExist, vocabCnt: $vocabCnt, ${wordObj['vocab1']}, ${wordObj['vocab2']}');
     } catch (error) {
       wordExist = false;
@@ -171,39 +167,28 @@ class TeachWordViewState extends ConsumerState<TeachWordView> with TickerProvide
   }
 
   Future<void> readJsonAndProcess() async {
-    // setState() is called in this function
     try {
       final result = await readJson(); // readJson() will set svgFileExist
       debugPrint('readJsonAndProcess: $word ${svgFileExist ? "有筆順" : "沒有筆順"}');
       if (result.isNotEmpty) {
-        debugPrint('readJsonAndProcess: $word ${svgFileExist ? "有筆順" : "沒筆順，用“學”代替；"}, 筆順檔下載成功');
+        if (!mounted) return; // Add this check
         setState(() {
-          strokeController = StrokeOrderAnimationController(
-              result, this);  // let WriteTab to set up onQuizCompleteCallback
-              // onQuizCompleteCallback: handleQuizCompletion;
-
+          strokeController = StrokeOrderAnimationController(result, this);
         });
       } else {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          showErrorDialog(context, ref, '','「$word」的筆順檔無法下載。請截圖回報。謝謝！');
-          debugPrint('readJsonAndProcess error: $word 的筆順檔無法下載, svgFileExist: $svgFileExist');
-          firstNullStrokeFlag = true;
-          showErrorFlag = false;
-        });        
-        setState(() {
-          strokeController = null;
-          debugPrint('readJsonAndProcess setState error: $word 的筆順檔無法下載, svgFileExist: $svgFileExist');
+          if (!mounted) return; // Add this check
+          showErrorDialog(context, ref, '', '「$word」的筆順檔無法下載。請截圖回報。謝謝！');
         });
       }
     } catch (error) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        showErrorDialog(context, ref, '','「$word」筆順檔問題，請截圖回報。svgFileExist: $svgFileExist。謝謝！');
-        firstNullStrokeFlag = true;
-        showErrorFlag = false;
+        if (!mounted) return; // Add this check
+        showErrorDialog(context, ref, '', '「$word」筆順檔問題，請截圖回報。svgFileExist: $svgFileExist。謝謝！');
       });
+      if (!mounted) return; // Add this check
       setState(() {
         strokeController = null;
-        debugPrint('setState readJsonAndProcess error: $word 筆順檔問題, svgFileExist: $svgFileExist');
       });
     }
   }
