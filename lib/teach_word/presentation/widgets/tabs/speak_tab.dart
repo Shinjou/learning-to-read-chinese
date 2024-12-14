@@ -293,22 +293,22 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
     final notifier = ref.read(speechStateProvider.notifier);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       notifier.resetPractice();
-    });    
+    });
+
     vocabIndex = pageIndex.clamp(0, widget.vocabCnt - 1);
-    vocab = widget.wordObj['vocab${pageIndex + 1}'] ?? '';
-    vocab2 = widget.wordObj['vocab${(pageIndex + 1) % widget.vocabCnt + 1}'] ?? '';
-    sentence = widget.wordObj['sentence${pageIndex + 1}'] ?? '';
+    vocab = widget.wordObj['vocab${pageIndex + 1}'] ?? ''; // Add default value
+    vocab2 = widget.wordObj['vocab${(pageIndex + 1) % widget.vocabCnt + 1}'] ?? ''; // Add default value
+    sentence = widget.wordObj['sentence${pageIndex + 1}'] ?? ''; // Add default value
     isAnswerCorrect = false;
     isLastVocab = (pageIndex == widget.vocabCnt - 1);
-    nextStepId = pageIndex == 0
-        ? TeachWordSteps.steps['goToSpeak1']!
-        : TeachWordSteps.steps['goToSpeak2']!;
-    hasSpoken = false;
 
-    debugPrint(
-      'SpeakTab Var Init: pageIndex=$pageIndex, vocabIndex=$vocabIndex, vocabCnt=${widget.vocabCnt}, vocab=$vocab, '
-      'isLastVocab=$isLastVocab',
-    );
+    if (!mounted) return; // Ensure context is valid
+    setState(() {
+      nextStepId = pageIndex == 0
+          ? TeachWordSteps.steps['goToSpeak1']!
+          : TeachWordSteps.steps['goToSpeak2']!;
+      hasSpoken = false;
+    });
   }
 
   Future<void> _handleGoToSpeak() async {
