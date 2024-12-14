@@ -12,6 +12,8 @@ class TeachWordSteps {
     'practiceWithoutBorder1': 7,
     'goToUse1': 8,
     'goToUse2': 9,
+    'goToSpeak1': 10,
+    'goToSpeak2': 11,
   };
 
   static bool isAtStep(int currentStep, String stepName) {
