@@ -425,12 +425,18 @@ class TeachWordViewState extends ConsumerState<TeachWordView> with TickerProvide
             title: _buildUnitTitle(fontSize, unitId, unitTitle),
             leading: IconButton(
               icon: Icon(Icons.chevron_left, color: Colors.white, size: fontSize * 1.5),
-              onPressed: () => Navigator.pop(context),
+              onPressed: () {
+                if (!context.mounted) return;
+                Navigator.pop(context);
+              },
             ),
             actions: [
               IconButton(
                 icon: Icon(Icons.home_filled, color: Colors.white, size: fontSize * 1.5),
-                onPressed: () => navigateWithProvider(context, '/mainPage', ref),
+                onPressed: () {
+                  if (!context.mounted) return;
+                  navigateWithProvider(context, '/mainPage', ref);
+                },
               ),
             ],
             bottom: _buildTabBar(fontSize),
@@ -504,11 +510,20 @@ class TeachWordViewState extends ConsumerState<TeachWordView> with TickerProvide
           isFirst: (widget.wordIndex == 0),
           isLast: (widget.wordIndex == widget.wordsStatus.length - 1),
           onLeftClicked: widget.wordIndex > 0
-              ? () => _navigateToWord(-1)
+              ? () {
+                  if (context.mounted) {
+                    _navigateToWord(-1);
+                  }
+                }
               : null,
           onRightClicked: widget.wordIndex < widget.wordsStatus.length - 1
-              ? () => _navigateToWord(1)
+              ? () {
+                  if (context.mounted) {
+                    _navigateToWord(1);
+                  }
+                }
               : null,
+
         ),
       ),
     );
