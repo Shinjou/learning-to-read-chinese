@@ -1,6 +1,7 @@
 // lib/teach_word/presentation/teach_word_utils.dart
 
 import 'package:flutter/material.dart';
+import 'package:flutter_beep/flutter_beep.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -8,6 +9,7 @@ import 'package:ltrc/data/models/word_status_model.dart';
 import 'package:ltrc/data/providers/word_status_provider.dart';
 import 'package:ltrc/providers.dart';
 import 'package:ltrc/teach_word/constants/steps.dart';
+import 'package:ltrc/views/view_utils.dart'; 
 
 
 const lookTabNum = 0;
@@ -45,14 +47,55 @@ void showErrorDialog(BuildContext context, WidgetRef ref, String message, String
               style: TextStyle(color: Colors.black, fontSize: fontSize * 1.2),
             ),
             onPressed: () {
-              Navigator.of(context).pop();
-              Navigator.of(context).pushReplacementNamed('/mainPage');
+              if (context.mounted) {
+                Navigator.of(context).pop();
+                Navigator.of(context).pushReplacementNamed('/mainPage');
+              }
             },
           ),
         ],
       );
     },
   );
+}
+
+/// Navigates to the next character.
+/// If currently on the last character, it loops back to the first character.
+void goToNextCharacter({
+  required BuildContext context,
+  required WidgetRef ref,
+  required int currentWordIndex,
+  required List<dynamic> wordsStatus,
+  required List<Map> wordsPhrase,
+  required int unitId,
+  required String unitTitle,
+  required int widgetId,
+}) {
+  int nextIndex;
+  if (currentWordIndex < wordsStatus.length - 1) {
+    // Not the last character, go to next
+    nextIndex = currentWordIndex + 1;
+  } else {
+    // Last character, loop to first
+    nextIndex = 0;
+  }
+
+  // Navigate to TeachWordView with the new index
+  if (context.mounted) {
+    navigateWithProvider(
+      context,
+      '/teachWord',
+      ref,
+      arguments: {
+        'unitId': unitId,
+        'unitTitle': unitTitle,
+        'wordsStatus': wordsStatus,
+        'wordsPhrase': wordsPhrase,
+        'wordIndex': nextIndex,
+        'widgetId': widgetId,
+      },
+    );
+  }
 }
 
 void navigateToTab(TabController tabController, int currentTab, int nextTab, bool wordIsLearned) {
@@ -131,7 +174,7 @@ Future<void> handleGoToUse(
       case 2:
         final step = vocabIndex == 0 ? 'goToUse1' : 'goToUse2';
         debugPrint('nextId=${TeachWordSteps.steps[step]}, vocab1: ${wordObj['vocab1']}, vocab2: ${wordObj['vocab2']}');
-        if (TeachWordSteps.steps[step] == 8) {
+        if (TeachWordSteps.steps[step] == TeachWordSteps.steps['goToUse1']) {
           await ftts.speak("${wordObj['vocab1']}。${wordObj['sentence1']}");
         } else {
           await ftts.speak("${wordObj['vocab2']}。${wordObj['sentence2']}");
@@ -143,6 +186,92 @@ Future<void> handleGoToUse(
   } catch (e) {
     debugPrint('Error in handleGoToUse: $e');
   }
-
 }
+
+Future<void> handleGoToSpeak(
+  int vocabCnt,
+  int vocabIndex,
+  int nextStepId,
+  Map wordObj,
+  FlutterTts ftts,
+  // ValueNotifier<int> nextStepIdNotifier,
+) async {
+  debugPrint('utils handleGoToSpeak vocabCnt: $vocabCnt, vocabIndex=$vocabIndex, nextId: $nextStepId');
+
+  try {
+    switch (vocabCnt) {
+      case 1:
+        await ftts.speak("${wordObj['vocab1']}。${wordObj['sentence1']}");
+        break;
+      case 2:
+        final step = vocabIndex == 0 ? 'goToSpeak1' : 'goToSpeak2';
+        debugPrint('nextId=${TeachWordSteps.steps[step]}, vocab1: ${wordObj['vocab1']}, vocab2: ${wordObj['vocab2']}');
+        if (TeachWordSteps.steps[step] == TeachWordSteps.steps['goToSpeak1']) {
+          await ftts.speak("${wordObj['vocab1']}。${wordObj['sentence1']}");
+        } else {
+          await ftts.speak("${wordObj['vocab2']}。${wordObj['sentence2']}");
+        }
+        break;
+      default:
+        debugPrint('Unexpected vocabCnt: $vocabCnt');
+    }
+  } catch (e) {
+    debugPrint('Error in handleGoToSpeak: $e');
+  }
+}
+
+class CountdownDisplay extends ConsumerWidget {
+  final int countdownValue;
+  final double fontSize;
+
+  const CountdownDisplay({
+    super.key,
+    required this.countdownValue,
+    required this.fontSize,
+  });
+
+  void _playBeep() {
+    if (countdownValue > 0) {
+      // Short beep for intermediate values
+      FlutterBeep.beep(); 
+    } else {
+      // Long beep (beep with different tone or multiple times)
+      FlutterBeep.beep(); // You can call beep multiple times or use another sound
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Play the beep sound whenever this widget rebuilds with a new countdownValue
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _playBeep();
+    });
+
+    // Choose a color or style based on countdownValue
+    Color circleColor = Colors.green; 
+    // Optional: Different color if close to zero
+    if (countdownValue <= 1) {
+      circleColor = Colors.red;
+    }
+    
+    return Center(
+      child: SizedBox(
+        width: fontSize * 10,
+        height: fontSize * 10,
+        child: AnimatedSwitcher(
+          duration: Duration(milliseconds: 300),
+          transitionBuilder: (child, animation) => ScaleTransition(scale: animation, child: child),
+          child: Text(
+            countdownValue > 0 ? countdownValue.toString() : "GO",
+            key: ValueKey<int>(countdownValue), // triggers rebuild
+            style: TextStyle(fontSize: fontSize * 5, fontWeight: FontWeight.bold, color: circleColor),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ),
+    );
+
+  }
+}
+
 
