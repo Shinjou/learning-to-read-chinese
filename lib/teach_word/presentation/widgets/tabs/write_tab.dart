@@ -209,11 +209,6 @@ class WriteTabState extends ConsumerState<WriteTab> with TickerProviderStateMixi
   Future<void> _showNoSvgDialog(BuildContext context, WidgetRef ref, String word, bool isBpmf) async {
     if (!context.mounted) return;
 
-    // final screenInfo = ref.read(screenInfoProvider);
-    // final fontSize = screenInfo.fontSize;
-    // final ftts = ref.read(ttsProvider);
-    // final player = ref.read(audioPlayerProvider);
-
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -331,7 +326,7 @@ class WriteTabState extends ConsumerState<WriteTab> with TickerProviderStateMixi
       iconsSize: max(fontSize * 1.5, 48.0),
       rightBorder: _canMoveToUse(),
       middleWidget: ZhuyinProcessing(
-        text: '寫一寫',
+        textParam: '寫一寫',
         color: lightGray,
         fontSize: fontSize * 1.2,        
         fontWeight: FontWeight.bold,  // Optional font weight

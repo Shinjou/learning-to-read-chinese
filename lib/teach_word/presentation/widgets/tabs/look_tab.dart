@@ -128,7 +128,7 @@ class LookTabState extends ConsumerState<LookTab> with TickerProviderStateMixin 
       iconsSize: max(fontSize * 1.5, 48.0),
       rightBorder: true, // always true for 看一看 and 聽一聽
       middleWidget: ZhuyinProcessing(
-        text: '看一看',
+        textParam: '看一看',
         color: lightGray,
         fontSize: fontSize * 1.2,        
         fontWeight: FontWeight.bold,  // Optional font weight
