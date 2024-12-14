@@ -128,7 +128,7 @@ class WordVocabContentState extends ConsumerState<WordVocabContent> {
           mainAxisSize: MainAxisSize.min,
           children: [
             ZhuyinProcessing(
-              text: widget.vocab,
+              textParam: widget.vocab,
               color: explanationColor,
               fontSize: fontSize * 1.2,        
               centered: true,  // Optional centering
@@ -167,7 +167,7 @@ class WordVocabContentState extends ConsumerState<WordVocabContent> {
               ],
             ),
             ZhuyinProcessing(
-              text: widget.meaning,
+              textParam: widget.meaning,
               fontSize: fontSize,
               color: whiteColor,
             ),
@@ -200,7 +200,7 @@ class WordVocabContentState extends ConsumerState<WordVocabContent> {
               ],
             ),
             ZhuyinProcessing(
-              text: displayedSentence,
+              textParam: displayedSentence,
               fontSize: fontSize,
               color: whiteColor,
             ),

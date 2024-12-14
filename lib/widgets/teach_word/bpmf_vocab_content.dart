@@ -46,7 +46,7 @@ class BopomofoVocabContent extends ConsumerWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   ZhuyinProcessing(
-                    text: vocab,
+                    textParam: vocab,
                     fontSize: fontSize * 2.0, 
                     color: const Color.fromRGBO(228, 219, 124, 1),
                   ),
@@ -64,7 +64,7 @@ class BopomofoVocabContent extends ConsumerWidget {
               ),
               SizedBox(height: fontSize * 0.5),
               ZhuyinProcessing(
-                text: sentence, // whole sentence. no limitation on length
+                textParam: sentence, // whole sentence. no limitation on length
                 fontSize: fontSize * 1.3, 
                 color: const Color.fromRGBO(245, 245, 220, 100),
               ),              
