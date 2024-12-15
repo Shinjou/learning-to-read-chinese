@@ -1,0 +1,69 @@
+name: ltrc
+description: A new Flutter project.
+publish_to: 'none'
+
+version: 1.8.0+8
+
+ios:
+  minimum_os_version: '15.6'
+
+environment:
+  sdk: '>=3.0.5 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_riverpod: ^2.6.0
+  provider: ^6.1.2
+  flutter_tts: ^4.2.0
+  audioplayers: ^6.1.0
+  cupertino_icons: ^1.0.6
+  fluttertoast: ^8.2.10
+  path: ^1.9.0
+  shared_preferences: ^2.3.3
+  svg_path_parser: ^1.1.1
+  sqflite: ^2.3.2
+  path_provider: ^2.1.5
+  logger: ^2.3.0
+  tuple: ^2.0.2
+  file_picker: ^8.0.0+1
+  screenshot: ^3.0.0
+  intl: ^0.20.0
+  stack_trace: ^1.11.0
+  package_info_plus: ^8.0.2
+  freezed_annotation: ^2.4.4
+  record: ^5.2.0
+  permission_handler: ^11.3.1
+  speech_to_text: ^7.0.0
+  flutter_phoenix: ^1.1.1
+  flutter_beep: ^1.0.0
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  freezed: ^2.4.1  # Required for code generation with freezed_annotation
+
+flutter:
+  fonts:
+    - family: Iansui     
+      fonts:
+        - asset: lib/assets/fonts/Iansui-Regular.ttf        
+    - family: BpmfOnly
+      fonts:
+        - asset: lib/assets/fonts/BpmfZihiOnly-R.ttf
+    - family: BpmfIansui
+      fonts:
+        - asset: lib/assets/fonts/BpmfIansui-Regular.ttf      
+  uses-material-design: true
+
+  assets:
+    - assets/data_files/
+    - lib/assets/svg/
+    - lib/assets/img/
+    - lib/assets/img/word/
+    - lib/assets/img/oldWords/
+    - lib/assets/img/bopomo/
+    - lib/assets/img/bopomo_spelling/
+    - assets/bopomo/
