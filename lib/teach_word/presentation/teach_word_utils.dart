@@ -1,7 +1,6 @@
 // lib/teach_word/presentation/teach_word_utils.dart
 
 import 'package:flutter/material.dart';
-import 'package:flutter_beep/flutter_beep.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -230,21 +229,27 @@ class CountdownDisplay extends ConsumerWidget {
     required this.fontSize,
   });
 
-  void _playBeep() {
-    if (countdownValue > 0) {
-      // Short beep for intermediate values
-      FlutterBeep.beep(); 
-    } else {
-      // Long beep (beep with different tone or multiple times)
-      FlutterBeep.beep(); // You can call beep multiple times or use another sound
+  void _playBeep(AudioPlayer player) async {
+    try {
+      if (countdownValue > 0) {
+        // Short beep for intermediate values
+        await player.play(AssetSource('sounds/short_beep.mp3'), volume: 1.0);
+      } else {
+        // Long beep (beep with different tone)
+        await player.play(AssetSource('sounds/long_beep.mp3'), volume: 1.0);
+      }
+    } catch (e) {
+      debugPrint('Error playing beep: $e');
     }
-  }
+  }  
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final player = ref.watch(audioPlayerProvider);
+
     // Play the beep sound whenever this widget rebuilds with a new countdownValue
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _playBeep();
+      _playBeep(player);
     });
 
     // Choose a color or style based on countdownValue
@@ -259,7 +264,7 @@ class CountdownDisplay extends ConsumerWidget {
         width: fontSize * 10,
         height: fontSize * 10,
         child: AnimatedSwitcher(
-          duration: Duration(milliseconds: 300),
+          duration: const Duration(milliseconds: 300),
           transitionBuilder: (child, animation) => ScaleTransition(scale: animation, child: child),
           child: Text(
             countdownValue > 0 ? countdownValue.toString() : "GO",
@@ -270,8 +275,6 @@ class CountdownDisplay extends ConsumerWidget {
         ),
       ),
     );
-
   }
 }
-
 
