@@ -254,7 +254,7 @@ void setupLogger() async {
         lineLength: 120,
         colors: false,
         printEmojis: false,
-        printTime: true,
+        dateTimeFormat: DateTimeFormat.onlyTime,
       ),
     );
   }
