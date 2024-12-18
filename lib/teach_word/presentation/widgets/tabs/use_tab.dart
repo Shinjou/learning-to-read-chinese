@@ -1,7 +1,5 @@
 // lib/teach_word/presentation/widgets/tabs/use_tab.dart
 
-// import 'package:audioplayers/audioplayers.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart'
     hide ChangeNotifierProvider, Consumer;
@@ -10,7 +8,6 @@ import 'package:ltrc/data/models/word_status_model.dart';
 import 'package:ltrc/providers.dart';
 import 'package:ltrc/teach_word/constants/steps.dart';
 import 'package:ltrc/teach_word/presentation/teach_word_utils.dart';
-// import 'package:ltrc/teach_word/presentation/teach_word_utils.dart';
 import 'package:ltrc/views/view_utils.dart';
 import 'package:ltrc/widgets/mainPage/left_right_switch.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
