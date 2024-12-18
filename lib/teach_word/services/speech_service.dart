@@ -94,7 +94,7 @@ class SpeechService {
         onResult(result.recognizedWords, result.finalResult);
       },
       listenFor: Duration(seconds: 30),
-      partialResults: true,
+      partialResults: true, // don't know how to upgrade
       onSoundLevelChange: onAudioLevel,
     );
   }
