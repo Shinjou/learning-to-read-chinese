@@ -18,28 +18,23 @@
 	<string>學國語</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
-	
-	<key>CFBundleShortVersionString</key>
-	<string>$1.8.0</string>
 	<key>CFBundleVersion</key>
-	<string>$8</string>
+	<string>$(FLUTTER_BUILD_NUMBER)</string>
 
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSApplicationCategoryType</key>
-	<string></string>
+	<string>Education</string>	
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>需要使用麥克風來進行錄音和語音辨識</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>需要使用語音辨識來檢查朗讀的內容</string>	
-	<key>NSCameraUsageDescription</key>
-	<string>This app requires access to the camera.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This app requires access to the photo library.</string>
+	<string>需要使用語音辨識來檢查朗讀的內容</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchScreen</key>
