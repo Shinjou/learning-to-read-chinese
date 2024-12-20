@@ -1,6 +1,7 @@
 // lib/teach_word/notifiers/speech_state_notifier.dart
 
 import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:ltrc/teach_word/models/speech_state.dart';
@@ -52,31 +53,42 @@ class SpeechStateNotifier extends StateNotifier<SpeechState> {
       initialize();
     }
 
+    // Define the initial countdown value
+    const int initialCountdownValue = 3;
+
+    // Initialize the countdown state
     state = state.copyWith(
       state: RecordingState.countdown,
-      countdownValue: 3,
+      countdownValue: initialCountdownValue,
       transcribedText: '',
       recordingSeconds: 0,
-      error: null, 
+      error: null,
       localeId: 'zh-TW',
     );
 
-    int count = 3;
-    _countdownTimer?.cancel();
+    _countdownTimer?.cancel(); // Ensure any previous timer is canceled
+
     _countdownTimer = Timer.periodic(Duration(seconds: 1), (timer) {
-      count--;
       if (!mounted) {
         timer.cancel();
         return;
       }
-      if (count > 0) {
-        state = state.copyWith(countdownValue: count, localeId: 'zh-TW');
+
+      // Update the countdown value
+      final currentCount = state.countdownValue - 1;
+      if (currentCount > 0) {
+        debugPrint('Countdown tick: $currentCount');
+        state = state.copyWith(countdownValue: currentCount, localeId: 'zh-TW');
       } else {
+        // Countdown complete
+        debugPrint('Countdown reached 0. Starting listening flow.');
         timer.cancel();
+        state = state.copyWith(countdownValue: 0, localeId: 'zh-TW');
         _startListeningFlow();
       }
     });
   }
+
 
   Future<void> _startListeningFlow() async {
     // Start recording audio if desired

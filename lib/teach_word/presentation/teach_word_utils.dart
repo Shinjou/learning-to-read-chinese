@@ -229,47 +229,62 @@ class CountdownDisplay extends ConsumerWidget {
     required this.fontSize,
   });
 
+  static int? _lastBeepedValue;
+
   void _playBeep(AudioPlayer player) async {
     try {
-      if (countdownValue > 0) {
-        // Short beep for intermediate values
-        await player.play(AssetSource('sounds/short_beep.mp3'), volume: 1.0);
+      if (_lastBeepedValue != countdownValue) {
+        _lastBeepedValue = countdownValue; // Update last beeped value
+
+        if (countdownValue > 0) {
+          debugPrint('Playing short beep. CountdownValue: $countdownValue');
+          await player.play(AssetSource('sounds/short_beep.mp3'), volume: 1.0);
+        } else {
+          debugPrint('Playing long beep. CountdownValue: $countdownValue');
+          await player.play(AssetSource('sounds/long_beep.mp3'), volume: 1.0);
+        }
       } else {
-        // Long beep (beep with different tone)
-        await player.play(AssetSource('sounds/long_beep.mp3'), volume: 1.0);
+        debugPrint('Skipped beep. CountdownValue: $countdownValue already beeped.');
       }
     } catch (e) {
       debugPrint('Error playing beep: $e');
     }
-  }  
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final player = ref.watch(audioPlayerProvider);
 
-    // Play the beep sound whenever this widget rebuilds with a new countdownValue
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      debugPrint('Widget Rebuilt. CountdownValue: $countdownValue');
       _playBeep(player);
     });
 
-    // Choose a color or style based on countdownValue
-    Color circleColor = Colors.green; 
-    // Optional: Different color if close to zero
+    // Debug: Confirm the countdownValue has reached 0
+    if (countdownValue == 0) {
+      debugPrint('Countdown reached 0. Long beep should play.');
+    }
+
+    Color circleColor = Colors.green;
     if (countdownValue <= 1) {
       circleColor = Colors.red;
     }
-    
+
     return Center(
       child: SizedBox(
         width: fontSize * 10,
         height: fontSize * 10,
         child: AnimatedSwitcher(
           duration: const Duration(milliseconds: 300),
-          transitionBuilder: (child, animation) => ScaleTransition(scale: animation, child: child),
+          transitionBuilder: (child, animation) =>
+              ScaleTransition(scale: animation, child: child),
           child: Text(
             countdownValue > 0 ? countdownValue.toString() : "GO",
-            key: ValueKey<int>(countdownValue), // triggers rebuild
-            style: TextStyle(fontSize: fontSize * 5, fontWeight: FontWeight.bold, color: circleColor),
+            key: ValueKey<int>(countdownValue),
+            style: TextStyle(
+                fontSize: fontSize * 5,
+                fontWeight: FontWeight.bold,
+                color: circleColor),
             textAlign: TextAlign.center,
           ),
         ),
@@ -277,4 +292,5 @@ class CountdownDisplay extends ConsumerWidget {
     );
   }
 }
+
 
