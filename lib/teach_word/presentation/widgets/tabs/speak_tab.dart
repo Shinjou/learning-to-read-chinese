@@ -40,7 +40,6 @@ String normalizeForAccuracy(String text) {
 }
 
 // Compare normalized texts and compute accuracy
-// Modify only compareTexts and related logic
 ComparisonResult compareTexts(String originalText, String recognizedText) {
   final alignment = _computeAlignment(originalText, recognizedText);
 
@@ -121,7 +120,8 @@ ComparisonResult compareTexts(String originalText, String recognizedText) {
   // Calculate accuracy
   double accuracy = 1.0;
   if ((originalLen + recognizedLen) > 0) {
-    accuracy = (matched * 2.0) / (originalLen + recognizedLen);
+    accuracy = (matched) / (originalLen);
+    debugPrint('compareTexts: originalLen=$originalLen, recognizedLen=$recognizedLen, matched=$matched, accuracy=$accuracy');
   }
 
   return ComparisonResult(
@@ -154,6 +154,7 @@ int calculateWPM(String recognizedText, int elapsedSeconds) {
   // recognizedText is normalized for accuracy; it contains only meaningful chars
   int wordCount = recognizedText.length; // each char as a word
   double wpm = (wordCount / elapsedSeconds) * 60.0;
+  debugPrint('calculateWPM: recognizedText=$recognizedText, elapsedSeconds=$elapsedSeconds, wordCount=$wordCount, wpm=$wpm');
   return wpm.round();
 }
 
@@ -327,7 +328,6 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
       fontSize: fontSize,
       iconsColor: lightGray,
       iconsSize: fontSize * 1.5,
-      // rightBorder: isAnswerCorrect && vocabIndex == 0,
       rightBorder: isAnswerCorrect,
       middleWidget: ZhuyinProcessing(
         textParam: '說一說',
@@ -452,31 +452,6 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
           ),
         );
 
-      /*
-      case RecordingState.listening:
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Large box for transcribed text (even though no subtitle needed here as per design)
-            Container(
-              margin: containerMargin,
-              padding: containerPadding,
-              decoration: commonBoxDecoration.copyWith(color: Colors.grey[200]),
-              constraints: BoxConstraints(minHeight: fontSize * 3.0),
-              width: deviceWidth * 0.9,
-              child: Text(
-                speechState.transcribedText,
-                style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold, color: Colors.grey[600]),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () => notifier.stopListening(),
-              child: Text("停止", style: TextStyle(fontSize: fontSize, color: Colors.grey[600])),
-            ),
-          ],
-        );
-      */
-
       case RecordingState.listening:
         return Column(
           mainAxisSize: MainAxisSize.min,
@@ -518,10 +493,13 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
         int wpm = calculateWPM(normRecognized, speechState.recordingSeconds);
         String message = feedbackMessage(accuracy);
         if (accuracy >= accuracyThreshold) {
-          setState(() {
-            isAnswerCorrect = true;
-          });
+          debugPrint('說一說-第${vocabIndex + 1}句，$vocab, 正確！');
+          isAnswerCorrect = true;         
+        } else {
+          debugPrint('說一說-第${vocabIndex + 1}句，$vocab, 錯誤！');
+          isAnswerCorrect = false;
         }
+        _buildNavigationSwitch();
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -628,9 +606,6 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
       child: Column(
         children: [
           _buildNavigationSwitch(),
-          // SizedBox(height: fontSize * 0.5),          
-          // _buildVocabularySection(),
-          // SizedBox(height: fontSize),
           _buildSentenceSection(),
           SizedBox(height: fontSize * 1.5),
           _buildPracticeControls(),

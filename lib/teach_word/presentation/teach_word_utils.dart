@@ -240,8 +240,9 @@ class CountdownDisplay extends ConsumerWidget {
           debugPrint('Playing short beep. CountdownValue: $countdownValue');
           await player.play(AssetSource('sounds/short_beep.mp3'), volume: 1.0);
         } else {
-          debugPrint('Playing long beep. CountdownValue: $countdownValue');
-          await player.play(AssetSource('sounds/long_beep.mp3'), volume: 1.0);
+          // Long beep was played in _notifier 
+          debugPrint('Playing long beep. Do nothing. CountdownValue: $countdownValue.');
+          // await player.play(AssetSource('sounds/long_beep.mp3'), volume: 1.0);
         }
       } else {
         debugPrint('Skipped beep. CountdownValue: $countdownValue already beeped.');
@@ -265,11 +266,14 @@ class CountdownDisplay extends ConsumerWidget {
       debugPrint('Countdown reached 0. Long beep should play.');
     }
 
-    Color circleColor = Colors.green;
+    // Color circleColor = Colors.green;
+    Color circleColor = Colors.white;
     if (countdownValue <= 1) {
-      circleColor = Colors.red;
+      // circleColor = Colors.red;
+      circleColor = Colors.white;
     }
 
+    /*
     return Center(
       child: SizedBox(
         width: fontSize * 10,
@@ -279,7 +283,8 @@ class CountdownDisplay extends ConsumerWidget {
           transitionBuilder: (child, animation) =>
               ScaleTransition(scale: animation, child: child),
           child: Text(
-            countdownValue > 0 ? countdownValue.toString() : "GO",
+            // countdownValue > 0 ? countdownValue.toString() : "GO",
+            countdownValue.toString(),
             key: ValueKey<int>(countdownValue),
             style: TextStyle(
                 fontSize: fontSize * 5,
@@ -290,6 +295,33 @@ class CountdownDisplay extends ConsumerWidget {
         ),
       ),
     );
+    */
+
+    return Center(
+      child: SizedBox(
+        width: fontSize * 10,
+        height: fontSize * 10,
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300),
+          transitionBuilder: (child, animation) =>
+              ScaleTransition(scale: animation, child: child),
+          child: Text(
+            countdownValue > 0 ? countdownValue.toString() : "",
+            // Use a separate key for the "GO" state so AnimatedSwitcher sees it
+            // as a completely different widget than any numeric countdown.
+            key: ValueKey<int>(countdownValue > 0 ? countdownValue : -1),
+            style: TextStyle(
+              fontSize: fontSize * 5,
+              fontWeight: FontWeight.bold,
+              color: circleColor,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ),
+    );
+
+
   }
 }
 
