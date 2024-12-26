@@ -20,6 +20,35 @@ const totalTabNum = speakTabNum + 1;
 
 const List<String> tabNames = ['看一看', '聽一聽', '寫一寫', '用一用', '說一說'];
 
+DateTime? _lastLogTime;
+
+String formattedElapsedTime() {
+  final now = DateTime.now();
+  if (_lastLogTime == null) {
+    _lastLogTime = now;
+    return "00:00.00";
+  }
+  final elapsed = now.difference(_lastLogTime!);
+  _lastLogTime = now;
+  
+  final minutes = elapsed.inMinutes.toString().padLeft(2, '0');
+  final seconds = (elapsed.inSeconds % 60).toString().padLeft(2, '0');
+  final milliseconds = (elapsed.inMilliseconds % 1000).toString().padLeft(3, '0').substring(0, 2);
+
+  return "$minutes:$seconds.$milliseconds";
+}
+
+String formattedActualTime() {
+  final now = DateTime.now();
+  final hours = now.hour.toString().padLeft(2, '0');
+  final minutes = now.minute.toString().padLeft(2, '0');
+  final seconds = now.second.toString().padLeft(2, '0');
+  final milliseconds = now.millisecond.toString().padLeft(3, '0');
+
+  return "$hours:$minutes:$seconds.$milliseconds";
+}
+
+
 void showErrorDialog(BuildContext context, WidgetRef ref, String message, String title) {
   if (!context.mounted) return;
 
@@ -219,7 +248,8 @@ Future<void> handleGoToSpeak(
   }
 }
 
-class CountdownDisplay extends ConsumerWidget {
+/*
+class CountdownDisplay extends StatelessWidget {
   final int countdownValue;
   final double fontSize;
 
@@ -229,73 +259,11 @@ class CountdownDisplay extends ConsumerWidget {
     required this.fontSize,
   });
 
-  static int? _lastBeepedValue;
-
-  void _playBeep(AudioPlayer player) async {
-    try {
-      if (_lastBeepedValue != countdownValue) {
-        _lastBeepedValue = countdownValue; // Update last beeped value
-
-        if (countdownValue > 0) {
-          debugPrint('Playing short beep. CountdownValue: $countdownValue');
-          await player.play(AssetSource('sounds/short_beep.mp3'), volume: 1.0);
-        } else {
-          // Long beep was played in _notifier 
-          debugPrint('Playing long beep. Do nothing. CountdownValue: $countdownValue.');
-          // await player.play(AssetSource('sounds/long_beep.mp3'), volume: 1.0);
-        }
-      } else {
-        debugPrint('Skipped beep. CountdownValue: $countdownValue already beeped.');
-      }
-    } catch (e) {
-      debugPrint('Error playing beep: $e');
-    }
-  }
-
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final player = ref.watch(audioPlayerProvider);
+  Widget build(BuildContext context) {
+    debugPrint('${formattedActualTime()} CountdownDisplay build. CountdownValue: $countdownValue.');
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      debugPrint('Widget Rebuilt. CountdownValue: $countdownValue');
-      _playBeep(player);
-    });
-
-    // Debug: Confirm the countdownValue has reached 0
-    if (countdownValue == 0) {
-      debugPrint('Countdown reached 0. Long beep should play.');
-    }
-
-    // Color circleColor = Colors.green;
-    Color circleColor = Colors.white;
-    if (countdownValue <= 1) {
-      // circleColor = Colors.red;
-      circleColor = Colors.white;
-    }
-
-    /*
-    return Center(
-      child: SizedBox(
-        width: fontSize * 10,
-        height: fontSize * 10,
-        child: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 300),
-          transitionBuilder: (child, animation) =>
-              ScaleTransition(scale: animation, child: child),
-          child: Text(
-            // countdownValue > 0 ? countdownValue.toString() : "GO",
-            countdownValue.toString(),
-            key: ValueKey<int>(countdownValue),
-            style: TextStyle(
-                fontSize: fontSize * 5,
-                fontWeight: FontWeight.bold,
-                color: circleColor),
-            textAlign: TextAlign.center,
-          ),
-        ),
-      ),
-    );
-    */
+    Color circleColor = countdownValue <= 1 ? Colors.red : Colors.white;
 
     return Center(
       child: SizedBox(
@@ -307,8 +275,6 @@ class CountdownDisplay extends ConsumerWidget {
               ScaleTransition(scale: animation, child: child),
           child: Text(
             countdownValue > 0 ? countdownValue.toString() : "",
-            // Use a separate key for the "GO" state so AnimatedSwitcher sees it
-            // as a completely different widget than any numeric countdown.
             key: ValueKey<int>(countdownValue > 0 ? countdownValue : -1),
             style: TextStyle(
               fontSize: fontSize * 5,
@@ -320,9 +286,49 @@ class CountdownDisplay extends ConsumerWidget {
         ),
       ),
     );
-
-
   }
 }
+*/
+
+class CountdownDisplay extends StatelessWidget {
+  final int countdownValue;
+  final double fontSize;
+
+  const CountdownDisplay({
+    super.key,
+    required this.countdownValue,
+    required this.fontSize,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    debugPrint('${formattedActualTime()} CountdownDisplay build. CountdownValue: $countdownValue.');
+
+    Color circleColor = countdownValue <= 1 ? Colors.red : Colors.white;
+
+    return Center(
+      child: SizedBox(
+        width: fontSize * 10,
+        height: fontSize * 10,
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300),
+          transitionBuilder: (child, animation) =>
+              ScaleTransition(scale: animation, child: child),
+          child: Text(
+            countdownValue > 0 ? countdownValue.toString() : "",
+            key: ValueKey<int>(countdownValue > 0 ? countdownValue : -1),
+            style: TextStyle(
+              fontSize: fontSize * 5,
+              fontWeight: FontWeight.bold,
+              color: circleColor,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 
 

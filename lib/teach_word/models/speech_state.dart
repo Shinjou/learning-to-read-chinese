@@ -48,7 +48,7 @@ class SpeechState {
     String? error,
     bool? isListening,
     double? audioLevel,
-    required String localeId,
+    String? localeId,
   }) {
     return SpeechState(
       isInitialized: isInitialized ?? this.isInitialized,
@@ -62,7 +62,7 @@ class SpeechState {
       error: error,
       isListening: isListening ?? this.isListening,
       audioLevel: audioLevel ?? this.audioLevel,
-      localeId: localeId,
+      localeId: localeId ?? this.localeId,
     );
   }
 }
