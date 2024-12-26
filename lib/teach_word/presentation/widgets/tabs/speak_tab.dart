@@ -121,7 +121,7 @@ ComparisonResult compareTexts(String originalText, String recognizedText) {
   double accuracy = 1.0;
   if ((originalLen + recognizedLen) > 0) {
     accuracy = (matched) / (originalLen);
-    debugPrint('compareTexts: originalLen=$originalLen, recognizedLen=$recognizedLen, matched=$matched, accuracy=$accuracy');
+    debugPrint('${formattedActualTime()} compareTexts: originalLen=$originalLen, recognizedLen=$recognizedLen, matched=$matched, accuracy=$accuracy');
   }
 
   return ComparisonResult(
@@ -154,7 +154,7 @@ int calculateWPM(String recognizedText, int elapsedSeconds) {
   // recognizedText is normalized for accuracy; it contains only meaningful chars
   int wordCount = recognizedText.length; // each char as a word
   double wpm = (wordCount / elapsedSeconds) * 60.0;
-  debugPrint('calculateWPM: recognizedText=$recognizedText, elapsedSeconds=$elapsedSeconds, wordCount=$wordCount, wpm=$wpm');
+  debugPrint('${formattedActualTime()} calculateWPM: recognizedText=$recognizedText, elapsedSeconds=$elapsedSeconds, wordCount=$wordCount, wpm=$wpm');
   return wpm.round();
 }
 
@@ -279,9 +279,9 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
 
   @override
   void initState() {
-    super.initState(); 
+    super.initState();
     _initializeComponents();
-    debugPrint('SpeakTabState.initState called for widgetId: ${widget.widgetId}');    
+    debugPrint('${formattedActualTime()} SpeakTabState.initState called for widgetId: ${widget.widgetId}');
   }
   
   void _initializeComponents() {
@@ -303,7 +303,7 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
     isAnswerCorrect = false;
     isLastVocab = (pageIndex == widget.vocabCnt - 1);
 
-    if (!mounted) return; // Ensure context is valid
+    if (!mounted) return;
     setState(() {
       nextStepId = pageIndex == 0
           ? TeachWordSteps.steps['goToSpeak1']!
@@ -313,17 +313,18 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
   }
 
   Future<void> _handleGoToSpeak() async {
-    debugPrint('_handleGoToSpeak hasSpoken=$hasSpoken, vocabCnt=${widget.vocabCnt}, vocabIndex=$vocabIndex, nextStepId=$nextStepId');
-    if (hasSpoken) return; // Prevent multiple calls
-    hasSpoken = true;    
+    debugPrint('${formattedActualTime()} _handleGoToSpeak hasSpoken=$hasSpoken, vocabCnt=${widget.vocabCnt}, vocabIndex=$vocabIndex, nextStepId=$nextStepId');
+    if (hasSpoken) return;
+    hasSpoken = true;
     await handleGoToSpeak(widget.vocabCnt, vocabIndex, nextStepId, widget.wordObj, ftts);
   }
-
+  /*
   Future<void> _speak(String text) async {
     await ftts.speak(text);
   }
-
+  */
   Widget _buildNavigationSwitch() {
+    debugPrint('${formattedActualTime()} _buildNavigationSwitch called.');
     return LeftRightSwitch(
       fontSize: fontSize,
       iconsColor: lightGray,
@@ -332,12 +333,11 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
       middleWidget: ZhuyinProcessing(
         textParam: '說一說',
         color: lightGray,
-        fontSize: fontSize * 1.2,        
-        fontWeight: FontWeight.bold,  // Optional font weight
-        centered: true,  // Optional centering
-      ),            
+        fontSize: fontSize * 1.2,
+        fontWeight: FontWeight.bold,
+        centered: true,
+      ),
       isFirst: false,
-      // isLast: isLastVocab,
       isLast: false,
 
       onLeftClicked: () {
@@ -349,8 +349,9 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
         }
       },
       onRightClicked: () {
+        debugPrint('${formattedActualTime()} Right navigation clicked. isAnswerCorrect=$isAnswerCorrect');
         if (!isAnswerCorrect) {
-          debugPrint('說一說-第${vocabIndex + 1}句，$vocab, 需再試！');
+          debugPrint('${formattedActualTime()} 說一說-第${vocabIndex + 1}句，$vocab, 需再試！');
           return; // 需再試，do nothing
         } else if (isLastVocab) {
           goToNextCharacter(
@@ -372,14 +373,16 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
   }
 
   void _onNextVocab() {
+    debugPrint('${formattedActualTime()} _onNextVocab called. Moving to next vocab.');
     setState(() {
       vocabIndex++;
-      hasSpoken = false; // Reset for the next page
+      hasSpoken = false;
       _initVariables(vocabIndex);
     });
   }
 
   void _onPreviousVocab() {
+    debugPrint('${formattedActualTime()} _onPreviousVocab called. Moving to previous vocab.');
     if (vocabIndex > 0) {
       setState(() {
         vocabIndex--;
@@ -390,35 +393,90 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
 
   Widget _buildSentenceSection() {
     return Padding(
-      // More symmetric padding so there's space on both left and right
       padding: EdgeInsets.symmetric(horizontal: fontSize),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Text(
-                "例句：",
-                style: TextStyle(
-                  fontSize: fontSize,
-                  color: explanationColor,
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "例句：",
+                  style: TextStyle(
+                    fontSize: fontSize,
+                    color: explanationColor,
+                  ),
                 ),
               ),
               IconButton(
                 icon: const Icon(Icons.volume_up),
                 iconSize: fontSize,
                 color: explanationColor,
-                onPressed: () => _speak(sentence),
+                onPressed: () {
+                  ftts.speak(sentence);
+                },
               ),
             ],
           ),
-          ZhuyinProcessing(
-            textParam: sentence,
-            fontSize: fontSize,
-            color: whiteColor,
+          Align(
+            alignment: Alignment.centerLeft,
+            child: ZhuyinProcessing(
+              textParam: sentence,
+              fontSize: fontSize,
+              color: whiteColor,
+            ),
           ),
         ],
       ),
+    );
+  }  
+  
+  Widget _buildTranscriptionSection() {
+    final speechState = ref.watch(speechStateProvider);
+    debugPrint('${formattedActualTime()} _buildTranscriptionSection called.');
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        SizedBox(height: fontSize),
+        // Subtitle for transcribed text line
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: fontSize),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              "轉錄文字",
+              style: TextStyle(
+                fontSize: fontSize,
+                color: explanationColor,
+              ),
+            ),
+          ),
+        ),        
+
+        // Transcribed line container
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: fontSize, vertical: fontSize * 0.5),
+          padding: EdgeInsets.all(fontSize * 0.5),
+          decoration: BoxDecoration(
+            color: Colors.grey[200],
+            borderRadius: BorderRadius.circular(8),
+          ),
+          constraints: BoxConstraints(minHeight: fontSize * 3.0),
+          width: double.infinity,
+          child: AnimatedSwitcher(
+            duration: Duration(milliseconds: 200),
+            transitionBuilder: (child, animation) {
+              return FadeTransition(opacity: animation, child: child);
+            },
+            child: Text(
+              speechState.transcribedText,
+              key: ValueKey<String>(speechState.transcribedText),
+              style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold, color: Colors.grey[600]),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -426,54 +484,30 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
     final speechState = ref.watch(speechStateProvider);
     final notifier = ref.read(speechStateProvider.notifier);
 
-    // Common decorations and constraints
-    final commonBoxDecoration = BoxDecoration(
-      color: Colors.grey[200],
-      borderRadius: BorderRadius.circular(8),
-    );
-
-    final containerPadding = EdgeInsets.all(fontSize * 0.5);
-    final containerMargin = EdgeInsets.symmetric(horizontal: fontSize, vertical: fontSize * 0.5);
+    debugPrint('${formattedActualTime()} _buildPracticeControls called. RecordingState: ${speechState.state}');
 
     switch (speechState.state) {
       case RecordingState.idle:
         return ElevatedButton(
-          onPressed: () => notifier.startCountdown(),
+          onPressed: () {
+            debugPrint('${formattedActualTime()} Start button pressed. Starting countdown...');
+            notifier.startCountdown();
+          },
           child: Text("開始朗讀", style: TextStyle(fontSize: fontSize, color: Colors.grey[600])),
         );
 
       case RecordingState.countdown:
-        return SizedBox(
-          width: fontSize * 10, // fixed size
-          height: fontSize * 10,
-          child: CountdownDisplay(
+        debugPrint('${formattedActualTime()} Rendering CountdownDisplay. countdownValue: ${speechState.countdownValue}');
+        return CountdownDisplay(
             countdownValue: speechState.countdownValue,
             fontSize: fontSize,
-          ),
         );
 
       case RecordingState.listening:
+        debugPrint('${formattedActualTime()} Listening state. Rendering stop button.');
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              margin: containerMargin,
-              padding: containerPadding,
-              decoration: commonBoxDecoration.copyWith(color: Colors.grey[200]),
-              constraints: BoxConstraints(minHeight: fontSize * 3.0),
-              width: deviceWidth * 0.9,
-              child: AnimatedSwitcher(
-                duration: Duration(milliseconds: 200),
-                transitionBuilder: (child, animation) {
-                  return FadeTransition(opacity: animation, child: child);
-                },
-                child: Text(
-                  speechState.transcribedText,
-                  key: ValueKey<String>(speechState.transcribedText),
-                  style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold, color: Colors.grey[600]),
-                ),
-              ),
-            ),
             ElevatedButton(
               onPressed: () => notifier.stopListening(),
               child: Text("停止", style: TextStyle(fontSize: fontSize, color: Colors.grey[600])),
@@ -482,136 +516,117 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
         );
 
       case RecordingState.finished:
-        // Raw recognized text
-        String rawText = speechState.transcribedText;
+        return _buildFeedback(notifier, speechState);
 
-        String normOriginal = normalizeForAccuracy(sentence);
-        String normRecognized = normalizeForAccuracy(rawText);
+    }        
 
-        final comparison = compareTexts(normOriginal, normRecognized);
-        double accuracy = comparison.accuracy;
-        int wpm = calculateWPM(normRecognized, speechState.recordingSeconds);
-        String message = feedbackMessage(accuracy);
-        if (accuracy >= accuracyThreshold) {
-          debugPrint('說一說-第${vocabIndex + 1}句，$vocab, 正確！');
-          isAnswerCorrect = true;         
-        } else {
-          debugPrint('說一說-第${vocabIndex + 1}句，$vocab, 錯誤！');
-          isAnswerCorrect = false;
-        }
-        _buildNavigationSwitch();
-
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // Subtitle for transcribed text line
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: fontSize),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "轉錄文字",
-                  style: TextStyle(
-                    fontSize: fontSize,
-                    color: explanationColor,
-                  ),
-                ),
-              ),
-            ),
-
-            // Transcribed line container
-            Container(
-              margin: containerMargin,
-              padding: containerPadding,
-              decoration: commonBoxDecoration.copyWith(color: Colors.grey[300]),
-              constraints: BoxConstraints(minHeight: fontSize * 3.0),
-              width: double.infinity,
-              child: ZhuyinProcessing(
-                textParam: rawText,
-                fontSize: fontSize,
-                color: Colors.black,
-              ),              
-            ),
-
-            // If accuracy < 1.0, show diff line with subtitle
-            if (accuracy < 1.0) ...[
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: fontSize),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    "跟原文比對",
-                    style: TextStyle(
-                      fontSize: fontSize,
-                      color: explanationColor,
-                    ),
-                  ),
-                ),
-              ),
-
-              Container(
-                margin: containerMargin,
-                padding: containerPadding,
-                decoration: commonBoxDecoration,
-                constraints: BoxConstraints(minHeight: fontSize * 3.0),
-                width: double.infinity,
-                child: ZhuyinProcessing.fromSpan(
-                  spanParam: comparison.highlightedSpan,
-                  fontSize: fontSize * 1.0,
-                  color: Colors.black,
-                ),
-              ),
-            ],
-
-            Wrap(
-              spacing: fontSize * 1.5,
-              runSpacing: fontSize * 0.5,
-              alignment: WrapAlignment.center,
-              children: [
-                Text("準確率: ${(accuracy * 100).toStringAsFixed(0)}%", style: TextStyle(fontSize: fontSize, color: Colors.white)),
-                Text("語速: $wpm 字/分鐘", style: TextStyle(fontSize: fontSize, color: Colors.white)),
-              ],
-            ),
-
-            SizedBox(height: fontSize),
-            Text(message, style: TextStyle(fontSize: fontSize, color: explanationColor)),
-            SizedBox(height: fontSize * 0.5),
-            Wrap(
-              spacing: fontSize,
-              runSpacing: fontSize * 0.5,
-              children: [
-                ElevatedButton(
-                  onPressed: () => notifier.retry(),
-                  child: Text("重新練習", style: TextStyle(fontSize: fontSize, color: Colors.grey[600])),
-                ),
-                if (speechState.recordingPath != null)
-                  ElevatedButton(
-                    onPressed: () => notifier.playRecording(),
-                    child: Text("聽取錄音", style: TextStyle(fontSize: fontSize, color: Colors.grey[600])),
-                  ),    
-              ]
-            )
-          ],
-        );
-    }
   }
+  
+  Widget _buildFeedback(notifier, SpeechState speechState) {
+    debugPrint('${formattedActualTime()} _buildFeedback called.');
 
+    String rawText = speechState.transcribedText;
+
+    String normOriginal = normalizeForAccuracy(sentence);
+    String normRecognized = normalizeForAccuracy(rawText);
+
+    final comparison = compareTexts(normOriginal, normRecognized);
+    double accuracy = comparison.accuracy;
+    int wpm = calculateWPM(normRecognized, speechState.recordingSeconds);
+    String message = feedbackMessage(accuracy);
+
+    debugPrint('${formattedActualTime()} Feedback calculated. Accuracy: ${(accuracy * 100).toStringAsFixed(2)}%, WPM: $wpm.');
+    isAnswerCorrect = accuracy >= accuracyThreshold;
+    // _buildNavigationSwitch();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        // If accuracy < 1.0, show diff line with subtitle
+        if (accuracy < 1.0) ...[
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: fontSize),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "比對結果",
+                style: TextStyle(
+                  fontSize: fontSize,
+                  color: explanationColor,
+                ),
+              ),
+            ),
+          ),
+
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: fontSize, vertical: fontSize * 0.5),
+            padding: EdgeInsets.all(fontSize * 0.5),
+            decoration: BoxDecoration(
+              color: Colors.grey[200],
+              borderRadius: BorderRadius.circular(8),
+            ),
+            constraints: BoxConstraints(minHeight: fontSize * 3.0),
+            width: double.infinity,
+            child: ZhuyinProcessing.fromSpan(
+              spanParam: comparison.highlightedSpan,
+              fontSize: fontSize * 1.0,
+              color: Colors.black,
+            ),
+          ),
+        ],
+
+        Wrap(
+          spacing: fontSize * 1.5,
+          runSpacing: fontSize * 0.5,
+          alignment: WrapAlignment.center,
+          children: [
+            Text("準確率: ${(accuracy * 100).toStringAsFixed(0)}%", style: TextStyle(fontSize: fontSize, color: Colors.white)),
+            Text("語速: $wpm 字/分鐘", style: TextStyle(fontSize: fontSize, color: Colors.white)),
+          ],
+        ),
+
+        SizedBox(height: fontSize),
+        Text(message, style: TextStyle(fontSize: fontSize, color: explanationColor)),
+        SizedBox(height: fontSize * 0.5),
+        Wrap(
+          spacing: fontSize,
+          runSpacing: fontSize * 0.5,
+          children: [
+            ElevatedButton(
+              onPressed: () => ref.read(speechStateProvider.notifier).retry(),
+              child: Text("重新練習", style: TextStyle(fontSize: fontSize, color: Colors.grey[600])),
+            ),
+            if (speechState.recordingPath != null)
+              ElevatedButton(
+                onPressed: () => ref.read(speechStateProvider.notifier).playRecording(),
+                child: Text("聽取錄音", style: TextStyle(fontSize: fontSize, color: Colors.grey[600])),
+              ),    
+          ]
+        )
+      ],
+    );
+  }
+  
   @override
   Widget build(BuildContext context) {
-    final screenInfo = ref.read(screenInfoProvider);
+    final screenInfo = ref.watch(screenInfoProvider);
     fontSize = screenInfo.fontSize;
     deviceWidth = screenInfo.screenWidth;
+    debugPrint('${formattedActualTime()} SpeakTabState.build called. fontSize: $fontSize');
 
     return SingleChildScrollView(
       child: Column(
         children: [
           _buildNavigationSwitch(),
           _buildSentenceSection(),
+          _buildTranscriptionSection(),
           SizedBox(height: fontSize * 1.5),
           _buildPracticeControls(),
         ],
       ),
     );
   }
+
 }
+
 
