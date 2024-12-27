@@ -1,20 +1,14 @@
 // lib/teach_word/presentation/teach_word_view.dart
-// ChatGPT generated code based on the original code.
 
-
-// import 'dart:math' as math;
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-// import 'package:fluttertoast/fluttertoast.dart';
 import 'package:ltrc/contants/bopomos.dart';
-// import 'package:ltrc/data/providers/word_status_provider.dart';
 import 'package:ltrc/providers.dart';
 import 'package:ltrc/data/models/word_status_model.dart';
 import 'package:ltrc/teach_word/presentation/widgets/tabs/speak_tab.dart';
-// import 'package:ltrc/teach_word/constants/steps.dart';
 import 'package:ltrc/teach_word/providers/teach_word_providers.dart';
 import 'package:ltrc/teach_word/states/navigation_state.dart';
 import 'package:ltrc/teach_word/providers/word_provider.dart';
@@ -177,13 +171,13 @@ class TeachWordViewState extends ConsumerState<TeachWordView> with TickerProvide
         });
       } else {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (!mounted) return; // Add this check
+          if (!mounted) return;
           showErrorDialog(context, ref, '', '「$word」的筆順檔無法下載。請截圖回報。謝謝！');
         });
       }
     } catch (error) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return; // Add this check
+        if (!mounted) return;
         showErrorDialog(context, ref, '', '「$word」筆順檔問題，請截圖回報。svgFileExist: $svgFileExist。謝謝！');
       });
       if (!mounted) return; // Add this check
