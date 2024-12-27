@@ -210,7 +210,7 @@ class UnitsViewState extends ConsumerState<UnitsView> {
                           padding: const EdgeInsets.all(2.0),
                           child: Text(
                             text,
-                            style: TextStyle(fontSize: fontSize),
+                            style: TextStyle(fontSize: fontSize * 1.2),
                             textAlign: TextAlign.center,
                           ),
                         ),
@@ -222,7 +222,7 @@ class UnitsViewState extends ConsumerState<UnitsView> {
               ),
             ),
           ),
-
+          /*
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(23, 14, 23, 20),
             sliver: SliverGrid(
@@ -293,13 +293,102 @@ class UnitsViewState extends ConsumerState<UnitsView> {
                           Text(
                             "第${numeralToChinese[index + 1]}課",
                             style: TextStyle(
-                              fontSize: fontSize, // Choose a font size that fits all boxes
+                              fontSize: fontSize * 1.2, // Choose a font size that fits all boxes
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
                           Text(
                             units[index].unitTitle,
-                            style: TextStyle(fontSize: fontSize), // Use the same font size for consistency
+                            style: TextStyle(fontSize: fontSize * 1.2), // Use the same font size for consistency
+                            textAlign: TextAlign.center,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+                childCount: units.length,
+              ),
+            ),
+          ),
+          */
+
+          SliverPadding(
+            padding: EdgeInsets.symmetric(
+              horizontal: fontSize * 0.5, // Minimal horizontal padding to maximize grid space
+              vertical: fontSize * 0.5, // Adjust vertical padding proportionally
+            ),
+            sliver: SliverGrid(
+              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: fontSize * 14.0, // Adjusted to better utilize screen width
+                mainAxisSpacing: fontSize * 0.5, // Proportional spacing for better fit
+                crossAxisSpacing: fontSize * 0.5, // Consistent spacing
+                childAspectRatio: isTablet ? 5 / 2 : 4 / 2.5, // Slightly optimized for screen sizes
+              ),
+              delegate: SliverChildBuilderDelegate(
+                (BuildContext context, int index) {
+                  return InkWell(
+                    onTap: () async {
+                      Unit unit = units[index];
+                      await WordStatusProvider().addWordsStatus(
+                        statuses: unit.newWords.map((word) => 
+                          WordStatus(
+                            id: -1, 
+                            userAccount: ref.read(accountProvider.notifier).state, 
+                            word: word, 
+                            learned: false, 
+                            liked: false,
+                          )
+                        ).toList(),
+                      );
+                      unit.newWords.removeWhere((item) => unit.extraWords.contains(item));
+
+                      List<WordStatus> newWordsStatus = await WordStatusProvider().getWordsStatus(
+                        account: ref.read(accountProvider.notifier).state,
+                        words: unit.newWords,
+                      );
+                      List<WordStatus> extraWordsStatus = await WordStatusProvider().getWordsStatus(
+                        account: ref.read(accountProvider.notifier).state,
+                        words: unit.extraWords,
+                      );
+                      List<Map> newWordsPhrase = await getWordsPhraseSentence(newWordsStatus);
+                      List<Map> extraWordsPhrase = await getWordsPhraseSentence(extraWordsStatus);
+                      if (!context.mounted) return;
+                      navigateWithProvider(
+                        context,
+                        '/words',
+                        ref,
+                        arguments: {
+                          'unit': unit,
+                          'newWordsStatus': newWordsStatus,
+                          'extraWordsStatus': extraWordsStatus,
+                          'newWordsPhrase': newWordsPhrase,
+                          'extraWordsPhrase': extraWordsPhrase,
+                        },
+                      );
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10), // Reduced radius for compactness
+                        color: const Color(0xFF013E6D),
+                      ),
+                      alignment: Alignment.center,
+                      padding: EdgeInsets.all(fontSize * 0.3), // Reduced padding for more content space
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            "第${numeralToChinese[index + 1]}課",
+                            style: TextStyle(
+                              fontSize: fontSize * 1.2, // Adjusted for better fit
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          Text(
+                            units[index].unitTitle,
+                            style: TextStyle(fontSize: fontSize * 1.2), // Matching font size for consistency
                             textAlign: TextAlign.center,
                             overflow: TextOverflow.ellipsis,
                           ),
