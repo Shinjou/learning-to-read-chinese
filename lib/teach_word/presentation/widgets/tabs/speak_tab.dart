@@ -51,7 +51,8 @@ ComparisonResult compareTexts(String originalText, String recognizedText) {
 
   int i = 0;
   while (i < alignment.length) {
-    if (alignment[i].originalChar.isNotEmpty && alignment[i].recognizedChar.isNotEmpty &&
+    if (alignment[i].originalChar.isNotEmpty &&
+        alignment[i].recognizedChar.isNotEmpty &&
         alignment[i].originalChar == alignment[i].recognizedChar) {
       // Match
       spans.add(TextSpan(text: alignment[i].originalChar));
@@ -60,14 +61,17 @@ ComparisonResult compareTexts(String originalText, String recognizedText) {
     } else {
       int start = i;
       while (i < alignment.length &&
-             !(alignment[i].originalChar.isNotEmpty && alignment[i].recognizedChar.isNotEmpty
-               && alignment[i].originalChar == alignment[i].recognizedChar)) {
+          !(alignment[i].originalChar.isNotEmpty &&
+              alignment[i].recognizedChar.isNotEmpty &&
+              alignment[i].originalChar == alignment[i].recognizedChar)) {
         i++;
       }
       var diffRun = alignment.getRange(start, i).toList();
 
-      String originalSegment = diffRun.where((p) => p.originalChar.isNotEmpty).map((p) => p.originalChar).join();
-      String recognizedSegment = diffRun.where((p) => p.recognizedChar.isNotEmpty).map((p) => p.recognizedChar).join();
+      String originalSegment =
+          diffRun.where((p) => p.originalChar.isNotEmpty).map((p) => p.originalChar).join();
+      String recognizedSegment =
+          diffRun.where((p) => p.recognizedChar.isNotEmpty).map((p) => p.recognizedChar).join();
 
       // Find longest common prefix
       int prefixLen = _commonPrefixLength(originalSegment, recognizedSegment);
@@ -87,22 +91,17 @@ ComparisonResult compareTexts(String originalText, String recognizedText) {
       // Add common prefix as normal matched text
       if (commonPrefix.isNotEmpty) {
         spans.add(TextSpan(text: commonPrefix));
-        // Count matched chars in prefix
         matched += commonPrefix.length;
       }
 
-      // Now handle the differing middle parts
-      // oMid: missing original chars → underline
-      // rMid: extra recognized chars → strikethrough
+      // Handle differing middle parts
       if (oMid.isNotEmpty) {
-        // These original chars were not recognized, need to be added back → underline
         spans.add(TextSpan(
           text: oMid,
           style: TextStyle(decoration: TextDecoration.underline, color: Colors.black),
         ));
       }
       if (rMid.isNotEmpty) {
-        // These recognized chars are extra → strikethrough
         spans.add(TextSpan(
           text: rMid,
           style: TextStyle(decoration: TextDecoration.lineThrough, color: Colors.black),
@@ -118,17 +117,20 @@ ComparisonResult compareTexts(String originalText, String recognizedText) {
   }
 
   // Calculate accuracy
+  int extraChars = recognizedLen - matched; // Characters in recognizedText that are unmatched
   double accuracy = 1.0;
-  if ((originalLen + recognizedLen) > 0) {
-    accuracy = (matched) / (originalLen);
-    debugPrint('${formattedActualTime()} compareTexts: originalLen=$originalLen, recognizedLen=$recognizedLen, matched=$matched, accuracy=$accuracy');
+  if ((originalLen + extraChars) > 0) {
+    accuracy = matched / (originalLen + extraChars);
   }
+
+  debugPrint('${formattedActualTime()} compareTexts: originalLen=$originalLen, recognizedLen=$recognizedLen, matched=$matched, extraChars=$extraChars, accuracy=$accuracy');
 
   return ComparisonResult(
     TextSpan(children: spans, style: TextStyle(color: Colors.black)),
-    accuracy
+    accuracy,
   );
 }
+
 
 int _commonPrefixLength(String a, String b) {
   int minLen = a.length < b.length ? a.length : b.length;
@@ -428,11 +430,13 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
     );
   }  
   
+  /*
   Widget _buildTranscriptionSection() {
     final speechState = ref.watch(speechStateProvider);
     debugPrint('${formattedActualTime()} _buildTranscriptionSection called.');
+    
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(height: fontSize),
         // Subtitle for transcribed text line
@@ -468,7 +472,62 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
             child: Text(
               speechState.transcribedText,
               key: ValueKey<String>(speechState.transcribedText),
+              textAlign: TextAlign.start, // Align text to start
               style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold, color: Colors.grey[600]),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+  */
+  
+  Widget _buildTranscriptionSection() {
+    final speechState = ref.watch(speechStateProvider);
+    debugPrint('${formattedActualTime()} _buildTranscriptionSection called.');
+    
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start, // Ensure alignment to the left
+      children: [
+        SizedBox(height: fontSize),
+        // Subtitle for transcribed text line
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: fontSize),
+          child: Align(
+            alignment: Alignment.centerLeft, // Align the subtitle to the left
+            child: Text(
+              "轉錄文字",
+              style: TextStyle(
+                fontSize: fontSize,
+                color: explanationColor,
+              ),
+            ),
+          ),
+        ),
+
+        // Transcribed line container
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: fontSize, vertical: fontSize * 0.5),
+          padding: EdgeInsets.all(fontSize * 0.5),
+          decoration: BoxDecoration(
+            color: Colors.grey[200],
+            borderRadius: BorderRadius.circular(8),
+          ),
+          constraints: BoxConstraints(minHeight: fontSize * 3.0),
+          width: double.infinity,
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 200),
+            transitionBuilder: (child, animation) {
+              return FadeTransition(opacity: animation, child: child);
+            },
+            child: Align( // Explicit alignment for the text
+              alignment: Alignment.centerLeft, // Align text to the left
+              child: Text(
+                speechState.transcribedText,
+                key: ValueKey<String>(speechState.transcribedText),
+                textAlign: TextAlign.start, // Ensure the text starts from the left
+                style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold, color: Colors.grey[600]),
+              ),
             ),
           ),
         ),
@@ -532,13 +591,13 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
     int wpm = calculateWPM(normRecognized, speechState.recordingSeconds);
     String message = feedbackMessage(accuracy);
 
-    // Check if the new correctness value differs before scheduling the update
     bool newIsAnswerCorrect = accuracy >= accuracyThreshold;
+    // Update correctness outside of widget rebuild if necessary
     if (speechState.isAnswerCorrect != newIsAnswerCorrect) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+      Future.microtask(() {
         notifier.updateAnswerCorrectness(newIsAnswerCorrect);
       });
-    }    
+    }
 
     debugPrint('${formattedActualTime()} Feedback calculated. Accuracy: ${(accuracy * 100).toStringAsFixed(2)}%, WPM: $wpm.');
 
@@ -583,8 +642,14 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
           runSpacing: fontSize * 0.5,
           alignment: WrapAlignment.center,
           children: [
-            Text("準確率: ${(accuracy * 100).toStringAsFixed(0)}%", style: TextStyle(fontSize: fontSize, color: Colors.white)),
-            Text("語速: $wpm 字/分鐘", style: TextStyle(fontSize: fontSize, color: Colors.white)),
+            Text(
+              "準確率: ${(accuracy * 100).toStringAsFixed(0)}%",
+              style: TextStyle(fontSize: fontSize, color: Colors.white, fontWeight: FontWeight.bold), // Increased contrast
+            ),
+            Text(
+              "語速: $wpm 字/分鐘",
+              style: TextStyle(fontSize: fontSize, color: Colors.white, fontWeight: FontWeight.bold), // Increased contrast
+            ),
           ],
         ),
 
