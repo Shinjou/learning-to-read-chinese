@@ -19,6 +19,7 @@ class SpeechState {
   final String? error;
   final bool isListening; // indicate if currently listening
   final double? audioLevel; // if you want to show audio level if needed
+  final bool isAnswerCorrect; // Tracks if the answer is correct  
   String localeId;
 
   SpeechState({
@@ -33,6 +34,7 @@ class SpeechState {
     this.error,
     this.isListening = false,
     this.audioLevel,
+    this.isAnswerCorrect = false,
     this.localeId = 'zh-TW',
   });
 
@@ -48,6 +50,7 @@ class SpeechState {
     String? error,
     bool? isListening,
     double? audioLevel,
+    bool? isAnswerCorrect,
     String? localeId,
   }) {
     return SpeechState(
@@ -62,6 +65,7 @@ class SpeechState {
       error: error,
       isListening: isListening ?? this.isListening,
       audioLevel: audioLevel ?? this.audioLevel,
+      isAnswerCorrect: isAnswerCorrect ?? this.isAnswerCorrect,
       localeId: localeId ?? this.localeId,
     );
   }
