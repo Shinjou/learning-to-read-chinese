@@ -16,7 +16,6 @@ class SpeechStateNotifier extends StateNotifier<SpeechState> {
   Timer? _elapsedTimer;
   final Completer<void> longBeepCompleter = Completer<void>();
   int _elapsedSeconds = 0;
-  // static int? _lastBeepedValue; // Prevent duplicate beeps
   StreamSubscription? _playerCompleteSubscription;
 
   SpeechStateNotifier(
@@ -56,6 +55,11 @@ class SpeechStateNotifier extends StateNotifier<SpeechState> {
     }
   }
 
+  /* Originally, I was trying to display a countdown from 3 to 0
+  // and play three short beeps followed by a long beep.
+  // However, I could not fix the problem of the long beep and 
+  // it took too long to display tne new screen. So I disabled it.
+  // I alsow changed the CountdownDisplay widget.
   void startCountdown() {
     debugPrint('${formattedActualTime()} Starting countdown...');
 
@@ -97,6 +101,27 @@ class SpeechStateNotifier extends StateNotifier<SpeechState> {
 
     });
   }
+  */
+
+  void startCountdown() {
+    debugPrint('${formattedActualTime()} Starting countdown...');
+
+    if (!state.isInitialized) {
+      initialize();
+    }
+
+    const int initialCountdownValue = 1; // was 3
+    state = state.copyWith(
+      state: RecordingState.countdown,
+      countdownValue: initialCountdownValue,
+    );
+
+    _countdownTimer?.cancel();
+    _playBeep('short');
+    _startListeningFlow();
+
+  }
+
 
   Future<void> _playBeep(String type) async {
     final startTime = DateTime.now();
@@ -186,18 +211,25 @@ class SpeechStateNotifier extends StateNotifier<SpeechState> {
     state = state.copyWith(isPlaying: true);
     try {
       await _audioPlayer.play(DeviceFileSource(state.recordingPath!));
+      state = state.copyWith(isPlaying: false);
     } catch (e) {
       handleError('Failed to play recording: $e');
       state = state.copyWith(isPlaying: false);
     }
   }
 
-  void retry() {
+  void reset() {
     state = SpeechState(localeId: state.localeId);
   }
 
-  void resetPractice() {
-    state = SpeechState(localeId: state.localeId);
+  void updateAnswerCorrectness(bool isCorrect) {
+    state = state.copyWith(isAnswerCorrect: isCorrect);
+  }
+
+  Future<void> evaluateFeedback(String normOriginal, String normRecognized, double accuracyThreshold) async {
+    final accuracy = (normOriginal == normRecognized) ? 1.0 : 0.0; // Simplified for demo
+    final isCorrect = accuracy >= accuracyThreshold;
+    updateAnswerCorrectness(isCorrect);
   }
 
   void handleError(String error) {
@@ -212,10 +244,10 @@ class SpeechStateNotifier extends StateNotifier<SpeechState> {
 
   @override
   void dispose() {
-    _playerCompleteSubscription?.cancel(); // Ensure listener is cleaned up
+    _playerCompleteSubscription?.cancel();
     _countdownTimer?.cancel();
     _elapsedTimer?.cancel();
     super.dispose();
-  }  
+  }
 }
 
