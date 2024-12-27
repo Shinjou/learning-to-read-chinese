@@ -273,7 +273,6 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
   late String vocab;
   late String vocab2;
   late String sentence;
-  bool isAnswerCorrect = false;
   late int pageIndex;
   static const accuracyThreshold = 0.6;
 
@@ -350,7 +349,7 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
         }
       },
       onRightClicked: () {
-        debugPrint('${formattedActualTime()} Right navigation clicked. isAnswerCorrect=$isAnswerCorrect');
+        debugPrint('${formattedActualTime()} Right navigation clicked. isAnswerCorrect=$speechState.isAnswerCorrect');
         if (!speechState.isAnswerCorrect) {
           debugPrint('${formattedActualTime()} 說一說-第${vocabIndex + 1}句，$vocab, 需再試！');
           return; // 需再試，do nothing
