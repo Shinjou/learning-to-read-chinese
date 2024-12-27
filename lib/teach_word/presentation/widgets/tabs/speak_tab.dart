@@ -293,14 +293,13 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
   void _initVariables(int pageIndex) {
     final notifier = ref.read(speechStateProvider.notifier);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      notifier.resetPractice();
+      notifier.reset();
     });
 
     vocabIndex = pageIndex.clamp(0, widget.vocabCnt - 1);
     vocab = widget.wordObj['vocab${pageIndex + 1}'] ?? ''; // Add default value
     vocab2 = widget.wordObj['vocab${(pageIndex + 1) % widget.vocabCnt + 1}'] ?? ''; // Add default value
     sentence = widget.wordObj['sentence${pageIndex + 1}'] ?? ''; // Add default value
-    isAnswerCorrect = false;
     isLastVocab = (pageIndex == widget.vocabCnt - 1);
 
     if (!mounted) return;
@@ -324,12 +323,14 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
   }
   */
   Widget _buildNavigationSwitch() {
+    final speechState = ref.watch(speechStateProvider);
     debugPrint('${formattedActualTime()} _buildNavigationSwitch called.');
+    
     return LeftRightSwitch(
       fontSize: fontSize,
       iconsColor: lightGray,
       iconsSize: fontSize * 1.5,
-      rightBorder: isAnswerCorrect,
+      rightBorder: speechState.isAnswerCorrect, // Directly bound to SpeechState,
       middleWidget: ZhuyinProcessing(
         textParam: '說一說',
         color: lightGray,
@@ -350,7 +351,7 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
       },
       onRightClicked: () {
         debugPrint('${formattedActualTime()} Right navigation clicked. isAnswerCorrect=$isAnswerCorrect');
-        if (!isAnswerCorrect) {
+        if (!speechState.isAnswerCorrect) {
           debugPrint('${formattedActualTime()} 說一說-第${vocabIndex + 1}句，$vocab, 需再試！');
           return; // 需再試，do nothing
         } else if (isLastVocab) {
@@ -374,24 +375,20 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
 
   void _onNextVocab() {
     debugPrint('${formattedActualTime()} _onNextVocab called. Moving to next vocab.');
-    setState(() {
-      vocabIndex++;
-      hasSpoken = false;
-      _initVariables(vocabIndex);
-    });
+    vocabIndex++;
+    _initVariables(vocabIndex);    
   }
 
   void _onPreviousVocab() {
-    debugPrint('${formattedActualTime()} _onPreviousVocab called. Moving to previous vocab.');
+    debugPrint('${formattedActualTime()} _onPreviousVocab called. Moving to previous vocab.'); 
     if (vocabIndex > 0) {
-      setState(() {
-        vocabIndex--;
-        _initVariables(vocabIndex);
-      });
+      vocabIndex--;
+      _initVariables(vocabIndex);      
     }
   }
 
   Widget _buildSentenceSection() {
+    debugPrint('${formattedActualTime()} _buildSentenceSection called.');    
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: fontSize),
       child: Column(
@@ -498,10 +495,13 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
 
       case RecordingState.countdown:
         debugPrint('${formattedActualTime()} Rendering CountdownDisplay. countdownValue: ${speechState.countdownValue}');
+        /*
         return CountdownDisplay(
             countdownValue: speechState.countdownValue,
             fontSize: fontSize,
         );
+        */
+        return SizedBox(height: fontSize);
 
       case RecordingState.listening:
         debugPrint('${formattedActualTime()} Listening state. Rendering stop button.');
@@ -521,23 +521,27 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
     }        
 
   }
-  
+
   Widget _buildFeedback(notifier, SpeechState speechState) {
     debugPrint('${formattedActualTime()} _buildFeedback called.');
 
     String rawText = speechState.transcribedText;
-
     String normOriginal = normalizeForAccuracy(sentence);
     String normRecognized = normalizeForAccuracy(rawText);
-
     final comparison = compareTexts(normOriginal, normRecognized);
     double accuracy = comparison.accuracy;
     int wpm = calculateWPM(normRecognized, speechState.recordingSeconds);
     String message = feedbackMessage(accuracy);
 
+    // Check if the new correctness value differs before scheduling the update
+    bool newIsAnswerCorrect = accuracy >= accuracyThreshold;
+    if (speechState.isAnswerCorrect != newIsAnswerCorrect) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifier.updateAnswerCorrectness(newIsAnswerCorrect);
+      });
+    }    
+
     debugPrint('${formattedActualTime()} Feedback calculated. Accuracy: ${(accuracy * 100).toStringAsFixed(2)}%, WPM: $wpm.');
-    isAnswerCorrect = accuracy >= accuracyThreshold;
-    // _buildNavigationSwitch();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -593,7 +597,7 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
           runSpacing: fontSize * 0.5,
           children: [
             ElevatedButton(
-              onPressed: () => ref.read(speechStateProvider.notifier).retry(),
+              onPressed: () => ref.read(speechStateProvider.notifier).reset(),
               child: Text("重新練習", style: TextStyle(fontSize: fontSize, color: Colors.grey[600])),
             ),
             if (speechState.recordingPath != null)
