@@ -248,48 +248,7 @@ Future<void> handleGoToSpeak(
   }
 }
 
-/*
-class CountdownDisplay extends StatelessWidget {
-  final int countdownValue;
-  final double fontSize;
-
-  const CountdownDisplay({
-    super.key,
-    required this.countdownValue,
-    required this.fontSize,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    debugPrint('${formattedActualTime()} CountdownDisplay build. CountdownValue: $countdownValue.');
-
-    Color circleColor = countdownValue <= 1 ? Colors.red : Colors.white;
-
-    return Center(
-      child: SizedBox(
-        width: fontSize * 10,
-        height: fontSize * 10,
-        child: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 300),
-          transitionBuilder: (child, animation) =>
-              ScaleTransition(scale: animation, child: child),
-          child: Text(
-            countdownValue > 0 ? countdownValue.toString() : "",
-            key: ValueKey<int>(countdownValue > 0 ? countdownValue : -1),
-            style: TextStyle(
-              fontSize: fontSize * 5,
-              fontWeight: FontWeight.bold,
-              color: circleColor,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ),
-      ),
-    );
-  }
-}
-*/
-
+// Due to a timing issue in playing long beep, the countdown display is no longer used.
 class CountdownDisplay extends StatelessWidget {
   final int countdownValue;
   final double fontSize;
