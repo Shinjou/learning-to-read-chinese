@@ -2,7 +2,7 @@ name: ltrc
 description: A new Flutter project.
 publish_to: 'none'
 
-version: 1.8.0+8
+version: 1.8.0+9
 
 ios:
   minimum_os_version: '13.0'
