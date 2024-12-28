@@ -2,64 +2,121 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
-	<key>CFBundleDevelopmentRegion</key>
-	<string>$(DEVELOPMENT_LANGUAGE)</string>
-	<key>CFBundleDisplayName</key>
-	<string>學國語</string>
-	<key>CFBundleExecutable</key>
-	<string>$(EXECUTABLE_NAME)</string>
-	<key>CFBundleIdentifier</key>
-	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CFBundleName</key>
-	<string>學國語</string>
-	<key>CFBundlePackageType</key>
-	<string>APPL</string>
-	<key>CFBundleShortVersionString</key>
-	<string>$(FLUTTER_BUILD_NAME)</string>
-	<key>CFBundleSignature</key>
-	<string>????</string>
-	<key>CFBundleVersion</key>
-	<string>$(FLUTTER_BUILD_NUMBER)</string>
+    <!-- Enables minimum frame duration override for smooth rendering -->
+    <key>CADisableMinimumFrameDurationOnPhone</key>
+    <true/>
 
-	<key>ITSAppUsesNonExemptEncryption</key>
-	<false/>
-	<key>LSApplicationCategoryType</key>
-	<string>Education</string>	
-	<key>LSRequiresIPhoneOS</key>
-	<true/>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>需要使用麥克風來進行錄音和語音辨識</string>
-	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>需要使用語音辨識來檢查朗讀的內容</string>
-	<key>UIApplicationSupportsIndirectInputEvents</key>
-	<true/>
-	<key>UILaunchScreen</key>
-	<dict>
-		<key>UIImageName</key>
-		<string>LaunchImage</string>
-		<key>UIImageRespectsSafeAreaInsets</key>
-		<false/>
-	</dict>
-	<key>UILaunchStoryboardName</key>
-	<string>LaunchScreen</string>
-	<key>UIMainStoryboardFile</key>
-	<string>Main</string>
-	<key>UISupportedInterfaceOrientations</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-	</array>
-	<key>UISupportedInterfaceOrientations~ipad</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationPortraitUpsideDown</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
-	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<false/>
+    <!-- Localization region -->
+    <key>CFBundleDevelopmentRegion</key>
+    <string>$(DEVELOPMENT_LANGUAGE)</string>
+
+    <!-- Display name of the app -->
+    <key>CFBundleDisplayName</key>
+    <string>學國語</string>
+
+    <!-- Executable name -->
+    <key>CFBundleExecutable</key>
+    <string>$(EXECUTABLE_NAME)</string>
+
+    <!-- Unique bundle identifier -->
+    <key>CFBundleIdentifier</key>
+    <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+
+    <!-- Info dictionary version -->
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+
+    <!-- App name -->
+    <key>CFBundleName</key>
+    <string>學國語</string>
+
+    <!-- Package type -->
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+
+    <!-- App signature -->
+    <key>CFBundleSignature</key>
+    <string>????</string>
+
+    <!-- App version, need to sync with pubspec.yaml -->
+    <key>CFBundleShortVersionString</key>
+    <string>1.8.0</string>
+
+    <!-- Build number, need to sync with pubspec.yaml -->
+    <key>CFBundleVersion</key>
+    <string>9</string>
+
+    <!-- Indicates the app does not use non-exempt encryption -->
+    <key>ITSAppUsesNonExemptEncryption</key>
+    <false/>
+
+    <!-- App category -->
+    <key>LSApplicationCategoryType</key>
+    <string>Education</string>
+
+    <!-- Indicates that the app requires iPhone OS -->
+    <key>LSRequiresIPhoneOS</key>
+    <true/>
+
+    <!-- Purpose string for microphone access -->
+    <key>NSMicrophoneUsageDescription</key>
+    <string>此應用程式需要使用麥克風來進行錄音和語音辨識</string>
+
+    <!-- Purpose string for speech recognition -->
+    <key>NSSpeechRecognitionUsageDescription</key>
+    <string>此應用程式需要使用語音辨識來檢查朗讀的內容</string>
+
+    <!-- Purpose string for location access -->
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>此應用程式需要存取您的位置才能提供定位服務。</string>
+
+    <!-- Purpose string for photo library access -->
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>此應用程式需要存取您的照片庫才能上傳照片。</string>
+
+    <!-- Purpose string for camera access -->
+    <key>NSCameraUsageDescription</key>
+    <string>此應用程式需要存取您的相機才能拍攝照片或影片。</string>
+
+    <!-- Supports indirect input events -->
+    <key>UIApplicationSupportsIndirectInputEvents</key>
+    <true/>
+
+    <!-- Launch screen image -->
+    <key>UILaunchScreen</key>
+    <dict>
+        <key>UIImageName</key>
+        <string>LaunchImage</string>
+        <key>UIImageRespectsSafeAreaInsets</key>
+        <false/>
+    </dict>
+
+    <!-- Launch storyboard -->
+    <key>UILaunchStoryboardName</key>
+    <string>LaunchScreen</string>
+
+    <!-- Main storyboard -->
+    <key>UIMainStoryboardFile</key>
+    <string>Main</string>
+
+    <!-- Supported orientations for iPhone -->
+    <key>UISupportedInterfaceOrientations</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+    </array>
+
+    <!-- Supported orientations for iPad -->
+    <key>UISupportedInterfaceOrientations~ipad</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+        <string>UIInterfaceOrientationPortraitUpsideDown</string>
+        <string>UIInterfaceOrientationLandscapeLeft</string>
+        <string>UIInterfaceOrientationLandscapeRight</string>
+    </array>
+
+    <!-- Prevents status bar changes by view controllers -->
+    <key>UIViewControllerBasedStatusBarAppearance</key>
+    <false/>
 </dict>
 </plist>
+
