@@ -8,43 +8,87 @@ ios:
   minimum_os_version: '13.0'
 
 environment:
-  sdk: '>=3.0.5 <4.0.0'
-
-
+  sdk: '>=3.0.6 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
-  flutter_riverpod: ^2.6.0
-  provider: ^6.1.2
-  flutter_tts: ^4.2.0
-  audioplayers: ^6.1.0
-  fluttertoast: ^8.2.10
-  path: ^1.9.0
-  shared_preferences: ^2.3.4
+  # flutter_riverpod: ^2.6.0
+  flutter_riverpod: ^2.4.9  # Downgraded for better compatibility
+  # provider: ^6.1.2
+  provider: ^6.0.5  # Downgraded for stability
+  # flutter_tts: ^4.2.0
+  flutter_tts: ^3.8.3  # Downgraded to avoid compatibility issues
+  # audioplayers: ^6.1.0
+  audioplayers: ^5.2.0
+  # fluttertoast: ^8.2.10
+  fluttertoast: ^8.2.2
+  
+  # Using path ^1.8.3 for Dart 3.0.6 compatibility
+  # path: ^1.9.0
+  path: ^1.8.3
+  
+  # Using shared_preferences ^2.2.0 for Dart 3.0.6 compatibility  
+  # shared_preferences: ^2.3.4
+  shared_preferences: ^2.2.0
+
   svg_path_parser: ^1.1.1
-  sqflite: ^2.3.2
-  path_provider: ^2.1.5
-  logger: ^2.3.0
+  # sqflite: ^2.3.2
+  sqflite: ^2.3.0
+
+  # Using path_provider ^2.0.0 for older Dart compatibility
+  # path_provider: ^2.1.5
+  path_provider: ^2.0.15
+  # logger: ^2.3.0
+  logger: ^1.4.0  # Downgraded for SDK compatibility
   tuple: ^2.0.2
+
+
+  # IMPORTANT: pin file_picker to 8.1.6 (or lower) to avoid web ^1.0.0
   # file_picker: 5.2.7 # old version
-  file_picker: ^8.1.6
-  screenshot: ^3.0.0
-  intl: ^0.20.0
-  stack_trace: ^1.11.1
-  package_info_plus: ^8.1.2
-  freezed_annotation: ^2.4.4
-  record: ^5.2.0
-  permission_handler: ^11.3.1 # old version
-  speech_to_text: ^7.0.0
+  # file_picker: ^8.1.6
+  file_picker: ^5.3.3  # Downgraded to avoid web dependency issues
+
+  # screenshot: ^3.0.0
+  screenshot: ^2.1.0
+
+  # For older Dart, pin intl to ~0.15 or 0.16  
+  # intl: ^0.20.0
+  intl: ^0.18.1  # Updated to a more stable version
+  # stack_trace: ^1.11.1
+  stack_trace: ^1.11.0
+  # package_info_plus: ^8.1.2
+  package_info_plus: ^4.1.0
+
+  # freezed_annotation: ^2.4.4
+  freezed_annotation: ^2.4.1
+  record: ^5.0.0
+  # record: ^3.0.4 # does not support AudioRecorder
+
+  # permission_handler: ^11.3.1 # old version
+  permission_handler: ^10.4.3  # Downgraded for SDK compatibility
+  # speech_to_text: ^7.0.0
+  speech_to_text: ^6.3.0  # Downgraded for compatibility
   flutter_phoenix: ^1.1.1
+  # flutter_volume_controller: ^1.3.3 # not working
+  volume_controller: ^3.0.2
+
+# Remove or comment out overrides that force versions requiring Dart ≥3.1
+# dependency_overrides:
+#   flutter_tts: ^4.2.1
+#   path_provider_android: ^2.2.15
+#   file_picker: ^8.1.7
 
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^5.0.0
-  freezed: ^2.4.1  # Required for code generation with freezed_annotation
+  # flutter_lints: ^5.0.0
+  flutter_lints: ^2.0.0
+
+  # Required for code generation with freezed_annotation
+  freezed: ^2.4.1  
+  
 
 flutter:
   fonts:
