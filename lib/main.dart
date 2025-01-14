@@ -17,6 +17,7 @@ import 'package:ltrc/views/log_in_view.dart';
 import 'package:ltrc/views/polyphonic_processor.dart';
 import 'package:ltrc/contants/routes.dart';
 
+
 Future<void> main() async {
   try {
     WidgetsFlutterBinding.ensureInitialized();
@@ -77,6 +78,11 @@ class ServiceInitializer {
       final recorder = await initializeRecorder();
       providers.add(recorderProvider.overrideWithValue(recorder));
       debugPrint('Audio recorder initialized');
+
+      // Initialize Volume Controller
+      final volCtrl = await initializeVolCtrl();
+      final currentVol = await volCtrl.getVolume();
+      debugPrint('Volume controller initialized: $currentVol');
       
       debugPrint('All core services initialized successfully');
       
@@ -110,7 +116,8 @@ class MyApp extends ConsumerWidget {
       home: const ScreenInfoInitializer(child: HomePage()),
       builder: (context, child) {
         return MediaQuery(
-          data: MediaQuery.of(context).copyWith(textScaler: const TextScaler.linear(1.0)),
+          // data: MediaQuery.of(context).copyWith(textScaler: const TextScaler.linear(1.0)),
+          data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0), // older version
           child: child!,
         );
       },
@@ -254,7 +261,8 @@ void setupLogger() async {
         lineLength: 120,
         colors: false,
         printEmojis: false,
-        dateTimeFormat: DateTimeFormat.onlyTime,
+        // dateTimeFormat: DateTimeFormat.onlyTime, // old format 
+        // dateTimeFormat: DateFormat('HH:mm'),  // new but not used
       ),
     );
   }
