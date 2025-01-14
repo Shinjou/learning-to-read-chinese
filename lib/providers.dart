@@ -10,9 +10,11 @@ import 'package:ltrc/teach_word/services/speech_service.dart';
 import 'package:ltrc/views/view_utils.dart';
 import 'package:record/record.dart';
 import 'package:speech_to_text/speech_to_text.dart';
+import 'package:volume_controller/volume_controller.dart';
 
-
+// --------------------------
 // Core app state providers
+// --------------------------
 final soundSpeedProvider = StateProvider<double>((ref) => 0.5);
 final zhuyinOnProvider = StateProvider<bool>((ref) => true);
 
@@ -26,7 +28,9 @@ final userNameProvider = StateProvider<String>((ref) => "");
 final totalWordCountProvider = StateProvider<int>((ref) => 186);
 final learnedWordCountProvider = StateProvider<int>((ref) => 0);
 
+// --------------------------
 // Base service providers
+// --------------------------
 final ttsProvider = Provider<FlutterTts>((ref) {
   final ftts = FlutterTts();
   return ftts;
@@ -38,9 +42,9 @@ final audioPlayerProvider = Provider<AudioPlayer>((ref) {
   return player;
 });
 
-// Base providers for speech services
 final speechToTextProvider = Provider<SpeechToText>((ref) {
   final stt = SpeechToText();
+  // Optionally stop if the provider is disposed
   ref.onDispose(() {
     stt.stop();
   });
@@ -55,7 +59,38 @@ final recorderProvider = Provider<AudioRecorder>((ref) {
   return recorder;
 });
 
+
+final volumeControllerProvider = Provider<VolumeController>((ref) {
+  final volCtrl = VolumeController.instance;
+  return volCtrl;
+});
+
+final volumeStateProvider = AsyncNotifierProvider<VolumeAsyncNotifier, double>(() {
+  return VolumeAsyncNotifier();
+});
+
+class VolumeAsyncNotifier extends AsyncNotifier<double> {
+  @override
+  Future<double> build() async {
+    // read the volume from plugin
+    final ctrl = ref.read(volumeControllerProvider);
+    final vol = await ctrl.getVolume();
+    return vol;
+  }
+
+  Future<void> refreshVolume() async {
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      final ctrl = ref.read(volumeControllerProvider);
+      return await ctrl.getVolume();
+    });
+  }
+}
+
+// --------------------------
 // Initialization functions
+// (Used in main.dart or similar if needed)
+// --------------------------
 Future<FlutterTts> initializeTts() async {
   final ftts = FlutterTts();
   ftts.setStartHandler(() {
@@ -70,6 +105,10 @@ Future<FlutterTts> initializeTts() async {
   await ftts.setLanguage("zh-tw");
   await ftts.setSpeechRate(0.5);
   await ftts.setVolume(1.0);
+
+  // Set queue mode to ADD (1) so consecutive speak() calls won't interrupt each other.
+  await ftts.setQueueMode(1);
+
   debugPrint('Main: TTS initialized.');
   return ftts;
 }
@@ -86,6 +125,15 @@ Future<AudioRecorder> initializeRecorder() async {
   return recorder;
 }
 
+Future<VolumeController> initializeVolCtrl() async {
+  final volCtrl = VolumeController.instance;
+  debugPrint('Main: Volume controller initialized.');
+  return volCtrl;  
+}
+
+
+/// If you want to do a one-time init of STT in main.dart, you can use this.
+// But typically, we also re-initialize inside SpeechService for Android sessions.
 Future<SpeechToText> initializeSpeechToText() async {
   final speech = SpeechToText();
   try {
@@ -149,7 +197,9 @@ class AudioServiceInitializer {
   }
 }
 
-// Screen info provider
+// --------------------------
+// Screen info, error handlers
+// --------------------------
 final screenInfoProvider = StateNotifierProvider<ScreenInfoNotifier, ScreenInfo>((ref) {
   return ScreenInfoNotifier();
 });
@@ -162,18 +212,19 @@ final speechErrorHandlerProvider = Provider<Function(String)>((ref) {
   };
 });
 
+// --------------------------
+// Actual Service + Notifier
+// --------------------------
 final speechServiceProvider = Provider<SpeechService>((ref) {
   final stt = ref.watch(speechToTextProvider);
   final recorder = ref.watch(recorderProvider);
   final player = ref.watch(audioPlayerProvider);
   final errorHandler = ref.watch(speechErrorHandlerProvider);
-  // final initialLocaleId = ref.watch(initialLocaleProvider);
   return SpeechService(
     speechToText: stt,
     recorder: recorder,
     audioPlayer: player,
     onError: errorHandler,
-    // initialLocaleId: initialLocaleId,
   );
 });
 
@@ -183,13 +234,12 @@ final speechStateProvider = StateNotifierProvider<SpeechStateNotifier, SpeechSta
   final service = ref.watch(speechServiceProvider);
   final player = ref.watch(audioPlayerProvider);
   final errorHandler = ref.watch(speechErrorHandlerProvider);
-  // final initialLocaleId = ref.watch(initialLocaleProvider);
 
   return SpeechStateNotifier(
-    service, 
-    player, 
-    onError: errorHandler, 
-    initialLocaleId: 'zh-TW',
+    service,
+    player,
+    onError: errorHandler,
+    initialLocaleId: ref.watch(initialLocaleProvider),
   );
 });
 
