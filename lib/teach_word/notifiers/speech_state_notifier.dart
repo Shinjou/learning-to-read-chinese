@@ -119,7 +119,7 @@ class SpeechStateNotifier extends StateNotifier<SpeechState> {
       await _audioPlayer.resume();
 
       // Adjust buffer based on file type
-      final durationBuffer = isLongBeep ? Duration(milliseconds: 500) : Duration(milliseconds: 150);
+      final durationBuffer = isLongBeep ? const Duration(milliseconds: 500) : const Duration(milliseconds: 150);
       // final durationBuffer = isLongBeep ? Duration(milliseconds: 200) : Duration(milliseconds: 100);
       await Future.delayed(durationBuffer);
 
