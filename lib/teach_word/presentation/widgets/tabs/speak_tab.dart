@@ -1,10 +1,12 @@
 // lib/teach_word/presentation/widgets/tabs/speak_tab.dart
 
+import 'dart:io' show Platform;
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+
 import 'package:ltrc/providers.dart';
 import 'package:ltrc/teach_word/constants/steps.dart';
 import 'package:ltrc/teach_word/models/speech_state.dart';
@@ -12,6 +14,7 @@ import 'package:ltrc/teach_word/presentation/teach_word_utils.dart';
 import 'package:ltrc/views/view_utils.dart';
 import 'package:ltrc/widgets/mainPage/left_right_switch.dart';
 import 'package:ltrc/widgets/teach_word/zhuyin_processing.dart';
+import 'package:ltrc/teach_word/notifiers/speech_state_notifier.dart';
 
 class ComparisonResult {
   final InlineSpan highlightedSpan;
@@ -98,13 +101,13 @@ ComparisonResult compareTexts(String originalText, String recognizedText) {
       if (oMid.isNotEmpty) {
         spans.add(TextSpan(
           text: oMid,
-          style: TextStyle(decoration: TextDecoration.underline, color: Colors.black),
+          style: const TextStyle(decoration: TextDecoration.underline, color: Colors.black),
         ));
       }
       if (rMid.isNotEmpty) {
         spans.add(TextSpan(
           text: rMid,
-          style: TextStyle(decoration: TextDecoration.lineThrough, color: Colors.black),
+          style: const TextStyle(decoration: TextDecoration.lineThrough, color: Colors.black),
         ));
       }
 
@@ -126,7 +129,7 @@ ComparisonResult compareTexts(String originalText, String recognizedText) {
   debugPrint('${formattedActualTime()} compareTexts: originalLen=$originalLen, recognizedLen=$recognizedLen, matched=$matched, extraChars=$extraChars, accuracy=$accuracy');
 
   return ComparisonResult(
-    TextSpan(children: spans, style: TextStyle(color: Colors.black)),
+    TextSpan(children: spans, style: const TextStyle(color: Colors.black)),
     accuracy,
   );
 }
@@ -260,7 +263,6 @@ class SpeakTab extends ConsumerStatefulWidget {
 }
 
 class SpeakTabState extends ConsumerState<SpeakTab> {
-  // Core state variables
   late FlutterTts ftts;
   late double fontSize;
   late double deviceWidth;
@@ -278,18 +280,23 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
   late int pageIndex;
   static const accuracyThreshold = 0.6;
 
+  /// For Android only: user picks either STT or record mode
+  bool _isSttMode = true; // default "語音轉文字"
+
+  double volume = 0.5;
+
   @override
   void initState() {
     super.initState();
     _initializeComponents();
     debugPrint('${formattedActualTime()} SpeakTabState.initState called for widgetId: ${widget.widgetId}');
   }
-  
+
   void _initializeComponents() {
     ftts = ref.read(ttsProvider);
     pageIndex = 0;
     _initVariables(pageIndex); // Start with first page
-  }  
+  }
 
   void _initVariables(int pageIndex) {
     final notifier = ref.read(speechStateProvider.notifier);
@@ -318,15 +325,11 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
     hasSpoken = true;
     await handleGoToSpeak(widget.vocabCnt, vocabIndex, nextStepId, widget.wordObj, ftts);
   }
-  /*
-  Future<void> _speak(String text) async {
-    await ftts.speak(text);
-  }
-  */
+
   Widget _buildNavigationSwitch() {
     final speechState = ref.watch(speechStateProvider);
     debugPrint('${formattedActualTime()} _buildNavigationSwitch called.');
-    
+
     return LeftRightSwitch(
       fontSize: fontSize,
       iconsColor: lightGray,
@@ -351,13 +354,26 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
         }
       },
       onRightClicked: () {
-        debugPrint('${formattedActualTime()} Right navigation clicked. isAnswerCorrect=$speechState.isAnswerCorrect');
-        if (!speechState.isAnswerCorrect) {
+        debugPrint('${formattedActualTime()} Right navigation clicked. isAnswerCorrect=${speechState.isAnswerCorrect}');
+
+        // 1) If iOS, must pass accuracy.
+        // 2) If Android + STT mode, must pass accuracy.
+        // 3) If Android + record mode, can skip accuracy check.
+        bool mustPassAccuracy = false;
+        if (Platform.isIOS) {
+          mustPassAccuracy = true;
+        } else if (Platform.isAndroid && _isSttMode) {
+          mustPassAccuracy = true;
+        }
+
+        if (mustPassAccuracy && !speechState.isAnswerCorrect) {
           debugPrint('${formattedActualTime()} 說一說-第${vocabIndex + 1}句，$vocab, 需再試！');
-          return; // 需再試，do nothing
-        } else if (isLastVocab) {
+          return;
+        }
+
+        if (isLastVocab) {
           goToNextCharacter(
-            context: context, 
+            context: context,
             ref: ref,
             currentWordIndex: widget.wordIndex,
             wordsStatus: widget.wordsStatus,
@@ -377,14 +393,14 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
   void _onNextVocab() {
     debugPrint('${formattedActualTime()} _onNextVocab called. Moving to next vocab.');
     vocabIndex++;
-    _initVariables(vocabIndex);    
+    _initVariables(vocabIndex);
   }
 
   void _onPreviousVocab() {
     debugPrint('${formattedActualTime()} _onPreviousVocab called. Moving to previous vocab.'); 
     if (vocabIndex > 0) {
       vocabIndex--;
-      _initVariables(vocabIndex);      
+      _initVariables(vocabIndex);
     }
   }
 
@@ -411,9 +427,7 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
                 icon: const Icon(Icons.volume_up),
                 iconSize: fontSize,
                 color: explanationColor,
-                onPressed: () {
-                  ftts.speak(sentence);
-                },
+                onPressed: () => ftts.speak(sentence),
               ),
             ],
           ),
@@ -428,64 +442,19 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
         ],
       ),
     );
-  }  
-  
-  /*
-  Widget _buildTranscriptionSection() {
-    final speechState = ref.watch(speechStateProvider);
-    debugPrint('${formattedActualTime()} _buildTranscriptionSection called.');
-    
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(height: fontSize),
-        // Subtitle for transcribed text line
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: fontSize),
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              "轉錄文字",
-              style: TextStyle(
-                fontSize: fontSize,
-                color: explanationColor,
-              ),
-            ),
-          ),
-        ),        
-
-        // Transcribed line container
-        Container(
-          margin: EdgeInsets.symmetric(horizontal: fontSize, vertical: fontSize * 0.5),
-          padding: EdgeInsets.all(fontSize * 0.5),
-          decoration: BoxDecoration(
-            color: Colors.grey[200],
-            borderRadius: BorderRadius.circular(8),
-          ),
-          constraints: BoxConstraints(minHeight: fontSize * 3.0),
-          width: double.infinity,
-          child: AnimatedSwitcher(
-            duration: Duration(milliseconds: 200),
-            transitionBuilder: (child, animation) {
-              return FadeTransition(opacity: animation, child: child);
-            },
-            child: Text(
-              speechState.transcribedText,
-              key: ValueKey<String>(speechState.transcribedText),
-              textAlign: TextAlign.start, // Align text to start
-              style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold, color: Colors.grey[600]),
-            ),
-          ),
-        ),
-      ],
-    );
   }
-  */
-  
+
+  /// Show transcription if iOS concurrency or Android STT mode
   Widget _buildTranscriptionSection() {
     final speechState = ref.watch(speechStateProvider);
     debugPrint('${formattedActualTime()} _buildTranscriptionSection called.');
-    
+
+    final showTranscription = Platform.isIOS || (Platform.isAndroid && _isSttMode);
+
+    if (!showTranscription) {
+      return const SizedBox.shrink();
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start, // Ensure alignment to the left
       children: [
@@ -520,12 +489,12 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
             transitionBuilder: (child, animation) {
               return FadeTransition(opacity: animation, child: child);
             },
-            child: Align( // Explicit alignment for the text
-              alignment: Alignment.centerLeft, // Align text to the left
+            child: Align(
+              alignment: Alignment.centerLeft,
               child: Text(
                 speechState.transcribedText,
                 key: ValueKey<String>(speechState.transcribedText),
-                textAlign: TextAlign.start, // Ensure the text starts from the left
+                textAlign: TextAlign.start,
                 style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold, color: Colors.grey[600]),
               ),
             ),
@@ -535,6 +504,8 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
     );
   }
 
+  /// The practice controls (start, stop, feedback). We handle iOS concurrency as before,
+  /// but on Android we only do STT or record, not both at the same time.
   Widget _buildPracticeControls() {
     final speechState = ref.watch(speechStateProvider);
     final notifier = ref.read(speechStateProvider.notifier);
@@ -546,50 +517,149 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
         return ElevatedButton(
           onPressed: () {
             debugPrint('${formattedActualTime()} Start button pressed. Starting countdown...');
-            notifier.startCountdown();
+            notifier.startCountdown(isSttMode: _isSttMode);
           },
           child: Text("開始朗讀", style: TextStyle(fontSize: fontSize, color: Colors.grey[600])),
         );
 
       case RecordingState.countdown:
         debugPrint('${formattedActualTime()} Rendering CountdownDisplay. countdownValue: ${speechState.countdownValue}');
-        /*
-        return CountdownDisplay(
-            countdownValue: speechState.countdownValue,
-            fontSize: fontSize,
-        );
-        */
         return SizedBox(height: fontSize);
 
       case RecordingState.listening:
         debugPrint('${formattedActualTime()} Listening state. Rendering stop button.');
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ElevatedButton(
-              onPressed: () => notifier.stopListening(),
-              child: Text("停止", style: TextStyle(fontSize: fontSize, color: Colors.grey[600])),
-            ),
-          ],
+        return ElevatedButton(
+          onPressed: () async {
+            debugPrint('User tapped Stop.');
+            // even if STT says "done," still call stop anyway
+            await notifier.stopListening(); 
+          },
+          child: Text("停止", style: TextStyle(fontSize: fontSize, color: Colors.grey[600])),
         );
 
       case RecordingState.finished:
         return _buildFeedback(notifier, speechState);
-
-    }        
-
+    }
   }
 
-  Widget _buildFeedback(notifier, SpeechState speechState) {
+  /// Decide how to show feedback:
+  /// - iOS => concurrency => show STT diff plus “聽取錄音” if any
+  /// - Android STT => show diff, no “聽取錄音”
+  /// - Android record => no diff, show “聽取錄音”
+  Widget _buildFeedback(SpeechStateNotifier notifier, SpeechState speechState) {
     debugPrint('${formattedActualTime()} _buildFeedback called.');
 
-    String rawText = speechState.transcribedText;
-    String normOriginal = normalizeForAccuracy(sentence);
-    String normRecognized = normalizeForAccuracy(rawText);
+    if (Platform.isIOS) {
+      return _buildFeedbackiOS(notifier, speechState);
+    } else {
+      // Android => choose based on _isSttMode
+      if (_isSttMode) {
+        // STT => show transcript/diff, no "聽取錄音"
+        return _buildFeedbackStt(notifier, speechState);
+      } else {
+        // Record => no transcript, only "聽取錄音"
+        return _buildFeedbackRecord(notifier, speechState);
+      }
+    }
+  }
+
+  /// iOS concurrency => show transcript/diff + "聽取錄音" if path != null
+  Widget _buildFeedbackiOS(SpeechStateNotifier notifier, SpeechState speechState) {
+    final rawText = speechState.transcribedText;
+    final normOriginal = normalizeForAccuracy(sentence);
+    final normRecognized = normalizeForAccuracy(rawText);
     final comparison = compareTexts(normOriginal, normRecognized);
-    double accuracy = comparison.accuracy;
-    int wpm = calculateWPM(normRecognized, speechState.recordingSeconds);
-    String message = feedbackMessage(accuracy);
+    final accuracy = comparison.accuracy;
+    final wpm = calculateWPM(normRecognized, speechState.recordingSeconds);
+    final message = feedbackMessage(accuracy);
+
+    bool newIsAnswerCorrect = accuracy >= accuracyThreshold;
+    if (speechState.isAnswerCorrect != newIsAnswerCorrect) {
+      Future.microtask(() {
+        notifier.updateAnswerCorrectness(newIsAnswerCorrect);
+      });
+    }
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+        // If accuracy < 1.0, show diff
+        if (accuracy < 1.0) ...[
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: fontSize),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "比對結果",
+                style: TextStyle(
+                  fontSize: fontSize,
+                  color: explanationColor,
+                ),
+              ),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: fontSize, vertical: fontSize * 0.5),
+            padding: EdgeInsets.all(fontSize * 0.5),
+            decoration: BoxDecoration(
+              color: Colors.grey[200],
+              borderRadius: BorderRadius.circular(8),
+            ),
+            constraints: BoxConstraints(minHeight: fontSize * 3.0),
+            width: double.infinity,
+            child: ZhuyinProcessing.fromSpan(
+              spanParam: comparison.highlightedSpan,
+              fontSize: fontSize,
+              color: Colors.black,
+            ),
+          ),
+        ],
+        Wrap(
+          spacing: fontSize * 1.5,
+          runSpacing: fontSize * 0.5,
+          alignment: WrapAlignment.center,
+          children: [
+            Text(
+              "準確率: ${(accuracy * 100).toStringAsFixed(0)}%",
+              style: TextStyle(fontSize: fontSize, color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              "語速: $wpm 字/分鐘",
+              style: TextStyle(fontSize: fontSize, color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        SizedBox(height: fontSize),
+        Text(message, style: TextStyle(fontSize: fontSize, color: explanationColor)),
+        SizedBox(height: fontSize * 0.5),
+        Wrap(
+          spacing: fontSize,
+          runSpacing: fontSize * 0.5,
+          children: [
+            ElevatedButton(
+              onPressed: () => notifier.reset(),
+              child: Text("重新練習", style: TextStyle(fontSize: fontSize, color: Colors.grey[600])),
+            ),
+            if (speechState.recordingPath != null)
+              ElevatedButton(
+                onPressed: () => notifier.playRecording(volume),
+                child: Text("聽取錄音", style: TextStyle(fontSize: fontSize, color: Colors.grey[600])),
+              ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  /// Android STT => transcript/diff, no "聽取錄音"
+  Widget _buildFeedbackStt(SpeechStateNotifier notifier, SpeechState speechState) {
+    final rawText = speechState.transcribedText;
+    final normOriginal = normalizeForAccuracy(sentence);
+    final normRecognized = normalizeForAccuracy(rawText);
+    final comparison = compareTexts(normOriginal, normRecognized);
+    final accuracy = comparison.accuracy;
+    final wpm = calculateWPM(normRecognized, speechState.recordingSeconds);
+    final message = feedbackMessage(accuracy);
 
     bool newIsAnswerCorrect = accuracy >= accuracyThreshold;
     // Update correctness outside of widget rebuild if necessary
@@ -631,7 +701,7 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
             width: double.infinity,
             child: ZhuyinProcessing.fromSpan(
               spanParam: comparison.highlightedSpan,
-              fontSize: fontSize * 1.0,
+              fontSize: fontSize,
               color: Colors.black,
             ),
           ),
@@ -644,11 +714,11 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
           children: [
             Text(
               "準確率: ${(accuracy * 100).toStringAsFixed(0)}%",
-              style: TextStyle(fontSize: fontSize, color: Colors.white, fontWeight: FontWeight.bold), // Increased contrast
+              style: TextStyle(fontSize: fontSize, color: Colors.white, fontWeight: FontWeight.bold),
             ),
             Text(
               "語速: $wpm 字/分鐘",
-              style: TextStyle(fontSize: fontSize, color: Colors.white, fontWeight: FontWeight.bold), // Increased contrast
+              style: TextStyle(fontSize: fontSize, color: Colors.white, fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -656,45 +726,166 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
         SizedBox(height: fontSize),
         Text(message, style: TextStyle(fontSize: fontSize, color: explanationColor)),
         SizedBox(height: fontSize * 0.5),
+        ElevatedButton(
+          onPressed: () => notifier.reset(),
+          child: Text("重新練習", style: TextStyle(fontSize: fontSize, color: Colors.grey[600])),
+        ),
+      ],
+    );
+  }
+
+  /// Android Record => "聽取錄音" only, no transcript/diff
+  Widget _buildFeedbackRecord(SpeechStateNotifier notifier, SpeechState speechState) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
         Wrap(
           spacing: fontSize,
           runSpacing: fontSize * 0.5,
           children: [
             ElevatedButton(
-              onPressed: () => ref.read(speechStateProvider.notifier).reset(),
+              onPressed: () => notifier.reset(),
               child: Text("重新練習", style: TextStyle(fontSize: fontSize, color: Colors.grey[600])),
             ),
             if (speechState.recordingPath != null)
               ElevatedButton(
-                onPressed: () => ref.read(speechStateProvider.notifier).playRecording(),
+                onPressed: () => notifier.playRecording(volume),
                 child: Text("聽取錄音", style: TextStyle(fontSize: fontSize, color: Colors.grey[600])),
-              ),    
-          ]
-        )
+              ),
+          ],
+        ),
       ],
     );
   }
-  
-  @override
-  Widget build(BuildContext context) {
-    final screenInfo = ref.watch(screenInfoProvider);
-    fontSize = screenInfo.fontSize;
-    deviceWidth = screenInfo.screenWidth;
-    debugPrint('${formattedActualTime()} SpeakTabState.build called. fontSize: $fontSize');
 
-    return SingleChildScrollView(
+  /// Mode selector at bottom (Android only); iOS hides it
+  Widget _buildModeSelector() {
+    final speechState = ref.watch(speechStateProvider);
+    
+    if (Platform.isIOS) {
+      // iOS => concurrency => no special toggle
+      return const SizedBox.shrink();
+    }
+
+    // CHANGED: Hide the checkboxes if we are not in the idle state
+    if (speechState.state != RecordingState.idle) {
+      // We’re in the middle of recording => remove them entirely
+      return const SizedBox.shrink();
+    }
+
+    return Container(
+      margin: EdgeInsets.only(top: fontSize * 1.5, bottom: fontSize),
+      padding: EdgeInsets.symmetric(horizontal: fontSize),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildNavigationSwitch(),
-          _buildSentenceSection(),
-          _buildTranscriptionSection(),
-          SizedBox(height: fontSize * 1.5),
-          _buildPracticeControls(),
+          // Title, if you want it
+          Text(
+            '選擇模式',
+            style: TextStyle(fontSize: fontSize, color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: fontSize),
+
+          // 語音轉文字 Checkbox
+          Row(
+            children: [
+              Checkbox(
+                value: _isSttMode,
+                onChanged: (bool? newVal) {
+                  if (newVal == null) return;
+                  // If user checks this, we set STT mode = true
+                  setState(() {
+                    _isSttMode = true;
+                    ref.read(speechStateProvider.notifier).reset();
+                  });
+                },
+              ),
+              Text(
+                "語音轉文字",
+                style: TextStyle(
+                  fontSize: fontSize,
+                  color: _isSttMode ? Colors.lightBlue : Colors.white,
+                ),
+              ),
+            ],
+          ),
+
+          // 錄音 Checkbox
+          Row(
+            children: [
+              Checkbox(
+                value: !_isSttMode,
+                onChanged: (bool? newVal) {
+                  if (newVal == null) return;
+                  // If user checks this, we set STT mode = false
+                  setState(() {
+                    _isSttMode = !newVal; // Because newVal means “check for the other mode”
+                    ref.read(speechStateProvider.notifier).reset();
+                  });
+                },
+              ),
+              Text(
+                "錄音",
+                style: TextStyle(
+                  fontSize: fontSize,
+                  color: !_isSttMode ? Colors.lightBlue : Colors.white,
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
   }
 
-}
+  @override
+  Widget build(BuildContext context) {
 
+    // 1) Watch your synchronous providers:
+    final screenInfo = ref.watch(screenInfoProvider);
+    fontSize = screenInfo.fontSize;
+    deviceWidth = screenInfo.screenWidth;
+
+    // 2) (Optional) Watch an AsyncValue from Riverpod:
+    //    e.g., an async provider that fetches volume or something else
+    final volumeAsync = ref.watch(volumeStateProvider);
+
+    debugPrint('${formattedActualTime()} SpeakTabState.build called. fontSize: $fontSize');
+
+    // 3) Decide how to handle the async data. 
+    //    (If you have no async providers, you can skip the "when" block.)
+    return volumeAsync.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, stackTrace) {
+        return Center(child: Text('Error: $error'));
+      },
+      data: (volume) {
+        // 4) Use the data from the async provider plus your normal UI.
+        debugPrint('Fetched volume: $volume');
+
+        return SingleChildScrollView(
+          child: Column(
+            children: [
+              // 1) Navigation Switch (top)
+              _buildNavigationSwitch(),
+
+              // 2) Sentence
+              _buildSentenceSection(),
+
+              // 3) Transcription (if concurrency on iOS or STT mode on Android)
+              _buildTranscriptionSection(),
+              SizedBox(height: fontSize * 1.5),
+
+              // 4) Practice Controls
+              _buildPracticeControls(),
+
+              // 5) Mode selector at the bottom (Android only)
+              _buildModeSelector(),
+            ],
+          ),
+        );
+      }
+    );
+  }
+}
 
