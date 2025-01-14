@@ -36,12 +36,12 @@ class GradeAndProviderButton extends ConsumerWidget {
       child: ElevatedButton(
         onPressed: () {},
         style: ButtonStyle(
-          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(7)
             ),
           ),
-          backgroundColor: const WidgetStatePropertyAll(lightGray)
+          backgroundColor: MaterialStateProperty.all(lightGray)
         ),
         child: Text(
           text,
