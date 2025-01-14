@@ -59,7 +59,7 @@ class _SafetyHintRegisterState extends ConsumerState<SafetyHintRegisterView> {
           label: question.question,
           value: question,
           style: ButtonStyle(
-            textStyle: WidgetStateProperty.all<TextStyle>(
+            textStyle: MaterialStateProperty.all<TextStyle>(
               TextStyle(
                 fontSize: fontSize * 0.6,
                 color: veryDarkGrayishBlue,
@@ -79,7 +79,7 @@ class _SafetyHintRegisterState extends ConsumerState<SafetyHintRegisterView> {
             label: question.question,
             value: question,
             style: ButtonStyle(
-              textStyle: WidgetStateProperty.all<TextStyle>(
+              textStyle: MaterialStateProperty.all<TextStyle>(
                 TextStyle(
                   fontSize: fontSize * 0.6,
                   color: veryDarkGrayishBlue,

@@ -127,12 +127,12 @@ class MainPageView extends ConsumerWidget {
     return ElevatedButton(
       onPressed: onPressed,
       style: ButtonStyle(
-        backgroundColor: WidgetStateProperty.all(deepBlue),
-        elevation: WidgetStateProperty.all(25),
-        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+        backgroundColor: MaterialStateProperty.all(deepBlue),
+        elevation: MaterialStateProperty.all(25),
+        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
           RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12))),
-        padding: WidgetStateProperty.all(const EdgeInsets.symmetric(vertical: 16)),
+        padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 16)),
       ),
       child: Text(
         text,
