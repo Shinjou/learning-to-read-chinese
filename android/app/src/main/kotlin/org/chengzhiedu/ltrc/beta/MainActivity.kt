@@ -1,4 +1,4 @@
-package org.chengzhiedu.ltrc
+package org.chengzhiedu.ltrc.beta
 
 import io.flutter.embedding.android.FlutterActivity
 
