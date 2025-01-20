@@ -3,7 +3,10 @@ description: A new Flutter project.
 publish_to: 'none'
 # Changes to use Flutter 3.10.6; Android SDK 34; Android Studio 2022.2; Java 17.0.6; Gradle 7.5; AGP 7.3.0; 
 
-version: 1.8.0+9
+# The format is version: X.Y.Z+N where:
+#   X.Y.Z is your version name (shown to users)
+#   N is your version code (must be higher than previous releases)
+version: 1.8.10+10 
 
 ios:
   minimum_os_version: '13.0'
