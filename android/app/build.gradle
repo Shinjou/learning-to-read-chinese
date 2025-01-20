@@ -27,8 +27,8 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
     namespace "org.chengzhiedu.ltrc"
-    // compileSdkVersion flutter.compileSdkVersion
-    compileSdkVersion 35 // To support Volume Control
+    compileSdkVersion flutter.compileSdkVersion
+    // compileSdkVersion 35 // To support Volume Control
     ndkVersion flutter.ndkVersion
 
     compileOptions {

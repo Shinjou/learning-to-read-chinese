@@ -10,7 +10,7 @@ import 'package:ltrc/teach_word/services/speech_service.dart';
 import 'package:ltrc/views/view_utils.dart';
 import 'package:record/record.dart';
 import 'package:speech_to_text/speech_to_text.dart';
-import 'package:volume_controller/volume_controller.dart';
+// import 'package:volume_controller/volume_controller.dart';
 
 // --------------------------
 // Core app state providers
@@ -59,7 +59,7 @@ final recorderProvider = Provider<AudioRecorder>((ref) {
   return recorder;
 });
 
-
+/* volume_controller.dart requires sdk 35. Could not make it work.
 final volumeControllerProvider = Provider<VolumeController>((ref) {
   final volCtrl = VolumeController.instance;
   return volCtrl;
@@ -86,6 +86,13 @@ class VolumeAsyncNotifier extends AsyncNotifier<double> {
     });
   }
 }
+
+Future<VolumeController> initializeVolCtrl() async {
+  final volCtrl = VolumeController.instance;
+  debugPrint('Main: Volume controller initialized.');
+  return volCtrl;  
+}
+*/
 
 // --------------------------
 // Initialization functions
@@ -124,13 +131,6 @@ Future<AudioRecorder> initializeRecorder() async {
   debugPrint('Main: Audio recorder initialized.');
   return recorder;
 }
-
-Future<VolumeController> initializeVolCtrl() async {
-  final volCtrl = VolumeController.instance;
-  debugPrint('Main: Volume controller initialized.');
-  return volCtrl;  
-}
-
 
 /// If you want to do a one-time init of STT in main.dart, you can use this.
 // But typically, we also re-initialize inside SpeechService for Android sessions.

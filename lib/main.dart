@@ -1,8 +1,10 @@
 // main.dart 
 
 import 'dart:async';
+import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ltrc/views/view_utils.dart';
@@ -23,6 +25,23 @@ Future<void> main() async {
     WidgetsFlutterBinding.ensureInitialized();
     setupLogger();
     
+    // Check if device is a phone or tablet
+    final bool isPhone = await _isPhone();
+    if (isPhone) {
+      // Lock orientation to portrait for phones only
+      await SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+      ]);
+    } else {
+      // Allow all orientations for tablets
+      await SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.landscapeRight,
+      ]);
+    }
+
     // Initialize databases and data
     await Future.wait([
       AllProvider().database,
@@ -52,6 +71,16 @@ Future<void> main() async {
   }
 }
 
+// Helper function to determine if the device is a phone
+Future<bool> _isPhone() async {
+  final FlutterView view = WidgetsBinding.instance.platformDispatcher.views.first;
+  final size = view.physicalSize / view.devicePixelRatio;
+  final shortestSide = size.shortestSide;
+  
+  // Generally, devices with a shortest side less than 600dp are considered phones
+  return shortestSide < 600;
+}
+
 class ServiceInitializer {
   Future<List<Override>> initializeServices() async {
     final providers = <Override>[];
@@ -78,12 +107,15 @@ class ServiceInitializer {
       final recorder = await initializeRecorder();
       providers.add(recorderProvider.overrideWithValue(recorder));
       debugPrint('Audio recorder initialized');
-
+      
+      /* volume_controller.dart requires sdk 35. Could not make it work. 
+      // so take it out for now.
       // Initialize Volume Controller
       final volCtrl = await initializeVolCtrl();
       final currentVol = await volCtrl.getVolume();
       debugPrint('Volume controller initialized: $currentVol');
-      
+      */
+
       debugPrint('All core services initialized successfully');
       
     } catch (e, stack) {
