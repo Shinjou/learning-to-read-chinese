@@ -136,7 +136,6 @@ class SpeechService {
 
           // If the final recognized text is not empty, do something with it:
           if (recognizedText.isNotEmpty) {
-            // For example, pass it to a method that processes the completed text
             onResult(recognizedText, true);
           } else {
             // Possibly handle an empty final result (user didn't say anything, or got cut off)
