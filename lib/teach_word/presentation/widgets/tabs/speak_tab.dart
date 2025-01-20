@@ -266,6 +266,7 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
   late FlutterTts ftts;
   late double fontSize;
   late double deviceWidth;
+  late SpeechState speechState;
 
   // Navigation state
   int vocabIndex = 0;
@@ -283,7 +284,7 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
   /// For Android only: user picks either STT or record mode
   bool _isSttMode = true; // default "語音轉文字"
 
-  double volume = 0.5;
+  double volume = 0.9; // Volume for playback. fixed because volume controller requires sdk 35
 
   @override
   void initState() {
@@ -317,6 +318,7 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
           : TeachWordSteps.steps['goToSpeak2']!;
       hasSpoken = false;
     });
+    debugPrint('${formattedActualTime()} _initVariables called. pageIndex=$pageIndex, vocab=$vocab, vocab2=$vocab2, nextStepId=$nextStepId');
   }
 
   Future<void> _handleGoToSpeak() async {
@@ -327,7 +329,6 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
   }
 
   Widget _buildNavigationSwitch() {
-    final speechState = ref.watch(speechStateProvider);
     debugPrint('${formattedActualTime()} _buildNavigationSwitch called.');
 
     return LeftRightSwitch(
@@ -446,7 +447,6 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
 
   /// Show transcription if iOS concurrency or Android STT mode
   Widget _buildTranscriptionSection() {
-    final speechState = ref.watch(speechStateProvider);
     debugPrint('${formattedActualTime()} _buildTranscriptionSection called.');
 
     final showTranscription = Platform.isIOS || (Platform.isAndroid && _isSttMode);
@@ -507,10 +507,9 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
   /// The practice controls (start, stop, feedback). We handle iOS concurrency as before,
   /// but on Android we only do STT or record, not both at the same time.
   Widget _buildPracticeControls() {
-    final speechState = ref.watch(speechStateProvider);
     final notifier = ref.read(speechStateProvider.notifier);
 
-    debugPrint('${formattedActualTime()} _buildPracticeControls called. RecordingState: ${speechState.state}');
+    // debugPrint('${formattedActualTime()} _buildPracticeControls called. RecordingState: ${speechState.state}');
 
     switch (speechState.state) {
       case RecordingState.idle:
@@ -531,8 +530,7 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
         return ElevatedButton(
           onPressed: () async {
             debugPrint('User tapped Stop.');
-            // even if STT says "done," still call stop anyway
-            await notifier.stopListening(); 
+            await notifier.stopListening(isSttMode: _isSttMode); 
           },
           child: Text("停止", style: TextStyle(fontSize: fontSize, color: Colors.grey[600])),
         );
@@ -637,7 +635,7 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
           runSpacing: fontSize * 0.5,
           children: [
             ElevatedButton(
-              onPressed: () => notifier.reset(),
+              onPressed:() => _initVariables(vocabIndex),
               child: Text("重新練習", style: TextStyle(fontSize: fontSize, color: Colors.grey[600])),
             ),
             if (speechState.recordingPath != null)
@@ -760,7 +758,6 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
 
   /// Mode selector at bottom (Android only); iOS hides it
   Widget _buildModeSelector() {
-    final speechState = ref.watch(speechStateProvider);
     
     if (Platform.isIOS) {
       // iOS => concurrency => no special toggle
@@ -842,16 +839,20 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
   Widget build(BuildContext context) {
 
     // 1) Watch your synchronous providers:
+    speechState = ref.watch(speechStateProvider);
     final screenInfo = ref.watch(screenInfoProvider);
     fontSize = screenInfo.fontSize;
     deviceWidth = screenInfo.screenWidth;
 
+    /* volume_controller.dart requires sdk 35. Could not make it work. commented out for now.
     // 2) (Optional) Watch an AsyncValue from Riverpod:
     //    e.g., an async provider that fetches volume or something else
     final volumeAsync = ref.watch(volumeStateProvider);
+    */
 
-    debugPrint('${formattedActualTime()} SpeakTabState.build called. fontSize: $fontSize');
+    debugPrint('${formattedActualTime()} SpeakTabState.build called. fontSize: $fontSize, state=${speechState.state}');
 
+    /* volume_controller.dart requires sdk 35. Could not make it work. commented out for now.
     // 3) Decide how to handle the async data. 
     //    (If you have no async providers, you can skip the "when" block.)
     return volumeAsync.when(
@@ -862,7 +863,7 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
       data: (volume) {
         // 4) Use the data from the async provider plus your normal UI.
         debugPrint('Fetched volume: $volume');
-
+    */
         return SingleChildScrollView(
           child: Column(
             children: [
@@ -884,8 +885,10 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
             ],
           ),
         );
+    /* commented out volumeAsync.when block for now.
       }
     );
+    */
   }
 }
 
