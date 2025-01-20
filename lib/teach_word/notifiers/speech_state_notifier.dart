@@ -2,7 +2,6 @@
 
 import 'dart:async';
 import 'dart:io';
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -101,7 +100,7 @@ class SpeechStateNotifier extends StateNotifier<SpeechState> {
   }
 
 
-
+  /* Android can not play beep before listening. So I took it out for both Android and iOS.
   Future<void> _playBeep(String type) async {
     final startTime = DateTime.now();
     final isLongBeep = type == 'long';
@@ -129,6 +128,7 @@ class SpeechStateNotifier extends StateNotifier<SpeechState> {
       debugPrint('${formattedActualTime()} Error playing $type beep: $e');
     }
   }
+  */
 
   // iOS concurrency
   Future<void> _startIosListeningFlow() async {
@@ -251,22 +251,36 @@ class SpeechStateNotifier extends StateNotifier<SpeechState> {
   // If you still want the old concurrency for both iOS/Android, you can keep _startListeningFlow,
   // but you seem to have replaced it with specialized flows.
 
-  Future<void> stopListening() async {
-    debugPrint('stopListening() called...');
+  Future<void> stopListening({bool isSttMode = true}) async {
+    debugPrint('notifier stopListening() called...');
     try {
-      await _speechService.stopListening();
-      debugPrint('stopListening() => STT stopped');
-      final path = await _speechService.stopRecording();
-      debugPrint('stopListening() => recorder stopped at $path');
       _elapsedTimer?.cancel();
-      if (!mounted) return;
       state = state.copyWith(
         state: RecordingState.finished,
         isListening: false,
-        recordingPath: path,
+        // recordingPath: path,
         recordingSeconds: _elapsedSeconds,
-      );
-      debugPrint('stopListening() => state updated to finished');
+      );      
+      if (Platform.isAndroid) {
+        if (isSttMode) {
+          await _speechService.stopListening();
+          debugPrint('stopListening() => STT stopped. state = $state');
+        } else {
+          final path = await _speechService.stopRecording();
+          debugPrint('stopListening() => recorder stopped at $path. state = $state');
+          state = state.copyWith(
+            recordingPath: path,
+          );                
+        }
+      } else { // iOS
+        await _speechService.stopListening();
+        debugPrint('stopListening() => STT stopped');
+        final path = await _speechService.stopRecording();
+        debugPrint('stopListening() => recorder stopped at $path. state = $state');
+        state = state.copyWith(
+          recordingPath: path,
+        );                        
+      }
     } catch (e) {
       debugPrint('stopListening() => error: $e');
       handleError('Error stopping listening/recording: $e');
@@ -277,8 +291,6 @@ class SpeechStateNotifier extends StateNotifier<SpeechState> {
     if (state.recordingPath == null || state.isPlaying) return;
     state = state.copyWith(isPlaying: true);
     try {
-      volume = min(volume as double, 0.9);
-      // volume = 1.0; // for testing
       await _audioPlayer.play(DeviceFileSource(state.recordingPath!), volume: volume);
       state = state.copyWith(isPlaying: false);
     } catch (e) {
