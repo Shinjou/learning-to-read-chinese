@@ -13,6 +13,7 @@
 migrate_working_dir/
 # Tools. Move sh file under lib before execution
 lib/tools/
+*.sh
 
 # IntelliJ related
 *.iml
