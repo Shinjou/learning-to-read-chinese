@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ltrc/contants/semester_code.dart';
-import 'package:ltrc/contants/publisher_code.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:ltrc/constants/semester_code.dart';
+// import 'package:ltrc/constants/publisher_code.dart';
 import 'package:ltrc/data/models/user_model.dart';
-import 'package:ltrc/data/providers/unit_provider.dart';
+// import 'package:ltrc/data/providers/unit_provider.dart';
 import 'package:ltrc/data/providers/user_provider.dart';
-// import 'package:ltrc/extensions.dart';
 import 'package:ltrc/providers.dart';
-import 'package:ltrc/views/view_utils.dart';
+// import 'package:ltrc/views/view_utils.dart';
 
 class LogInView extends ConsumerStatefulWidget {
   const LogInView({super.key});
@@ -24,21 +24,81 @@ class LogInViewState extends ConsumerState<LogInView> {
   TextEditingController accountController = TextEditingController();
   TextEditingController pwdController = TextEditingController();
 
-  bool pwdVisible = false;
+  bool pwdVisible = true;
   String showErrorHint = "";
+  List<String> recentAccounts = [];
 
   @override
   void initState() {
     super.initState();
-    pwdVisible = true;
-    showErrorHint = "";
+    _initializeDefaultValues();
   }
 
-  @override
-  void dispose() {
-    accountController.dispose();
-    pwdController.dispose();
-    super.dispose();
+  Future<void> _initializeDefaultValues() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String lastUsername = prefs.getString('lastUsername') ?? 'learner';
+    List<String> accounts = prefs.getStringList('recentAccounts') ?? [];
+
+    setState(() {
+      accountController.text = lastUsername;
+      pwdController.text = lastUsername == 'learner' ? '1234' : '';
+      recentAccounts = accounts;
+    });
+  }
+
+  Future<void> _login() async {
+    String account = accountController.text.trim();
+    String password = pwdController.text.trim();
+
+    if (account.isEmpty || password.isEmpty) {
+      setState(() {
+        showErrorHint = "請填入帳號和密碼";
+      });
+      return;
+    }
+
+    // Add account length validation
+    if (account.length < 6) {
+      setState(() {
+        showErrorHint = accountLengthErrorHint;
+      });
+      return;
+    }
+
+    try {
+      // Mock or real backend logic to validate login
+      User user = await UserProvider().getUser(inputAccount: account);
+
+      if (user.password != password) {
+        setState(() {
+          showErrorHint = pwdConfirmErrorHint;
+        });
+      } else {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+
+        if (!recentAccounts.contains(account)) {
+          if (recentAccounts.length >= 5) {
+            recentAccounts.removeAt(0);
+          }
+          recentAccounts.add(account);
+        }
+
+        await prefs.setString('lastUsername', account);
+        await prefs.setStringList('recentAccounts', recentAccounts);
+
+        ref.read(accountProvider.notifier).state = account;
+        ref.read(userNameProvider.notifier).state = user.username;
+
+        // Check if context is still mounted before navigation
+        if (mounted) {
+          Navigator.pushReplacementNamed(context, '/mainPage');
+        }
+      }
+    } catch (e) {
+      setState(() {
+        showErrorHint = abnormalErrorHint;
+      });
+    }
   }
 
   @override
@@ -49,6 +109,162 @@ class LogInViewState extends ConsumerState<LogInView> {
     double deviceWidth = screenInfo.screenWidth;
     debugPrint('LogInView: Building H: $deviceHeight, W: $deviceWidth, F: $fontSize');
 
+    return GestureDetector(
+      onTap: () {
+        final scope = FocusScope.of(context);
+        if (!scope.hasPrimaryFocus && scope.focusedChild != null) {
+          scope.focusedChild!.unfocus();
+        }
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        backgroundColor: Colors.grey[900],
+        body: SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: deviceHeight,
+            ),
+            child: IntrinsicHeight(
+            child: Center(
+              child: SizedBox(
+                width: deviceWidth, // honor ScreenInfo width (3:4 in landscape)
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    SizedBox(height: deviceHeight * 0.1),
+                    Text('學國語',
+                        style: TextStyle(
+                          fontSize: fontSize * 3.0,
+                          color: Colors.white,
+                        )),
+                    SizedBox(height: fontSize * 2.0),
+                    SizedBox(
+                      width: deviceWidth * 0.8,
+                      child: TextField(
+                        controller: accountController,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: fontSize,
+                        ),
+                        decoration: InputDecoration(
+                          labelText: '帳號名稱',
+                          labelStyle: TextStyle(color: Colors.white, fontSize: fontSize),
+                          enabledBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.blueGrey),
+                          ),
+                          focusedBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.blue, width: 2),
+                          ),
+                          filled: true,
+                          fillColor: Colors.grey[800],
+                        ),
+                        onChanged: (value) {
+                          // Keep default password shortcut for learner
+                          setState(() {
+                            pwdController.text = value.trim() == 'learner' ? '1234' : '';
+                          });
+                        },
+                      ),
+                    ),
+                    SizedBox(height: deviceHeight * 0.05),
+                    SizedBox(
+                      width: deviceWidth * 0.8,
+                      child: TextField(
+                        controller: pwdController,
+                        obscureText: pwdVisible,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: fontSize,
+                        ),
+                        decoration: InputDecoration(
+                          labelText: '密碼',
+                          labelStyle: TextStyle(color: Colors.white, fontSize: fontSize),
+                          enabledBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.blueGrey),
+                          ),
+                          focusedBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.blue, width: 2),
+                          ),
+                          filled: true,
+                          fillColor: Colors.grey[800],
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                                pwdVisible ? Icons.visibility : Icons.visibility_off,
+                                color: Colors.white),
+                            onPressed: () {
+                              setState(() {
+                                pwdVisible = !pwdVisible;
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: deviceHeight * 0.03),
+                    Visibility(
+                      visible: showErrorHint.isNotEmpty,
+                      child: SizedBox(
+                        width: deviceWidth * 0.8,
+                        child: Text(
+                          showErrorHint,
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontSize: fontSize * 0.9,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: deviceHeight * 0.05),
+                    SizedBox(
+                      width: deviceWidth * 0.8,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          SizedBox(
+                            width: deviceWidth * 0.35,
+                            height: fontSize * 3,
+                            child: ElevatedButton(
+                              onPressed: _login,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blue,
+                                foregroundColor: Colors.white,
+                              ),
+                              child: Text(
+                                '登入',
+                                style: TextStyle(fontSize: fontSize * 1.2),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: deviceWidth * 0.35,
+                            height: fontSize * 3,
+                            child: TextButton(
+                              onPressed: () => Navigator.pushNamed(context, '/register'),
+                              style: TextButton.styleFrom(
+                                backgroundColor: Colors.grey[700],
+                                foregroundColor: Colors.white,
+                              ),
+                              child: Text(
+                                '註冊',
+                                style: TextStyle(fontSize: fontSize * 1.2),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: deviceHeight * 0.03),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    )
+
+    /*
     return GestureDetector(
       onTap: () {
         FocusScopeNode currentFocus = FocusScope.of(context);
@@ -71,7 +287,7 @@ class LogInViewState extends ConsumerState<LogInView> {
                   SizedBox(height: deviceHeight * 0.1),
                   Text('學國語',
                       style: TextStyle(
-                        fontSize: fontSize * 3.0, // was 4.0
+                        fontSize: fontSize * 3.0,
                       )),
                   SizedBox(height: fontSize * 2.0),
                   Container(
@@ -279,6 +495,9 @@ class LogInViewState extends ConsumerState<LogInView> {
         ),
       ),
     );
+    */
+
+  );
   }
 
 }
