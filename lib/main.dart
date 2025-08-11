@@ -17,7 +17,7 @@ import 'package:ltrc/data/providers/all_provider.dart';
 import 'package:ltrc/data/providers/user_provider.dart';
 import 'package:ltrc/views/log_in_view.dart';
 import 'package:ltrc/views/polyphonic_processor.dart';
-import 'package:ltrc/contants/routes.dart';
+import 'package:ltrc/constants/routes.dart';
 
 
 Future<void> main() async {
@@ -57,17 +57,19 @@ Future<void> main() async {
 
     debugPrint('Main: Starting app initialization.');
     runApp(
-      ProviderScope(
-        child: UncontrolledProviderScope(
-          container: container,
-          child: const MyApp(),
+      Phoenix(
+        child: ProviderScope(
+          child: UncontrolledProviderScope(
+            container: container,
+            child: const MyApp(),
+          ),
         ),
       ),
     );
   } catch (e, stack) {
     debugPrint('Failed to init the app: $e');
     debugPrint('Stack trace: $stack');
-    runApp(const ErrorApp());
+    runApp(Phoenix(child: const ErrorApp()));
   }
 }
 
