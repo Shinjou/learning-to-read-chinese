@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:ltrc/contants/bopomos.dart';
+import 'package:ltrc/constants/bopomos.dart';
 import 'package:ltrc/providers.dart';
 import 'package:ltrc/data/models/word_status_model.dart';
 import 'package:ltrc/teach_word/presentation/widgets/tabs/speak_tab.dart';

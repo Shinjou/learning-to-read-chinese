@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ltrc/contants/bopomos.dart';
-import 'package:ltrc/contants/publisher_code.dart';
-import 'package:ltrc/contants/semester_code.dart';
+import 'package:ltrc/constants/bopomos.dart';
+import 'package:ltrc/constants/publisher_code.dart';
+import 'package:ltrc/constants/semester_code.dart';
 import 'package:ltrc/data/models/word_status_model.dart';
 import 'package:ltrc/data/models/word_phrase_sentence_model.dart';
 import 'package:ltrc/data/providers/word_phrase_sentence_provider.dart';
@@ -11,7 +11,7 @@ import 'package:ltrc/providers.dart';
 import 'package:ltrc/views/view_utils.dart';
 
 
-import '../contants/arabic_numerals_to_chinese.dart';
+import '../constants/arabic_numerals_to_chinese.dart';
 import '../data/models/unit_model.dart';
 
 class UnitsView extends ConsumerStatefulWidget {

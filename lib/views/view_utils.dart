@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ltrc/contants/routes.dart';
+import 'package:ltrc/constants/routes.dart';
 import 'package:ltrc/providers.dart';
 // import 'package:stack_trace/stack_trace.dart';
 
@@ -110,8 +110,7 @@ class ScreenInfoNotifier extends StateNotifier<ScreenInfo> {
       
       double screenHeight = mediaQuery.size.height;
       double screenWidth = mediaQuery.size.width;
-      
-      // Adjust dimensions for landscape
+      // Adjust dimensions for landscape to keep a 3:4 canvas
       if (mediaQuery.orientation == Orientation.landscape) {
         screenHeight = mediaQuery.size.shortestSide;
         screenWidth = screenHeight * 3 / 4;

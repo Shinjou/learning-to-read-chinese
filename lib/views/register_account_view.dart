@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ltrc/contants/register_question_label.dart';
+import 'package:ltrc/constants/register_question_label.dart';
 import 'package:ltrc/data/providers/user_provider.dart';
 // import 'package:ltrc/extensions.dart';
 import 'package:ltrc/providers.dart';

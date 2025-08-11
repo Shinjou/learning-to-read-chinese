@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ltrc/contants/semester_code.dart';
-import 'package:ltrc/contants/publisher_code.dart';
+import 'package:ltrc/constants/semester_code.dart';
+import 'package:ltrc/constants/publisher_code.dart';
 import 'package:ltrc/data/models/unit_model.dart';
 import 'package:ltrc/data/providers/unit_provider.dart';
 import 'package:ltrc/providers.dart';

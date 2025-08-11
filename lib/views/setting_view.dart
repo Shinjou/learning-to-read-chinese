@@ -1,9 +1,9 @@
 // setting_view.dart is a stateful widget that displays the settings page.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ltrc/contants/arabic_numerals_to_chinese.dart';
-import 'package:ltrc/contants/semester_code.dart';
-import 'package:ltrc/contants/publisher_code.dart';
+import 'package:ltrc/constants/arabic_numerals_to_chinese.dart';
+import 'package:ltrc/constants/semester_code.dart';
+import 'package:ltrc/constants/publisher_code.dart';
 import 'package:ltrc/data/models/user_model.dart';
 import 'package:ltrc/data/providers/unit_provider.dart';
 import 'package:ltrc/data/providers/user_provider.dart';
