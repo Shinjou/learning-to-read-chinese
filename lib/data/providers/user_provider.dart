@@ -34,7 +34,7 @@ class UserProvider {
   static const String databasePublisher = 'publisher';
 
   static const String _dbName = 'users.sqlite';
-  static const int _dbNewVersion = 10; 
+  static const int _dbNewVersion = 11; 
   static const String _wordStatusTable = 'wordStatus';
 
   /// Gets the singleton database instance, initializing if necessary.
@@ -75,11 +75,15 @@ class UserProvider {
       isDbClosed = false;  // Mark database as open
       // Create index on wordStatus table
       await _createIndexes(_database!);
+      
       // Check and potentially upgrade the database version
       int currentVersion = await _database!.getVersion();
       if (currentVersion < _dbNewVersion) {
         await _performUpgrade(_database!, currentVersion);
       }
+      
+      // Ensure default users exist even for existing databases
+      await _seedDefaultUsers(_database!);
 
       return _database!;
     } catch (e) {
@@ -94,6 +98,7 @@ class UserProvider {
       await deleteUserWord(db: db, userAccount: 'tester', word: '鸚');
       await addUserWord(db: db, userAccount: 'tester', word: '鸚', learned: 1, liked: 1);
       
+      // Check and add testerbpmf user if it doesn't exist
       bool userBpmfExists = await checkIfAccountExists('testerbpmf');
       if (!userBpmfExists) {
         await addUser(
@@ -110,7 +115,28 @@ class UserProvider {
             publisher: '康軒',
           ),
         );       
-      }         
+      }
+
+      // Check and add learner user if it doesn't exist
+      bool learnerExists = await checkIfAccountExists('learner');
+      if (!learnerExists) {
+        await addUser(
+          user: User(
+            account: 'learner',
+            password: '1234',
+            username: 'learner',
+            safetyQuestionId1: 1,
+            safetyAnswer1: '1234',
+            safetyQuestionId2: 2,
+            safetyAnswer2: '1234',
+            grade: 1,
+            semester: '上',
+            publisher: '康軒',
+          ),
+        );
+        debugPrint('Learner user added successfully');
+      }
+      
       // Ensure indexes are created after upgrade
       await _createIndexes(db);
 
@@ -129,9 +155,83 @@ class UserProvider {
       List<int> bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
       await File(dbPath).writeAsBytes(bytes, flush: true);
       debugPrint('Copy of $_dbName to $dbPath completed successfully.');
+      
+      // After copying, ensure default users exist
+      _database = await openDatabase(dbPath);
+      isDbClosed = false;
+      await _createIndexes(_database!);
+      
+      // Seed default users if they don't exist
+      await _seedDefaultUsers(_database!);
     } catch (e) {
       debugPrint('Failed to copy $_dbName from assets to $dbPath. Error: $e');
       rethrow;
+    }
+  }
+
+  Future<void> _seedDefaultUsers(Database db) async {
+    try {
+      // Check and add learner user
+      bool learnerExists = await checkIfAccountExists('learner');
+      if (!learnerExists) {
+        await addUser(
+          user: User(
+            account: 'learner',
+            password: '1234',
+            username: 'learner',
+            safetyQuestionId1: 1,
+            safetyAnswer1: '1234',
+            safetyQuestionId2: 2,
+            safetyAnswer2: '1234',
+            grade: 1,
+            semester: '上',
+            publisher: '康軒',
+          ),
+        );
+        debugPrint('Learner user seeded successfully');
+      }
+
+      // Check and add tester user
+      bool testerExists = await checkIfAccountExists('tester');
+      if (!testerExists) {
+        await addUser(
+          user: User(
+            account: 'tester',
+            password: '1234',
+            username: 'tester',
+            safetyQuestionId1: 1,
+            safetyAnswer1: '1234',
+            safetyQuestionId2: 2,
+            safetyAnswer2: '1234',
+            grade: 1,
+            semester: '上',
+            publisher: '康軒',
+          ),
+        );
+        debugPrint('Tester user seeded successfully');
+      }
+
+      // Check and add testerbpmf user
+      bool testerBpmfExists = await checkIfAccountExists('testerbpmf');
+      if (!testerBpmfExists) {
+        await addUser(
+          user: User(
+            account: 'testerbpmf',
+            password: '1234',
+            username: 'testerbpmf',
+            safetyQuestionId1: 1,
+            safetyAnswer1: '1234',
+            safetyQuestionId2: 2,
+            safetyAnswer2: '1234',
+            grade: 1,
+            semester: '上',
+            publisher: '康軒',
+          ),
+        );
+        debugPrint('TesterBpmf user seeded successfully');
+      }
+    } catch (e) {
+      debugPrint('Error seeding default users: $e');
     }
   }
 
