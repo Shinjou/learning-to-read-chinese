@@ -113,8 +113,13 @@ Future<FlutterTts> initializeTts() async {
   await ftts.setSpeechRate(0.5);
   await ftts.setVolume(1.0);
 
-  // Set queue mode to ADD (1) so consecutive speak() calls won't interrupt each other.
-  await ftts.setQueueMode(1);
+  // Set queue mode to ADD (1) where supported (guards MissingPlugin on some platforms) 
+  // This allows multiple TTS requests to be queued so consecutive speak() calls won't interrupt each other.
+  try {
+    await ftts.setQueueMode(1);
+  } catch (e) {
+    debugPrint('Main: setQueueMode not supported on this platform: $e');
+  }
 
   debugPrint('Main: TTS initialized.');
   return ftts;
