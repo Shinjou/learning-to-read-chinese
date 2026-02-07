@@ -1,4 +1,8 @@
 Testing Status
 8/9/2025
 - Can not do a Flutter run. First, it requires a 18.5/18.6 ios simulator.
-- 
+
+8/14/2025
+- 有一次第一次說一說完全成功，但是第二次前面會被切斷
+- 後來一連串的更改，越改越糟。我就放棄了。
+- 我學到的是，同一個 ChatGPT chat session，不能談太久太多。它會變糊塗

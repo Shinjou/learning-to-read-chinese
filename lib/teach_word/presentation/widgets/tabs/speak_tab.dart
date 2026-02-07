@@ -1,4 +1,5 @@
 // lib/teach_word/presentation/widgets/tabs/speak_tab.dart
+// Stops TTS before starting STT, uses speechStateProvider from providers.dart
 
 import 'dart:io' show Platform;
 import 'dart:math';
@@ -266,6 +267,7 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
   late FlutterTts ftts;
   late double fontSize;
   late double deviceWidth;
+  late bool isTablet;
   late SpeechState speechState;
 
   // Navigation state
@@ -289,6 +291,13 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
   @override
   void initState() {
     super.initState();
+    // Pre-initialize STT as soon as the tab is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      try {
+        final notifier = ref.read(speechStateProvider.notifier);
+        notifier.ensureInitialized();
+      } catch (_) {}
+    });
     _initializeComponents();
     debugPrint('${formattedActualTime()} SpeakTabState.initState called for widgetId: ${widget.widgetId}');
   }
@@ -514,16 +523,46 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
     switch (speechState.state) {
       case RecordingState.idle:
         return ElevatedButton(
-          onPressed: () {
-            debugPrint('${formattedActualTime()} Start button pressed. Starting countdown...');
-            notifier.startCountdown(isSttMode: _isSttMode);
+          onPressed: () async {
+            debugPrint('${DateTime.now()} Start button pressed. Starting countdown...');
+            try {
+              await ftts.stop();
+              debugPrint('${formattedActualTime()} isTablet is $isTablet. Start button pressed. Starting countdown...');
+
+              // Tablets need a longer audio-route flip than phones
+              await Future.delayed(Duration(milliseconds: isTablet ? 900 : 450));
+              // Ask notifier to start STT earlier on tablets. Empirically good values:
+
+              notifier.startCountdown(
+                isSttMode: _isSttMode,
+                preferredLeadMs: isTablet ? 1500 : 900,
+                isTablet: isTablet,               // make sure you forward this bool
+              );              
+            } catch (_) {
+              notifier.startCountdown(
+                isSttMode: _isSttMode,
+                preferredLeadMs: 1500,
+                isTablet: isTablet,               // make sure you forward this bool
+              );                            
+            }
           },
+
           child: Text("開始朗讀", style: TextStyle(fontSize: fontSize, color: Colors.grey[600])),
         );
 
       case RecordingState.countdown:
         debugPrint('${formattedActualTime()} Rendering CountdownDisplay. countdownValue: ${speechState.countdownValue}');
-        return SizedBox(height: fontSize);
+        return Center(
+          child: Text(
+            '${speechState.countdownValue}',
+            style: TextStyle(
+              fontSize: fontSize * 3, // big and obvious
+              fontWeight: FontWeight.w800,
+              color: Colors.white,
+              shadows: const [Shadow(blurRadius: 8, color: Colors.black54, offset: Offset(0, 2))],
+            ),
+          ),
+        );
 
       case RecordingState.listening:
         debugPrint('${formattedActualTime()} Listening state. Rendering stop button.');
@@ -836,6 +875,12 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
   }
 
   @override
+  void dispose() {
+    debugPrint('${DateTime.now()} SpeakTabState.dispose called for widgetId: ${widget.widgetId}');
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
 
     // 1) Watch your synchronous providers:
@@ -843,6 +888,7 @@ class SpeakTabState extends ConsumerState<SpeakTab> {
     final screenInfo = ref.watch(screenInfoProvider);
     fontSize = screenInfo.fontSize;
     deviceWidth = screenInfo.screenWidth;
+    isTablet = screenInfo.isTablet;
 
     /* volume_controller.dart requires sdk 35. Could not make it work. commented out for now.
     // 2) (Optional) Watch an AsyncValue from Riverpod:

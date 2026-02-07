@@ -38,8 +38,20 @@ final ttsProvider = Provider<FlutterTts>((ref) {
 
 final audioPlayerProvider = Provider<AudioPlayer>((ref) {
   final player = AudioPlayer();
+  // iOS-friendly audio session for quick switch Play <-> Record
+  player.setAudioContext(const AudioContext(
+    iOS: AudioContextIOS(
+      category: AVAudioSessionCategory.playAndRecord,
+      options: [
+        AVAudioSessionOptions.defaultToSpeaker,
+        AVAudioSessionOptions.allowBluetooth,
+        AVAudioSessionOptions.mixWithOthers,
+      ],
+    ),
+  ));
   ref.onDispose(() => player.dispose());
   return player;
+
 });
 
 final speechToTextProvider = Provider<SpeechToText>((ref) {

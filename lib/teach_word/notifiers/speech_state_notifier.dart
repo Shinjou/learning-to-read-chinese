@@ -1,329 +1,235 @@
 // lib/teach_word/notifiers/speech_state_notifier.dart
+// Matches providers.dart constructor and implements pre-start STT during countdown.
 
 import 'dart:async';
-import 'dart:io';
+// import 'dart:io';
+import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:audioplayers/audioplayers.dart';
 import 'package:ltrc/teach_word/models/speech_state.dart';
-import 'package:ltrc/teach_word/presentation/teach_word_utils.dart';
 import 'package:ltrc/teach_word/services/speech_service.dart';
 
 class SpeechStateNotifier extends StateNotifier<SpeechState> {
-  final SpeechService _speechService;
-  final AudioPlayer _audioPlayer;
-  final Function(String) _onError;
+  final SpeechService _speech;
+  final AudioPlayer _player;
+  final void Function(String message) _uiError;
+
   Timer? _countdownTimer;
-  Timer? _elapsedTimer;
-  final Completer<void> longBeepCompleter = Completer<void>();
-  int _elapsedSeconds = 0;
-  StreamSubscription? _playerCompleteSubscription;
+  DateTime? _listenStart;
+
+  // pre-start state
+  bool _preStarted = false;
+  bool _listenStarted = false;
+  int _msRemaining = 0;
+
+  // Self-tuning lead time before T==0 to start STT early.
+  // Shared across instances so it improves after first run.
+  static int _leadMs = 900; // phone baseline
+  DateTime? _listenCallAt;  // when we invoked listen()
+  final bool isTablet = true; // will be set during countdown
 
   SpeechStateNotifier(
-    this._speechService,
-    this._audioPlayer, {
-    required Function(String) onError,
+    this._speech,
+    this._player, {
+    required void Function(String) onError,
     required String initialLocaleId,
-  })  : _onError = onError,
-        super(SpeechState(localeId: initialLocaleId)) {
-    _setupPlayerListener();
+  })  : _uiError = onError,
+        super(SpeechState(localeId: initialLocaleId));
+
+  String _ts() {
+    final now = DateTime.now();
+    return '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}';
   }
 
-  void _setupPlayerListener() {
-    _audioPlayer.onPlayerComplete.listen((_) {
-      if (mounted) {
-        state = state.copyWith(isPlaying: false);
+  Future<void> ensureInitialized() async {
+    if (state.isInitialized) return;
+    final ok = await _speech.initialize(
+      onStatus: (s) {
+        debugPrint('Speech recognition status: $s');
+
+        if (s == 'listening') {
+          // measure device startup latency (from listen() call to 'listening')
+          if (_listenCallAt != null) {
+            final latencyMs = DateTime.now().difference(_listenCallAt!).inMilliseconds;
+            debugPrint('${_ts()} STT listening after ${latencyMs}ms since listen()');
+
+            // If latency is bigger than our current lead, increase it (cap 2000ms)
+            final target = (latencyMs + 200).clamp(600, 2000);
+            if (target > _leadMs) {
+              _leadMs = target;
+              debugPrint('${_ts()} Adjusted STT lead to ${_leadMs}ms for next runs');
+            }
+          }
+          state = state.copyWith(isListening: true);
+        } else if (s == 'notListening' || s == 'done') {
+          state = state.copyWith(isListening: false);
+        }
+      },
+
+
+      onError: (e) {
+        debugPrint('Speech recognition error: $e');
+        _uiError('$e');
+      },
+      onLevel: (lvl) {
+        state = state.copyWith(audioLevel: lvl);
+      },
+      preferredLocaleId: state.localeId, // <-- force zh-TW (comes from providers)
+    );
+
+    state = state.copyWith(isInitialized: ok, localeId: _speech.localeId);
+  }
+
+  void startCountdown({required bool isSttMode, int? preferredLeadMs, required bool isTablet}) {    
+    debugPrint('${_ts()} Starting countdown... isSttMode: $isSttMode, leadMs: $preferredLeadMs, isTablet: $isTablet}');
+    if (preferredLeadMs != null && preferredLeadMs > _leadMs) {
+      _leadMs = preferredLeadMs;
+      debugPrint('${_ts()} Using preferredLeadMs=$_leadMs');
+    }
+
+    _countdownTimer?.cancel();
+    _preStarted = false;
+    _listenStarted = false;
+    state = state.copyWith(state: RecordingState.countdown, countdownValue: 3, error: null);
+
+    // 200ms ticks so we can pre-start STT just before 0
+    _msRemaining = state.countdownValue * 1000;
+    _countdownTimer = Timer.periodic(const Duration(milliseconds: 200), (t) async {
+      _msRemaining -= 200;
+
+      // PRE-START STT around _leadMs ms (was 600)
+      if (!_preStarted && _msRemaining <= _leadMs) {
+        _preStarted = true;
+        debugPrint('${_ts()} PRE-START STT at T-${_msRemaining}ms (lead=$_leadMs)');
+        await ensureInitialized();
+        await Future.delayed(const Duration(milliseconds: 120));
+        await _startSttInternal();
+      }
+
+      if (_msRemaining <= 0) {
+        t.cancel();
+        if (!_listenStarted) {
+          await _startSttInternal();
+        }
+        state = state.copyWith(state: RecordingState.listening, isListening: true);
+      } else {
+        final secs = (_msRemaining / 1000).ceil();
+        if (secs != state.countdownValue) {
+          state = state.copyWith(countdownValue: secs);
+        }
       }
     });
   }
 
-  /// iOS or first-time usage => just call .initialize(force=false)
-  /// But if you want each new session on iOS to be fresh, you could force too.
-  Future<void> initialize({bool force = false}) async {
-    if (state.isInitialized && !force) {
-      // already good
-      return;
-    }
-    final success = await _speechService.initialize(force: force);
-    state = state.copyWith(
-      isInitialized: success,
-      error: success ? null : 'Failed to initialize STT',
-    );
-  }
-
-  Future<void> preloadAllBeeps() async {
+  Future<void> _startSttInternal() async {
+    if (_listenStarted) return;
+    _listenStart = DateTime.now();
+    _listenStarted = true;
     try {
-      await _audioPlayer.setSource(AssetSource('sounds/short_beep.mp3'));
-      await _audioPlayer.setSource(AssetSource('sounds/long_beep.mp3'));
-      debugPrint('${formattedActualTime()} Preloaded all beep files.');
+      _listenCallAt = DateTime.now();
+
+      await _speech.startListening(
+        onResult: (text, isFinal) {
+          if (text != state.transcribedText) {
+            state = state.copyWith(transcribedText: text);
+          }
+          // Optional: if you want to stop as soon as the engine says it's final.
+          // You can also comment this out and let the plugin end naturally.
+          if (isFinal) {
+            stopListening();
+          }
+        },
+        onError: (e) {
+          debugPrint('${_ts()} STT listen failed: $e');
+          _uiError('STT: $e');
+        },
+        /* chat took out these two without explanation
+        // >>> NEW: tolerate longer pauses, esp. on iPad
+        listenForDur: const Duration(seconds: 60),
+        pauseForDur: isTablet
+            ? const Duration(milliseconds: 4200) // iPad: longer silence window
+            : const Duration(milliseconds: 2800), // iPhone: default-ish
+        */
+      );
+    /*
     } catch (e) {
-      debugPrint('${formattedActualTime()} Error preloading beep files: $e');
-    }
-  }
-
-  // -------------------------------------------------------------------------
-  // The main entry point for user tapping "開始朗讀"
-  // -------------------------------------------------------------------------
-  void startCountdown({bool isSttMode = true}) {
-    debugPrint('${formattedActualTime()} Starting countdown...');
-
-    // Always attempt to initialize. Android might 'force' re-init each session
-    // iOS can skip if already initialized.
-    if (!state.isInitialized) {
-      initialize(force: Platform.isAndroid ? false : false); 
-      // or you can do something more explicit
-    }
-
-    const int initialCountdownValue = 1;
-    state = state.copyWith(
-      state: RecordingState.countdown,
-      countdownValue: initialCountdownValue,
-    );
-
-    _countdownTimer?.cancel();
-    // Originally, I played a short beep before listening. But it caused problems
-    // in the Android. Even though iOS works well, To keep the same UI, I took it out.
-    // _playBeep('short');
-
-    // Now start the correct flow
-    if (Platform.isIOS) {
-      // iOS => concurrency => run re-init if you want a fresh session each time
-      _startIosListeningFlow();
-    } else {
-      // Android => re-init STT each time if isSttMode
-      if (isSttMode) {
-        _startAndroidSttFlow();
-      } else {
-        _startAndroidRecordFlow();
+      // Fallback recording if STT fails immediately
+      try {
+        await _speech.startRecording();
+        state = state.copyWith(isRecordingFallback: true);
+        debugPrint('${_ts()} startRecording (fallback) done.');
+      } catch (_) {
+        state = state.copyWith(state: RecordingState.finished, isListening: false, error: '無法啟動語音功能');
       }
-    }
-  }
-
-
-  /* Android can not play beep before listening. So I took it out for both Android and iOS.
-  Future<void> _playBeep(String type) async {
-    final startTime = DateTime.now();
-    final isLongBeep = type == 'long';
-
-    try {
-      final source = type == 'short'
-          ? AssetSource('sounds/short_beep.mp3')
-          : AssetSource('sounds/long_beep.mp3');
-
-      await _audioPlayer.stop();
-      debugPrint('${formattedActualTime()} Previous playback stopped.');
-
-      debugPrint('${formattedActualTime()} Initiating $type beep playback.');
-      await _audioPlayer.setSource(source);
-      await _audioPlayer.resume();
-
-      // Adjust buffer based on file type
-      final durationBuffer = isLongBeep ? const Duration(milliseconds: 500) : const Duration(milliseconds: 150);
-      // final durationBuffer = isLongBeep ? Duration(milliseconds: 200) : Duration(milliseconds: 100);
-      await Future.delayed(durationBuffer);
-
-      final elapsed = DateTime.now().difference(startTime).inMilliseconds;
-      debugPrint('${formattedActualTime()} $type beep played in $elapsed ms.');
+    */  
     } catch (e) {
-      debugPrint('${formattedActualTime()} Error playing $type beep: $e');
-    }
-  }
-  */
-
-  // iOS concurrency
-  Future<void> _startIosListeningFlow() async {
-    debugPrint('${formattedActualTime()} Starting iOS concurrency flow...');
-
-    if (state.state == RecordingState.listening) {
-      debugPrint('${formattedActualTime()} Already in listening state. Skipping start.');
+      // Do NOT start the fallback recorder here.
+      debugPrint('${_ts()} STT threw: $e');
+      _uiError('STT listen threw: $e');
+      state = state.copyWith(state: RecordingState.finished, isListening: false, error: '無法啟動語音功能');
       return;
-    }
-
-    try {
-      // Possibly re-init STT for iOS if you want each session fresh
-      await initialize(force: false);
-
-      // Start both
-      final recordingFuture = _speechService.startRecording();
-      final listeningFuture = _speechService.startListening(
-        localeId: state.localeId,
-        onResult: (text, finalResult) {
-          if (!mounted) return;
-          state = state.copyWith(transcribedText: text);
-        },
-        onAudioLevel: (level) {},
-      );
-
-      // Wait for both
-      await recordingFuture;
-      debugPrint('${formattedActualTime()} startRecording (iOS) done.');
-
-      await listeningFuture;
-      debugPrint('${formattedActualTime()} startListening (iOS) done.');
-
-      // Start timer
-      _elapsedSeconds = 0;
-      _elapsedTimer?.cancel();
-      _elapsedTimer = Timer.periodic(const Duration(seconds: 1), (_) => _elapsedSeconds++);
-
-      state = state.copyWith(
-        state: RecordingState.listening,
-        isListening: true,
-      );
-      debugPrint('${formattedActualTime()} iOS concurrency listening started.');
-    } catch (e) {
-      debugPrint('${formattedActualTime()} Error in iOS concurrency: $e');
-      state = state.copyWith(error: e.toString());
-    }
+    }      
   }
 
-  // Android STT only
-  Future<void> _startAndroidSttFlow() async {
-    debugPrint('${formattedActualTime()} Starting Android STT flow...');
-
-    if (state.state == RecordingState.listening) {
-      debugPrint('${formattedActualTime()} Already in listening. Skipping start.');
-      return;
-    }
-
-    try {
-      // Force re-init for each STT session on Android
-      await initialize(force: true);
-
-      final listeningFuture = _speechService.startListening(
-        localeId: state.localeId,
-        onResult: (text, finalResult) {
-          if (!mounted) return;
-          state = state.copyWith(transcribedText: text);
-        },
-        onAudioLevel: (level) {},
-      );
-
-      await listeningFuture;
-      debugPrint('${formattedActualTime()} startListening (Android STT) done.');
-
-      _elapsedSeconds = 0;
-      _elapsedTimer?.cancel();
-      _elapsedTimer = Timer.periodic(const Duration(seconds: 1), (_) => _elapsedSeconds++);
-
-      state = state.copyWith(
-        state: RecordingState.listening,
-        isListening: true,
-      );
-      debugPrint('${formattedActualTime()} Android STT listening started.');
-    } catch (e) {
-      debugPrint('${formattedActualTime()} Error in Android STT flow: $e');
-      state = state.copyWith(error: e.toString());
-    }
-  }
-
-  // Android record-only
-  Future<void> _startAndroidRecordFlow() async {
-    debugPrint('${formattedActualTime()} Starting Android RECORD flow...');
-
-    if (state.state == RecordingState.listening) {
-      debugPrint('${formattedActualTime()} Already in listening. Skipping.');
-      return;
-    }
-
-    try {
-      // No need for STT re-init if we’re just recording
-      final recordingFuture = _speechService.startRecording();
-
-      await recordingFuture;
-      debugPrint('${formattedActualTime()} startRecording (Android) done.');
-
-      _elapsedSeconds = 0;
-      _elapsedTimer?.cancel();
-      _elapsedTimer = Timer.periodic(const Duration(seconds: 1), (_) => _elapsedSeconds++);
-
-      state = state.copyWith(
-        state: RecordingState.listening,
-        isListening: true,
-      );
-      debugPrint('${formattedActualTime()} Android record-only listening started.');
-    } catch (e) {
-      debugPrint('${formattedActualTime()} Error in Android record flow: $e');
-      state = state.copyWith(error: e.toString());
-    }
-  }
-
-  // If you still want the old concurrency for both iOS/Android, you can keep _startListeningFlow,
-  // but you seem to have replaced it with specialized flows.
-
-  Future<void> stopListening({bool isSttMode = true}) async {
+  /// Keep the signature your UI calls: `stopListening(isSttMode: _isSttMode)`
+  Future<void> stopListening({bool? isSttMode}) async {
     debugPrint('notifier stopListening() called...');
-    try {
-      _elapsedTimer?.cancel();
-      state = state.copyWith(
-        state: RecordingState.finished,
-        isListening: false,
-        // recordingPath: path,
-        recordingSeconds: _elapsedSeconds,
-      );      
-      if (Platform.isAndroid) {
-        if (isSttMode) {
-          await _speechService.stopListening();
-          debugPrint('stopListening() => STT stopped. state = $state');
-        } else {
-          final path = await _speechService.stopRecording();
-          debugPrint('stopListening() => recorder stopped at $path. state = $state');
-          state = state.copyWith(
-            recordingPath: path,
-          );                
-        }
-      } else { // iOS
-        await _speechService.stopListening();
-        debugPrint('stopListening() => STT stopped');
-        final path = await _speechService.stopRecording();
-        debugPrint('stopListening() => recorder stopped at $path. state = $state');
-        state = state.copyWith(
-          recordingPath: path,
-        );                        
-      }
-    } catch (e) {
-      debugPrint('stopListening() => error: $e');
-      handleError('Error stopping listening/recording: $e');
+    final elapsed = _listenStart == null ? 0 : DateTime.now().difference(_listenStart!).inSeconds;
+    await _speech.stopListening();
+    debugPrint('stopListening() => STT stopped');
+
+    String? recPath;
+    if (state.isRecordingFallback) {
+      recPath = await _speech.stopRecording();
+      debugPrint('stopListening() => recorder stopped at $recPath');
+    } else {
+      debugPrint('stopListening() => no recording to stop (STT-only mode)');
     }
+
+    state = state.copyWith(
+      state: RecordingState.finished,
+      isListening: false,
+      recordingSeconds: elapsed,
+      recordingPath: recPath ?? state.recordingPath,
+      isRecordingFallback: false,
+    );
   }
 
-  Future<void> playRecording(volume) async {
-    if (state.recordingPath == null || state.isPlaying) return;
-    state = state.copyWith(isPlaying: true);
-    try {
-      await _audioPlayer.play(DeviceFileSource(state.recordingPath!), volume: volume);
-      state = state.copyWith(isPlaying: false);
-    } catch (e) {
-      handleError('Failed to play recording: $e');
-      state = state.copyWith(isPlaying: false);
+  /// Your UI toggles/sets correctness explicitly.
+  void updateAnswerCorrectness(bool value) {
+    state = state.copyWith(isAnswerCorrect: value);
+  }
+
+  /// Your UI invokes `playRecording(volume)`.
+  Future<void> playRecording(double volume) async {
+    final path = state.recordingPath;
+    if (path == null || path.isEmpty) {
+      _uiError('沒有可播放的錄音檔');
+      return;
     }
+    try {
+      await _player.stop();
+    } catch (_) {}
+    // clamp volume 0.0 ~ 1.0
+    final v = volume.clamp(0.0, 1.0);
+    await _player.setVolume(v);
+    await _player.play(DeviceFileSource(path));
   }
 
   void reset() {
-    state = SpeechState(localeId: state.localeId);
-  }
-
-  void updateAnswerCorrectness(bool isCorrect) {
-    state = state.copyWith(isAnswerCorrect: isCorrect);
-  }
-
-  void handleError(String error) {
-    _onError(error);
-    if (!mounted) return;
+    _countdownTimer?.cancel();
     state = state.copyWith(
-      error: error,
       state: RecordingState.idle,
+      transcribedText: '',
+      countdownValue: 3,
+      recordingSeconds: 0,
+      recordingPath: null,
+      error: null,
       isListening: false,
+      audioLevel: 0.0,
+      isRecordingFallback: false,
+      isAnswerCorrect: false, // reset correctness
     );
   }
-
-  @override
-  void dispose() {
-    _playerCompleteSubscription?.cancel();
-    _countdownTimer?.cancel();
-    _elapsedTimer?.cancel();
-    super.dispose();
-  }
 }
-
-
